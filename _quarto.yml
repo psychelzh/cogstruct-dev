@@ -1,0 +1,24 @@
+project:
+  type: website
+  execute-dir: project
+
+# freeze computational output
+# (see https://quarto.org/docs/projects/code-execution.html#freeze)
+execute:
+  freeze: auto
+
+website:
+  title: "Cognitive Structure"
+  navbar:
+    right:
+      - about.qmd
+      - icon: github
+        href: https://github.com/psychelzh/cogstruct-dev
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    comments:
+      hypothesis:
+        openSidebar: false
