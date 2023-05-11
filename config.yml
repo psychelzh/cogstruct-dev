@@ -1,0 +1,33 @@
+default:
+  require_keyboard:
+  - 语义判断
+  - 声调判断
+  - 词语判断
+  - 变色魔块PRO
+  - 卡片分类PRO
+  - 快速归类PRO
+  - 一心二用PRO
+  - 太空飞船PRO
+  - 候鸟迁徙PRO
+  - 多变计数师
+  - 随机应变
+  - 多彩文字PRO
+  - 数字卡片PRO
+  - 美术卡片
+  - 格子卡片
+  - 文字卡片
+  - 专注大师_中级
+  - 魔术师终极
+  - 察颜观色PRO
+  - 注意警觉
+  - 注意指向
+  - 方向检测
+  - 色彩检测
+  where:
+  - table: base_organization
+    field: Name
+    values: [四川师范大学, 天津师范大学, 北京联合大学, 北京大学]
+  - table: course
+    field: Name
+    operator: REGEXP
+    values: ^认知实验[A-E]$
