@@ -347,7 +347,8 @@
 "方向检测","FiltOrient","k5",,
 "方向检测","FiltOrient","k7",,
 "方向检测","FiltOrient","k9",,
-"远距离联想A","RAT","nc",Thinking,f
+"远距离联想A","RATA","nc",,
+"远距离联想","RAT","nc",Thinking,f
 "阅读判断","Reading","nc",Reading,f
 "视觉记忆测试","VMT","nc",Memory,f
 "图形折叠","FR","nc",Quantitative,f

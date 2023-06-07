@@ -23,6 +23,8 @@ default:
   - 注意指向
   - 方向检测
   - 色彩检测
+
+main:
   where:
   - table: base_organization
     field: Name
@@ -31,3 +33,19 @@ default:
     field: Name
     operator: REGEXP
     values: ^认知实验[A-E]$
+
+makeup:
+  where:
+  - table: base_organization
+    field: Name
+    values: [四川师范大学, 天津师范大学, 北京联合大学, 北京大学]
+  - table: course
+    field: Name
+    operator: REGEXP
+    values: CAMP-补测
+
+restore:
+  where:
+  - table: course
+    field: Name
+    values: 认知实验D

@@ -68,3 +68,92 @@ combine_targets <- function(name, targets, cols_targets) {
       substitute()
   )
 }
+
+prepare_data <- function(games, config, path_restore, name_suffix = "restore") {
+  rlang::check_exclusive(config, path_restore)
+  if (!missing(config)) {
+    arg_config <- substitute(config)
+    config <- tryCatch(
+      rlang::sym(config),
+      error = \(e) arg_config
+    )
+    targets_data_fetch <- list(
+      tar_target_raw(
+        paste("config_where_single_game", name_suffix, sep = "_"),
+        rlang::expr(
+          insert_where_single_game(
+            !!rlang::ensym(config),
+            game_id
+          )
+        )
+      ),
+      tar_target_raw(
+        paste("data", name_suffix, sep = "_"),
+        rlang::expr(
+          pickup(
+            query_tmpl_data,
+            !!rlang::sym(
+              paste("config_where_single_game", name_suffix, sep = "_")
+            )
+          )
+        )
+      ),
+      tar_target_raw(
+        paste("data_parsed", name_suffix, sep = "_"),
+        rlang::expr(
+          wrangle_data(
+            !!rlang::sym(paste("data", name_suffix, sep = "_"))
+          )
+        )
+      )
+    )
+  }
+  if (!missing(path_restore)) {
+    targets_data_fetch <- list(
+      tar_target_raw(
+        paste("file_data", name_suffix, sep = "_"),
+        rlang::expr(
+          fs::path(!!path_restore, paste("data", game_name_abbr, sep = "_"))
+        ),
+        format = "file"
+      ),
+      tar_target_raw(
+        paste("data_parsed", name_suffix, sep = "_"),
+        rlang::expr(
+          wrangle_data(
+            qs::qread(
+              !!rlang::sym(paste("file_data", name_suffix, sep = "_"))
+            )
+          )
+        )
+      )
+    )
+  }
+  tarchetypes::tar_map(
+    values = games,
+    names = game_name_abbr,
+    targets_data_fetch,
+    tar_target_raw(
+      paste("data_valid", name_suffix, sep = "_"),
+      rlang::expr(
+        validate_raw_parsed(
+          !!rlang::sym(paste("data_parsed", name_suffix, sep = "_")),
+          games_req_kb
+        )
+      )
+    ),
+    tar_target_raw(
+      paste("indices", name_suffix, sep = "_"),
+      rlang::expr(
+        if (!is.na(prep_fun_name)) {
+          preproc_data(
+            !!rlang::sym(paste("data_valid", name_suffix, sep = "_")),
+            prep_fun,
+            .input = input,
+            .extra = extra
+          )
+        }
+      )
+    )
+  )
+}

@@ -1,6 +1,6 @@
 library(targets)
 future::plan(future.callr::callr)
-purrr::walk(fs::dir_ls("R"), source)
+tar_source()
 tar_option_set(
   package = c("tidyverse", "preproc.iquizoo", "tarflow.iquizoo", "bit64"),
   format = "qs",
@@ -13,42 +13,54 @@ search_games_mem <- memoise::memoise(
   tarflow.iquizoo::search_games,
   cache = cachem::cache_disk("~/.cache.tarflow")
 )
-games <- search_games_mem(config_where = config::get("where"))
-targets_data <- tarchetypes::tar_map(
-  values = games,
-  names = game_name_abbr,
-  # major targets
-  tar_target(data, pickup(query_tmpl_data, config_where_single_game)),
-  tar_target(data_parsed, wrangle_data(data)),
-  tar_target(
-    data_valid,
-    validate_raw_parsed(data_parsed, games_req_kb)
-  ),
-  tar_target(
-    indices,
-    if (!is.na(prep_fun_name)) {
-      preproc_data(data_valid, prep_fun, .input = input, .extra = extra)
+configs <- c("main", "makeup", "restore")
+targets_data <- lapply(
+  configs,
+  \(config) {
+    games <- search_games_mem(
+      config_where = config::get("where", config = config)
+    )
+    if (config != "restore") {
+      prepare_data(
+        games,
+        config = paste("config_where", config, sep = "_"),
+        name_suffix = config
+      )
+    } else {
+      prepare_data(
+        games |> dplyr::filter(game_name_abbr != "RAT"),
+        path_restore = here::here(
+          "../archived/cogstruct-dev-archived/_targets/preproc_behav/objects"
+        ),
+        name_suffix = config
+      )
     }
-  ),
-  # configurations
-  tar_target(
-    config_where_single_game,
-    insert_where_single_game(config_where, game_id)
-  )
+  }
 )
+
 list(
+  tar_target(game_ids, unique(indices$game_id)),
   tar_target(file_config, "config.yml", format = "file"),
-  tar_target(config_where, config::get("where", file = file_config)),
+  lapply(
+    configs,
+    \(config)
+    tar_target_raw(
+      paste("config_where", config, sep = "_"),
+      rlang::expr(
+        config::get("where", file = file_config, config = !!config)
+      )
+    )
+  ),
   tar_target(games_req_kb, config::get("require_keyboard", file = file_config)),
   tarchetypes::tar_file_read(
     users,
     fs::path("sql", "users.tmpl.sql"),
-    read = pickup(!!.x, config_where)
+    read = pickup(!!.x, config_where_main)
   ),
   tarchetypes::tar_file_read(
     users_project_progress,
     fs::path("sql", "progress.tmpl.sql"),
-    read = pickup(!!.x, config_where)
+    read = pickup(!!.x, config_where_main)
   ),
   tar_target(
     query_tmpl_data,
@@ -60,24 +72,20 @@ list(
     users_project_progress |>
       filter(str_detect(project_name, "^认知实验[A-E]$")) |>
       summarise(n = sum(project_progress) / 100, .by = user_id) |>
-      filter(n > 4)
+      filter(n >= 4)
   ),
   targets_data,
   tarchetypes::tar_combine(
     data_parsed,
-    targets_data$data_parsed
-  ),
-  tarchetypes::tar_combine(
-    data_valid,
-    targets_data$data_valid
+    purrr::list_flatten(targets_data)[
+      paste("data_parsed", configs, sep = "_")
+    ]
   ),
   tarchetypes::tar_combine(
     indices,
-    targets_data$indices
-  ),
-  tar_target(
-    indices_clean,
-    clean_indices(indices, users_completed)
+    purrr::list_flatten(targets_data)[
+      paste("indices", configs, sep = "_")
+    ]
   ),
   tarchetypes::tar_file_read(
     config_indices,
@@ -85,6 +93,10 @@ list(
     read = read_csv(!!.x, show_col_types = FALSE) |>
       filter(!is.na(dimension)) |>
       mutate(game_index = str_c(game_name_abbr, index_name, sep = "."))
+  ),
+  tar_target(
+    indices_clean,
+    clean_indices(indices, users_completed)
   ),
   tar_target(
     indices_of_interest,
@@ -95,9 +107,7 @@ list(
       ) |>
       mutate(score_adj = if_else(reversed, -score, score)) |>
       mutate(
-        is_outlier_iqr = score |>
-          performance::check_outliers(method = "iqr") |>
-          unclass(),
+        is_outlier_iqr = score %in% boxplot.stats(score)$out,
         .by = game_index
       )
   )

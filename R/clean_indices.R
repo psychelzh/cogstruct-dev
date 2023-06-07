@@ -1,15 +1,15 @@
+#' Cleanse the calculated scores
+#'
+#' The most important job here is to replace the original scores by the
+#' corresponding makeup scores.
 clean_indices <- function(indices, users_completed) {
   indices |>
     semi_join(users_completed, by = "user_id") |>
+    # keep the first result for each subject and game
+    # https://github.com/r-lib/vctrs/issues/1787
+    arrange(game_time) |>
+    distinct(user_id, game_name, index_name, .keep_all = TRUE) |>
     left_join(data.iquizoo::game_info, by = c("game_id", "game_name")) |>
-    mutate(
-      game_name_real = if_else(
-        str_detect(game_name_abbr, "[A|B]$"),
-        str_remove(game_name, "[A|B]$"),
-        game_name
-      ),
-      game_name_abbr = str_remove(game_name_abbr, "[A|B]$")
-    ) |>
     select(user_id, game_id, game_name, game_name_abbr, game_time,
            index_name, score)
 }
