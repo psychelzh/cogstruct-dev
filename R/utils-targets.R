@@ -72,13 +72,16 @@ combine_targets <- function(name, targets, cols_targets) {
 prepare_data <- function(games, name_config, path_restore,
                          name_suffix = "restore") {
   rlang::check_exclusive(name_config, path_restore)
+  add_suffix <- function(name) {
+    paste(name, name_suffix, sep = "_")
+  }
   if (!missing(name_config)) {
     if (!tryCatch(is.character(name_config), error = \(e) FALSE)) {
       name_config <- deparse1(substitute(name_config))
     }
     targets_data_fetch <- list(
       tar_target_raw(
-        paste("config_where_single_game", name_suffix, sep = "_"),
+        add_suffix("config_where_single_game"),
         rlang::expr(
           insert_where_single_game(
             !!rlang::ensym(name_config),
@@ -91,17 +94,15 @@ prepare_data <- function(games, name_config, path_restore,
         rlang::expr(
           pickup(
             query_tmpl_data,
-            !!rlang::sym(
-              paste("config_where_single_game", name_suffix, sep = "_")
-            )
+            !!rlang::sym(add_suffix("config_where_single_game"))
           )
         )
       ),
       tar_target_raw(
-        paste("data_parsed", name_suffix, sep = "_"),
+        add_suffix("data_parsed"),
         rlang::expr(
           wrangle_data(
-            !!rlang::sym(paste("data", name_suffix, sep = "_"))
+            !!rlang::sym(add_suffix("data"))
           )
         )
       )
@@ -110,19 +111,20 @@ prepare_data <- function(games, name_config, path_restore,
   if (!missing(path_restore)) {
     targets_data_fetch <- list(
       tar_target_raw(
-        paste("file_data", name_suffix, sep = "_"),
+        add_suffix("file_data"),
         rlang::expr(
-          fs::path(!!path_restore, paste("data", game_name_abbr, sep = "_"))
+          fs::path(
+            !!path_restore,
+            paste("data", game_name_abbr, sep = "_")
+          )
         ),
         format = "file"
       ),
       tar_target_raw(
-        paste("data_parsed", name_suffix, sep = "_"),
+        add_suffix("data_parsed"),
         rlang::expr(
           wrangle_data(
-            qs::qread(
-              !!rlang::sym(paste("file_data", name_suffix, sep = "_"))
-            )
+            qs::qread(!!rlang::sym(add_suffix("file_data")))
           )
         )
       )
@@ -133,20 +135,20 @@ prepare_data <- function(games, name_config, path_restore,
     names = game_name_abbr,
     targets_data_fetch,
     tar_target_raw(
-      paste("data_valid", name_suffix, sep = "_"),
+      add_suffix("data_valid"),
       rlang::expr(
         validate_raw_parsed(
-          !!rlang::sym(paste("data_parsed", name_suffix, sep = "_")),
+          !!rlang::sym(add_suffix("data_parsed")),
           games_req_kb
         )
       )
     ),
     tar_target_raw(
-      paste("indices", name_suffix, sep = "_"),
+      add_suffix("indices"),
       rlang::expr(
         if (!is.na(prep_fun_name)) {
           preproc_data(
-            !!rlang::sym(paste("data_valid", name_suffix, sep = "_")),
+            !!rlang::sym(add_suffix("data_valid")),
             prep_fun,
             .input = input,
             .extra = extra
