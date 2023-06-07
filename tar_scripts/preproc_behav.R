@@ -2,7 +2,10 @@ library(targets)
 future::plan(future.callr::callr)
 tar_source()
 tar_option_set(
-  package = c("tidyverse", "preproc.iquizoo", "tarflow.iquizoo", "bit64"),
+  package = c(
+    "tidyverse", "tarflow.iquizoo", "bit64",
+    "preproc.iquizoo", "lavaan"
+  ),
   format = "qs",
   imports = "preproc.iquizoo",
   memory = "transient",
@@ -110,5 +113,28 @@ list(
         is_outlier_iqr = score %in% boxplot.stats(score)$out,
         .by = game_index
       )
+  ),
+  tar_target(
+    indices_wider_clean,
+    indices_of_interest |>
+      filter(!is_outlier_iqr) |>
+      pivot_wider(
+        id_cols = user_id,
+        names_from = game_index,
+        values_from = score_adj
+      ) |>
+      # currently, these two schools did not complete the makeup tests
+      anti_join(
+        filter(users, school %in% c("北京大学", "北京联合大学")),
+        by = "user_id"
+      )
+  ),
+  tar_target(
+    mdl_fitted,
+    fit_g(indices_wider_clean, names(indices_wider_clean)[-1])
+  ),
+  tar_target(
+    scores_g,
+    predict_g_score(indices_wider_clean, mdl_fitted)
   )
 )
