@@ -26,7 +26,7 @@ targets_data <- lapply(
     if (config != "restore") {
       prepare_data(
         games,
-        config = paste("config_where", config, sep = "_"),
+        name_config = paste("config_where", config, sep = "_"),
         name_suffix = config
       )
     } else {

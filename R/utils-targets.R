@@ -69,20 +69,19 @@ combine_targets <- function(name, targets, cols_targets) {
   )
 }
 
-prepare_data <- function(games, config, path_restore, name_suffix = "restore") {
-  rlang::check_exclusive(config, path_restore)
-  if (!missing(config)) {
-    arg_config <- substitute(config)
-    config <- tryCatch(
-      rlang::sym(config),
-      error = \(e) arg_config
-    )
+prepare_data <- function(games, name_config, path_restore,
+                         name_suffix = "restore") {
+  rlang::check_exclusive(name_config, path_restore)
+  if (!missing(name_config)) {
+    if (!tryCatch(is.character(name_config), error = \(e) FALSE)) {
+      name_config <- deparse1(substitute(name_config))
+    }
     targets_data_fetch <- list(
       tar_target_raw(
         paste("config_where_single_game", name_suffix, sep = "_"),
         rlang::expr(
           insert_where_single_game(
-            !!rlang::ensym(config),
+            !!rlang::ensym(name_config),
             game_id
           )
         )
