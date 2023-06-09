@@ -43,6 +43,11 @@ targets_data <- lapply(
 
 list(
   tar_target(game_ids, unique(indices$game_id)),
+  tarchetypes::tar_file_read(
+    formats,
+    "config/game_format.csv",
+    read = read_csv(!!.x, show_col_types = FALSE)
+  ),
   tar_target(file_config, "config.yml", format = "file"),
   lapply(
     configs,
@@ -90,16 +95,26 @@ list(
       paste("indices", configs, sep = "_")
     ]
   ),
+  tar_target(
+    indices_clean,
+    clean_indices(indices, users_completed)
+  ),
+  tarchetypes::tar_combine(
+    indices_slices,
+    purrr::list_flatten(targets_data)[
+      paste("indices_slices", configs, sep = "_")
+    ]
+  ),
+  tar_target(
+    indices_slices_clean,
+    clean_indices(indices_slices, users_completed, id_cols = c(user_id, part))
+  ),
   tarchetypes::tar_file_read(
     config_indices,
     "config/indices_filtering.csv",
     read = read_csv(!!.x, show_col_types = FALSE) |>
       filter(!is.na(dimension)) |>
       mutate(game_index = str_c(game_name_abbr, index_name, sep = "."))
-  ),
-  tar_target(
-    indices_clean,
-    clean_indices(indices, users_completed)
   ),
   tar_target(
     indices_of_interest,
@@ -112,6 +127,19 @@ list(
       mutate(
         is_outlier_iqr = score %in% boxplot.stats(score)$out,
         .by = game_index
+      )
+  ),
+  tar_target(
+    indices_slices_of_interest,
+    config_indices |>
+      inner_join(
+        indices_slices_clean,
+        join_by(game_name, game_name_abbr, index_name)
+      ) |>
+      mutate(score_adj = if_else(reversed, -score, score)) |>
+      mutate(
+        is_outlier_iqr = score %in% boxplot.stats(score)$out,
+        .by = c(game_index, part)
       )
   ),
   tar_target(

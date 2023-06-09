@@ -70,6 +70,7 @@ combine_targets <- function(name, targets, cols_targets) {
 }
 
 prepare_data <- function(games, name_config, path_restore,
+                         add_slice = TRUE,
                          name_suffix = "restore") {
   rlang::check_exclusive(name_config, path_restore)
   add_suffix <- function(name) {
@@ -155,6 +156,37 @@ prepare_data <- function(games, name_config, path_restore,
           )
         }
       )
-    )
+    ),
+    if (add_slice) {
+      list(
+        tar_target_raw(
+          add_suffix("match_format"),
+          rlang::expr(filter(formats, .data[["game_name"]] == game_name))
+        ),
+        tar_target_raw(
+          add_suffix("data_valid_slices"),
+          rlang::expr(
+            slice_data(
+              !!rlang::sym(add_suffix("data_valid")),
+              format = `$`(!!rlang::sym(add_suffix("match_format")), format),
+              subset = `$`(!!rlang::sym(add_suffix("match_format")), subset)
+            )
+          )
+        ),
+        tar_target_raw(
+          add_suffix("indices_slices"),
+          rlang::expr({
+            if (!is.null(!!rlang::sym(add_suffix("data_valid_slices")))) {
+              tarflow.iquizoo::preproc_data(
+                !!rlang::sym(add_suffix("data_valid_slices")),
+                prep_fun,
+                .input = input,
+                .extra = extra
+              )
+            }
+          })
+        )
+      )
+    }
   )
 }
