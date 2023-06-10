@@ -131,6 +131,21 @@ prepare_data <- function(games, name_config, path_restore,
       )
     )
   }
+  if (add_slice) {
+    games <- games |>
+      dplyr::left_join(
+        readr::read_csv("config/game_format.csv", show_col_types = FALSE),
+        by = "game_name"
+      ) |>
+      dplyr::mutate(
+        slice_data_fun = purrr::map(
+          format,
+          ~ if (.x %in% c("trials", "items", "duration")) {
+            rlang::sym(paste0("slice_data_", .x))
+          }
+        )
+      )
+  }
   tarchetypes::tar_map(
     values = games,
     names = game_name_abbr,
@@ -160,18 +175,16 @@ prepare_data <- function(games, name_config, path_restore,
     if (add_slice) {
       list(
         tar_target_raw(
-          add_suffix("match_format"),
-          rlang::expr(filter(formats, .data[["game_name"]] == game_name))
-        ),
-        tar_target_raw(
           add_suffix("data_valid_slices"),
-          rlang::expr(
-            slice_data(
-              !!rlang::sym(add_suffix("data_valid")),
-              format = `$`(!!rlang::sym(add_suffix("match_format")), format),
-              subset = `$`(!!rlang::sym(add_suffix("match_format")), subset)
-            )
-          )
+          rlang::expr({
+            if (!is.null(slice_data_fun)) {
+              slice_data_fun(
+                !!rlang::sym(add_suffix("data_valid")),
+                subset = subset,
+                parts = parts
+              )
+            }
+          })
         ),
         tar_target_raw(
           add_suffix("indices_slices"),
