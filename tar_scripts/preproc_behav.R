@@ -22,7 +22,14 @@ targets_data <- lapply(
   \(config) {
     games <- search_games_mem(
       config_where = config::get("where", config = config)
-    )
+    ) |>
+      dplyr::mutate(
+        prep_fun = dplyr::if_else(
+          game_name == "文字推理",
+          rlang::syms("countcorrect_vr"),
+          prep_fun
+        )
+      )
     if (config != "restore") {
       prepare_data(
         games,
