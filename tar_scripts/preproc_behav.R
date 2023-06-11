@@ -17,28 +17,34 @@ search_games_mem <- memoise::memoise(
   cache = cachem::cache_disk("~/.cache.tarflow")
 )
 configs <- c("main", "makeup", "restore")
+games_config <- configs |>
+  rlang::set_names() |>
+  lapply(
+    \(config) {
+      search_games_mem(
+        config_where = config::get("where", config = config)
+      ) |>
+        dplyr::mutate(
+          prep_fun = dplyr::if_else(
+            game_name == "文字推理",
+            rlang::syms("countcorrect_vr"),
+            prep_fun
+          )
+        )
+    }
+  )
 targets_data <- lapply(
   configs,
   \(config) {
-    games <- search_games_mem(
-      config_where = config::get("where", config = config)
-    ) |>
-      dplyr::mutate(
-        prep_fun = dplyr::if_else(
-          game_name == "文字推理",
-          rlang::syms("countcorrect_vr"),
-          prep_fun
-        )
-      )
     if (config != "restore") {
       prepare_data(
-        games,
+        games_config[[config]],
         name_config = paste("config_where", config, sep = "_"),
         name_suffix = config
       )
     } else {
       prepare_data(
-        games |> dplyr::filter(game_name_abbr != "RAT"),
+        games_config[[config]],
         path_restore = here::here(
           "../archived/cogstruct-dev-archived/_targets/preproc_behav/objects"
         ),
@@ -47,6 +53,55 @@ targets_data <- lapply(
     }
   }
 )
+
+targets_slices <- games_config |>
+  dplyr::bind_rows(.id = "config") |>
+  dplyr::mutate(
+    tar_data_valid = stringr::str_c(
+      "data_valid", config, game_name_abbr,
+      sep = "_"
+    ) |>
+      rlang::syms()
+  ) |>
+  tidyr::chop(c(config, tar_data_valid)) |>
+  dplyr::left_join(
+    readr::read_csv("config/game_format.csv", show_col_types = FALSE),
+    by = "game_name"
+  ) |>
+  dplyr::mutate(
+    slice_data_fun = purrr::map(
+      format,
+      ~ if (.x %in% c("trials", "items", "duration")) {
+        rlang::sym(paste0("slice_data_", .x))
+      }
+    )
+  ) |>
+  tarchetypes::tar_map(
+    names = game_name_abbr,
+    list(
+      tar_target(
+        data_valid_slices,
+        if (!is.null(slice_data_fun)) {
+          slice_data_fun(
+            bind_rows(tar_data_valid),
+            subset = subset,
+            parts = parts
+          )
+        }
+      ),
+      tar_target(
+        indices_slices,
+        if (!is.null(data_valid_slices)) {
+          tarflow.iquizoo::preproc_data(
+            data_valid_slices,
+            prep_fun,
+            .input = input,
+            .extra = extra
+          )
+        }
+      )
+    )
+  )
 
 list(
   tar_target(game_ids, unique(indices$game_id)),
@@ -106,11 +161,10 @@ list(
     indices_clean,
     clean_indices(indices, users_completed)
   ),
+  targets_slices,
   tarchetypes::tar_combine(
     indices_slices,
-    purrr::list_flatten(targets_data)[
-      paste("indices_slices", configs, sep = "_")
-    ]
+    targets_slices$indices_slices
   ),
   tar_target(
     indices_slices_clean,

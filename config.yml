@@ -49,3 +49,7 @@ restore:
   - table: course
     field: Name
     values: 认知实验D
+  - table: content
+    field: Name
+    operator: "<>"
+    values: 远距离联想

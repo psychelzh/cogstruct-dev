@@ -70,7 +70,6 @@ combine_targets <- function(name, targets, cols_targets) {
 }
 
 prepare_data <- function(games, name_config, path_restore,
-                         add_slice = TRUE,
                          name_suffix = "restore") {
   rlang::check_exclusive(name_config, path_restore)
   add_suffix <- function(name) {
@@ -131,21 +130,6 @@ prepare_data <- function(games, name_config, path_restore,
       )
     )
   }
-  if (add_slice) {
-    games <- games |>
-      dplyr::left_join(
-        readr::read_csv("config/game_format.csv", show_col_types = FALSE),
-        by = "game_name"
-      ) |>
-      dplyr::mutate(
-        slice_data_fun = purrr::map(
-          format,
-          ~ if (.x %in% c("trials", "items", "duration")) {
-            rlang::sym(paste0("slice_data_", .x))
-          }
-        )
-      )
-  }
   tarchetypes::tar_map(
     values = games,
     names = game_name_abbr,
@@ -171,35 +155,6 @@ prepare_data <- function(games, name_config, path_restore,
           )
         }
       )
-    ),
-    if (add_slice) {
-      list(
-        tar_target_raw(
-          add_suffix("data_valid_slices"),
-          rlang::expr({
-            if (!is.null(slice_data_fun)) {
-              slice_data_fun(
-                !!rlang::sym(add_suffix("data_valid")),
-                subset = subset,
-                parts = parts
-              )
-            }
-          })
-        ),
-        tar_target_raw(
-          add_suffix("indices_slices"),
-          rlang::expr({
-            if (!is.null(!!rlang::sym(add_suffix("data_valid_slices")))) {
-              tarflow.iquizoo::preproc_data(
-                !!rlang::sym(add_suffix("data_valid_slices")),
-                prep_fun,
-                .input = input,
-                .extra = extra
-              )
-            }
-          })
-        )
-      )
-    }
+    )
   )
 }
