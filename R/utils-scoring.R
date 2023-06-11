@@ -54,8 +54,8 @@ slice_data_trials <- function(data, parts, ...,
   }
   if (all(map_int(data[[name_raw_parsed]], nrow) == num_trials)) {
     config_parts <- tibble(
-      part = seq_len(parts - 1),
-      row_num_break = num_trials * part / parts
+      part = seq_len(parts - 1) / parts,
+      row_num_break = num_trials * part
     )
     by <- join_by(row_num <= row_num_break)
   } else {
@@ -70,8 +70,8 @@ slice_data_trials <- function(data, parts, ...,
         map(
           num_trials,
           ~ tibble(
-            part = seq_len(parts - 1),
-            row_num_break = .x * part / parts
+            part = seq_len(parts - 1) / parts,
+            row_num_break = .x * part
           )
         ) |>
           list_rbind()
@@ -98,8 +98,8 @@ slice_data_duration <- function(data, parts, ...,
     slice_tail(n = 1) |>
     reframe(
       tibble(
-        part = seq_len(parts - 1),
-        rt_cum_break = rt_cum * part / parts
+        part = seq_len(parts - 1) / parts,
+        rt_cum_break = rt_cum * part
       )
     ) |>
     ungroup()
