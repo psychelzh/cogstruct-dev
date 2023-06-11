@@ -116,7 +116,6 @@ slice_data_duration <- function(data, parts, ...,
 }
 
 slice_data_items <- function(data, ...,
-                             subset = NA,
                              name_raw_parsed = "raw_parsed") {
   cols_meta <- setdiff(names(data), name_raw_parsed)
   if (unique(data$game_name) %in% "远距离联想") {
@@ -131,11 +130,17 @@ slice_data_items <- function(data, ...,
   }
   data_unnested <- data |>
     unnest(any_of(name_raw_parsed))
-  if (!is.na(subset)) {
-    data_unnested <- data_unnested |>
-      filter(eval(parse(text = subset)))
-  }
+  item_dur <- data_unnested |>
+    summarise(mrt = mean(rt[acc != -1]), .by = itemid) |>
+    mutate(rt_cum = cumsum(mrt))
+  parts <- round(last(item_dur$rt_cum) / 60000)
+  config_parts <- tibble(
+    part = seq_len(parts - 1) / parts,
+    rt_cum_break = last(item_dur$rt_cum) * part
+  ) |>
+    inner_join(item_dur, by = join_by(rt_cum_break >= rt_cum)) |>
+    select(part, itemid)
   data_unnested |>
-    mutate(part = row_number(), .by = all_of(cols_meta)) |>
+    inner_join(config_parts, by = "itemid", relationship = "many-to-many") |>
     nest(.by = all_of(c(cols_meta, "part")), .key = name_raw_parsed)
 }
