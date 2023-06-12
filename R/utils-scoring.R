@@ -133,7 +133,7 @@ slice_data_items <- function(data, ...,
   item_dur <- data_unnested |>
     summarise(mrt = mean(rt[acc != -1]), .by = itemid) |>
     mutate(rt_cum = cumsum(mrt))
-  parts <- round(last(item_dur$rt_cum) / 60000)
+  parts <- max(round(last(item_dur$rt_cum) / 60000), 2)
   config_parts <- tibble(
     part = seq_len(parts - 1) / parts,
     rt_cum_break = last(item_dur$rt_cum) * part
