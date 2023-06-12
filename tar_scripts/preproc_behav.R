@@ -68,41 +68,31 @@ targets_slices <- games_config |>
       rlang::syms()
   ) |>
   tidyr::chop(c(config, tar_data_valid)) |>
-  dplyr::left_join(
+  dplyr::inner_join(
     readr::read_csv("config/game_format.csv", show_col_types = FALSE),
     by = "game_name"
   ) |>
-  dplyr::mutate(
-    slice_data_fun = purrr::map(
-      format,
-      ~ if (.x %in% c("trials", "items", "duration")) {
-        rlang::sym(paste0("slice_data_", .x))
-      }
-    )
-  ) |>
+  dplyr::filter(format %in% c("trials", "items", "duration")) |>
+  dplyr::mutate(slice_data_fun = rlang::syms(paste0("slice_data_", format))) |>
   tarchetypes::tar_map(
     names = game_name_abbr,
     list(
       tar_target(
         data_valid_slices,
-        if (!is.null(slice_data_fun)) {
-          slice_data_fun(
-            bind_rows(tar_data_valid),
-            subset = subset,
-            parts = parts
-          )
-        }
+        slice_data_fun(
+          bind_rows(tar_data_valid),
+          subset = subset,
+          parts = parts
+        )
       ),
       tar_target(
         indices_slices,
-        if (!is.null(data_valid_slices)) {
-          tarflow.iquizoo::preproc_data(
-            data_valid_slices,
-            prep_fun,
-            .input = input,
-            .extra = extra
-          )
-        }
+        tarflow.iquizoo::preproc_data(
+          data_valid_slices,
+          prep_fun,
+          .input = input,
+          .extra = extra
+        )
       )
     )
   )
