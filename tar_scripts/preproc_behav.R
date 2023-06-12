@@ -16,9 +16,7 @@ search_games_mem <- memoise::memoise(
   tarflow.iquizoo::search_games,
   cache = cachem::cache_disk("~/.cache.tarflow")
 )
-configs <- c("main", "makeup", "restore")
-games_config <- configs |>
-  rlang::set_names() |>
+games_config <- rlang::set_names(c("main", "makeup", "restore")) |>
   lapply(
     \(config) {
       search_games_mem(
@@ -33,27 +31,33 @@ games_config <- configs |>
         )
     }
   )
-targets_data <- lapply(
-  configs,
-  \(config) {
-    if (config != "restore") {
-      prepare_data(
-        games_config[[config]],
-        name_config = paste("config_where", config, sep = "_"),
-        name_suffix = config
+targets_data <- games_config |>
+  purrr::imap(
+    \(games, config) {
+      config_where <- tar_target_raw(
+        paste("config_where", config, sep = "_"),
+        rlang::expr(
+          config::get("where", file = file_config, config = !!config)
+        )
       )
-    } else {
-      prepare_data(
-        games_config[[config]],
-        path_restore = here::here(
-          "../archived/cogstruct-dev-archived/_targets/preproc_behav/objects"
-        ),
-        name_suffix = config
-      )
+      data <- if (config != "restore") {
+        prepare_data(
+          games,
+          name_config = paste("config_where", config, sep = "_"),
+          name_suffix = config
+        )
+      } else {
+        prepare_data(
+          games,
+          path_restore = here::here(
+            "../archived/cogstruct-dev-archived/_targets/preproc_behav/objects"
+          ),
+          name_suffix = config
+        )
+      }
+      c(config_where, data)
     }
-  }
-)
-
+  )
 targets_slices <- games_config |>
   dplyr::bind_rows(.id = "config") |>
   dplyr::mutate(
@@ -111,16 +115,6 @@ list(
     read = read_csv(!!.x, show_col_types = FALSE)
   ),
   tar_target(file_config, "config.yml", format = "file"),
-  lapply(
-    configs,
-    \(config)
-    tar_target_raw(
-      paste("config_where", config, sep = "_"),
-      rlang::expr(
-        config::get("where", file = file_config, config = !!config)
-      )
-    )
-  ),
   tar_target(games_req_kb, config::get("require_keyboard", file = file_config)),
   tarchetypes::tar_file_read(
     users,
@@ -147,15 +141,17 @@ list(
   targets_data,
   tarchetypes::tar_combine(
     data_parsed,
-    purrr::list_flatten(targets_data)[
-      paste("data_parsed", configs, sep = "_")
-    ]
+    purrr::imap(
+      targets_data,
+      ~ .x[paste("data_parsed", .y, sep = "_")]
+    )
   ),
   tarchetypes::tar_combine(
     indices,
-    purrr::list_flatten(targets_data)[
-      paste("indices", configs, sep = "_")
-    ]
+    purrr::imap(
+      targets_data,
+      ~ .x[paste("indices", .y, sep = "_")]
+    )
   ),
   tar_target(
     indices_clean,
