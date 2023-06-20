@@ -211,5 +211,20 @@ list(
   tar_target(
     scores_g,
     predict_g_score(indices_wider_clean, mdl_fitted)
+  ),
+  tarchetypes::tar_map_rep(
+    fact_attribution,
+    indices_wider_clean |>
+      select(-user_id) |>
+      slice_sample(prop = 1, replace = TRUE) |>
+      psych::fa(n_fact) |>
+      parameters::model_parameters() |>
+      as_tibble() |>
+      rowwise() |>
+      mutate(mr = which.max(c_across(starts_with("MR")))) |>
+      ungroup(),
+    values = data.frame(n_fact = 4:10),
+    batches = 10,
+    reps = 10
   )
 )
