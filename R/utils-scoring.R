@@ -26,7 +26,7 @@ calc_var_exp <- function(fit) {
 #'   identifiers.
 #' @returns A data frame with g factor scores.
 #' @export
-predict_g_score <- function(data, mdl, id_cols = 1) {
+predict_g_score <- function(data, mdl, id_cols = 1, name_g = "g") {
   g <- lavPredict(mdl)[, 1]
   data_names <- rownames(loadings(mdl))
   for (data_name in data_names) {
@@ -37,7 +37,7 @@ predict_g_score <- function(data, mdl, id_cols = 1) {
       break
     }
   }
-  add_column(data[, id_cols], g = g)
+  add_column(data[, id_cols], "{name_g}" := g)
 }
 
 # Support for each type of data slicing ----
