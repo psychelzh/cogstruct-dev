@@ -67,27 +67,41 @@ targets_slices <- games_config |>
   ) |>
   dplyr::filter(format %in% c("trials", "items", "duration")) |>
   dplyr::mutate(slice_data_fun = rlang::syms(paste0("slice_data_", format))) |>
-  tarchetypes::tar_map(
-    names = game_name_abbr,
-    list(
-      tar_target(
-        data_valid_slices,
-        slice_data_fun(
-          bind_rows(tar_data_valid),
-          subset = subset,
-          parts = parts
-        )
-      ),
-      tar_target(
-        indices_slices,
-        tarflow.iquizoo::preproc_data(
-          data_valid_slices,
-          prep_fun,
-          .input = input,
-          .extra = extra
+  split(~format) |>
+  purrr::imap(
+    \(values, format) {
+      args_slice <- if (format == "items") {
+        # partition based on correlation with scores_g
+        "scores_g"
+      } else {
+        c("subset", "parts")
+      }
+      args_slice <- setNames(rlang::syms(args_slice), args_slice)
+      tarchetypes::tar_map(
+        values,
+        names = game_name_abbr,
+        list(
+          tar_target_raw(
+            "data_valid_slices",
+            rlang::expr(
+              slice_data_fun(
+                bind_rows(tar_data_valid),
+                !!!args_slice
+              )
+            )
+          ),
+          tar_target(
+            indices_slices,
+            tarflow.iquizoo::preproc_data(
+              data_valid_slices,
+              prep_fun,
+              .input = input,
+              .extra = extra
+            )
+          )
         )
       )
-    )
+    }
   )
 
 list(
@@ -143,7 +157,7 @@ list(
   targets_slices,
   tarchetypes::tar_combine(
     indices_slices,
-    targets_slices$indices_slices
+    targets_slices |> purrr::map("indices_slices")
   ),
   tar_target(
     indices_slices_clean,

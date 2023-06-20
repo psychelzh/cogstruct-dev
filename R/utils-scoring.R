@@ -130,18 +130,27 @@ slice_data_items <- function(data, scores_g, ...,
   }
   data_unnested <- data |>
     unnest(any_of(name_raw_parsed))
-  data_unnested |>
-    left_join(scores_g, by = "user_id")
+  item_order <- data_unnested |>
+    mutate(acc = acc == 1) |>
+    left_join(scores_g, by = "user_id") |>
+    summarise(
+      cor = psych::biserial(g, acc)[, 1],
+      .by = itemid
+    ) |>
+    arrange(desc(cor))
   item_dur <- data_unnested |>
-    summarise(mrt = mean(rt[acc != -1]), .by = itemid) |>
-    mutate(rt_cum = cumsum(mrt))
-
-  parts <- max(round(last(item_dur$rt_cum) / 60000), 2)
+    summarise(mrt = mean(rt[acc != -1]), .by = itemid)
+  parts <- max(round(sum(item_dur$mrt) / 60000), 2)
   config_parts <- tibble(
     part = seq_len(parts - 1) / parts,
-    rt_cum_break = last(item_dur$rt_cum) * part
+    rt_cum_break = sum(item_dur$mrt) * part
   ) |>
-    inner_join(item_dur, by = join_by(rt_cum_break >= rt_cum)) |>
+    inner_join(
+      item_order |>
+        left_join(item_dur, by = "itemid") |>
+        mutate(rt_cum = cumsum(mrt)),
+      by = join_by(rt_cum_break >= rt_cum)
+    ) |>
     select(part, itemid)
   data_unnested |>
     inner_join(config_parts, by = "itemid", relationship = "many-to-many") |>
