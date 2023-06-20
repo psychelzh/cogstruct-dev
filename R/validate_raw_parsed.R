@@ -17,6 +17,26 @@ validate_raw_parsed <- function(data_parsed, games_req_kb) {
         raw_parsed, game_name,
         ~ !(check_used_mouse(.x, .y) & .y %in% games_req_kb)
       )
+    ) |>
+    # correct VR data
+    mutate(
+      raw_parsed = ifelse(
+        game_name == "文字推理",
+        map(
+          raw_parsed,
+          ~ mutate(
+            .x,
+            acc = map2_int(
+              cresp, resp,
+              ~ all(
+                str_split(.x, ",") %in%
+                  str_split(.y, ",")
+              )
+            )
+          )
+        ),
+        raw_parsed
+      )
     )
 }
 check_version <- function(data) {
@@ -46,4 +66,45 @@ check_used_mouse <- function(raw_parsed, game_name) {
     str_c(collapse = "-") |>
     str_split("-") |>
     map_lgl(~ any(.x == "mouse"))
+}
+
+check_motivated <- function(raw_parsed, game_name, chance_acc,
+                            rigor = TRUE, ...) {
+  if (game_name == "变色魔块PRO") {
+    raw_parsed <- filter(raw_parsed, type == "go")
+  }
+  if (game_name %in% c("图片记忆A", "强化学习")) {
+    raw_parsed <- filter(raw_parsed, phase == "test")
+  }
+  if (has_name(raw_parsed, "type")) {
+    raw_parsed <- filter(raw_parsed, type != "filler")
+  }
+  if (game_name %in% c("方向检测", "色彩检测")) {
+    raw_parsed <- filter(raw_parsed, numtarget %in% c(3, 5))
+  }
+  if (game_name == "塔罗牌") {
+    raw_parsed <- slice_tail(raw_parsed, prop = 0.5)
+  }
+  # more 10% missed trials
+  if (has_name(raw_parsed, "acc") && mean(raw_parsed$acc == -1) > 0.1) {
+    return(FALSE)
+  }
+  if (!is.na(chance_acc)) {
+    if (rigor) {
+      return(
+        sum(raw_parsed$acc == 1) >
+          qbinom(0.95, nrow(raw_parsed), chance_acc)
+      )
+    } else {
+      return(mean(raw_parsed$acc == 1) > chance_acc)
+    }
+  }
+  return(TRUE)
+  # if (method == "rt") {
+  #   if (has_name(raw_parsed, "acc")) {
+  #     raw_parsed <- raw_parsed |>
+  #       filter(acc != -1)
+  #   }
+  #   return(mean(raw_parsed$rt < chance * 1000) < 0.1)
+  # }
 }

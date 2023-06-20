@@ -21,14 +21,7 @@ games_config <- rlang::set_names(c("main", "makeup", "restore")) |>
     \(config) {
       search_games_mem(
         config_where = config::get("where", config = config)
-      ) |>
-        dplyr::mutate(
-          prep_fun = dplyr::if_else(
-            game_name == "文字推理",
-            rlang::syms("countcorrect_vr"),
-            prep_fun
-          )
-        )
+      )
     }
   )
 targets_data <- games_config |>
