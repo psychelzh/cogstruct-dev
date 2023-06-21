@@ -182,10 +182,10 @@ slice_data_blocks <- function(data, ...,
   }
   blocks <- unique(data_unnested$block)
   config_parts <- tibble(
-    part = seq_along(blocks),
+    part = seq_along(blocks) / length(blocks),
     block = accumulate(blocks, c)
   ) |>
-    filter(part != max(part)) |>
+    filter(part != 1) |>
     unchop(block)
   data_unnested |>
     inner_join(config_parts, by = "block", relationship = "many-to-many") |>
