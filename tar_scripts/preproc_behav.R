@@ -219,10 +219,24 @@ list(
     scores_g,
     predict_g_score(indices_wider_clean, mdl_fitted)
   ),
+  tarchetypes::tar_file_read(
+    selected_efa,
+    "config/game_selection_dim.csv",
+    read = read_csv(!!.x, show_col_types = FALSE)
+  ),
+  tar_target(
+    data_efa,
+    indices_wider_clean |>
+      select(
+        selected_efa |>
+          unite("game_index", game_name_abbr, index_name, sep = ".") |>
+          filter(include) |>
+          pull(game_index)
+      )
+  ),
   tarchetypes::tar_map_rep(
     fact_attribution,
-    indices_wider_clean |>
-      select(-user_id) |>
+    data_efa |>
       slice_sample(prop = 1, replace = TRUE) |>
       psych::fa(n_fact) |>
       parameters::model_parameters() |>
