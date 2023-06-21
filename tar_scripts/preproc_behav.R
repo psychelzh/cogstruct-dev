@@ -66,7 +66,14 @@ targets_slices <- games_config |>
     by = "game_name"
   ) |>
   dplyr::filter(!is.na(format)) |>
-  dplyr::mutate(slice_data_fun = rlang::syms(paste0("slice_data_", format))) |>
+  dplyr::mutate(
+    slice_data_fun = rlang::syms(paste0("slice_data_", format)),
+    prep_fun = ifelse(
+      game_name == "社交达人",
+      rlang::syms("fname_slices"),
+      prep_fun
+    )
+  ) |>
   split(~format) |>
   purrr::imap(
     \(values, format) {

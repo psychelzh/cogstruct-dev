@@ -168,12 +168,17 @@ slice_data_blocks <- function(data, ...,
         block = cumsum(type == "learn"),
         .by = all_of(cols_meta)
       )
-  } else if (unique(data$game_name) != "欢乐餐厅PRO") {
-    data_unnested <- data_unnested |>
-      mutate(
-        block = row_number(),
-        .by = all_of(cols_meta)
-      )
+  }
+  if (!has_name(data_unnested, "block")) {
+    if (has_name(data_unnested, "phase")) {
+      data_unnested$block <- data_unnested$phase
+    } else {
+      data_unnested <- data_unnested |>
+        mutate(
+          block = row_number(),
+          .by = all_of(cols_meta)
+        )
+    }
   }
   blocks <- unique(data_unnested$block)
   config_parts <- tibble(
