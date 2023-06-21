@@ -65,7 +65,7 @@ targets_slices <- games_config |>
     readr::read_csv("config/game_format.csv", show_col_types = FALSE),
     by = "game_name"
   ) |>
-  dplyr::filter(format %in% c("trials", "items", "duration")) |>
+  dplyr::filter(!is.na(format)) |>
   dplyr::mutate(slice_data_fun = rlang::syms(paste0("slice_data_", format))) |>
   split(~format) |>
   purrr::imap(

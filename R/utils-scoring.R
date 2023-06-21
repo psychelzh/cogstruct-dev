@@ -157,6 +157,36 @@ slice_data_items <- function(data, scores_g, ...,
     nest(.by = all_of(c(cols_meta, "part")), .key = name_raw_parsed)
 }
 
+slice_data_blocks <- function(data, ...,
+                              name_raw_parsed = "raw_parsed") {
+  cols_meta <- setdiff(names(data), name_raw_parsed)
+  data_unnested <- data |>
+    unnest(any_of(name_raw_parsed))
+  if (unique(data$game_name) == "人工语言-高级") {
+    data_unnested <- data_unnested |>
+      mutate(
+        block = cumsum(type == "learn"),
+        .by = all_of(cols_meta)
+      )
+  } else if (unique(data$game_name) != "欢乐餐厅PRO") {
+    data_unnested <- data_unnested |>
+      mutate(
+        block = row_number(),
+        .by = all_of(cols_meta)
+      )
+  }
+  blocks <- unique(data_unnested$block)
+  config_parts <- tibble(
+    part = seq_along(blocks),
+    block = accumulate(blocks, c)
+  ) |>
+    filter(part != max(part)) |>
+    unchop(block)
+  data_unnested |>
+    inner_join(config_parts, by = "block", relationship = "many-to-many") |>
+    nest(.by = all_of(c(cols_meta, "part")), .key = name_raw_parsed)
+}
+
 # 2-fold CVs ----
 split_data <- function(indices_pool) {
   distinct(indices_pool, user_id) |>
