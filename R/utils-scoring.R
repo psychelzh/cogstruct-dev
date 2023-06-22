@@ -48,24 +48,38 @@ split_data <- function(indices_pool) {
 }
 
 feature_selection <- function(data, game_durs, dimensions, scores_dim, n_each = 3) {
-  data |>
+  data_with_crits <- data |>
     left_join(game_durs, by = c("game_name", "part")) |>
     left_join(dimensions, by = "game_index") |>
     inner_join(scores_dim, by = c("user_id", "cfa")) |>
     summarise(
       n = sum(!is.na(score_adj)),
-      var_exp_total = cor(score_adj, score_dim)^2,
-      .by = c(label, cfa, game_index, part, mean_dur_mins)
+      var_exp_total = cor(score_adj, score_dim, use = "pairwise")^2,
+      .by = c(label, cfa, game_name, game_index, part, mean_dur_mins)
     ) |>
     filter(n > 200) |>
     mutate(
       var_exp_per_min = var_exp_total / mean_dur_mins,
       var_exp_crit = case_when(
-        cfa %in% c("Inh", "Shift") ~ var_exp_total,
-        label == "EM" & part < 1 ~ 0,
+        # these two might not be so useful
+        game_name %in% c("图片记忆A", "言语记忆A") & part < 1 ~ 0,
+        # remove too similar games
+        game_name %in% c("数字卡片PRO", "文字卡片", "美术卡片") ~ 0,
         .default = var_exp_per_min
       )
-    ) |>
+    )
+  if (n_each == 3) {
+    data_with_crits <- data_with_crits |>
+      filter(between(mean_dur_mins, 3, 5))
+  }
+  if (n_each == 1) {
+    data_with_crits <- data_with_crits |>
+      filter(
+        cfa != "Shift",
+        between(mean_dur_mins, 4, 6)
+      )
+  }
+  data_with_crits |>
     arrange(desc(var_exp_crit)) |>
     distinct(cfa, game_index, .keep_all = TRUE) |>
     slice_max(
