@@ -170,10 +170,10 @@
 "太空飞船PRO","FlkrPro","rcs_con",,
 "太空飞船PRO","FlkrPro","lisas_inc",,
 "太空飞船PRO","FlkrPro","lisas_con",,
-"变戏法","AntiSac","nc",Inhibition,f
+"变戏法","AntiSac","nc",,
 "变戏法","AntiSac","mrt",,
 "变戏法","AntiSac","rtsd",,
-"变戏法","AntiSac","ies",,
+"变戏法","AntiSac","ies",Inhibition,t
 "变戏法","AntiSac","rcs",,
 "变戏法","AntiSac","lisas",,
 "多彩文字PRO","ColStrpPro","pc",,

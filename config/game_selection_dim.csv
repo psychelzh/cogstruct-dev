@@ -37,7 +37,7 @@
 节奏感知,RP,thresh_peak_valley,TRUE
 时间顺序判断,TOJ,thresh_peak_valley,TRUE
 变色魔块PRO,StopSigPro,ssrt,TRUE
-变戏法,AntiSac,nc,TRUE
+变戏法,AntiSac,ies,TRUE
 超级秒表PRO,SRTPro,mrt,TRUE
 随机应变,NumLet,switch_cost_ies,TRUE
 候鸟迁徙PRO,BirdsPro,switch_cost_ies,TRUE
