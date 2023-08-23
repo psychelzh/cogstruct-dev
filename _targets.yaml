@@ -1,6 +1,6 @@
 preproc_behav:
-  script: tar_scripts/preproc_behav.R
+  script: _scripts/preproc_behav.R
   store: _targets/preproc_behav
 g_invariance:
-  script: tar_scripts/g_invariance.R
+  script: _scripts/g_invariance.R
   store: _targets/g_invariance
