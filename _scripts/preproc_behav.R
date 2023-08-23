@@ -113,11 +113,6 @@ targets_slices <- games_config |>
 
 list(
   tar_target(game_ids, unique(indices$game_id)),
-  tarchetypes::tar_file_read(
-    formats,
-    "config/game_format.csv",
-    read = read_csv(!!.x, show_col_types = FALSE)
-  ),
   tar_target(file_config, "config.yml", format = "file"),
   tar_target(games_req_kb, config::get("require_keyboard", file = file_config)),
   tarchetypes::tar_file_read(
