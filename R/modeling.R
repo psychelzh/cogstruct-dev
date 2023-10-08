@@ -42,8 +42,11 @@ predict_g_score <- function(data, mdl, id_cols = 1, name_g = "g") {
 
 fit_dim <- function(model, data) {
   lavaan::cfa(
-    model, data,
-    std.ov = TRUE, std.lv = TRUE, missing = "ml"
+    model,
+    data,
+    std.ov = TRUE,
+    std.lv = TRUE,
+    missing = "ml"
   )
 }
 
@@ -54,7 +57,7 @@ predict_dim <- function(fitted, data, suffix = "") {
     add_column(user_id = data$user_id, .before = 1L) |>
     pivot_longer(
       -user_id,
-      names_to = "cfa",
+      names_to = "dim_simple",
       values_to = paste0("score_dim", suffix)
     )
 }
