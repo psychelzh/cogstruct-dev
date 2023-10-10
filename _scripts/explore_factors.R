@@ -139,10 +139,11 @@ list(
           ragg::agg_png(file, width = 1980, height = 1980, res = 100)
           corrplot::corrplot(
             mat,
-            method = "shade",
+            type = "upper",
+            method = "color",
             order = "hclust",
             col.lim = c(0, 1),
-            col = corrplot::COL1("Greys")
+            col = corrplot::COL2("RdBu")
           )
           dev.off()
           file
