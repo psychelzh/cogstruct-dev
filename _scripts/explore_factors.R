@@ -144,6 +144,7 @@ list(
             col.lim = c(0, 1),
             col = corrplot::COL1("Greys")
           )
+          dev.off()
           file
         }
       )
