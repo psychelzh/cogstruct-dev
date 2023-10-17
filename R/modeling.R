@@ -40,13 +40,14 @@ predict_g_score <- function(data, mdl, id_cols = 1, name_g = "g") {
   add_column(data[, id_cols], "{name_g}" := g)
 }
 
-fit_dim <- function(model, data) {
+fit_cfa <- function(model, data, ...) {
   lavaan::cfa(
     model,
     data,
     std.ov = TRUE,
     std.lv = TRUE,
-    missing = "ml"
+    missing = "ml",
+    ...
   )
 }
 
