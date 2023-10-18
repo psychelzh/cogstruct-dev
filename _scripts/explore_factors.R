@@ -173,6 +173,7 @@ list(
             type = "upper",
             method = "color",
             order = "hclust",
+            hclust.method = "ward",
             col.lim = c(0, 1),
             col = corrplot::COL2("RdBu")
           )
