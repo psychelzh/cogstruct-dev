@@ -108,3 +108,26 @@ check_motivated <- function(raw_parsed, game_name, chance_acc,
   #   return(mean(raw_parsed$rt < chance * 1000) < 0.1)
   # }
 }
+
+#' Cleanse the calculated scores
+#'
+#' The most important job here is to replace the original scores by the
+#' corresponding makeup scores.
+clean_indices <- function(indices, users_completed,
+                          id_cols = user_id) {
+  indices |>
+    semi_join(users_completed, by = "user_id") |>
+    # keep the first result for each subject and game
+    # https://github.com/r-lib/vctrs/issues/1787
+    arrange(desc(game_time)) |>
+    distinct(pick({{ id_cols }}), game_name, index_name, .keep_all = TRUE) |>
+    left_join(data.iquizoo::game_info, by = c("game_id", "game_name")) |>
+    select({{ id_cols }}, game_id, game_name, game_name_abbr,
+           game_time, game_duration, index_name, score)
+}
+
+# The separate scores for face and vocation cannot be calculated
+fname_slices <- function(data, .by = NULL, .input = NULL, .extra = NULL) {
+  data |>
+    summarise(fntotal = sum(acc == 1), .by = all_of(.by))
+}
