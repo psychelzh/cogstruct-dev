@@ -72,8 +72,8 @@
 方向检测,FiltOrient,k,TRUE
 太空飞船PRO,FlkrPro,cong_eff_ies,TRUE
 注意警觉,AttenAlert,cong_eff_ies,TRUE
-注意指向,AttenOrient,cong_eff_ies,FALSE
-数感,NsymNCmp,w,FALSE
+注意指向,AttenOrient,cong_eff_ies,TRUE
+数感,NsymNCmp,w,TRUE
 多彩文字PRO,ColStrpPro,cong_eff_ies,TRUE
 候鸟迁徙PRO,BirdsPro,cong_eff_ies,TRUE
 捉虫高级简版,TOVAS,dprime,TRUE
