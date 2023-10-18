@@ -100,7 +100,7 @@ list(
   ),
   tarchetypes::tar_file_read(
     game_selected,
-    "config/game_selection_dim.csv",
+    "config/indices_factan.csv",
     read = read_csv(!!.x, show_col_types = FALSE) |>
       unite("game_index", game_name_abbr, index_name, sep = ".") |>
       filter(include) |>
