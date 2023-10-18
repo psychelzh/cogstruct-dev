@@ -128,6 +128,35 @@ list(
       )
   ),
   tar_target(
+    task_orders,
+    prob_one_fact_avg |>
+      pmap_chr(
+        \(exclude_id, mat, ...) {
+          file <- fs::path(
+            ".output",
+            str_c("taskorder_exclude-", exclude_id, ".csv")
+          )
+          tibble(
+            game_index = colnames(mat)[
+              corrplot::corrMatOrder(mat, "hclust", hclust.method = "ward")
+            ]
+          ) |>
+            separate_wider_delim(
+              game_index,
+              delim = ".",
+              names = c("game_name_abbr", "index_name"),
+              cols_remove = FALSE
+            ) |>
+            left_join(
+              select(data.iquizoo::game_info, game_name, game_name_abbr),
+              by = "game_name_abbr"
+            ) |>
+            write_excel_csv(file)
+          file
+        }
+      )
+  ),
+  tar_target(
     files_plots,
     prob_one_fact_avg |>
       pmap_chr(
