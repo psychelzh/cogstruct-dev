@@ -39,7 +39,9 @@ config <- tidyr::expand_grid(
     include = purrr::map(exclude, ~ setdiff(c(games_nback, games_filt), .x)),
     .keep = "unused"
   ) |>
-  tibble::add_row(exclude = list(character())) |>
+  tibble::add_row(
+    exclude = list(character(), c(games_nback, games_filt), games_filt)
+  ) |>
   dplyr::mutate(exclude_id = dplyr::consecutive_id(exclude), .before = 1) |>
   tidyr::expand_grid(n_fact = 4:10)
 
