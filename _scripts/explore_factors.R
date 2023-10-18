@@ -28,6 +28,53 @@ replace_as_name_cn <- function(name) {
   out
 }
 
+output_taskorder <- function(exclude_id, mat,
+                             file_prefix = "taskorder", ...) {
+  file <- fs::path(
+    ".output",
+    str_glue("{file_prefix}_exclude-{exclude_id}.csv")
+  )
+  tibble(
+    game_index = colnames(mat)[
+      corrplot::corrMatOrder(mat, "hclust", hclust.method = "ward")
+    ]
+  ) |>
+    separate_wider_delim(
+      game_index,
+      delim = ".",
+      names = c("game_name_abbr", "index_name"),
+      cols_remove = FALSE
+    ) |>
+    left_join(
+      select(data.iquizoo::game_info, game_name, game_name_abbr),
+      by = "game_name_abbr"
+    ) |>
+    write_excel_csv(file)
+  file
+}
+
+output_factcons <- function(exclude_id, mat,
+                             file_prefix = "factcons", ...) {
+  file <- fs::path(
+    ".output",
+    str_glue("{file_prefix}_exclude-{exclude_id}.png")
+  )
+  rownames(mat) <- replace_as_name_cn(rownames(mat))
+  colnames(mat) <- replace_as_name_cn(colnames(mat))
+  ragg::agg_png(file, width = 1980, height = 1980, res = 100)
+  corrplot::corrplot(
+    mat,
+    type = "upper",
+    method = "color",
+    order = "hclust",
+    hclust.method = "ward",
+    col.lim = c(0, 1),
+    col = corrplot::COL2("RdBu")
+  )
+  dev.off()
+  file
+}
+
 games_nback <- c("Nback4", "Digit3back", "Verbal3back", "Grid2back", "Paint2back")
 games_filt <- c("FiltColor", "FiltOrient")
 config <- tidyr::expand_grid(
@@ -121,7 +168,6 @@ list(
   tar_target(
     prob_one_fact_avg,
     prob_one_fact |>
-      filter(n_fact > 7) |>
       summarise(
         mat = list(reduce(mat, `+`) / n()),
         .by = c(exclude_id, exclude)
@@ -130,56 +176,30 @@ list(
   tar_target(
     task_orders,
     prob_one_fact_avg |>
-      pmap_chr(
-        \(exclude_id, mat, ...) {
-          file <- fs::path(
-            ".output",
-            str_c("taskorder_exclude-", exclude_id, ".csv")
-          )
-          tibble(
-            game_index = colnames(mat)[
-              corrplot::corrMatOrder(mat, "hclust", hclust.method = "ward")
-            ]
-          ) |>
-            separate_wider_delim(
-              game_index,
-              delim = ".",
-              names = c("game_name_abbr", "index_name"),
-              cols_remove = FALSE
-            ) |>
-            left_join(
-              select(data.iquizoo::game_info, game_name, game_name_abbr),
-              by = "game_name_abbr"
-            ) |>
-            write_excel_csv(file)
-          file
-        }
-      )
+      pmap_chr(output_taskorder)
   ),
   tar_target(
     files_plots,
     prob_one_fact_avg |>
-      pmap_chr(
-        \(exclude_id, mat, ...) {
-          file <- fs::path(
-            ".output",
-            str_c("factconvergence_exclude-", exclude_id, ".png")
-          )
-          rownames(mat) <- replace_as_name_cn(rownames(mat))
-          colnames(mat) <- replace_as_name_cn(colnames(mat))
-          ragg::agg_png(file, width = 1980, height = 1980, res = 100)
-          corrplot::corrplot(
-            mat,
-            type = "upper",
-            method = "color",
-            order = "hclust",
-            hclust.method = "ward",
-            col.lim = c(0, 1),
-            col = corrplot::COL2("RdBu")
-          )
-          dev.off()
-          file
-        }
+      pmap_chr(output_factcons)
+  ),
+  tar_target(
+    prob_one_fact_large,
+    prob_one_fact |>
+      filter(n_fact > 7) |>
+      summarise(
+        mat = list(reduce(mat, `+`) / n()),
+        .by = c(exclude_id, exclude)
       )
+  ),
+  tar_target(
+    task_orders_large,
+    prob_one_fact_large |>
+      pmap_chr(output_taskorder, file_prefix = "taskorder_nfact-large")
+  ),
+  tar_target(
+    files_plots_large,
+    prob_one_fact_large |>
+      pmap_chr(output_factcons, file_prefix = "factcons_nfact-large")
   )
 )
