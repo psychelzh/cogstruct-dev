@@ -3,10 +3,10 @@ title: Structure of cognitive abilities
 subtitle: Evidence based on behavioral paradigms and how to measure them effectively
 author: Zhang, Liang
 date: 2023-10-19
-format: 
-  revealjs: 
+format:
+  revealjs:
     code-fold: true
-execute: 
+execute:
   warning: false
   message: false
 bibliography: references.bib
@@ -33,7 +33,7 @@ select_list <- function(.l, ...) {
     });
     // onClick function for zoomImg
     $('img.zoomImg').click(function() {
-      $('.zoomDiv').css({opacity: '0', width: '0%'}); 
+      $('.zoomDiv').css({opacity: '0', width: '0%'});
     });
   });
 </script>
@@ -81,24 +81,24 @@ We collected cognitive tests commonly used in cognitive research, with which beh
 targets::tar_load(indices_of_interest, store = projects$preproc_behav$store)
 targets::tar_load(users, store = projects$preproc_behav$store)
 game_selected <- read_csv(
-  "config/indices_factan.csv", 
+  "config/indices_factan.csv",
   show_col_types = FALSE
-) |> 
+) |>
   filter(include)
-descr_subjects <- indices_of_interest |> 
-  summarise(game_date = median(game_time), .by = user_id) |> 
-  left_join(users, by = "user_id") |> 
+descr_subjects <- indices_of_interest |>
+  summarise(game_date = median(game_time), .by = user_id) |>
+  left_join(users, by = "user_id") |>
   mutate(
     age = (user_dob %--% game_date) / years(),
     user_sex = c("M", "F")[user_sex],
     .keep = "none"
-  ) |> 
-  filter(age > 15) |> 
+  ) |>
+  filter(age > 15) |>
   report::report_participants(sex = "user_sex")
-counts_school <- users |> 
-  semi_join(indices_of_interest, by = "user_id") |> 
-  count(school) |> 
-  str_glue_data("{school}: {n}") |> 
+counts_school <- users |>
+  semi_join(indices_of_interest, by = "user_id") |>
+  count(school) |>
+  str_glue_data("{school}: {n}") |>
   str_c(collapse = "; ")
 ```
 
@@ -124,7 +124,7 @@ targets::tar_load(indices_selected, store = projects$explore_factors$store)
 parameters::n_factors(
   indices_selected,
   rotation = "oblimin"
-) |> 
+) |>
   plot()
 ```
 
@@ -145,9 +145,9 @@ parameters::n_factors(
 ## Factor Convergence
 
 ::: {layout-ncol=2}
-![Average across 4-10 factors](../../.output/factcons_exclude-11.png){width=40%}
+![Average across 4-10 factors](image/factcons_exclude-11.png){width=40%}
 
-![Average across 8-10 factors](../../.output/factcons_nfact-large_exclude-11.png){width=40%}
+![Average across 8-10 factors](image/factcons_nfact-large_exclude-11.png){width=40%}
 :::
 
 ## Structure based on the convergence {.smaller}
@@ -156,10 +156,10 @@ parameters::n_factors(
 #| label: structure-schema
 
 dims <- read_csv("config/dimensions.csv", show_col_types = FALSE)
-dims |> 
-  select(game_name, index_name, dimension = dim_name) |> 
-  gt::gt() |> 
-  gt::data_color(columns = dimension, rows = dimension != "Unstable") |> 
+dims |>
+  select(game_name, index_name, dimension = dim_name) |>
+  gt::gt() |>
+  gt::data_color(columns = dimension, rows = dimension != "Unstable") |>
   gt::opt_interactive(use_filters = TRUE, page_size_default = 8)
 ```
 
@@ -178,10 +178,10 @@ params <- parameters::model_parameters(fit_origin_none)
 ```{r}
 #| label: structure-wordcloud
 
-params |> 
-  filter(Component == "Loading") |> 
-  as_tibble() |> 
-  left_join(dims, by = join_by(From == game_index)) |> 
+params |>
+  filter(Component == "Loading") |>
+  as_tibble() |>
+  left_join(dims, by = join_by(From == game_index)) |>
   mutate(
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
     dim_name = factor(dim_name, unique(dims$dim_name)),
@@ -189,7 +189,7 @@ params |>
       str_glue("{dim_name} ({dim_abbr})"),
       as.integer(dim_name)
     )
-  ) |> 
+  ) |>
   ggplot(aes(label = game_name, size = Coefficient)) +
   ggwordcloud::geom_text_wordcloud() +
   facet_wrap(~dim_name_disp) +
@@ -204,27 +204,27 @@ params |>
 #| fig-width: 6
 #| fig-height: 6
 
-cormat_latents <- params |> 
-  filter(Component == "Correlation") |> 
-  as_tibble() |> 
-  select(From, To, Coefficient) |> 
-  igraph::graph_from_data_frame(directed = FALSE) |> 
+cormat_latents <- params |>
+  filter(Component == "Correlation") |>
+  as_tibble() |>
+  select(From, To, Coefficient) |>
+  igraph::graph_from_data_frame(directed = FALSE) |>
   igraph::as_adjacency_matrix(attr = "Coefficient", sparse = FALSE)
 diag(cormat_latents) <- 1
 corrplot::corrplot(
   cormat_latents,
-  method = "shade", 
+  method = "shade",
   type = "upper",
   order = "hclust",
   col = colorRampPalette(c("blue", "white", "red"))(200),
   addCoef.col = "gray",
   diag = FALSE
 )
-cormat_latents |> 
-  proxy::pr_simil2dist() |> 
-  as.dist() |> 
-  cmdscale() |> 
-  as_tibble(rownames = "dim_abbr") |> 
+cormat_latents |>
+  proxy::pr_simil2dist() |>
+  as.dist() |>
+  cmdscale() |>
+  as_tibble(rownames = "dim_abbr") |>
   ggplot(aes(V1, V2)) +
   geom_point() +
   ggrepel::geom_text_repel(aes(label = dim_abbr)) +
@@ -238,11 +238,11 @@ The desired `CFI` and `TLI` is above 0.90, and `RMSEA` below 0.05.
 ```{r}
 #| label: cfa-fit-origin
 
-gof_origin |> 
+gof_origin |>
   select(
-    hierarchical, chisq, df, pvalue, 
+    hierarchical, chisq, df, pvalue,
     CFI = cfi, TLI = tli, RMESA = rmsea
-  ) |> 
+  ) |>
   knitr::kable(digits = 2)
 ```
 
@@ -264,14 +264,14 @@ targets::tar_load(gof_updated, store = projects$update_factors$store)
 ```{r}
 #| label: improve-by-loading
 
-gof_updated |> 
-  filter(method == "cutoff") |> 
+gof_updated |>
+  filter(method == "cutoff") |>
   mutate(
     hierarchical = as_factor(hierarchical),
     level = as_factor(level)
-  ) |> 
-  pivot_longer(-c(hierarchical, method, level)) |> 
-  filter(name %in% c("cfi", "rmsea")) |> 
+  ) |>
+  pivot_longer(-c(hierarchical, method, level)) |>
+  filter(name %in% c("cfi", "rmsea")) |>
   ggplot(aes(level, value, color = hierarchical)) +
   geom_point() +
   geom_line(aes(group = hierarchical)) +
@@ -287,10 +287,10 @@ gof_updated |>
 
 targets::tar_load(fit_updated_none_cutoff_good, store = projects$update_factors$store)
 params <- parameters::model_parameters(fit_updated_none_cutoff_good)
-params |> 
-  filter(Component == "Loading") |> 
-  as_tibble() |> 
-  left_join(dims, by = join_by(From == game_index)) |> 
+params |>
+  filter(Component == "Loading") |>
+  as_tibble() |>
+  left_join(dims, by = join_by(From == game_index)) |>
   mutate(
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
     dim_name = factor(dim_name, unique(dims$dim_name)),
@@ -298,7 +298,7 @@ params |>
       str_glue("{dim_name} ({dim_abbr})"),
       as.integer(dim_name)
     )
-  ) |> 
+  ) |>
   ggplot(aes(label = game_name, size = Coefficient)) +
   ggwordcloud::geom_text_wordcloud() +
   facet_wrap(~dim_name_disp) +
@@ -310,14 +310,14 @@ params |>
 ```{r}
 #| label: improve-by-numtask
 
-gof_updated |> 
-  filter(method == "numtask") |> 
+gof_updated |>
+  filter(method == "numtask") |>
   mutate(
     hierarchical = as_factor(hierarchical),
     level = as_factor(level)
-  ) |> 
-  pivot_longer(-c(hierarchical, method, level)) |> 
-  filter(name %in% c("cfi", "rmsea")) |> 
+  ) |>
+  pivot_longer(-c(hierarchical, method, level)) |>
+  filter(name %in% c("cfi", "rmsea")) |>
   ggplot(aes(level, value, color = hierarchical)) +
   geom_point() +
   geom_line(aes(group = hierarchical)) +
@@ -333,10 +333,10 @@ gof_updated |>
 
 targets::tar_load(fit_updated_none_numtask_three, store = projects$update_factors$store)
 params <- parameters::model_parameters(fit_updated_none_numtask_three)
-params |> 
-  filter(Component == "Loading") |> 
-  as_tibble() |> 
-  left_join(dims, by = join_by(From == game_index)) |> 
+params |>
+  filter(Component == "Loading") |>
+  as_tibble() |>
+  left_join(dims, by = join_by(From == game_index)) |>
   mutate(
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
     dim_name = factor(dim_name, unique(dims$dim_name)),
@@ -344,7 +344,7 @@ params |>
       str_glue("{dim_name} ({dim_abbr})"),
       as.integer(dim_name)
     )
-  ) |> 
+  ) |>
   ggplot(aes(label = game_name, size = Coefficient)) +
   ggwordcloud::geom_text_wordcloud() +
   facet_wrap(~dim_name_disp) +
@@ -356,14 +356,14 @@ params |>
 ```{r}
 #| label: improve-by-trimdim
 
-gof_updated |> 
-  filter(method == "trimdim") |> 
+gof_updated |>
+  filter(method == "trimdim") |>
   mutate(
     hierarchical = as_factor(hierarchical),
     level = as_factor(level)
-  ) |> 
-  pivot_longer(-c(hierarchical, method, level)) |> 
-  filter(name %in% c("cfi", "rmsea")) |> 
+  ) |>
+  pivot_longer(-c(hierarchical, method, level)) |>
+  filter(name %in% c("cfi", "rmsea")) |>
   ggplot(aes(fct_reorder(level, value), value, color = hierarchical)) +
   geom_point() +
   geom_line(aes(group = hierarchical)) +
@@ -379,13 +379,13 @@ gof_updated |>
 #| fig-cap: Based on the best model from task number
 
 targets::tar_load(gof_updated2, store = projects$update_factors$store)
-gof_updated2 |> 
+gof_updated2 |>
   mutate(
     hierarchical = as_factor(hierarchical),
     level = as_factor(level)
-  ) |> 
-  pivot_longer(-c(hierarchical, method, level)) |> 
-  filter(name %in% c("cfi", "rmsea")) |> 
+  ) |>
+  pivot_longer(-c(hierarchical, method, level)) |>
+  filter(name %in% c("cfi", "rmsea")) |>
   ggplot(aes(fct_reorder(level, value), value, color = hierarchical)) +
   geom_point() +
   geom_line(aes(group = hierarchical)) +
@@ -401,10 +401,10 @@ gof_updated2 |>
 
 targets::tar_load(fit_updated2_none_trimdim_Spd, store = projects$update_factors$store)
 params <- parameters::model_parameters(fit_updated2_none_trimdim_Spd)
-params |> 
-  filter(Component == "Loading") |> 
-  as_tibble() |> 
-  left_join(dims, by = join_by(From == game_index)) |> 
+params |>
+  filter(Component == "Loading") |>
+  as_tibble() |>
+  left_join(dims, by = join_by(From == game_index)) |>
   mutate(
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
     dim_name = factor(dim_name, unique(dims$dim_name)),
@@ -412,7 +412,7 @@ params |>
       str_glue("{dim_name} ({dim_abbr})"),
       as.integer(dim_name)
     )
-  ) |> 
+  ) |>
   ggplot(aes(label = game_name, size = Coefficient)) +
   ggwordcloud::geom_text_wordcloud() +
   facet_wrap(~dim_name_disp) +
@@ -427,27 +427,27 @@ params |>
 #| fig-width: 6
 #| fig-height: 6
 
-cormat_latents <- params |> 
-  filter(Component == "Correlation") |> 
-  as_tibble() |> 
-  select(From, To, Coefficient) |> 
-  igraph::graph_from_data_frame(directed = FALSE) |> 
+cormat_latents <- params |>
+  filter(Component == "Correlation") |>
+  as_tibble() |>
+  select(From, To, Coefficient) |>
+  igraph::graph_from_data_frame(directed = FALSE) |>
   igraph::as_adjacency_matrix(attr = "Coefficient", sparse = FALSE)
 diag(cormat_latents) <- 1
 corrplot::corrplot(
   cormat_latents,
-  method = "shade", 
+  method = "shade",
   type = "upper",
   order = "hclust",
   col = colorRampPalette(c("blue", "white", "red"))(200),
   addCoef.col = "gray",
   diag = FALSE
 )
-cormat_latents |> 
-  proxy::pr_simil2dist() |> 
-  as.dist() |> 
-  cmdscale() |> 
-  as_tibble(rownames = "dim_abbr") |> 
+cormat_latents |>
+  proxy::pr_simil2dist() |>
+  as.dist() |>
+  cmdscale() |>
+  as_tibble(rownames = "dim_abbr") |>
   ggplot(aes(V1, V2)) +
   geom_point() +
   ggrepel::geom_text_repel(aes(label = dim_abbr)) +
@@ -462,11 +462,11 @@ Try merging some dimensions?
 
 ## Example: $R^2$ with G
 
-![](../../.output/corr_slices_g_dur_type-total.png)
+![](image/corr_slices_g_dur_type-total.png)
 
 ## Example: $R^2$ with G
 
-![](../../.output/corr_slices_g_dur_type-per_min.png)
+![](image/corr_slices_g_dur_type-per_min.png)
 
 ## Task Selection Results {.smaller}
 
@@ -475,10 +475,10 @@ Try merging some dimensions?
 
 task_sel <- readxl::read_excel(".output/task_selcted_by_dim.xlsx")
 task_sel |>
-  select(dimension = dim, game_name, index_name, duration = mean_dur_mins) |> 
+  select(dimension = dim, game_name, index_name, duration = mean_dur_mins) |>
   gt::gt() |>
   gt::data_color(columns = dimension) |>
-  gt::fmt_number(columns = duration) |> 
+  gt::fmt_number(columns = duration) |>
   gt::opt_interactive(page_size_default = 9)
 ```
 
@@ -486,6 +486,6 @@ task_sel |>
 
 ## Factor Convergence
 
-![](../../.output/factcons_acq-short.png)
+![](image/factcons_acq-short.png)
 
 # References
