@@ -1,16 +1,163 @@
 [
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Analysis Notes",
+    "section": "",
+    "text": "Structure of cognitive abilities\n\n\nEvidence based on behavioral paradigms and how to measure them effectively\n\n\n\n\n\n\n\n\n\nOct 19, 2023\n\n\nZhang, Liang\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/presentations/index.html#call-for-cognitive-ontology",
+    "href": "posts/presentations/index.html#call-for-cognitive-ontology",
+    "title": "Structure of cognitive abilities",
+    "section": "Call for Cognitive Ontology",
+    "text": "Call for Cognitive Ontology\n\n\nIssues of identification of neural correlates of cognitive processes\n\n“Many-to-many mapping” between cognitive function and brain (Price and Friston 2005)\n“Toothbrush problem” (Poldrack and Yarkoni 2016)\n\nCognitive ontology underlies structure-function mapping\n\n\n\nThe structure of the mind that specifies the component operations that comprise mental function (Poldrack 2010)\n\n\nA formal ontology requires lots of work because of its requirements of controlled vocabulary and framework (Poldrack and Yarkoni 2016)\nData-driven ontology seems promising (Eisenberg et al. 2019)\n\n\n\n\nMaybe add WLQ?"
+  },
+  {
+    "objectID": "posts/presentations/index.html#sample-description-based-on-camp",
+    "href": "posts/presentations/index.html#sample-description-based-on-camp",
+    "title": "Structure of cognitive abilities",
+    "section": "Sample Description based on CAMP",
+    "text": "Sample Description based on CAMP\n\nTasks (creative ability not included)\n\n75 distinct tasks\n76 indices\n\nParticipants\n\n1200 participants (Mean age = 20.6, SD = 1.7, range: [17.5, 31.38]; Sex: 52.1% females, 47.9% males, 0.0% other)\n北京大学: 96; 北京联合大学: 96; 四川师范大学: 478; 天津师范大学: 536"
+  },
+  {
+    "objectID": "posts/presentations/index.html#how-many-factors",
+    "href": "posts/presentations/index.html#how-many-factors",
+    "title": "Structure of cognitive abilities",
+    "section": "How many factors?",
+    "text": "How many factors?\n\n\nThe traditional way to determine number of factors is indecisive for us\n\nSome tasks load on many factors\nSome tasks have low reliability"
+  },
+  {
+    "objectID": "posts/presentations/index.html#factors-resampling",
+    "href": "posts/presentations/index.html#factors-resampling",
+    "title": "Structure of cognitive abilities",
+    "section": "Factors Resampling",
+    "text": "Factors Resampling\n\nHere we use a new method based on resampling\n\nResample with replace a sample of the same size as the original data\nDo exploratory factor analysis with 4-10 factors (reasonable based on previous slide)\nStore the factor attribution\nRepeat the process for 100 times\nAcross the 100 samples, calculate the probability of each pair of tasks belonging to the same factor\nAverage the results across all 4-10 factor solutions"
+  },
+  {
+    "objectID": "posts/presentations/index.html#factor-convergence",
+    "href": "posts/presentations/index.html#factor-convergence",
+    "title": "Structure of cognitive abilities",
+    "section": "Factor Convergence",
+    "text": "Factor Convergence\n\n\n\n\n\n\nAverage across 4-10 factors\n\n\n\n\n\n\n\nAverage across 8-10 factors"
+  },
+  {
+    "objectID": "posts/presentations/index.html#structure-based-on-the-convergence",
+    "href": "posts/presentations/index.html#structure-based-on-the-convergence",
+    "title": "Structure of cognitive abilities",
+    "section": "Structure based on the convergence",
+    "text": "Structure based on the convergence"
+  },
+  {
+    "objectID": "posts/presentations/index.html#loading",
+    "href": "posts/presentations/index.html#loading",
+    "title": "Structure of cognitive abilities",
+    "section": "Loading",
+    "text": "Loading"
+  },
+  {
+    "objectID": "posts/presentations/index.html#latent-correlation",
+    "href": "posts/presentations/index.html#latent-correlation",
+    "title": "Structure of cognitive abilities",
+    "section": "Latent Correlation",
+    "text": "Latent Correlation"
+  },
+  {
+    "objectID": "posts/presentations/index.html#goodness-of-fit",
+    "href": "posts/presentations/index.html#goodness-of-fit",
+    "title": "Structure of cognitive abilities",
+    "section": "Goodness of Fit",
+    "text": "Goodness of Fit\nThe desired CFI and TLI is above 0.90, and RMSEA below 0.05.\n\n\n\n\n\nhierarchical\nchisq\ndf\npvalue\nCFI\nTLI\nRMESA\n\n\n\n\nnone\n4334.68\n1448\n0\n0.81\n0.80\n0.04\n\n\nbifactor\n4127.76\n1428\n0\n0.82\n0.81\n0.04\n\n\nhighorder\n4868.35\n1475\n0\n0.78\n0.77\n0.05"
+  },
+  {
+    "objectID": "posts/presentations/index.html#loading-cutoff",
+    "href": "posts/presentations/index.html#loading-cutoff",
+    "title": "Structure of cognitive abilities",
+    "section": "Loading Cutoff",
+    "text": "Loading Cutoff"
+  },
+  {
+    "objectID": "posts/presentations/index.html#loading-cutoff---best-model",
+    "href": "posts/presentations/index.html#loading-cutoff---best-model",
+    "title": "Structure of cognitive abilities",
+    "section": "Loading Cutoff - Best Model",
+    "text": "Loading Cutoff - Best Model"
+  },
+  {
+    "objectID": "posts/presentations/index.html#task-number",
+    "href": "posts/presentations/index.html#task-number",
+    "title": "Structure of cognitive abilities",
+    "section": "Task Number",
+    "text": "Task Number"
+  },
+  {
+    "objectID": "posts/presentations/index.html#task-number---best-model",
+    "href": "posts/presentations/index.html#task-number---best-model",
+    "title": "Structure of cognitive abilities",
+    "section": "Task Number - Best Model",
+    "text": "Task Number - Best Model"
+  },
+  {
+    "objectID": "posts/presentations/index.html#trim-dimension",
+    "href": "posts/presentations/index.html#trim-dimension",
+    "title": "Structure of cognitive abilities",
+    "section": "Trim Dimension",
+    "text": "Trim Dimension"
+  },
+  {
+    "objectID": "posts/presentations/index.html#trim-dimension-continue",
+    "href": "posts/presentations/index.html#trim-dimension-continue",
+    "title": "Structure of cognitive abilities",
+    "section": "Trim Dimension (Continue)",
+    "text": "Trim Dimension (Continue)\n\nBased on the best model from task number"
+  },
+  {
+    "objectID": "posts/presentations/index.html#trim-dimension---best-model",
+    "href": "posts/presentations/index.html#trim-dimension---best-model",
+    "title": "Structure of cognitive abilities",
+    "section": "Trim Dimension - Best Model",
+    "text": "Trim Dimension - Best Model"
+  },
+  {
+    "objectID": "posts/presentations/index.html#trim-dimension---best-model-1",
+    "href": "posts/presentations/index.html#trim-dimension---best-model-1",
+    "title": "Structure of cognitive abilities",
+    "section": "Trim Dimension - Best Model",
+    "text": "Trim Dimension - Best Model\n\n\n\n\n\n\n\n\n\n\n\nTry merging some dimensions?"
+  },
+  {
+    "objectID": "posts/presentations/index.html#example-r2-with-g",
+    "href": "posts/presentations/index.html#example-r2-with-g",
+    "title": "Structure of cognitive abilities",
+    "section": "Example: \\(R^2\\) with G",
+    "text": "Example: \\(R^2\\) with G"
+  },
+  {
+    "objectID": "posts/presentations/index.html#example-r2-with-g-1",
+    "href": "posts/presentations/index.html#example-r2-with-g-1",
+    "title": "Structure of cognitive abilities",
+    "section": "Example: \\(R^2\\) with G",
+    "text": "Example: \\(R^2\\) with G"
+  },
+  {
+    "objectID": "posts/presentations/index.html#task-selection-results",
+    "href": "posts/presentations/index.html#task-selection-results",
+    "title": "Structure of cognitive abilities",
+    "section": "Task Selection Results",
+    "text": "Task Selection Results"
+  },
+  {
+    "objectID": "posts/presentations/index.html#factor-convergence-1",
+    "href": "posts/presentations/index.html#factor-convergence-1",
+    "title": "Structure of cognitive abilities",
+    "section": "Factor Convergence",
+    "text": "Factor Convergence"
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
     "text": "We are from Beijing Normal University. We have developed more than 80 tasks based on psychological paradigms, in order to explore the structure of human cognition."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "cogstruct-dev",
-    "section": "",
-    "text": "No matching items"
   }
 ]
