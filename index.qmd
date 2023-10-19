@@ -1,5 +1,5 @@
 ---
-title: "cogstruct-dev"
+title: "Analysis Notes"
 listing:
   contents: posts
   sort: "date desc"

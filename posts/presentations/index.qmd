@@ -1,0 +1,491 @@
+---
+title: Structure of cognitive abilities
+subtitle: Evidence based on behavioral paradigms and how to measure them effectively
+author: Zhang, Liang
+date: 2023-10-19
+format: 
+  revealjs: 
+    code-fold: true
+execute: 
+  warning: false
+  message: false
+bibliography: references.bib
+---
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+projects <- targets::tar_config_yaml()
+select_list <- function(.l, ...) {
+  .l[tidyselect::eval_select(expr(c(...)), .l)]
+}
+```
+
+<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js""></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').prepend('<div class=\"zoomDiv\"><img src=\"\" class=\"zoomImg\"></div>');
+    // onClick function for all plots (img's)
+    $('img:not(.zoomImg)').click(function() {
+      $('.zoomImg').attr('src', $(this).attr('src')).css({width: '100%'});
+      $('.zoomDiv').css({opacity: '1', width: 'auto', border: '1px solid white', borderRadius: '5px', position: 'fixed', top: '50%', left: '50%', marginRight: '-50%', transform: 'translate(-50%, -50%)', boxShadow: '0px 0px 50px #888888', zIndex: '50', overflow: 'auto', maxHeight: '100%'});
+    });
+    // onClick function for zoomImg
+    $('img.zoomImg').click(function() {
+      $('.zoomDiv').css({opacity: '0', width: '0%'}); 
+    });
+  });
+</script>
+
+# Introduction
+
+!["Old-fashioned" functional Magnetic Resonance Imaging](image/PhrenologyPix.jpg)
+
+## Call for Cognitive Ontology {.smaller}
+
+::: incremental
+-   Issues of identification of neural correlates of cognitive processes
+
+    -   "Many-to-many mapping" between cognitive function and brain [@price2005]
+
+    -   "Toothbrush problem" [@poldrack2016]
+
+-   Cognitive ontology underlies structure-function mapping
+
+    -   <div>
+
+        > The structure of the mind that specifies the component operations that comprise mental function [@poldrack2010]
+
+        </div>
+
+    -   A formal ontology requires lots of work because of its requirements of controlled vocabulary and framework [@poldrack2016]
+
+    -   Data-driven ontology seems promising [@eisenberg2019]
+:::
+
+::: notes
+Maybe add WLQ?
+:::
+
+# Method
+
+We collected cognitive tests commonly used in cognitive research, with which behavioral data on thousands of people were collected, to directly examine their relationships.
+
+## Sample Description based on CAMP
+
+```{r}
+#| label: desc-sample
+#| fig-align: center
+
+targets::tar_load(indices_of_interest, store = projects$preproc_behav$store)
+targets::tar_load(users, store = projects$preproc_behav$store)
+game_selected <- read_csv(
+  "config/indices_factan.csv", 
+  show_col_types = FALSE
+) |> 
+  filter(include)
+descr_subjects <- indices_of_interest |> 
+  summarise(game_date = median(game_time), .by = user_id) |> 
+  left_join(users, by = "user_id") |> 
+  mutate(
+    age = (user_dob %--% game_date) / years(),
+    user_sex = c("M", "F")[user_sex],
+    .keep = "none"
+  ) |> 
+  filter(age > 15) |> 
+  report::report_participants(sex = "user_sex")
+counts_school <- users |> 
+  semi_join(indices_of_interest, by = "user_id") |> 
+  count(school) |> 
+  str_glue_data("{school}: {n}") |> 
+  str_c(collapse = "; ")
+```
+
+-   Tasks (creative ability not included)
+
+    -   `r n_distinct(game_selected$game_name)` distinct tasks
+    -   `r nrow(distinct(game_selected, game_name, index_name))` indices
+
+-   Participants
+
+    -   `r descr_subjects`
+    -   `r counts_school`
+
+# Exploratory Factor Analysis
+
+## How many factors? {.smaller}
+
+```{r}
+#| label: n-factors
+#| cache: true
+
+targets::tar_load(indices_selected, store = projects$explore_factors$store)
+parameters::n_factors(
+  indices_selected,
+  rotation = "oblimin"
+) |> 
+  plot()
+```
+
+-   The traditional way to determine number of factors is indecisive for us
+    -   Some tasks load on many factors
+    -   Some tasks have low reliability
+
+## Factors Resampling {.smaller}
+
+-   Here we use a new method based on resampling
+    1.  Resample with replace a sample of the same size as the original data
+    2.  Do exploratory factor analysis with 4-10 factors (reasonable based on previous slide)
+    3.  Store the factor attribution
+    4.  Repeat the process for 100 times
+    5.  Across the 100 samples, calculate the probability of each pair of tasks belonging to the same factor
+    6.  Average the results across all 4-10 factor solutions
+
+## Factor Convergence
+
+::: {layout-ncol=2}
+![Average across 4-10 factors](../../.output/factcons_exclude-11.png){width=40%}
+
+![Average across 8-10 factors](../../.output/factcons_nfact-large_exclude-11.png){width=40%}
+:::
+
+## Structure based on the convergence {.smaller}
+
+```{r}
+#| label: structure-schema
+
+dims <- read_csv("config/dimensions.csv", show_col_types = FALSE)
+dims |> 
+  select(game_name, index_name, dimension = dim_name) |> 
+  gt::gt() |> 
+  gt::data_color(columns = dimension, rows = dimension != "Unstable") |> 
+  gt::opt_interactive(use_filters = TRUE, page_size_default = 8)
+```
+
+# Confirmatory Factor Analysis
+
+## Loading
+
+```{r}
+#| label: load-cfa-results
+
+targets::tar_load(fit_origin_none, store = projects$update_factors$store)
+targets::tar_load(gof_origin, store = projects$update_factors$store)
+params <- parameters::model_parameters(fit_origin_none)
+```
+
+```{r}
+#| label: structure-wordcloud
+
+params |> 
+  filter(Component == "Loading") |> 
+  as_tibble() |> 
+  left_join(dims, by = join_by(From == game_index)) |> 
+  mutate(
+    game_name = str_remove(game_name, "[a-zA-Z]+$"),
+    dim_name = factor(dim_name, unique(dims$dim_name)),
+    dim_name_disp = fct_reorder(
+      str_glue("{dim_name} ({dim_abbr})"),
+      as.integer(dim_name)
+    )
+  ) |> 
+  ggplot(aes(label = game_name, size = Coefficient)) +
+  ggwordcloud::geom_text_wordcloud() +
+  facet_wrap(~dim_name_disp) +
+  theme_minimal()
+```
+
+## Latent Correlation
+
+```{r}
+#| label: correlation-among-latents
+#| layout-ncol: 2
+#| fig-width: 6
+#| fig-height: 6
+
+cormat_latents <- params |> 
+  filter(Component == "Correlation") |> 
+  as_tibble() |> 
+  select(From, To, Coefficient) |> 
+  igraph::graph_from_data_frame(directed = FALSE) |> 
+  igraph::as_adjacency_matrix(attr = "Coefficient", sparse = FALSE)
+diag(cormat_latents) <- 1
+corrplot::corrplot(
+  cormat_latents,
+  method = "shade", 
+  type = "upper",
+  order = "hclust",
+  col = colorRampPalette(c("blue", "white", "red"))(200),
+  addCoef.col = "gray",
+  diag = FALSE
+)
+cormat_latents |> 
+  proxy::pr_simil2dist() |> 
+  as.dist() |> 
+  cmdscale() |> 
+  as_tibble(rownames = "dim_abbr") |> 
+  ggplot(aes(V1, V2)) +
+  geom_point() +
+  ggrepel::geom_text_repel(aes(label = dim_abbr)) +
+  theme_void()
+```
+
+## Goodness of Fit
+
+The desired `CFI` and `TLI` is above 0.90, and `RMSEA` below 0.05.
+
+```{r}
+#| label: cfa-fit-origin
+
+gof_origin |> 
+  select(
+    hierarchical, chisq, df, pvalue, 
+    CFI = cfi, TLI = tli, RMESA = rmsea
+  ) |> 
+  knitr::kable(digits = 2)
+```
+
+# Improve Fitting
+
+* Three means were tried
+  * Trim low loading tasks: poor (> 0.32), fair (> 0.45), good (> 0.55)
+  * Keep equal number of tasks for each dimension: 3 or 4
+  * Drop certain dimension
+
+```{r}
+#| label: improve-load-data
+
+targets::tar_load(gof_updated, store = projects$update_factors$store)
+```
+
+## Loading Cutoff
+
+```{r}
+#| label: improve-by-loading
+
+gof_updated |> 
+  filter(method == "cutoff") |> 
+  mutate(
+    hierarchical = as_factor(hierarchical),
+    level = as_factor(level)
+  ) |> 
+  pivot_longer(-c(hierarchical, method, level)) |> 
+  filter(name %in% c("cfi", "rmsea")) |> 
+  ggplot(aes(level, value, color = hierarchical)) +
+  geom_point() +
+  geom_line(aes(group = hierarchical)) +
+  ggthemes::scale_color_few() +
+  ggthemes::theme_hc() +
+  facet_wrap(~name, scales = "free")
+```
+
+## Loading Cutoff - Best Model
+
+```{r}
+#| label: improve-by-loading-best
+
+targets::tar_load(fit_updated_none_cutoff_good, store = projects$update_factors$store)
+params <- parameters::model_parameters(fit_updated_none_cutoff_good)
+params |> 
+  filter(Component == "Loading") |> 
+  as_tibble() |> 
+  left_join(dims, by = join_by(From == game_index)) |> 
+  mutate(
+    game_name = str_remove(game_name, "[a-zA-Z]+$"),
+    dim_name = factor(dim_name, unique(dims$dim_name)),
+    dim_name_disp = fct_reorder(
+      str_glue("{dim_name} ({dim_abbr})"),
+      as.integer(dim_name)
+    )
+  ) |> 
+  ggplot(aes(label = game_name, size = Coefficient)) +
+  ggwordcloud::geom_text_wordcloud() +
+  facet_wrap(~dim_name_disp) +
+  theme_minimal()
+```
+
+## Task Number
+
+```{r}
+#| label: improve-by-numtask
+
+gof_updated |> 
+  filter(method == "numtask") |> 
+  mutate(
+    hierarchical = as_factor(hierarchical),
+    level = as_factor(level)
+  ) |> 
+  pivot_longer(-c(hierarchical, method, level)) |> 
+  filter(name %in% c("cfi", "rmsea")) |> 
+  ggplot(aes(level, value, color = hierarchical)) +
+  geom_point() +
+  geom_line(aes(group = hierarchical)) +
+  ggthemes::scale_color_few() +
+  ggthemes::theme_hc() +
+  facet_wrap(~name, scales = "free")
+```
+
+## Task Number - Best Model
+
+```{r}
+#| label: improve-by-numtask-best
+
+targets::tar_load(fit_updated_none_numtask_three, store = projects$update_factors$store)
+params <- parameters::model_parameters(fit_updated_none_numtask_three)
+params |> 
+  filter(Component == "Loading") |> 
+  as_tibble() |> 
+  left_join(dims, by = join_by(From == game_index)) |> 
+  mutate(
+    game_name = str_remove(game_name, "[a-zA-Z]+$"),
+    dim_name = factor(dim_name, unique(dims$dim_name)),
+    dim_name_disp = fct_reorder(
+      str_glue("{dim_name} ({dim_abbr})"),
+      as.integer(dim_name)
+    )
+  ) |> 
+  ggplot(aes(label = game_name, size = Coefficient)) +
+  ggwordcloud::geom_text_wordcloud() +
+  facet_wrap(~dim_name_disp) +
+  theme_minimal()
+```
+
+## Trim Dimension
+
+```{r}
+#| label: improve-by-trimdim
+
+gof_updated |> 
+  filter(method == "trimdim") |> 
+  mutate(
+    hierarchical = as_factor(hierarchical),
+    level = as_factor(level)
+  ) |> 
+  pivot_longer(-c(hierarchical, method, level)) |> 
+  filter(name %in% c("cfi", "rmsea")) |> 
+  ggplot(aes(fct_reorder(level, value), value, color = hierarchical)) +
+  geom_point() +
+  geom_line(aes(group = hierarchical)) +
+  ggthemes::scale_color_few() +
+  ggthemes::theme_hc() +
+  facet_wrap(~name, scales = "free")
+```
+
+## Trim Dimension (Continue)
+
+```{r}
+#| label: improve-by-trimdim2
+#| fig-cap: Based on the best model from task number
+
+targets::tar_load(gof_updated2, store = projects$update_factors$store)
+gof_updated2 |> 
+  mutate(
+    hierarchical = as_factor(hierarchical),
+    level = as_factor(level)
+  ) |> 
+  pivot_longer(-c(hierarchical, method, level)) |> 
+  filter(name %in% c("cfi", "rmsea")) |> 
+  ggplot(aes(fct_reorder(level, value), value, color = hierarchical)) +
+  geom_point() +
+  geom_line(aes(group = hierarchical)) +
+  ggthemes::scale_color_few() +
+  ggthemes::theme_hc() +
+  facet_wrap(~name, scales = "free")
+```
+
+## Trim Dimension - Best Model
+
+```{r}
+#| label: improve-by-trimdim2-best
+
+targets::tar_load(fit_updated2_none_trimdim_Spd, store = projects$update_factors$store)
+params <- parameters::model_parameters(fit_updated2_none_trimdim_Spd)
+params |> 
+  filter(Component == "Loading") |> 
+  as_tibble() |> 
+  left_join(dims, by = join_by(From == game_index)) |> 
+  mutate(
+    game_name = str_remove(game_name, "[a-zA-Z]+$"),
+    dim_name = factor(dim_name, unique(dims$dim_name)),
+    dim_name_disp = fct_reorder(
+      str_glue("{dim_name} ({dim_abbr})"),
+      as.integer(dim_name)
+    )
+  ) |> 
+  ggplot(aes(label = game_name, size = Coefficient)) +
+  ggwordcloud::geom_text_wordcloud() +
+  facet_wrap(~dim_name_disp) +
+  theme_minimal()
+```
+
+## Trim Dimension - Best Model
+
+```{r}
+#| label: correlation-among-latents-trimdim2-best
+#| layout-ncol: 2
+#| fig-width: 6
+#| fig-height: 6
+
+cormat_latents <- params |> 
+  filter(Component == "Correlation") |> 
+  as_tibble() |> 
+  select(From, To, Coefficient) |> 
+  igraph::graph_from_data_frame(directed = FALSE) |> 
+  igraph::as_adjacency_matrix(attr = "Coefficient", sparse = FALSE)
+diag(cormat_latents) <- 1
+corrplot::corrplot(
+  cormat_latents,
+  method = "shade", 
+  type = "upper",
+  order = "hclust",
+  col = colorRampPalette(c("blue", "white", "red"))(200),
+  addCoef.col = "gray",
+  diag = FALSE
+)
+cormat_latents |> 
+  proxy::pr_simil2dist() |> 
+  as.dist() |> 
+  cmdscale() |> 
+  as_tibble(rownames = "dim_abbr") |> 
+  ggplot(aes(V1, V2)) +
+  geom_point() +
+  ggrepel::geom_text_repel(aes(label = dim_abbr)) +
+  theme_void()
+```
+
+::: {.notes}
+Try merging some dimensions?
+:::
+
+# Measure Efficiency: Less Time-consuming
+
+## Example: $R^2$ with G
+
+![](../../.output/corr_slices_g_dur_type-total.png)
+
+## Example: $R^2$ with G
+
+![](../../.output/corr_slices_g_dur_type-per_min.png)
+
+## Task Selection Results {.smaller}
+
+```{r}
+#| label: sel-results
+
+task_sel <- readxl::read_excel(".output/task_selcted_by_dim.xlsx")
+task_sel |>
+  select(dimension = dim, game_name, index_name, duration = mean_dur_mins) |> 
+  gt::gt() |>
+  gt::data_color(columns = dimension) |>
+  gt::fmt_number(columns = duration) |> 
+  gt::opt_interactive(page_size_default = 9)
+```
+
+# Exploratory Factor Analysis on Short Version
+
+## Factor Convergence
+
+![](../../.output/factcons_acq-short.png)
+
+# References

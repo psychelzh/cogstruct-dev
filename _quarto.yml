@@ -5,7 +5,7 @@ project:
 # freeze computational output
 # (see https://quarto.org/docs/projects/code-execution.html#freeze)
 execute:
-  freeze: auto
+  freeze: true
 
 website:
   title: "Cognitive Structure"
