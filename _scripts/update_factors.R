@@ -29,6 +29,10 @@ thresh_by_numtask <- function(params, level) {
       by = To
     )
 }
+thresh_by_trimdim <- function(params, level) {
+  params |>
+    filter(To != level)
+}
 add_targets_fitting <- function(dims, col_dim, col_task, suffix = NULL) {
   add_suffix <- function(name) {
     if (!is.null(suffix)) {
@@ -68,6 +72,26 @@ add_targets_fitting <- function(dims, col_dim, col_task, suffix = NULL) {
 }
 
 hypers_model <- list(hierarchical = c("none", "bifactor", "highorder"))
+hypers_updation <- dplyr::bind_rows(
+  data.frame(
+    method = "cutoff",
+    level = c("poor", "fair", "good")
+  ),
+  data.frame(
+    method = "numtask",
+    level = c("three", "four")
+  ),
+  data.frame(
+    method = "trimdim",
+    level = readr::read_csv(
+      "config/dimensions.csv",
+      show_col_types = FALSE
+    ) |>
+      dplyr::pull(dim_abbr) |>
+      unique()
+  )
+) |>
+  dplyr::mutate(thresh_fun = rlang::syms(paste0("thresh_by_", method)))
 targets_origin <- tarchetypes::tar_map(
   values = hypers_model,
   add_targets_fitting(
@@ -79,17 +103,7 @@ targets_origin <- tarchetypes::tar_map(
   )
 )
 targets_updation <- tarchetypes::tar_map(
-  values = dplyr::bind_rows(
-    data.frame(
-      method = "cutoff",
-      level = c("poor", "fair", "good")
-    ),
-    data.frame(
-      method = "numtask",
-      level = c("three", "four")
-    )
-  ) |>
-    dplyr::mutate(thresh_fun = rlang::syms(paste0("thresh_by_", method))),
+  values = hypers_updation,
   names = -thresh_fun,
   list(
     tar_target(
@@ -107,22 +121,47 @@ targets_updation <- tarchetypes::tar_map(
     )
   )
 )
+targets_updation2 <- tarchetypes::tar_map(
+  values = hypers_updation |>
+    dplyr::filter(method == "trimdim"),
+  names = -thresh_fun,
+  list(
+    tar_target(
+      dims_updated2,
+      thresh_fun(model_params_updated, level)
+    ),
+    tarchetypes::tar_map(
+      values = hypers_model,
+      add_targets_fitting(
+        dims_updated2,
+        suffix = "updated2",
+        col_dim = "To",
+        col_task = "From"
+      )
+    )
+  )
+)
 targets_gof <- lapply(
   hypers_model$hierarchical,
   \(hier_type) {
     name <- paste0("gof_updated_", hier_type)
-    tarchetypes::tar_combine_raw(
+    combine_targets(
       name,
-      targets_updation[[name]],
-      command = list(!!!.x) |>
-        lapply(\(x) as_tibble_row(unclass(x))) |>
-        bind_rows(.id = "id") |>
-        separate_wider_delim(
-          id,
-          delim = "_",
-          names = c(NA, NA, "hierarchical", "method", "level")
-        ) |>
-        substitute()
+      targets_updation,
+      cols_targets = c("method", "level"),
+      fun = \(x) as_tibble_row(unclass(x))
+    )
+  }
+)
+targets_gof2 <- lapply(
+  hypers_model$hierarchical,
+  \(hier_type) {
+    name <- paste0("gof_updated2_", hier_type)
+    combine_targets(
+      name,
+      targets_updation2,
+      cols_targets = c("method", "level"),
+      fun = \(x) as_tibble_row(unclass(x))
     )
   }
 )
@@ -139,6 +178,12 @@ list(
     read = read_csv(!!.x, show_col_types = FALSE)
   ),
   targets_origin,
+  combine_targets(
+    gof_origin,
+    targets_origin,
+    cols_targets = "hierarchical",
+    fun = \(x) as_tibble_row(unclass(x))
+  ),
   tar_target(
     model_params_ref,
     fit_origin_none |>
@@ -147,16 +192,31 @@ list(
       as_tibble()
   ),
   targets_updation,
-  tarchetypes::tar_combine(
-    dims_updated,
-    targets_updation$dims_updated,
-    command = bind_rows(!!!.x, .id = "id") |>
-      separate_wider_delim(
-        id,
-        delim = "_",
-        names = c(NA, NA, "method", "level")
-      )
-  ),
   targets_gof,
-  tarchetypes::tar_combine(gof_updated, targets_gof)
+  combine_targets(
+    dims_updated,
+    targets_updation,
+    cols_targets = c("method", "level")
+  ),
+  tarchetypes::tar_combine(
+    gof_updated,
+    targets_gof,
+    command = bind_rows(!!!.x, .id = "hierarchical") |>
+      mutate(hierarchical = str_remove(hierarchical, "gof_updated_"))
+  ),
+  tar_target(
+    model_params_updated,
+    fit_updated_none_numtask_three |>
+      parameters::model_parameters() |>
+      filter(Component == "Loading") |>
+      as_tibble()
+  ),
+  targets_updation2,
+  targets_gof2,
+  tarchetypes::tar_combine(
+    gof_updated2,
+    targets_gof2,
+    command = bind_rows(!!!.x, .id = "hierarchical") |>
+      mutate(hierarchical = str_remove(hierarchical, "gof_updated2_"))
+  )
 )
