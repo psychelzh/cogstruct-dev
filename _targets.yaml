@@ -1,3 +1,6 @@
+prepare_source_data:
+  script: _scripts/prepare_source_data.R
+  store: _targets/prepare_source_data
 preproc_behav:
   script: _scripts/preproc_behav.R
   store: _targets/preproc_behav
