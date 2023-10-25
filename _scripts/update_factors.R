@@ -87,18 +87,16 @@ hypers_updation <- dplyr::bind_rows(
       "config/dimensions.csv",
       show_col_types = FALSE
     ) |>
-      dplyr::pull(dim_abbr) |>
-      unique()
+      dplyr::pull(dim_label)
   )
 ) |>
   dplyr::mutate(thresh_fun = rlang::syms(paste0("thresh_by_", method)))
 targets_origin <- tarchetypes::tar_map(
   values = hypers_model,
   add_targets_fitting(
-    dims_origin |>
-      filter(dim_abbr != "Uns"),
+    dims_origin,
     suffix = "origin",
-    col_dim = "dim_abbr",
+    col_dim = "dim_label",
     col_task = "game_index"
   )
 )
@@ -173,9 +171,20 @@ list(
     read = qs::qread(!!.x)
   ),
   tarchetypes::tar_file_read(
-    dims_origin,
+    dimensions,
     "config/dimensions.csv",
     read = read_csv(!!.x, show_col_types = FALSE)
+  ),
+  tarchetypes::tar_file_read(
+    factcons_clustering,
+    "config/factcons_clustering.csv",
+    read = read_csv(!!.x, show_col_types = FALSE)
+  ),
+  tar_target(
+    dims_origin,
+    factcons_clustering |>
+      filter(include) |>
+      left_join(dimensions, by = "cluster")
   ),
   targets_origin,
   combine_targets(
