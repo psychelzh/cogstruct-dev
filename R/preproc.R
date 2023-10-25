@@ -22,13 +22,11 @@ validate_data <- function(data_parsed, require_keyboard) {
 
 #' Cleanse the calculated scores
 #'
-#' The most important job here is to replace the original scores by the
-#' corresponding makeup scores.
-clean_indices <- function(indices, users_completed,
-                          id_cols = user_id) {
+#' The most important job here is to remove invalid scores for those with scores
+#' from multiple session, and here just keep the scores from the last session.
+clean_indices <- function(indices, users_completed, id_cols = user_id) {
   indices |>
     semi_join(users_completed, by = "user_id") |>
-    # keep the first result for each subject and game
     # https://github.com/r-lib/vctrs/issues/1787
     arrange(desc(game_time)) |>
     distinct(pick({{ id_cols }}), game_id, index_name, .keep_all = TRUE) |>
