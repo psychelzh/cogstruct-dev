@@ -39,10 +39,11 @@ output_taskorder <- function(exclude_id, mat,
   file
 }
 
-output_factcons <- function(exclude_id, mat,
-                             file_prefix = "factcons", ...) {
+output_factcons <- function(exclude_id, mat, ...,
+                            file_prefix = "factcons",
+                            dir_output = ".output/factor-consistency") {
   file <- fs::path(
-    ".output",
+    dir_output,
     str_glue("{file_prefix}_exclude-{exclude_id}.png")
   )
   rownames(mat) <- replace_as_name_cn(rownames(mat))
@@ -123,7 +124,7 @@ list(
         ),
         .keep = "unused"
       ) |>
-      unnest(pairs)|>
+      unnest(pairs) |>
       summarise(
         prob = n() / 100,
         .by = c(exclude_id, exclude, n_fact, pairs)
@@ -186,5 +187,25 @@ list(
     files_plots_large,
     prob_one_fact_large |>
       pmap_chr(output_factcons, file_prefix = "factcons_nfact-large")
+  ),
+  tarchetypes::tar_map(
+    values = tibble::tibble(
+      thresh_value = seq(0.4, 0.8, 0.1),
+      thresh_level = seq_along(thresh_value)
+    ),
+    names = thresh_level,
+    tar_target(
+      fact_cons_bin,
+      prob_one_fact_avg |>
+        mutate(mat = map(mat, ~ .x > thresh_value))
+    ),
+    tar_target(
+      files_plots_bin,
+      fact_cons_bin |>
+        pmap_chr(
+          output_factcons,
+          file_prefix = str_c("factcons_thresh-", thresh_level)
+        )
+    )
   )
 )
