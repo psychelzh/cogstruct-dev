@@ -31,8 +31,8 @@ clean_indices <- function(indices, users_completed,
     # keep the first result for each subject and game
     # https://github.com/r-lib/vctrs/issues/1787
     arrange(desc(game_time)) |>
-    distinct(pick({{ id_cols }}), game_name, index_name, .keep_all = TRUE) |>
-    left_join(data.iquizoo::game_info, by = c("game_id", "game_name")) |>
+    distinct(pick({{ id_cols }}), game_id, index_name, .keep_all = TRUE) |>
+    left_join(data.iquizoo::game_info, by = c("game_id")) |>
     select({{ id_cols }}, game_id, game_name, game_name_abbr,
            game_time, game_duration, index_name, score)
 }
