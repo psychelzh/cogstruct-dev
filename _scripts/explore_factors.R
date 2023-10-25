@@ -207,5 +207,33 @@ list(
           file_prefix = str_c("factcons_thresh-", thresh_level)
         )
     )
+  ),
+  tar_target(
+    cluster_result,
+    prob_one_fact_avg |>
+      filter(exclude_id == 3) |>
+      mutate(mat = map(mat, ~ 1 - .x)) |>
+      pluck("mat", 1) |>
+      as.dist() |>
+      hclust(method = "ward.D2") |>
+      dendextend::find_k() |>
+      pluck("pamobject", "silinfo", "widths") |>
+      as_tibble(rownames = "game_index")
+  ),
+  tar_target(
+    filte_cluster_result,
+    cluster_result |>
+      separate_wider_delim(
+        game_index,
+        delim = ".",
+        names = c("game_name_abbr", "index_name"),
+        cols_remove = FALSE
+      ) |>
+      left_join(
+        select(data.iquizoo::game_info, game_name, game_name_abbr),
+        by = "game_name_abbr"
+      ) |>
+      relocate(game_name, .before = 1L) |>
+      write_excel_csv(".output/factcons_clustering.csv")
   )
 )
