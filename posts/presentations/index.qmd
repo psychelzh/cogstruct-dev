@@ -186,7 +186,7 @@ params |>
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
     dim_name = factor(dim_name, unique(dims$dim_name)),
     dim_name_disp = fct_reorder(
-      str_glue("{dim_name} ({dim_abbr})"),
+      str_glue("{dim_name} ({dim_label})"),
       as.integer(dim_name)
     )
   ) |>
@@ -224,10 +224,10 @@ cormat_latents |>
   proxy::pr_simil2dist() |>
   as.dist() |>
   cmdscale() |>
-  as_tibble(rownames = "dim_abbr") |>
+  as_tibble(rownames = "dim_label") |>
   ggplot(aes(V1, V2)) +
   geom_point() +
-  ggrepel::geom_text_repel(aes(label = dim_abbr)) +
+  ggrepel::geom_text_repel(aes(label = dim_label)) +
   theme_void()
 ```
 
@@ -295,7 +295,7 @@ params |>
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
     dim_name = factor(dim_name, unique(dims$dim_name)),
     dim_name_disp = fct_reorder(
-      str_glue("{dim_name} ({dim_abbr})"),
+      str_glue("{dim_name} ({dim_label})"),
       as.integer(dim_name)
     )
   ) |>
@@ -341,7 +341,7 @@ params |>
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
     dim_name = factor(dim_name, unique(dims$dim_name)),
     dim_name_disp = fct_reorder(
-      str_glue("{dim_name} ({dim_abbr})"),
+      str_glue("{dim_name} ({dim_label})"),
       as.integer(dim_name)
     )
   ) |>
@@ -409,7 +409,7 @@ params |>
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
     dim_name = factor(dim_name, unique(dims$dim_name)),
     dim_name_disp = fct_reorder(
-      str_glue("{dim_name} ({dim_abbr})"),
+      str_glue("{dim_name} ({dim_label})"),
       as.integer(dim_name)
     )
   ) |>
@@ -447,10 +447,10 @@ cormat_latents |>
   proxy::pr_simil2dist() |>
   as.dist() |>
   cmdscale() |>
-  as_tibble(rownames = "dim_abbr") |>
+  as_tibble(rownames = "dim_label") |>
   ggplot(aes(V1, V2)) +
   geom_point() +
-  ggrepel::geom_text_repel(aes(label = dim_abbr)) +
+  ggrepel::geom_text_repel(aes(label = dim_label)) +
   theme_void()
 ```
 
