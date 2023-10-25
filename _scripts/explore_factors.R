@@ -10,7 +10,7 @@ tar_option_set(
 )
 
 store_preproc <- fs::path(
-  tar_config_get("store", project = "preproc_behav"),
+  tar_config_get("store", project = "prepare_source_data"),
   "objects"
 )
 
@@ -94,8 +94,7 @@ list(
   ),
   tar_target(
     indices_selected,
-    indices_wider_clean |>
-      select(all_of(game_selected))
+    select(indices_wider_clean, all_of(game_selected))
   ),
   tarchetypes::tar_map_rep(
     fact_attribution,

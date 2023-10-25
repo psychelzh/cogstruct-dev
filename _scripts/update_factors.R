@@ -10,7 +10,7 @@ tar_option_set(
 )
 
 store_preproc <- fs::path(
-  tar_config_get("store", project = "preproc_behav"),
+  tar_config_get("store", project = "prepare_source_data"),
   "objects"
 )
 
