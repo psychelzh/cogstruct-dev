@@ -1,12 +1,5 @@
 [
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Analysis Notes",
-    "section": "",
-    "text": "Structure of cognitive abilities\n\n\nEvidence based on behavioral paradigms and how to measure them effectively\n\n\n\n\n\n\n\n\n\nOct 19, 2023\n\n\nZhang, Liang\n\n\n\n\n\n\nNo matching items"
-  },
-  {
     "objectID": "posts/presentations/index.html#call-for-cognitive-ontology",
     "href": "posts/presentations/index.html#call-for-cognitive-ontology",
     "title": "Structure of cognitive abilities",
@@ -154,10 +147,24 @@
     "text": "Factor Convergence"
   },
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Analysis Notes",
+    "section": "",
+    "text": "Task Selction in Multi-Domain Training\n\n\n\n\n\n\n\n\n\n\n\n\nZhang, Liang\n\n\n\n\n\n\n  \n\n\n\n\nStructure of cognitive abilities\n\n\nEvidence based on behavioral paradigms and how to measure them effectively\n\n\n\n\n\n\n\n\n\nOct 19, 2023\n\n\nZhang, Liang\n\n\n\n\n\n\nNo matching items"
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
     "section": "",
     "text": "We are from Beijing Normal University. We have developed more than 80 tasks based on psychological paradigms, in order to explore the structure of human cognition."
+  },
+  {
+    "objectID": "posts/train-multi-domain/index.html",
+    "href": "posts/train-multi-domain/index.html",
+    "title": "Task Selction in Multi-Domain Training",
+    "section": "",
+    "text": "Code\nlibrary(tidyverse)\nlibrary(lavaan)\n# we need bit64 package to handle large integers\nrequireNamespace(\"bit64\")\n\nprojects &lt;- targets::tar_config_yaml()\ntargets::tar_load(\n  c(fit_origin_bifactor, dims_origin),\n  store = projects$update_factors$store\n)\ntargets::tar_load(\n  c(indices_of_interest, indices_wider_clean),\n  store = projects$prepare_source_data$store\n)\ndim_label_map &lt;- dims_origin |&gt; \n  distinct(dim_label, dim_name) |&gt; \n  deframe()\ngame_name_map &lt;- data.iquizoo::game_info |&gt; \n  distinct(game_name_abbr, game_name) |&gt; \n  deframe()\n\n\n\nCorrelation among Latent Factors\n\n\nCode\nscores_latent &lt;- lavPredict(fit_origin_bifactor) |&gt; \n  unclass() |&gt; \n  as_tibble() |&gt; \n  add_column(\n    user_id = indices_wider_clean$user_id, \n    .before = 1\n  )\ncors_latent &lt;- scores_latent |&gt; \n  rename_with(~ dim_label_map[.x], all_of(names(dim_label_map))) |&gt; \n  relocate(g, .before = 1) |&gt; \n  select(-user_id) |&gt; \n  cor()\nnew_order &lt;- order(cors_latent[,\"g\"], decreasing = TRUE)\ncors_latent[new_order, new_order] |&gt; \n  corrplot::corrplot(\n    method = \"color\",\n    type = \"upper\",\n    tl.col = \"black\",\n    tl.srt = 45,\n    tl.cex = 0.8,\n    addCoef.col = \"black\",\n    number.cex = 0.8,\n    diag = FALSE,\n    tl.offset = 0.5,\n    col = colorRampPalette(\n      rev(c(\"#BB4444\", \"#EE9988\", \"#FFFFFF\", \"#77AADD\", \"#4477AA\"))\n    )(200)\n  )\n\n\n\n\n\nCorrelation among latent factors. The scores are based on the bifactor model.\n\n\n\n\nAfter excluding \"Reasoning\" and \"Episodic Memory\", the most three correlated factors with g (i.e., training dimensions/domains) are \"Verbal STM\", \"Spatial STM\" and \"Inhibition\"/\"Speed\". The last two dimensions have similar correlation with g, and we should determine which one is more important for the training.\n\n\nSelection Results\nHere we list the task most correlated with g for each dimension/domain.\n\n\nCode\ndim_transfer &lt;- c(\"Rsn\", \"EM\")\ndim_train &lt;- c(\"VSTM\", \"SSTM\", \"Inh\", \"Spd\")\ncorrs_task_dim &lt;- indices_of_interest |&gt; \n  left_join(\n    scores_latent,\n    by = \"user_id\"\n  ) |&gt; \n  summarise(\n    across(\n      all_of(c(\"g\", dims_origin$dim_label)),\n      ~ cor(score_adj, .x, use = \"pairwise.complete.obs\")\n    ),\n    .by = game_index\n  )\n\ndims_origin |&gt; \n  select(game_index, dim_label) |&gt; \n  inner_join(\n    corrs_task_dim,\n    by = \"game_index\"\n  ) |&gt; \n  arrange(desc(g)) |&gt; \n  distinct(dim_label, .keep_all = TRUE) |&gt; \n  separate_wider_delim(\n    game_index,\n    \".\",\n    names = c(\"game_name_abbr\", \"index_name\")\n  ) |&gt; \n  mutate(\n    game_name = game_name_map[game_name_abbr],\n    dim_name = dim_label_map[dim_label]\n  ) |&gt; \n  select(dim_name, game_name, g, all_of(names(dim_label_map))) |&gt; \n  gt::gt() |&gt; \n  gt::fmt_number(\n    columns = c(\"g\", all_of(names(dim_label_map))),\n    decimals = 2\n  ) |&gt; \n  gtExtras::gt_highlight_rows(\n    rows = dim_name %in% dim_label_map[dim_transfer],\n    fill = \"#FFCCCC\"\n  ) |&gt; \n  gtExtras::gt_highlight_rows(\n    rows = dim_name %in% dim_label_map[dim_train],\n    fill = \"#CCFFCC\"\n  ) |&gt; \n  gt::tab_header(\n    title = \"Task Selection Results\",\n    subtitle = \"The most correlated task with g for each dimension/domain.\"\n  ) |&gt; \n  gt::tab_caption(\n    gt::md(\n      paste(\n        \"Rows with pink background are the dimensions/domains used as **transfer** tasks.\",\n        \"Rows with green background are the **training dimensions/domains** and the proposed tasks.\"\n      )\n    )\n  )\n\n\n\n\n\n\n  Rows with pink background are the dimensions/domains used as transfer tasks. Rows with green background are the training dimensions/domains and the proposed tasks.\n  \n    \n      Task Selection Results\n    \n    \n      The most correlated task with g for each dimension/domain.\n    \n    \n      dim_name\n      game_name\n      g\n      AttDiv\n      EM\n      Inh\n      Shift\n      Spd\n      Rsn\n      VSTM\n      SSTM\n    \n  \n  \n    Reasoning\n图形推理\n0.67\n−0.06\n0.08\n−0.02\n−0.12\n−0.04\n0.38\n−0.04\n−0.06\n    Spatial STM\n蝴蝶照相机\n0.67\n0.15\n−0.13\n0.01\n0.03\n0.01\n−0.02\n0.11\n0.49\n    Episodic Memory\n过目不忘PRO\n0.58\n−0.19\n0.41\n0.04\n−0.07\n0.03\n0.08\n0.16\n−0.07\n    Verbal STM\n密码箱\n0.57\n0.15\n−0.12\n−0.08\n−0.01\n0.10\n0.04\n0.30\n0.18\n    Divided Attention\n火眼金睛\n0.56\n0.22\n0.06\n0.06\n0.01\n0.03\n0.03\n−0.10\n−0.05\n    Speed\n速算师（中级）\n0.53\n0.16\n−0.17\n−0.01\n0.14\n0.57\n0.00\n0.13\n0.15\n    Inhibition\n候鸟迁徙PRO\n0.48\n0.01\n0.09\n0.66\n0.03\n0.02\n−0.03\n0.01\n0.01\n    Shifting\n多变计数师\n0.38\n0.06\n0.02\n0.18\n0.45\n0.12\n−0.11\n−0.08\n0.05"
   }
 ]
