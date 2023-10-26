@@ -1,0 +1,143 @@
+---
+title: Task Selction in Multi-Domain Training
+author: Zhang, Liang
+format:
+  html: 
+    code-fold: true
+    embed-resources: true
+execute: 
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(lavaan)
+# we need bit64 package to handle large integers
+requireNamespace("bit64")
+
+projects <- targets::tar_config_yaml()
+targets::tar_load(
+  c(fit_origin_bifactor, dims_origin),
+  store = projects$update_factors$store
+)
+targets::tar_load(
+  c(indices_of_interest, indices_wider_clean),
+  store = projects$prepare_source_data$store
+)
+dim_label_map <- dims_origin |> 
+  distinct(dim_label, dim_name) |> 
+  deframe()
+game_name_map <- data.iquizoo::game_info |> 
+  distinct(game_name_abbr, game_name) |> 
+  deframe()
+```
+
+# Correlation among Latent Factors
+
+```{r}
+#| label: corr-latent
+#| fig-cap: >
+#|   Correlation among latent factors. The scores are based on the bifactor 
+#|   model.
+
+scores_latent <- lavPredict(fit_origin_bifactor) |> 
+  unclass() |> 
+  as_tibble() |> 
+  add_column(
+    user_id = indices_wider_clean$user_id, 
+    .before = 1
+  )
+cors_latent <- scores_latent |> 
+  rename_with(~ dim_label_map[.x], all_of(names(dim_label_map))) |> 
+  relocate(g, .before = 1) |> 
+  select(-user_id) |> 
+  cor()
+new_order <- order(cors_latent[,"g"], decreasing = TRUE)
+cors_latent[new_order, new_order] |> 
+  corrplot::corrplot(
+    method = "color",
+    type = "upper",
+    tl.col = "black",
+    tl.srt = 45,
+    tl.cex = 0.8,
+    addCoef.col = "black",
+    number.cex = 0.8,
+    diag = FALSE,
+    tl.offset = 0.5,
+    col = colorRampPalette(
+      rev(c("#BB4444", "#EE9988", "#FFFFFF", "#77AADD", "#4477AA"))
+    )(200)
+  )
+```
+
+After excluding `"Reasoning"` and `"Episodic Memory"`, the most three correlated factors with `g` (i.e., training dimensions/domains) are `"Verbal STM"`, `"Spatial STM"` and `"Inhibition"/"Speed"`. The last two dimensions have similar correlation with `g`, and we should determine which one is more important for the training.
+
+# Selection Results
+
+Here we list the task most correlated with g for each dimension/domain.
+
+```{r}
+#| label: task-selection
+
+dim_transfer <- c("Rsn", "EM")
+dim_train <- c("VSTM", "SSTM", "Inh", "Spd")
+corrs_task_dim <- indices_of_interest |> 
+  left_join(
+    scores_latent,
+    by = "user_id"
+  ) |> 
+  summarise(
+    across(
+      all_of(c("g", dims_origin$dim_label)),
+      ~ cor(score_adj, .x, use = "pairwise.complete.obs")
+    ),
+    .by = game_index
+  )
+
+dims_origin |> 
+  select(game_index, dim_label) |> 
+  inner_join(
+    corrs_task_dim,
+    by = "game_index"
+  ) |> 
+  arrange(desc(g)) |> 
+  distinct(dim_label, .keep_all = TRUE) |> 
+  separate_wider_delim(
+    game_index,
+    ".",
+    names = c("game_name_abbr", "index_name")
+  ) |> 
+  mutate(
+    game_name = game_name_map[game_name_abbr],
+    dim_name = dim_label_map[dim_label]
+  ) |> 
+  select(dim_name, game_name, g, all_of(names(dim_label_map))) |> 
+  gt::gt() |> 
+  gt::fmt_number(
+    columns = c("g", all_of(names(dim_label_map))),
+    decimals = 2
+  ) |> 
+  gtExtras::gt_highlight_rows(
+    rows = dim_name %in% dim_label_map[dim_transfer],
+    fill = "#FFCCCC"
+  ) |> 
+  gtExtras::gt_highlight_rows(
+    rows = dim_name %in% dim_label_map[dim_train],
+    fill = "#CCFFCC"
+  ) |> 
+  gt::tab_header(
+    title = "Task Selection Results",
+    subtitle = "The most correlated task with g for each dimension/domain."
+  ) |> 
+  gt::tab_caption(
+    gt::md(
+      paste(
+        "Rows with pink background are the dimensions/domains used as **transfer** tasks.",
+        "Rows with green background are the **training dimensions/domains** and the proposed tasks."
+      )
+    )
+  )
+```
