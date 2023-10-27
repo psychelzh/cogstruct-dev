@@ -78,8 +78,10 @@ We collected cognitive tests commonly used in cognitive research, with which beh
 #| label: desc-sample
 #| fig-align: center
 
-targets::tar_load(indices_of_interest, store = projects$preproc_behav$store)
-targets::tar_load(users, store = projects$preproc_behav$store)
+targets::tar_load(
+  c(users, indices_of_interest), 
+  store = projects$prepare_source_data$store
+)
 game_selected <- read_csv(
   "config/indices_factan.csv",
   show_col_types = FALSE
@@ -97,8 +99,8 @@ descr_subjects <- indices_of_interest |>
   report::report_participants(sex = "user_sex")
 counts_school <- users |>
   semi_join(indices_of_interest, by = "user_id") |>
-  count(school) |>
-  str_glue_data("{school}: {n}") |>
+  count(organization_name) |>
+  str_glue_data("{organization_name}: {n}") |>
   str_c(collapse = "; ")
 ```
 
@@ -155,8 +157,8 @@ parameters::n_factors(
 ```{r}
 #| label: structure-schema
 
-dims <- read_csv("config/dimensions.csv", show_col_types = FALSE)
-dims |>
+targets::tar_load(dims_origin, store = projects$update_factors$store)
+dims_origin |>
   select(game_name, index_name, dimension = dim_name) |>
   gt::gt() |>
   gt::data_color(columns = dimension, rows = dimension != "Unstable") |>
@@ -181,10 +183,10 @@ params <- parameters::model_parameters(fit_origin_none)
 params |>
   filter(Component == "Loading") |>
   as_tibble() |>
-  left_join(dims, by = join_by(From == game_index)) |>
+  left_join(dims_origin, by = join_by(From == game_index)) |>
   mutate(
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
-    dim_name = factor(dim_name, unique(dims$dim_name)),
+    dim_name = factor(dim_name, unique(dims_origin$dim_name)),
     dim_name_disp = fct_reorder(
       str_glue("{dim_name} ({dim_label})"),
       as.integer(dim_name)
@@ -290,10 +292,10 @@ params <- parameters::model_parameters(fit_updated_none_cutoff_good)
 params |>
   filter(Component == "Loading") |>
   as_tibble() |>
-  left_join(dims, by = join_by(From == game_index)) |>
+  left_join(dims_origin, by = join_by(From == game_index)) |>
   mutate(
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
-    dim_name = factor(dim_name, unique(dims$dim_name)),
+    dim_name = factor(dim_name, unique(dims_origin$dim_name)),
     dim_name_disp = fct_reorder(
       str_glue("{dim_name} ({dim_label})"),
       as.integer(dim_name)
@@ -336,10 +338,10 @@ params <- parameters::model_parameters(fit_updated_none_numtask_three)
 params |>
   filter(Component == "Loading") |>
   as_tibble() |>
-  left_join(dims, by = join_by(From == game_index)) |>
+  left_join(dims_origin, by = join_by(From == game_index)) |>
   mutate(
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
-    dim_name = factor(dim_name, unique(dims$dim_name)),
+    dim_name = factor(dim_name, unique(dims_origin$dim_name)),
     dim_name_disp = fct_reorder(
       str_glue("{dim_name} ({dim_label})"),
       as.integer(dim_name)
@@ -404,10 +406,10 @@ params <- parameters::model_parameters(fit_updated2_none_trimdim_Spd)
 params |>
   filter(Component == "Loading") |>
   as_tibble() |>
-  left_join(dims, by = join_by(From == game_index)) |>
+  left_join(dims_origin, by = join_by(From == game_index)) |>
   mutate(
     game_name = str_remove(game_name, "[a-zA-Z]+$"),
-    dim_name = factor(dim_name, unique(dims$dim_name)),
+    dim_name = factor(dim_name, unique(dims_origin$dim_name)),
     dim_name_disp = fct_reorder(
       str_glue("{dim_name} ({dim_label})"),
       as.integer(dim_name)
