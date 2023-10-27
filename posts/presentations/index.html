@@ -347,6 +347,21 @@
   <script src="../../site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
   <link href="../../site_libs/reactable-0.4.4/reactable.css" rel="stylesheet">
   <script src="../../site_libs/reactable-binding-0.4.4/reactable.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" "=""></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('body').prepend('<div class=\"zoomDiv\"><img src=\"\" class=\"zoomImg\"></div>');
+      // onClick function for all plots (img's)
+      $('img:not(.zoomImg)').click(function() {
+        $('.zoomImg').attr('src', $(this).attr('src')).css({width: '100%'});
+        $('.zoomDiv').css({opacity: '1', width: 'auto', border: '1px solid white', borderRadius: '5px', position: 'fixed', top: '50%', left: '50%', marginRight: '-50%', transform: 'translate(-50%, -50%)', boxShadow: '0px 0px 50px #888888', zIndex: '50', overflow: 'auto', maxHeight: '100%'});
+      });
+      // onClick function for zoomImg
+      $('img.zoomImg').click(function() {
+        $('.zoomDiv').css({opacity: '0', width: '0%'});
+      });
+    });
+  </script>
 </head>
 <body class="quarto-light">
   <div class="reveal">
@@ -365,24 +380,6 @@ Zhang, Liang
 </div>
 
   <p class="date">2023-10-19</p>
-</section>
-<section class="slide level2">
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" "=""></script>
-<script type="text/javascript">
-  $(document).ready(function() {
-    $('body').prepend('<div class=\"zoomDiv\"><img src=\"\" class=\"zoomImg\"></div>');
-    // onClick function for all plots (img's)
-    $('img:not(.zoomImg)').click(function() {
-      $('.zoomImg').attr('src', $(this).attr('src')).css({width: '100%'});
-      $('.zoomDiv').css({opacity: '1', width: 'auto', border: '1px solid white', borderRadius: '5px', position: 'fixed', top: '50%', left: '50%', marginRight: '-50%', transform: 'translate(-50%, -50%)', boxShadow: '0px 0px 50px #888888', zIndex: '50', overflow: 'auto', maxHeight: '100%'});
-    });
-    // onClick function for zoomImg
-    $('img.zoomImg').click(function() {
-      $('.zoomDiv').css({opacity: '0', width: '0%'});
-    });
-  });
-</script>
 </section>
 <section>
 <section id="introduction" class="title-slide slide level1 center">
@@ -502,23 +499,23 @@ Zhang, Liang
 <div class="cell">
 <div class="cell-output-display">
 
-<div id="qqhaboprdz" class=".gt_table" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#qqhaboprdz table {
+<div id="iqjqobzale" class=".gt_table" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#iqjqobzale table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#qqhaboprdz thead, #qqhaboprdz tbody, #qqhaboprdz tfoot, #qqhaboprdz tr, #qqhaboprdz td, #qqhaboprdz th {
+#iqjqobzale thead, #iqjqobzale tbody, #iqjqobzale tfoot, #iqjqobzale tr, #iqjqobzale td, #iqjqobzale th {
   border-style: none;
 }
 
-#qqhaboprdz p {
+#iqjqobzale p {
   margin: 0;
   padding: 0;
 }
 
-#qqhaboprdz .gt_table {
+#iqjqobzale .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -544,12 +541,12 @@ Zhang, Liang
   border-left-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_caption {
+#iqjqobzale .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#qqhaboprdz .gt_title {
+#iqjqobzale .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -561,7 +558,7 @@ Zhang, Liang
   border-bottom-width: 0;
 }
 
-#qqhaboprdz .gt_subtitle {
+#iqjqobzale .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -573,7 +570,7 @@ Zhang, Liang
   border-top-width: 0;
 }
 
-#qqhaboprdz .gt_heading {
+#iqjqobzale .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -585,13 +582,13 @@ Zhang, Liang
   border-right-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_bottom_border {
+#iqjqobzale .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_col_headings {
+#iqjqobzale .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -606,7 +603,7 @@ Zhang, Liang
   border-right-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_col_heading {
+#iqjqobzale .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -626,7 +623,7 @@ Zhang, Liang
   overflow-x: hidden;
 }
 
-#qqhaboprdz .gt_column_spanner_outer {
+#iqjqobzale .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -638,15 +635,15 @@ Zhang, Liang
   padding-right: 4px;
 }
 
-#qqhaboprdz .gt_column_spanner_outer:first-child {
+#iqjqobzale .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#qqhaboprdz .gt_column_spanner_outer:last-child {
+#iqjqobzale .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#qqhaboprdz .gt_column_spanner {
+#iqjqobzale .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -658,11 +655,11 @@ Zhang, Liang
   width: 100%;
 }
 
-#qqhaboprdz .gt_spanner_row {
+#iqjqobzale .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#qqhaboprdz .gt_group_heading {
+#iqjqobzale .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -688,7 +685,7 @@ Zhang, Liang
   text-align: left;
 }
 
-#qqhaboprdz .gt_empty_group_heading {
+#iqjqobzale .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -703,15 +700,15 @@ Zhang, Liang
   vertical-align: middle;
 }
 
-#qqhaboprdz .gt_from_md > :first-child {
+#iqjqobzale .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#qqhaboprdz .gt_from_md > :last-child {
+#iqjqobzale .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#qqhaboprdz .gt_row {
+#iqjqobzale .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -730,7 +727,7 @@ Zhang, Liang
   overflow-x: hidden;
 }
 
-#qqhaboprdz .gt_stub {
+#iqjqobzale .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -743,7 +740,7 @@ Zhang, Liang
   padding-right: 5px;
 }
 
-#qqhaboprdz .gt_stub_row_group {
+#iqjqobzale .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -757,15 +754,15 @@ Zhang, Liang
   vertical-align: top;
 }
 
-#qqhaboprdz .gt_row_group_first td {
+#iqjqobzale .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#qqhaboprdz .gt_row_group_first th {
+#iqjqobzale .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#qqhaboprdz .gt_summary_row {
+#iqjqobzale .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -775,16 +772,16 @@ Zhang, Liang
   padding-right: 5px;
 }
 
-#qqhaboprdz .gt_first_summary_row {
+#iqjqobzale .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_first_summary_row.thick {
+#iqjqobzale .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#qqhaboprdz .gt_last_summary_row {
+#iqjqobzale .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -794,7 +791,7 @@ Zhang, Liang
   border-bottom-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_grand_summary_row {
+#iqjqobzale .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -804,7 +801,7 @@ Zhang, Liang
   padding-right: 5px;
 }
 
-#qqhaboprdz .gt_first_grand_summary_row {
+#iqjqobzale .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -814,7 +811,7 @@ Zhang, Liang
   border-top-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_last_grand_summary_row_top {
+#iqjqobzale .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -824,11 +821,11 @@ Zhang, Liang
   border-bottom-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_striped {
+#iqjqobzale .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#qqhaboprdz .gt_table_body {
+#iqjqobzale .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -837,7 +834,7 @@ Zhang, Liang
   border-bottom-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_footnotes {
+#iqjqobzale .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -851,7 +848,7 @@ Zhang, Liang
   border-right-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_footnote {
+#iqjqobzale .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -860,7 +857,7 @@ Zhang, Liang
   padding-right: 5px;
 }
 
-#qqhaboprdz .gt_sourcenotes {
+#iqjqobzale .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -874,7 +871,7 @@ Zhang, Liang
   border-right-color: #D3D3D3;
 }
 
-#qqhaboprdz .gt_sourcenote {
+#iqjqobzale .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -882,68 +879,68 @@ Zhang, Liang
   padding-right: 5px;
 }
 
-#qqhaboprdz .gt_left {
+#iqjqobzale .gt_left {
   text-align: left;
 }
 
-#qqhaboprdz .gt_center {
+#iqjqobzale .gt_center {
   text-align: center;
 }
 
-#qqhaboprdz .gt_right {
+#iqjqobzale .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#qqhaboprdz .gt_font_normal {
+#iqjqobzale .gt_font_normal {
   font-weight: normal;
 }
 
-#qqhaboprdz .gt_font_bold {
+#iqjqobzale .gt_font_bold {
   font-weight: bold;
 }
 
-#qqhaboprdz .gt_font_italic {
+#iqjqobzale .gt_font_italic {
   font-style: italic;
 }
 
-#qqhaboprdz .gt_super {
+#iqjqobzale .gt_super {
   font-size: 65%;
 }
 
-#qqhaboprdz .gt_footnote_marks {
+#iqjqobzale .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#qqhaboprdz .gt_asterisk {
+#iqjqobzale .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#qqhaboprdz .gt_indent_1 {
+#iqjqobzale .gt_indent_1 {
   text-indent: 5px;
 }
 
-#qqhaboprdz .gt_indent_2 {
+#iqjqobzale .gt_indent_2 {
   text-indent: 10px;
 }
 
-#qqhaboprdz .gt_indent_3 {
+#iqjqobzale .gt_indent_3 {
   text-indent: 15px;
 }
 
-#qqhaboprdz .gt_indent_4 {
+#iqjqobzale .gt_indent_4 {
   text-indent: 20px;
 }
 
-#qqhaboprdz .gt_indent_5 {
+#iqjqobzale .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
-<div id="qqhaboprdz" class="reactable html-widget " style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="qqhaboprdz">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"game_name":["一心二用PRO","连点成画PRO","我是大厨","变戏法","小狗回家","火眼金睛","社交达人","词汇学习","视觉记忆测试","事件记忆","万花筒","过目不忘PRO","图片记忆A","言语记忆A","连续再认PRO","候鸟迁徙PRO","捉虫高级简版","数感","多彩文字PRO","变色魔块PRO","候鸟迁徙PRO","察颜观色PRO","随机应变","卡片分类PRO","多变计数师","词语判断","声调判断","速算师（中级）","专注大师_中级","语义判断","三维心理旋转测试A","视角判断","图形折叠","平面展开","物体旋转","登陆月球（中级）","图形推理","数字推理","阅读判断","顺背数PRO","幸运小球PRO","密码箱","井然有序","蝴蝶照相机","位置记忆PRO","萤火虫PRO","路径学习","打靶场"],"index_name":["nc","nc","score_total","ies","mean_score","nc","fntotal","nc","nc","nc","nc","nc","bps_score","tm_dprime","dprime","cong_eff_ies","dprime","w","cong_eff_ies","ssrt","switch_cost_ies","switch_cost_ies","switch_cost_ies","switch_cost_ies","switch_cost_ies","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","mean_log_err","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc"],"dimension":["Divided Attention","Divided Attention","Divided Attention","Divided Attention","Divided Attention","Divided Attention","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Inhibition","Inhibition","Inhibition","Inhibition","Inhibition","Shifting","Shifting","Shifting","Shifting","Shifting","Speed","Speed","Speed","Speed","Speed","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Verbal STM","Verbal STM","Verbal STM","Verbal STM","Spatial STM","Spatial STM","Spatial STM","Spatial STM","Spatial STM"]},"columns":[{"id":"game_name","name":"game_name","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 28) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 29) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 30) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 31) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 32) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 33) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 34) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 35) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 36) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 37) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 38) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 39) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 40) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 41) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 42) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 43) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 44) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 45) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 46) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 47) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 48) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\n}","cell":["一心二用PRO","连点成画PRO","我是大厨","变戏法","小狗回家","火眼金睛","社交达人","词汇学习","视觉记忆测试","事件记忆","万花筒","过目不忘PRO","图片记忆A","言语记忆A","连续再认PRO","候鸟迁徙PRO","捉虫高级简版","数感","多彩文字PRO","变色魔块PRO","候鸟迁徙PRO","察颜观色PRO","随机应变","卡片分类PRO","多变计数师","词语判断","声调判断","速算师（中级）","专注大师_中级","语义判断","三维心理旋转测试A","视角判断","图形折叠","平面展开","物体旋转","登陆月球（中级）","图形推理","数字推理","阅读判断","顺背数PRO","幸运小球PRO","密码箱","井然有序","蝴蝶照相机","位置记忆PRO","萤火虫PRO","路径学习","打靶场"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"index_name","name":"index_name","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 28) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 29) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 30) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 31) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 32) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 33) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 34) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 35) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 36) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 37) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 38) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 39) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 40) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 41) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 42) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 43) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 44) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 45) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 46) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 47) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 48) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\n}","cell":["nc","nc","score_total","ies","mean_score","nc","fntotal","nc","nc","nc","nc","nc","bps_score","tm_dprime","dprime","cong_eff_ies","dprime","w","cong_eff_ies","ssrt","switch_cost_ies","switch_cost_ies","switch_cost_ies","switch_cost_ies","switch_cost_ies","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","mean_log_err","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"dimension","name":"dimension","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 28) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 29) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 30) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 31) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 32) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 33) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 34) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 35) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 36) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 37) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 38) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 39) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 40) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 41) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 42) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 43) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 44) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 45) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 46) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 47) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 48) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\n}","cell":["Divided Attention","Divided Attention","Divided Attention","Divided Attention","Divided Attention","Divided Attention","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Inhibition","Inhibition","Inhibition","Inhibition","Inhibition","Shifting","Shifting","Shifting","Shifting","Shifting","Speed","Speed","Speed","Speed","Speed","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Verbal STM","Verbal STM","Verbal STM","Verbal STM","Spatial STM","Spatial STM","Spatial STM","Spatial STM","Spatial STM"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}}],"filterable":true,"defaultPageSize":8,"showPageSizeOptions":false,"pageSizeOptions":[10,25,50,100],"paginationType":"numbers","showPagination":true,"showPageInfo":true,"minRows":1,"showSortable":true,"height":"auto","theme":{"color":"#333333","backgroundColor":"#FFFFFF","stripedColor":"rgba(128,128,128,0.05)","style":{"fontFamily":"system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"},"headerStyle":{"borderTopStyle":"solid","borderTopWidth":"2px","borderTopColor":"#D3D3D3","borderBottomStyle":"solid","borderBottomWidth":"2px","borderBottomColor":"#D3D3D3"}},"elementId":"qqhaboprdz","dataKey":"5b464eade2b07acb02986caa52557b21"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.style","tag.attribs.columns.1.style","tag.attribs.columns.2.style"],"jsHooks":[]}</script>
+<div id="iqjqobzale" class="reactable html-widget " style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="iqjqobzale">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"game_name":["一心二用PRO","连点成画PRO","我是大厨","变戏法","小狗回家","火眼金睛","社交达人","词汇学习","视觉记忆测试","事件记忆","万花筒","过目不忘PRO","图片记忆A","言语记忆A","连续再认PRO","候鸟迁徙PRO","捉虫高级简版","数感","多彩文字PRO","变色魔块PRO","候鸟迁徙PRO","察颜观色PRO","随机应变","卡片分类PRO","多变计数师","词语判断","声调判断","速算师（中级）","专注大师_中级","语义判断","三维心理旋转测试A","视角判断","图形折叠","平面展开","物体旋转","登陆月球（中级）","图形推理","数字推理","阅读判断","顺背数PRO","幸运小球PRO","密码箱","井然有序","蝴蝶照相机","位置记忆PRO","萤火虫PRO","路径学习","打靶场"],"index_name":["nc","nc","score_total","ies","mean_score","nc","fntotal","nc","nc","nc","nc","nc","bps_score","tm_dprime","dprime","cong_eff_ies","dprime","w","cong_eff_ies","ssrt","switch_cost_ies","switch_cost_ies","switch_cost_ies","switch_cost_ies","switch_cost_ies","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","mean_log_err","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc"],"dimension":["Divided Attention","Divided Attention","Divided Attention","Divided Attention","Divided Attention","Divided Attention","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Inhibition","Inhibition","Inhibition","Inhibition","Inhibition","Shifting","Shifting","Shifting","Shifting","Shifting","Speed","Speed","Speed","Speed","Speed","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Verbal STM","Verbal STM","Verbal STM","Verbal STM","Spatial STM","Spatial STM","Spatial STM","Spatial STM","Spatial STM"]},"columns":[{"id":"game_name","name":"game_name","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 28) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 29) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 30) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 31) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 32) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 33) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 34) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 35) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 36) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 37) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 38) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 39) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 40) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 41) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 42) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 43) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 44) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 45) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 46) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 47) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 48) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\n}","cell":["一心二用PRO","连点成画PRO","我是大厨","变戏法","小狗回家","火眼金睛","社交达人","词汇学习","视觉记忆测试","事件记忆","万花筒","过目不忘PRO","图片记忆A","言语记忆A","连续再认PRO","候鸟迁徙PRO","捉虫高级简版","数感","多彩文字PRO","变色魔块PRO","候鸟迁徙PRO","察颜观色PRO","随机应变","卡片分类PRO","多变计数师","词语判断","声调判断","速算师（中级）","专注大师_中级","语义判断","三维心理旋转测试A","视角判断","图形折叠","平面展开","物体旋转","登陆月球（中级）","图形推理","数字推理","阅读判断","顺背数PRO","幸运小球PRO","密码箱","井然有序","蝴蝶照相机","位置记忆PRO","萤火虫PRO","路径学习","打靶场"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"index_name","name":"index_name","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 28) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 29) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 30) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 31) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 32) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 33) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 34) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 35) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 36) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 37) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 38) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 39) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 40) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 41) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 42) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 43) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 44) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 45) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 46) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 47) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 48) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\n}","cell":["nc","nc","score_total","ies","mean_score","nc","fntotal","nc","nc","nc","nc","nc","bps_score","tm_dprime","dprime","cong_eff_ies","dprime","w","cong_eff_ies","ssrt","switch_cost_ies","switch_cost_ies","switch_cost_ies","switch_cost_ies","switch_cost_ies","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","mean_log_err","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc","nc"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"dimension","name":"dimension","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#DF536B', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#61D04F', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#28E2E5', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 28) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 29) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 30) {\n  return { backgroundColor: '#F5C710', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 31) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 32) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 33) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 34) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 35) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 36) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 37) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 38) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 39) {\n  return { backgroundColor: '#2297E6', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 40) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 41) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 42) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 43) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 44) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 45) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 46) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 47) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 48) {\n  return { backgroundColor: '#CD0BBC', color: '#FFFFFF' }\n}\n\n}","cell":["Divided Attention","Divided Attention","Divided Attention","Divided Attention","Divided Attention","Divided Attention","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Episodic Memory","Inhibition","Inhibition","Inhibition","Inhibition","Inhibition","Shifting","Shifting","Shifting","Shifting","Shifting","Speed","Speed","Speed","Speed","Speed","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Reasoning","Verbal STM","Verbal STM","Verbal STM","Verbal STM","Spatial STM","Spatial STM","Spatial STM","Spatial STM","Spatial STM"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}}],"filterable":true,"defaultPageSize":8,"showPageSizeOptions":false,"pageSizeOptions":[10,25,50,100],"paginationType":"numbers","showPagination":true,"showPageInfo":true,"minRows":1,"showSortable":true,"height":"auto","theme":{"color":"#333333","backgroundColor":"#FFFFFF","stripedColor":"rgba(128,128,128,0.05)","style":{"fontFamily":"system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"},"headerStyle":{"borderTopStyle":"solid","borderTopWidth":"2px","borderTopColor":"#D3D3D3","borderBottomStyle":"solid","borderBottomWidth":"2px","borderBottomColor":"#D3D3D3"}},"elementId":"iqjqobzale","dataKey":"5b464eade2b07acb02986caa52557b21"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.style","tag.attribs.columns.1.style","tag.attribs.columns.2.style"],"jsHooks":[]}</script>
 </div>
 </div>
 </div>
@@ -1104,23 +1101,23 @@ Zhang, Liang
 <div class="cell">
 <div class="cell-output-display">
 
-<div id="hecqtvvbio" class=".gt_table" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#hecqtvvbio table {
+<div id="pjcdrbmjni" class=".gt_table" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#pjcdrbmjni table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#hecqtvvbio thead, #hecqtvvbio tbody, #hecqtvvbio tfoot, #hecqtvvbio tr, #hecqtvvbio td, #hecqtvvbio th {
+#pjcdrbmjni thead, #pjcdrbmjni tbody, #pjcdrbmjni tfoot, #pjcdrbmjni tr, #pjcdrbmjni td, #pjcdrbmjni th {
   border-style: none;
 }
 
-#hecqtvvbio p {
+#pjcdrbmjni p {
   margin: 0;
   padding: 0;
 }
 
-#hecqtvvbio .gt_table {
+#pjcdrbmjni .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1146,12 +1143,12 @@ Zhang, Liang
   border-left-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_caption {
+#pjcdrbmjni .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#hecqtvvbio .gt_title {
+#pjcdrbmjni .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1163,7 +1160,7 @@ Zhang, Liang
   border-bottom-width: 0;
 }
 
-#hecqtvvbio .gt_subtitle {
+#pjcdrbmjni .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1175,7 +1172,7 @@ Zhang, Liang
   border-top-width: 0;
 }
 
-#hecqtvvbio .gt_heading {
+#pjcdrbmjni .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1187,13 +1184,13 @@ Zhang, Liang
   border-right-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_bottom_border {
+#pjcdrbmjni .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_col_headings {
+#pjcdrbmjni .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1208,7 +1205,7 @@ Zhang, Liang
   border-right-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_col_heading {
+#pjcdrbmjni .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1228,7 +1225,7 @@ Zhang, Liang
   overflow-x: hidden;
 }
 
-#hecqtvvbio .gt_column_spanner_outer {
+#pjcdrbmjni .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1240,15 +1237,15 @@ Zhang, Liang
   padding-right: 4px;
 }
 
-#hecqtvvbio .gt_column_spanner_outer:first-child {
+#pjcdrbmjni .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#hecqtvvbio .gt_column_spanner_outer:last-child {
+#pjcdrbmjni .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#hecqtvvbio .gt_column_spanner {
+#pjcdrbmjni .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1260,11 +1257,11 @@ Zhang, Liang
   width: 100%;
 }
 
-#hecqtvvbio .gt_spanner_row {
+#pjcdrbmjni .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#hecqtvvbio .gt_group_heading {
+#pjcdrbmjni .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1290,7 +1287,7 @@ Zhang, Liang
   text-align: left;
 }
 
-#hecqtvvbio .gt_empty_group_heading {
+#pjcdrbmjni .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1305,15 +1302,15 @@ Zhang, Liang
   vertical-align: middle;
 }
 
-#hecqtvvbio .gt_from_md > :first-child {
+#pjcdrbmjni .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#hecqtvvbio .gt_from_md > :last-child {
+#pjcdrbmjni .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#hecqtvvbio .gt_row {
+#pjcdrbmjni .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1332,7 +1329,7 @@ Zhang, Liang
   overflow-x: hidden;
 }
 
-#hecqtvvbio .gt_stub {
+#pjcdrbmjni .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1345,7 +1342,7 @@ Zhang, Liang
   padding-right: 5px;
 }
 
-#hecqtvvbio .gt_stub_row_group {
+#pjcdrbmjni .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1359,15 +1356,15 @@ Zhang, Liang
   vertical-align: top;
 }
 
-#hecqtvvbio .gt_row_group_first td {
+#pjcdrbmjni .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#hecqtvvbio .gt_row_group_first th {
+#pjcdrbmjni .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#hecqtvvbio .gt_summary_row {
+#pjcdrbmjni .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1377,16 +1374,16 @@ Zhang, Liang
   padding-right: 5px;
 }
 
-#hecqtvvbio .gt_first_summary_row {
+#pjcdrbmjni .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_first_summary_row.thick {
+#pjcdrbmjni .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#hecqtvvbio .gt_last_summary_row {
+#pjcdrbmjni .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1396,7 +1393,7 @@ Zhang, Liang
   border-bottom-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_grand_summary_row {
+#pjcdrbmjni .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1406,7 +1403,7 @@ Zhang, Liang
   padding-right: 5px;
 }
 
-#hecqtvvbio .gt_first_grand_summary_row {
+#pjcdrbmjni .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1416,7 +1413,7 @@ Zhang, Liang
   border-top-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_last_grand_summary_row_top {
+#pjcdrbmjni .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1426,11 +1423,11 @@ Zhang, Liang
   border-bottom-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_striped {
+#pjcdrbmjni .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#hecqtvvbio .gt_table_body {
+#pjcdrbmjni .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1439,7 +1436,7 @@ Zhang, Liang
   border-bottom-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_footnotes {
+#pjcdrbmjni .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1453,7 +1450,7 @@ Zhang, Liang
   border-right-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_footnote {
+#pjcdrbmjni .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1462,7 +1459,7 @@ Zhang, Liang
   padding-right: 5px;
 }
 
-#hecqtvvbio .gt_sourcenotes {
+#pjcdrbmjni .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1476,7 +1473,7 @@ Zhang, Liang
   border-right-color: #D3D3D3;
 }
 
-#hecqtvvbio .gt_sourcenote {
+#pjcdrbmjni .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1484,68 +1481,68 @@ Zhang, Liang
   padding-right: 5px;
 }
 
-#hecqtvvbio .gt_left {
+#pjcdrbmjni .gt_left {
   text-align: left;
 }
 
-#hecqtvvbio .gt_center {
+#pjcdrbmjni .gt_center {
   text-align: center;
 }
 
-#hecqtvvbio .gt_right {
+#pjcdrbmjni .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#hecqtvvbio .gt_font_normal {
+#pjcdrbmjni .gt_font_normal {
   font-weight: normal;
 }
 
-#hecqtvvbio .gt_font_bold {
+#pjcdrbmjni .gt_font_bold {
   font-weight: bold;
 }
 
-#hecqtvvbio .gt_font_italic {
+#pjcdrbmjni .gt_font_italic {
   font-style: italic;
 }
 
-#hecqtvvbio .gt_super {
+#pjcdrbmjni .gt_super {
   font-size: 65%;
 }
 
-#hecqtvvbio .gt_footnote_marks {
+#pjcdrbmjni .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#hecqtvvbio .gt_asterisk {
+#pjcdrbmjni .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#hecqtvvbio .gt_indent_1 {
+#pjcdrbmjni .gt_indent_1 {
   text-indent: 5px;
 }
 
-#hecqtvvbio .gt_indent_2 {
+#pjcdrbmjni .gt_indent_2 {
   text-indent: 10px;
 }
 
-#hecqtvvbio .gt_indent_3 {
+#pjcdrbmjni .gt_indent_3 {
   text-indent: 15px;
 }
 
-#hecqtvvbio .gt_indent_4 {
+#pjcdrbmjni .gt_indent_4 {
   text-indent: 20px;
 }
 
-#hecqtvvbio .gt_indent_5 {
+#pjcdrbmjni .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
-<div id="hecqtvvbio" class="reactable html-widget " style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="hecqtvvbio">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"dimension":["EM","EM","EM","Rsn","Rsn","Rsn","SSTM","SSTM","SSTM","Shift","Shift","Shift","Spd","Spd","Spd","WM","WM","WM","AttDiv","AttDiv","AttDiv","Inh","Inh","Inh","VSTM","VSTM","VSTM"],"game_name":["社交达人","万花筒","词汇学习","三维心理旋转测试A","图形折叠","平面展开","位置记忆PRO","路径学习","城市导航","察颜观色PRO","多变计数师","卡片分类PRO","快速归类PRO","语义判断","速算师（中级）","格子卡片","魔术师终极","方向检测","连点成画PRO","小狗回家","一心二用PRO","候鸟迁徙PRO","变色魔块PRO","多彩文字PRO","井然有序","欢乐餐厅PRO","过目不忘PRO"],"index_name":["fntotal","nc","nc","nc","nc","nc","nc","nc","nc","switch_cost_ies","switch_cost_ies","switch_cost_ies","ies","nc","nc","dprime","dprime","k","nc","mean_score","nc","cong_eff_ies","ssrt","cong_eff_ies","nc","nc","nc"],"duration":[3.33381789086517,3.08186849802372,3.35387304347826,3.0755854507811,3.0901933446895,3.07226896778435,3.91829224852071,3.686101078238,4.25924349112426,3.14755401692494,3.87763830039526,3.33197594992799,3.10473083608361,3.82597309096945,3.00027318102126,3.08346329386437,3.73571029338014,4.99155068745808,3.0230104721948,3.13445820707071,4.00007115004936,3.11847456717072,4.0094566407355,3.91619033486193,3.15203326028198,4.20003026298488,3.99910568181818]},"columns":[{"id":"dimension","name":"dimension","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\n}","cell":["EM","EM","EM","Rsn","Rsn","Rsn","SSTM","SSTM","SSTM","Shift","Shift","Shift","Spd","Spd","Spd","WM","WM","WM","AttDiv","AttDiv","AttDiv","Inh","Inh","Inh","VSTM","VSTM","VSTM"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"game_name","name":"game_name","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\n}","cell":["社交达人","万花筒","词汇学习","三维心理旋转测试A","图形折叠","平面展开","位置记忆PRO","路径学习","城市导航","察颜观色PRO","多变计数师","卡片分类PRO","快速归类PRO","语义判断","速算师（中级）","格子卡片","魔术师终极","方向检测","连点成画PRO","小狗回家","一心二用PRO","候鸟迁徙PRO","变色魔块PRO","多彩文字PRO","井然有序","欢乐餐厅PRO","过目不忘PRO"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"index_name","name":"index_name","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\n}","cell":["fntotal","nc","nc","nc","nc","nc","nc","nc","nc","switch_cost_ies","switch_cost_ies","switch_cost_ies","ies","nc","nc","dprime","dprime","k","nc","mean_score","nc","cong_eff_ies","ssrt","cong_eff_ies","nc","nc","nc"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"duration","name":"duration","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\n}","cell":["3.33","3.08","3.35","3.08","3.09","3.07","3.92","3.69","4.26","3.15","3.88","3.33","3.10","3.83","3.00","3.08","3.74","4.99","3.02","3.13","4.00","3.12","4.01","3.92","3.15","4.20","4.00"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}}],"defaultPageSize":9,"showPageSizeOptions":false,"pageSizeOptions":[10,25,50,100],"paginationType":"numbers","showPagination":true,"showPageInfo":true,"minRows":1,"showSortable":true,"height":"auto","theme":{"color":"#333333","backgroundColor":"#FFFFFF","stripedColor":"rgba(128,128,128,0.05)","style":{"fontFamily":"system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"},"headerStyle":{"borderTopStyle":"solid","borderTopWidth":"2px","borderTopColor":"#D3D3D3","borderBottomStyle":"solid","borderBottomWidth":"2px","borderBottomColor":"#D3D3D3"}},"elementId":"hecqtvvbio","dataKey":"0214b765f6e9c2a332b58cb13a8f27d1"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.style","tag.attribs.columns.1.style","tag.attribs.columns.2.style","tag.attribs.columns.3.style"],"jsHooks":[]}</script>
+<div id="pjcdrbmjni" class="reactable html-widget " style="width:auto;height:auto;"></div>
+<script type="application/json" data-for="pjcdrbmjni">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"dimension":["EM","EM","EM","Rsn","Rsn","Rsn","SSTM","SSTM","SSTM","Shift","Shift","Shift","Spd","Spd","Spd","WM","WM","WM","AttDiv","AttDiv","AttDiv","Inh","Inh","Inh","VSTM","VSTM","VSTM"],"game_name":["社交达人","万花筒","词汇学习","三维心理旋转测试A","图形折叠","平面展开","位置记忆PRO","路径学习","城市导航","察颜观色PRO","多变计数师","卡片分类PRO","快速归类PRO","语义判断","速算师（中级）","格子卡片","魔术师终极","方向检测","连点成画PRO","小狗回家","一心二用PRO","候鸟迁徙PRO","变色魔块PRO","多彩文字PRO","井然有序","欢乐餐厅PRO","过目不忘PRO"],"index_name":["fntotal","nc","nc","nc","nc","nc","nc","nc","nc","switch_cost_ies","switch_cost_ies","switch_cost_ies","ies","nc","nc","dprime","dprime","k","nc","mean_score","nc","cong_eff_ies","ssrt","cong_eff_ies","nc","nc","nc"],"duration":[3.33381789086517,3.08186849802372,3.35387304347826,3.0755854507811,3.0901933446895,3.07226896778435,3.91829224852071,3.686101078238,4.25924349112426,3.14755401692494,3.87763830039526,3.33197594992799,3.10473083608361,3.82597309096945,3.00027318102126,3.08346329386437,3.73571029338014,4.99155068745808,3.0230104721948,3.13445820707071,4.00007115004936,3.11847456717072,4.0094566407355,3.91619033486193,3.15203326028198,4.20003026298488,3.99910568181818]},"columns":[{"id":"dimension","name":"dimension","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\n}","cell":["EM","EM","EM","Rsn","Rsn","Rsn","SSTM","SSTM","SSTM","Shift","Shift","Shift","Spd","Spd","Spd","WM","WM","WM","AttDiv","AttDiv","AttDiv","Inh","Inh","Inh","VSTM","VSTM","VSTM"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"game_name","name":"game_name","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\n}","cell":["社交达人","万花筒","词汇学习","三维心理旋转测试A","图形折叠","平面展开","位置记忆PRO","路径学习","城市导航","察颜观色PRO","多变计数师","卡片分类PRO","快速归类PRO","语义判断","速算师（中级）","格子卡片","魔术师终极","方向检测","连点成画PRO","小狗回家","一心二用PRO","候鸟迁徙PRO","变色魔块PRO","多彩文字PRO","井然有序","欢乐餐厅PRO","过目不忘PRO"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"index_name","name":"index_name","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\n}","cell":["fntotal","nc","nc","nc","nc","nc","nc","nc","nc","switch_cost_ies","switch_cost_ies","switch_cost_ies","ies","nc","nc","dprime","dprime","k","nc","mean_score","nc","cong_eff_ies","ssrt","cong_eff_ies","nc","nc","nc"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"duration","name":"duration","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\nif (colInfo.id === 'dimension' & rowIndex === 1) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 2) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 3) {\n  return { backgroundColor: '#C1495D', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 4) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 5) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 6) {\n  return { backgroundColor: '#5CACB1', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 7) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 8) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 9) {\n  return { backgroundColor: '#DE559E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 10) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 11) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 12) {\n  return { backgroundColor: '#2FBCE6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 13) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 14) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 15) {\n  return { backgroundColor: '#97A9D6', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 16) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 17) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 18) {\n  return { backgroundColor: '#9E9E9E', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 19) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 20) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 21) {\n  return { backgroundColor: '#000000', color: '#FFFFFF' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 22) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 23) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 24) {\n  return { backgroundColor: '#92B758', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 25) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 26) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\nif (colInfo.id === 'dimension' & rowIndex === 27) {\n  return { backgroundColor: '#ECC234', color: '#000000' }\n}\n\n}","cell":["3.33","3.08","3.35","3.08","3.09","3.07","3.92","3.69","4.26","3.15","3.88","3.33","3.10","3.83","3.00","3.08","3.74","4.99","3.02","3.13","4.00","3.12","4.01","3.92","3.15","4.20","4.00"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}}],"defaultPageSize":9,"showPageSizeOptions":false,"pageSizeOptions":[10,25,50,100],"paginationType":"numbers","showPagination":true,"showPageInfo":true,"minRows":1,"showSortable":true,"height":"auto","theme":{"color":"#333333","backgroundColor":"#FFFFFF","stripedColor":"rgba(128,128,128,0.05)","style":{"fontFamily":"system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"},"headerStyle":{"borderTopStyle":"solid","borderTopWidth":"2px","borderTopColor":"#D3D3D3","borderBottomStyle":"solid","borderBottomWidth":"2px","borderBottomColor":"#D3D3D3"}},"elementId":"pjcdrbmjni","dataKey":"0214b765f6e9c2a332b58cb13a8f27d1"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.style","tag.attribs.columns.1.style","tag.attribs.columns.2.style","tag.attribs.columns.3.style"],"jsHooks":[]}</script>
 </div>
 </div>
 </div>
