@@ -1,3 +1,11 @@
+# pre-processing functions correction ----
+# The separate scores for face and vocation cannot be calculated
+fname_slices <- function(data, .by = NULL, .input = NULL, .extra = NULL) {
+  data |>
+    summarise(fntotal = sum(acc == 1), .by = all_of(.by))
+}
+
+# data cleaning ----
 #' Validate Raw Data
 #'
 #' This step will remove invalid data following these rules:
@@ -46,12 +54,6 @@ clean_indices_short <- function(indices, contents) {
     arrange(game_time) |>
     distinct(user_id, game_id, course_period, .keep_all = TRUE) |>
     mutate(score = if_else(index_reverse, -score, score))
-}
-
-# The separate scores for face and vocation cannot be calculated
-fname_slices <- function(data, .by = NULL, .input = NULL, .extra = NULL) {
-  data |>
-    summarise(fntotal = sum(acc == 1), .by = all_of(.by))
 }
 
 # helper functions ----
