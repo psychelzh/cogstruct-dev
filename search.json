@@ -11,7 +11,7 @@
     "href": "posts/presentations/index.html#sample-description-based-on-camp",
     "title": "Structure of cognitive abilities",
     "section": "Sample Description based on CAMP",
-    "text": "Sample Description based on CAMP\n\nTasks (creative ability not included)\n\n75 distinct tasks\n76 indices\n\nParticipants\n\n1200 participants (Mean age = 20.6, SD = 1.7, range: [17.5, 31.38]; Sex: 52.1% females, 47.9% males, 0.0% other)\n北京大学: 96; 北京联合大学: 96; 四川师范大学: 478; 天津师范大学: 536"
+    "text": "Sample Description based on CAMP\n\nTasks (creative ability not included)\n\n75 distinct tasks\n76 indices\n\nParticipants\n\n1204 participants (Mean age = 20.6, SD = 1.7, range: [17.5, 31.38]; Sex: 52.0% females, 48.0% males, 0.0% other)\n北京大学: 97; 北京联合大学: 98; 四川师范大学: 478; 天津师范大学: 537"
   },
   {
     "objectID": "posts/presentations/index.html#how-many-factors",
@@ -60,7 +60,7 @@
     "href": "posts/presentations/index.html#goodness-of-fit",
     "title": "Structure of cognitive abilities",
     "section": "Goodness of Fit",
-    "text": "Goodness of Fit\nThe desired CFI and TLI is above 0.90, and RMSEA below 0.05.\n\n\n\n\n\nhierarchical\nchisq\ndf\npvalue\nCFI\nTLI\nRMESA\n\n\n\n\nnone\n4334.68\n1448\n0\n0.81\n0.80\n0.04\n\n\nbifactor\n4127.76\n1428\n0\n0.82\n0.81\n0.04\n\n\nhighorder\n4868.35\n1475\n0\n0.78\n0.77\n0.05"
+    "text": "Goodness of Fit\nThe desired CFI and TLI is above 0.90, and RMSEA below 0.05.\n\n\n\n\n\nhierarchical\nchisq\ndf\npvalue\nCFI\nTLI\nRMESA\n\n\n\n\nnone\n3733.81\n1052\n0\n0.84\n0.83\n0.05\n\n\nbifactor\n3648.05\n1032\n0\n0.84\n0.83\n0.05\n\n\nhighorder\n4222.35\n1072\n0\n0.81\n0.80\n0.05"
   },
   {
     "objectID": "posts/presentations/index.html#loading-cutoff",
