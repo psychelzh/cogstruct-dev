@@ -22,6 +22,7 @@ projects <- targets::tar_config_yaml()
 select_list <- function(.l, ...) {
   .l[tidyselect::eval_select(expr(c(...)), .l)]
 }
+set.seed(20231019)
 ```
 
 # Introduction
