@@ -7,7 +7,7 @@ format:
   revealjs:
     code-fold: true
     include-in-header:
-      file: ../resize-image.html
+      file: ../zoom-image-header.html
 execute:
   warning: false
   message: false
