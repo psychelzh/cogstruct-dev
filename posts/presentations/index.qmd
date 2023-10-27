@@ -7,6 +7,7 @@ format:
   revealjs:
     code-fold: true
     include-in-header:
+      # https://stackoverflow.com/a/59401761/5996475
       file: ../zoom-image-header.html
 execute:
   warning: false
