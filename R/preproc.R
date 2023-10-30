@@ -28,6 +28,16 @@ validate_data <- function(data_parsed, require_keyboard) {
   data_parsed[ver_keep & dev_keep, ]
 }
 
+correct_cr <- function(data, correction) {
+  data |>
+    mutate(
+      raw_parsed = lapply(
+        raw_parsed,
+        \(raw_parsed) correct_cr_acc_issue(raw_parsed, correction)
+      )
+    )
+}
+
 #' Cleanse the calculated scores
 #'
 #' The most important job here is to remove invalid scores for those with scores
@@ -91,4 +101,10 @@ correct_device_issue <- function(data_parsed) {
 
 is_valid_device <- function(raw_parsed) {
   !"mouse" %in% unlist(str_split(raw_parsed$device, "-"))
+}
+
+correct_cr_acc_issue <- function(raw_parsed, correction) {
+  raw_parsed |>
+    select(-acc) |>
+    left_join(correction, by = c("concept", "word"))
 }

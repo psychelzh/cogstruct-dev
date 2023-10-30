@@ -29,20 +29,24 @@ targets_current <- tarflow.iquizoo::tar_prep_iquizoo(
   action_raw_data = "none",
   check_progress = FALSE
 )
-targets_main <- tarchetypes::tar_map(
-  values = contents |>
-    dplyr::distinct(game_id) |>
-    dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
-    dplyr::mutate(
-      game_id = as.character(game_id),
-      name_current = rlang::syms(
-        stringr::str_glue("raw_data_{game_id}")
-      ),
-      name_restore = rlang::syms(
-        stringr::str_glue("data_{game_name_abbr}")
-      ),
-      require_keyboard = game_name %in% games_keyboard
+config_contents <- contents |>
+  dplyr::distinct(game_id) |>
+  dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
+  dplyr::mutate(
+    game_id = as.character(game_id),
+    name_current = rlang::syms(
+      stringr::str_glue("raw_data_{game_id}")
     ),
+    name_restore = rlang::syms(
+      stringr::str_glue("data_{game_name_abbr}")
+    ),
+    require_keyboard = game_name %in% games_keyboard,
+    tar_parsed = rlang::syms(
+      stringr::str_glue("data_parsed_{game_id}")
+    )
+  )
+targets_main <- tarchetypes::tar_map(
+  values = config_contents,
   names = game_id,
   tar_target(
     data_full,
@@ -59,18 +63,34 @@ targets_main <- tarchetypes::tar_map(
     ) |>
       distinct()
   ),
-  tar_target(data_parsed, wrangle_data(data_full)),
-  tar_target(data_valid, validate_data(data_parsed, require_keyboard))
+  tar_target(data_parsed, wrangle_data(data_full))
+)
+targets_valid_raw <- list(
+  tarchetypes::tar_map(
+    values = config_contents |>
+      dplyr::filter(game_id != "380174879445893"),
+    names = game_id,
+    tar_target(
+      data_valid,
+      validate_data(tar_parsed, require_keyboard)
+    )
+  ),
+  # special case for game "人工语言": correct accuracy
+  tarchetypes::tar_map(
+    values = config_contents |>
+      dplyr::filter(game_id == "380174879445893"),
+    names = game_id,
+    tar_target(
+      data_valid,
+      validate_data(tar_parsed, require_keyboard) |>
+        correct_cr(cr_correction)
+    )
+  )
 )
 targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
   contents |>
-    dplyr::distinct(game_id) |>
-    dplyr::mutate(
-      tar_data = rlang::syms(
-        stringr::str_glue("data_valid_{game_id}")
-      )
-    ),
-  name_parsed = "tar_data", # workaround by use name from values
+    dplyr::distinct(game_id),
+  name_parsed = "data_valid", # workaround by use name from values
   action_raw_data = "preproc",
   add_combine_pre = FALSE
 )
@@ -78,7 +98,33 @@ targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
 list(
   targets_current,
   targets_main,
+  targets_valid_raw,
   targets_preproc,
+  tarchetypes::tar_file_read(
+    cr_correction,
+    "data/cr_correction.parquet",
+    read = arrow::read_parquet(!!.x)
+  ),
+  tarchetypes::tar_file_read(
+    aut_grade_scores,
+    "data/aut_grade_scores.parquet",
+    read = arrow::read_parquet(!!.x)
+  ),
+  tarchetypes::tar_file_read(
+    aut_grade_types,
+    "data/aut_grade_types.parquet",
+    read = arrow::read_parquet(!!.x)
+  ),
+  tarchetypes::tar_file_read(
+    vg_dists,
+    "data/vg_dists.parquet",
+    read = arrow::read_parquet(!!.x)
+  ),
+  tarchetypes::tar_file_read(
+    dat_w2v,
+    "data/dat_w2v.qs",
+    read = qs::qread(!!.x)
+  ),
   tarchetypes::tar_file_read(
     users_project_progress,
     "sql/progress.tmpl.sql",
@@ -98,30 +144,24 @@ list(
     indices_clean,
     clean_indices(indices, users_completed)
   ),
-  tarchetypes::tar_file_read(
-    config_indices,
-    "config/indices_filtering.csv",
-    read = read_csv(!!.x, show_col_types = FALSE) |>
-      filter(!is.na(dimension)) |>
-      mutate(game_index = str_c(game_name_abbr, index_name, sep = "."))
-  ),
   tar_target(
     indices_of_interest,
-    config_indices |>
+    indices_clean |>
       inner_join(
-        indices_clean,
-        join_by(game_name, game_name_abbr, index_name)
+        data.iquizoo::game_indices,
+        join_by(game_id, index_name == index_main)
       ) |>
-      mutate(score_adj = if_else(reversed, -score, score)) |>
+      mutate(score_adj = if_else(index_reverse, -score, score)) |>
       mutate(
         is_outlier_iqr = score %in% boxplot.stats(score)$out,
-        .by = game_index
+        .by = c(game_id, index_name)
       )
   ),
   tar_target(
     indices_wider_clean,
     indices_of_interest |>
       filter(!is_outlier_iqr) |>
+      mutate(game_index = str_c(game_name_abbr, index_name, sep = ".")) |>
       pivot_wider(
         id_cols = user_id,
         names_from = game_index,
