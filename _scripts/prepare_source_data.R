@@ -10,6 +10,7 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 8)
 )
 
+game_id_rapm <- bit64::as.integer64(265520726213317)
 path_archive <- Sys.getenv("OneDriveConsumer") |>
   fs::path("Documents/Research/archived/cogstruct-dev-archived")
 path_restore <- withr::with_dir(
@@ -160,12 +161,22 @@ list(
   tar_target(
     indices_wider_clean,
     indices_of_interest |>
-      filter(!is_outlier_iqr) |>
+      filter(
+        !is_outlier_iqr,
+        # RAPM test is not included in the factor analysis
+        game_id != game_id_rapm
+      ) |>
       mutate(game_index = str_c(game_name_abbr, index_name, sep = ".")) |>
       pivot_wider(
         id_cols = user_id,
         names_from = game_index,
         values_from = score_adj
       )
+  ),
+  tar_target(
+    indices_rapm,
+    indices_of_interest |>
+      filter(game_id == game_id_rapm) |>
+      select(user_id, index_name, score = score_adj)
   )
 )
