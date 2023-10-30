@@ -10,7 +10,8 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 8)
 )
 
-game_id_rapm <- bit64::as.integer64(265520726213317)
+game_id_rapm <- bit64::as.integer64(265520726213317) # 瑞文高级推理
+game_id_cr <- bit64::as.integer64(380174879445893) # 人工语言
 path_archive <- Sys.getenv("OneDriveConsumer") |>
   fs::path("Documents/Research/archived/cogstruct-dev-archived")
 path_restore <- withr::with_dir(
@@ -69,17 +70,17 @@ targets_main <- tarchetypes::tar_map(
 targets_valid_raw <- list(
   tarchetypes::tar_map(
     values = config_contents |>
-      dplyr::filter(game_id != "380174879445893"),
+      dplyr::filter(game_id != game_id_cr),
     names = game_id,
     tar_target(
       data_valid,
       validate_data(tar_parsed, require_keyboard)
     )
   ),
-  # special case for game "人工语言": correct accuracy
+  # correct accuracy scores for CR
   tarchetypes::tar_map(
     values = config_contents |>
-      dplyr::filter(game_id == "380174879445893"),
+      dplyr::filter(game_id == game_id_cr),
     names = game_id,
     tar_target(
       data_valid,
