@@ -9,6 +9,7 @@ format:
 execute: 
   warning: false
   message: false
+bibliography: references.bib
 ---
 
 ```{r}
@@ -91,17 +92,18 @@ scores_latent |>
   )
 ```
 
-The correlation matrix by 2nd order model is more reasonable. 
+The correlation matrix by 2nd order model is more reasonable.
 
-After excluding transfer domains (`"Reasoning"` and `"Episodic Memory"`), the most correlated 2 domains with `g` are `"Verbal STM"` and `"Spatial STM"`. However, we should decide the last one domain to include as training domain. Although a little less correlated with `g`, `Divided Attention` is recommended as the last training domain because `Inhbition` and `Speed` are not so reasonable to be included as training domains.
+After excluding transfer domains (`"Reasoning"` and `"Episodic Memory"`), the most correlated 2 domains with `g` are `"Spatial STM"` and `"Verbal STM"`. However, the correlation between them is also very high, which means that we should not include both of them as training domains. Here we include `"Spatial STM"` as the training domain [^why_spatial]. Two other selected training domains are `"Divided Attention"` and `"Inhibition"`. Note that `"Speed"` is not selected as training domain because it is not so reasonable to be included as training domain [^why_not_speed]. 
+
+[^why_spatial]: Maybe spatial stimuli are better for younger children to understand and remember than verbal ones.
+
+[^why_not_speed]: This is mainly based on intuition, but see [@takeuchi2012].
 
 # Selection Results
 
-As a reference, here we list the correlations with all latent factors for all tasks. (Rows with [pink]{.pink} background are the **transfer domains**, rows with [green]{.green} background are the **training domains**.)
-
 ```{r}
 #| label: corr-task-latent
-#| column: page
 
 dim_order <- with(
   scores_latent, 
@@ -113,7 +115,7 @@ dim_order <- with(
   sort(decreasing = TRUE) |> 
   names()
 dim_transfer <- c("Rsn", "EM")
-dim_train <- c("VSTM", "SSTM", "AttDiv")
+dim_train <- c("SSTM", "Inh", "AttDiv")
 corrs_task_dim <- indices_of_interest |> 
   left_join(
     scores_latent$highorder |> 
@@ -125,29 +127,24 @@ corrs_task_dim <- indices_of_interest |>
       all_of(c("g", dims_origin$dim_label)),
       ~ cor(score_adj, .x, use = "pairwise.complete.obs")
     ),
-    .by = game_index
+    .by = c(game_name, index_name)
   ) |> 
   inner_join(
-    select(dims_origin, game_index, dim_label),
-    by = "game_index"
-  ) |> 
-  relocate(dim_label, .after = game_index) |>
-  separate_wider_delim(
-    game_index,
-    ".",
-    names = c("game_name_abbr", "index_name"),
-    cols_remove = FALSE
-  ) |> 
-  mutate(
-    game_name = game_name_map[game_name_abbr],
-    dim_name = dim_label_map[dim_label]
+    select(dims_origin, game_name, index_name, dim_label, dim_name),
+    by = join_by(game_name, index_name)
   ) |> 
   select(
-    game_index, dim_name, game_name, g, all_of(dim_order)
+    dim_name, game_name, index_name, g, all_of(dim_order)
   )
+```
+
+As a reference, here we list the correlations with all latent factors for all tasks. (Rows with [pink]{.pink} background are the **transfer domains**, rows with [green]{.green} background are the **training domains**.)
+
+```{r}
+#| label: fig-corr-task-latent
+#| column: page
 
 corrs_task_dim |> 
-  select(-game_index) |> 
   gt::gt() |> 
   gt::fmt_number(
     columns = c("g", all_of(names(dim_label_map))),
@@ -180,7 +177,6 @@ This is relatively simple. We select the task with the largest correlation with 
 #| tbl-cap: The selected transfer tasks
 
 corrs_task_dim |> 
-  select(-game_index) |>
   filter(dim_name %in% dim_label_map[dim_transfer]) |> 
   arrange(desc(g)) |> 
   gt::gt() |> 
@@ -193,27 +189,42 @@ corrs_task_dim |>
     fill = "#FFCCCC",
     bold_target_only = TRUE,
     target_col = c(game_name, Rsn, EM)
-  )
+  ) |> 
+  gt::tab_footnote(
+    footnote = "The previous version is '词汇学习'.",
+    locations = gt::cells_body(
+      columns = game_name,
+      rows = EM == max(EM)
+    )
+  ) |>
+  gt::opt_footnote_marks("standard")
 ```
 
 ## Training Tasks (Training Group)
 
-For training tasks, we will consider the correlations with the training domain, the transfer tasks and `g`. The tasks should be most related to `g`, and the correlations between the training task and transfer task should also be matched. 
+For training tasks, we will consider the correlations with the training domain, the transfer tasks and `g`. The tasks should be most related to `g`, and the correlations between the training task and transfer task should also be matched.
+
+But here comes the question of selecting single-domain training tasks. There are two options:
+
+1. `"Divided Atetion"`: this will match the mean correlations with `g`.
+1. `"Spatial STM"`: add this as additional group to further justify the effectiveness of multi-domain training (i.e., better than single-domain WM training).
 
 ```{r}
 #| label: tbl-train-tasks-train-group
 #| tbl-cap: >
-#|   The selected training tasks (train group). The rows with darker background 
-#|   are from three different domains, and the rows with lighter background are
-#|   from the same domain.
+#|   The selected training tasks (train group). The rows with [darker background]{.green-dark} 
+#|   are from three different domains, the rows with [lighter background]{.green-lighter} are
+#|   single `"Divided Atetion"` tasks, and the rows with [lightest background]{.green} are
+#|   single `"Spatial STM"` tasks.
 
-tasks_transfer <- c("三维心理旋转测试A", "词汇学习")
-tasks_train <- c("蝴蝶照相机", "幸运小球PRO", "火眼金睛")
-tasks_train_1 <- c("密码箱", "顺背数PRO")
+tasks_transfer <- c("三维心理旋转测试A", "万花筒")
+tasks_train <- c("蝴蝶照相机", "捉虫高级简版", "我是大厨")
+tasks_train_1 <- c("小狗回家", "一心二用PRO")
+tasks_train_1_alt <- c("打靶场", "位置记忆PRO")
 corr_task_transfer <- indices_of_interest |> 
   inner_join(
-    select(dims_origin, game_index, dim_label),
-    by = "game_index"
+    select(dims_origin, game_name, index_name, dim_label, dim_name),
+    by = join_by(game_name, index_name)
   ) |> 
   filter(!dim_label %in% dim_transfer) |> 
   inner_join(
@@ -231,18 +242,18 @@ corr_task_transfer <- indices_of_interest |>
       all_of(tasks_transfer),
       ~ cor(score_adj, .x, use = "pairwise.complete.obs")
     ),
-    .by = game_index
+    .by = c(game_name, index_name)
   )
 
 corrs_task_dim |> 
   filter(dim_name %in% dim_label_map[dim_train]) |> 
   left_join(
     corr_task_transfer,
-    by = "game_index"
+    by = join_by(game_name, index_name)
   ) |>
   select(
     dim_name, game_name, 
-    g, SSTM, VSTM, AttDiv, Rsn, EM, 
+    g, SSTM, VSTM, Inh, AttDiv, Rsn, EM, 
     all_of(tasks_transfer)
   ) |> 
   arrange(desc(g)) |> 
@@ -250,12 +261,28 @@ corrs_task_dim |>
   gt::fmt_number(decimals = 2) |> 
   gtExtras::gt_highlight_rows(
     rows = game_name %in% tasks_train,
-    fill = "#55FF55"
+    fill = "#11FF11"
   ) |> 
   gtExtras::gt_highlight_rows(
     rows = game_name %in% tasks_train_1,
+    fill = "#88FF88"
+  ) |> 
+  gtExtras::gt_highlight_rows(
+    rows = game_name %in% tasks_train_1_alt,
     fill = "#CCFFCC"
-  )
+  ) |> 
+  gt::tab_footnote(
+    footnote = paste(
+      "Although '候鸟迁徙PRO' is most correlated with both g and Inhibition,",
+      "it is not selected because it is a multi-domain (`Inh` and `Shift`) task."
+    ) |> 
+      gt::md(),
+    locations = gt::cells_body(
+      columns = game_name,
+      rows = Inh == max(Inh)
+    )
+  ) |>
+  gt::opt_footnote_marks("standard")
 ```
 
 ## Training Tasks (Active Control Group)
@@ -272,7 +299,7 @@ corrs_task_dim |>
   filter(dim_name %in% dim_label_map[dim_control]) |> 
   left_join(
     corr_task_transfer,
-    by = "game_index"
+    by = join_by(game_name, index_name)
   ) |> 
   select(
     dim_name, game_name, 
