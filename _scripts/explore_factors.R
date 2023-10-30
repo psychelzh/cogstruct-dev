@@ -85,21 +85,11 @@ list(
     fs::path(store_preproc, "indices_wider_clean"),
     read = qs::qread(!!.x)
   ),
-  tarchetypes::tar_file_read(
-    game_selected,
-    "config/indices_factan.csv",
-    read = read_csv(!!.x, show_col_types = FALSE) |>
-      unite("game_index", game_name_abbr, index_name, sep = ".") |>
-      filter(include) |>
-      pull(game_index)
-  ),
-  tar_target(
-    indices_selected,
-    select(indices_wider_clean, all_of(game_selected))
-  ),
   tarchetypes::tar_map_rep(
     fact_attribution,
-    resample_fact_attribution(indices_selected, n_fact, exclude),
+    indices_wider_clean |>
+      select(-user_id) |>
+      resample_fact_attribution(n_fact, exclude),
     values = dplyr::select(config, -include),
     names = c(exclude_id, n_fact),
     batches = 10,
