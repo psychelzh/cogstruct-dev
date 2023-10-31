@@ -208,7 +208,13 @@ list(
       hclust(method = "ward.D2") |>
       dendextend::find_k() |>
       pluck("pamobject", "silinfo", "widths") |>
-      as_tibble(rownames = "game_index")
+      as_tibble(rownames = "game_index") |>
+      mutate(
+        # at least keep 5 tasks
+        include = row_number(desc(sil_width)) <= 5 |
+          sil_width > mean(sil_width),
+        .by = cluster
+      )
   ),
   tar_target(
     filte_cluster_result,
@@ -224,6 +230,6 @@ list(
         by = "game_name_abbr"
       ) |>
       relocate(game_name, .before = 1L) |>
-      write_excel_csv(".output/factcons_clustering.csv")
+      write_excel_csv("config/factcons_clustering.csv")
   )
 )
