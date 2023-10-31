@@ -70,11 +70,7 @@ targets::tar_load(
   c(users, indices_of_interest),
   store = projects$prepare_source_data$store
 )
-game_selected <- read_csv(
-  "config/indices_factan.csv",
-  show_col_types = FALSE
-) |>
-  filter(include)
+
 descr_subjects <- indices_of_interest |>
   summarise(game_date = median(game_time), .by = user_id) |>
   left_join(users, by = "user_id") |>
@@ -94,8 +90,8 @@ counts_school <- users |>
 
 -   Tasks (creative ability not included)
 
-    -   `r n_distinct(game_selected$game_name)` distinct tasks
-    -   `r nrow(distinct(game_selected, game_name, index_name))` indices
+    -   `r n_distinct(indices_of_interest$game_name)` distinct tasks
+    -   `r nrow(distinct(indices_of_interest, game_name, index_name))` indices
 
 -   Participants
 
@@ -110,9 +106,9 @@ counts_school <- users |>
 #| label: n-factors
 #| cache: true
 
-targets::tar_load(indices_selected, store = projects$explore_factors$store)
+targets::tar_load(indices_wider_clean, store = projects$explore_factors$store)
 parameters::n_factors(
-  indices_selected,
+  select(indices_wider_clean, -user_id),
   rotation = "oblimin"
 ) |>
   plot()

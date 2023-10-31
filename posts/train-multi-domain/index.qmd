@@ -1,6 +1,8 @@
 ---
 title: Task Selction in Multi-Domain Training
 author: Zhang, Liang
+date: 2023-10-27
+date-modified: last-modified
 format:
   html: 
     toc: true
