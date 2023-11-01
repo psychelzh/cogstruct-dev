@@ -141,7 +141,7 @@ parameters::n_factors(
 ```{r}
 #| label: structure-schema
 
-targets::tar_load(dims_origin, store = projects$update_factors$store)
+targets::tar_load(dims_origin, store = projects$confirm_factors$store)
 dims_origin |>
   select(game_name, index_name, dimension = dim_name) |>
   gt::gt() |>
@@ -156,8 +156,8 @@ dims_origin |>
 ```{r}
 #| label: load-cfa-results
 
-targets::tar_load(fit_origin_none, store = projects$update_factors$store)
-targets::tar_load(gof_origin, store = projects$update_factors$store)
+targets::tar_load(fit_origin_none, store = projects$confirm_factors$store)
+targets::tar_load(gof_origin, store = projects$confirm_factors$store)
 params <- parameters::model_parameters(fit_origin_none)
 ```
 
@@ -242,7 +242,7 @@ gof_origin |>
 ```{r}
 #| label: improve-load-data
 
-targets::tar_load(gof_updated, store = projects$update_factors$store)
+targets::tar_load(gof_updated, store = projects$confirm_factors$store)
 ```
 
 ## Loading Cutoff
@@ -271,7 +271,7 @@ gof_updated |>
 ```{r}
 #| label: improve-by-loading-best
 
-targets::tar_load(fit_updated_none_cutoff_good, store = projects$update_factors$store)
+targets::tar_load(fit_updated_none_cutoff_good, store = projects$confirm_factors$store)
 params <- parameters::model_parameters(fit_updated_none_cutoff_good)
 params |>
   filter(Component == "Loading") |>
@@ -317,7 +317,7 @@ gof_updated |>
 ```{r}
 #| label: improve-by-numtask-best
 
-targets::tar_load(fit_updated_none_numtask_three, store = projects$update_factors$store)
+targets::tar_load(fit_updated_none_numtask_three, store = projects$confirm_factors$store)
 params <- parameters::model_parameters(fit_updated_none_numtask_three)
 params |>
   filter(Component == "Loading") |>
@@ -364,7 +364,7 @@ gof_updated |>
 #| label: improve-by-trimdim2
 #| fig-cap: Based on the best model from task number
 
-targets::tar_load(gof_updated2, store = projects$update_factors$store)
+targets::tar_load(gof_updated2, store = projects$confirm_factors$store)
 gof_updated2 |>
   mutate(
     hierarchical = as_factor(hierarchical),
@@ -385,7 +385,7 @@ gof_updated2 |>
 ```{r}
 #| label: improve-by-trimdim2-best
 
-targets::tar_load(fit_updated2_none_trimdim_Spd, store = projects$update_factors$store)
+targets::tar_load(fit_updated2_none_trimdim_Spd, store = projects$confirm_factors$store)
 params <- parameters::model_parameters(fit_updated2_none_trimdim_Spd)
 params |>
   filter(Component == "Loading") |>

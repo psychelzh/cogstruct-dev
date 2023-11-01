@@ -10,6 +10,6 @@ g_invariance:
 explore_factors:
   script: _scripts/explore_factors.R
   store: _targets/explore_factors
-update_factors:
-  script: _scripts/update_factors.R
-  store: _targets/update_factors
+confirm_factors:
+  script: _scripts/confirm_factors.R
+  store: _targets/confirm_factors

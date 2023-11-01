@@ -4,11 +4,11 @@ author: Zhang, Liang
 date: 2023-10-27
 date-modified: last-modified
 format:
-  html: 
+  html:
     toc: true
     code-fold: true
     css: style.css
-execute: 
+execute:
   warning: false
   message: false
 bibliography: references.bib
@@ -25,35 +25,35 @@ requireNamespace("bit64")
 projects <- targets::tar_config_yaml()
 targets::tar_load(
   c(fit_origin_highorder, fit_origin_bifactor, dims_origin),
-  store = projects$update_factors$store
+  store = projects$confirm_factors$store
 )
 targets::tar_load(
   c(indices_of_interest, indices_wider_clean),
   store = projects$prepare_source_data$store
 )
-dim_label_map <- dims_origin |> 
-  distinct(dim_label, dim_name) |> 
+dim_label_map <- dims_origin |>
+  distinct(dim_label, dim_name) |>
   deframe()
-game_name_map <- data.iquizoo::game_info |> 
-  distinct(game_name_abbr, game_name) |> 
+game_name_map <- data.iquizoo::game_info |>
+  distinct(game_name_abbr, game_name) |>
   deframe()
 
 # custom functions ----
 extract_latent_scores <- function(fit) {
-  fit |> 
-    lavPredict() |> 
-    unclass() |> 
-    as_tibble() |> 
+  fit |>
+    lavPredict() |>
+    unclass() |>
+    as_tibble() |>
     relocate(g, .before = 1)
 }
 
 visualize_latent_structure <- function(scores, dim_label_map) {
   colors <- c("#4477AA", "#77AADD", "#FFFFFF", "#EE9988", "#BB4444")
-  cor_mat <- scores |> 
+  cor_mat <- scores |>
     rename_with(~ dim_label_map[.x], all_of(names(dim_label_map))) |>
     cor()
   new_order <- order(cor_mat[,"g"], decreasing = TRUE)
-  cor_mat[new_order, new_order] |> 
+  cor_mat[new_order, new_order] |>
     corrplot::corrplot(
       method = "color",
       type = "upper",
@@ -75,20 +75,20 @@ visualize_latent_structure <- function(scores, dim_label_map) {
 #| label: corr-latent
 #| fig-cap: >
 #|   Correlation among latent factors.
-#| fig-subcap: 
+#| fig-subcap:
 #|   - The bifactor model scores.
 #|   - The 2nd order model scores.
 
 scores_latent <- list(
   bifactor = fit_origin_bifactor,
   highorder = fit_origin_highorder
-) |> 
+) |>
   map(extract_latent_scores)
 
-scores_latent |> 
+scores_latent |>
   walk(
     ~ visualize_latent_structure(
-      .x, 
+      .x,
       dim_label_map
     )
   )
@@ -96,7 +96,7 @@ scores_latent |>
 
 The correlation matrix by 2nd order model is more reasonable.
 
-After excluding transfer domains (`"Reasoning"` and `"Episodic Memory"`), the most correlated 2 domains with `g` are `"Spatial STM"` and `"Verbal STM"`. However, the correlation between them is also very high, which means that we should not include both of them as training domains. Here we include `"Spatial STM"` as the training domain [^why_spatial]. Two other selected training domains are `"Divided Attention"` and `"Inhibition"`. Note that `"Speed"` is not selected as training domain because it is not so reasonable to be included as training domain [^why_not_speed]. 
+After excluding transfer domains (`"Reasoning"` and `"Episodic Memory"`), the most correlated 2 domains with `g` are `"Spatial STM"` and `"Verbal STM"`. However, the correlation between them is also very high, which means that we should not include both of them as training domains. Here we include `"Spatial STM"` as the training domain [^why_spatial]. Two other selected training domains are `"Divided Attention"` and `"Inhibition"`. Note that `"Speed"` is not selected as training domain because it is not so reasonable to be included as training domain [^why_not_speed].
 
 [^why_spatial]: Maybe spatial stimuli are better for younger children to understand and remember than verbal ones.
 
@@ -108,33 +108,33 @@ After excluding transfer domains (`"Reasoning"` and `"Episodic Memory"`), the mo
 #| label: corr-task-latent
 
 dim_order <- with(
-  scores_latent, 
+  scores_latent,
   cor(
-    select(highorder, g), 
+    select(highorder, g),
     select(highorder, -g)
   )[1, ]
-) |> 
-  sort(decreasing = TRUE) |> 
+) |>
+  sort(decreasing = TRUE) |>
   names()
 dim_transfer <- c("Rsn", "EM")
 dim_train <- c("SSTM", "Inh", "AttDiv")
-corrs_task_dim <- indices_of_interest |> 
+corrs_task_dim <- indices_of_interest |>
   left_join(
-    scores_latent$highorder |> 
+    scores_latent$highorder |>
       add_column(user_id = indices_wider_clean$user_id),
     by = "user_id"
-  ) |> 
+  ) |>
   summarise(
     across(
       all_of(c("g", dims_origin$dim_label)),
       ~ cor(score_adj, .x, use = "pairwise.complete.obs")
     ),
     .by = c(game_name, index_name)
-  ) |> 
+  ) |>
   inner_join(
     select(dims_origin, game_name, index_name, dim_label, dim_name),
     by = join_by(game_name, index_name)
-  ) |> 
+  ) |>
   select(
     dim_name, game_name, index_name, g, all_of(dim_order)
   )
@@ -146,24 +146,24 @@ As a reference, here we list the correlations with all latent factors for all ta
 #| label: fig-corr-task-latent
 #| column: page
 
-corrs_task_dim |> 
-  gt::gt() |> 
+corrs_task_dim |>
+  gt::gt() |>
   gt::fmt_number(
     columns = c("g", all_of(names(dim_label_map))),
     decimals = 2
-  ) |> 
+  ) |>
   gtExtras::gt_highlight_rows(
     rows = dim_name %in% dim_label_map[dim_transfer],
     fill = "#FFCCCC"
-  ) |> 
+  ) |>
   gtExtras::gt_highlight_rows(
     rows = dim_name %in% dim_label_map[dim_train],
     fill = "#CCFFCC"
-  ) |> 
+  ) |>
   gt::tab_header(
     title = "Task Selection Results",
     subtitle = "The most correlated task with g for each dimension/domain."
-  ) |> 
+  ) |>
   gt::opt_interactive(
     use_filters = TRUE,
     use_highlight = TRUE
@@ -178,20 +178,20 @@ This is relatively simple. We select the task with the largest correlation with 
 #| label: tbl-transfer-tasks
 #| tbl-cap: The selected transfer tasks
 
-corrs_task_dim |> 
-  filter(dim_name %in% dim_label_map[dim_transfer]) |> 
-  arrange(desc(g)) |> 
-  gt::gt() |> 
+corrs_task_dim |>
+  filter(dim_name %in% dim_label_map[dim_transfer]) |>
+  arrange(desc(g)) |>
+  gt::gt() |>
   gt::fmt_number(
     columns = c("g", all_of(names(dim_label_map))),
     decimals = 2
-  ) |> 
+  ) |>
   gtExtras::gt_highlight_rows(
     rows = Rsn == max(Rsn) | EM == max(EM),
     fill = "#FFCCCC",
     bold_target_only = TRUE,
     target_col = c(game_name, Rsn, EM)
-  ) |> 
+  ) |>
   gt::tab_footnote(
     footnote = "The previous version is '词汇学习'.",
     locations = gt::cells_body(
@@ -214,7 +214,7 @@ But here comes the question of selecting single-domain training tasks. There are
 ```{r}
 #| label: tbl-train-tasks-train-group
 #| tbl-cap: >
-#|   The selected training tasks (train group). The rows with [darker background]{.green-dark} 
+#|   The selected training tasks (train group). The rows with [darker background]{.green-dark}
 #|   are from three different domains, the rows with [lighter background]{.green-lighter} are
 #|   single `"Divided Atetion"` tasks, and the rows with [lightest background]{.green} are
 #|   single `"Spatial STM"` tasks.
@@ -223,14 +223,14 @@ tasks_transfer <- c("三维心理旋转测试A", "万花筒")
 tasks_train <- c("蝴蝶照相机", "捉虫高级简版", "我是大厨")
 tasks_train_1 <- c("小狗回家", "一心二用PRO")
 tasks_train_1_alt <- c("打靶场", "位置记忆PRO")
-corr_task_transfer <- indices_of_interest |> 
+corr_task_transfer <- indices_of_interest |>
   inner_join(
     select(dims_origin, game_name, index_name, dim_label, dim_name),
     by = join_by(game_name, index_name)
-  ) |> 
-  filter(!dim_label %in% dim_transfer) |> 
+  ) |>
+  filter(!dim_label %in% dim_transfer) |>
   inner_join(
-    indices_of_interest |> 
+    indices_of_interest |>
       filter(game_name %in% tasks_transfer) |>
       pivot_wider(
         id_cols = user_id,
@@ -238,7 +238,7 @@ corr_task_transfer <- indices_of_interest |>
         values_from = score_adj
       ),
     by = "user_id"
-  ) |> 
+  ) |>
   summarise(
     across(
       all_of(tasks_transfer),
@@ -247,37 +247,37 @@ corr_task_transfer <- indices_of_interest |>
     .by = c(game_name, index_name)
   )
 
-corrs_task_dim |> 
-  filter(dim_name %in% dim_label_map[dim_train]) |> 
+corrs_task_dim |>
+  filter(dim_name %in% dim_label_map[dim_train]) |>
   left_join(
     corr_task_transfer,
     by = join_by(game_name, index_name)
   ) |>
   select(
-    dim_name, game_name, 
-    g, SSTM, VSTM, Inh, AttDiv, Rsn, EM, 
+    dim_name, game_name,
+    g, SSTM, VSTM, Inh, AttDiv, Rsn, EM,
     all_of(tasks_transfer)
-  ) |> 
-  arrange(desc(g)) |> 
-  gt::gt() |> 
-  gt::fmt_number(decimals = 2) |> 
+  ) |>
+  arrange(desc(g)) |>
+  gt::gt() |>
+  gt::fmt_number(decimals = 2) |>
   gtExtras::gt_highlight_rows(
     rows = game_name %in% tasks_train,
     fill = "#11FF11"
-  ) |> 
+  ) |>
   gtExtras::gt_highlight_rows(
     rows = game_name %in% tasks_train_1,
     fill = "#88FF88"
-  ) |> 
+  ) |>
   gtExtras::gt_highlight_rows(
     rows = game_name %in% tasks_train_1_alt,
     fill = "#CCFFCC"
-  ) |> 
+  ) |>
   gt::tab_footnote(
     footnote = paste(
       "Although '候鸟迁徙PRO' is most correlated with both g and Inhibition,",
       "it is not selected because it is a multi-domain (`Inh` and `Shift`) task."
-    ) |> 
+    ) |>
       gt::md(),
     locations = gt::cells_body(
       columns = game_name,
@@ -297,20 +297,20 @@ For this group, the domain least correlated with g, i.e., `Shifting` is selected
 #|   The selected training tasks (control group).
 
 dim_control <- "Shift"
-corrs_task_dim |> 
-  filter(dim_name %in% dim_label_map[dim_control]) |> 
+corrs_task_dim |>
+  filter(dim_name %in% dim_label_map[dim_control]) |>
   left_join(
     corr_task_transfer,
     by = join_by(game_name, index_name)
-  ) |> 
+  ) |>
   select(
-    dim_name, game_name, 
-    g, Shift, Rsn, EM, 
+    dim_name, game_name,
+    g, Shift, Rsn, EM,
     all_of(tasks_transfer)
-  ) |> 
-  arrange(desc(g)) |> 
-  gt::gt() |> 
-  gt::fmt_number(decimals = 2) |> 
+  ) |>
+  arrange(desc(g)) |>
+  gt::gt() |>
+  gt::fmt_number(decimals = 2) |>
   gtExtras::gt_highlight_rows(
     rows = dense_rank(desc(Shift)) <= 3,
     fill = "gray"
