@@ -14,31 +14,6 @@ store_preproc <- fs::path(
   "objects"
 )
 
-output_taskorder <- function(exclude_id, mat,
-                             file_prefix = "taskorder", ...) {
-  file <- fs::path(
-    ".output",
-    str_glue("{file_prefix}_exclude-{exclude_id}.csv")
-  )
-  tibble(
-    game_index = colnames(mat)[
-      corrplot::corrMatOrder(mat, "hclust", hclust.method = "ward")
-    ]
-  ) |>
-    separate_wider_delim(
-      game_index,
-      delim = ".",
-      names = c("game_name_abbr", "index_name"),
-      cols_remove = FALSE
-    ) |>
-    left_join(
-      select(data.iquizoo::game_info, game_name, game_name_abbr),
-      by = "game_name_abbr"
-    ) |>
-    write_excel_csv(file)
-  file
-}
-
 output_factcons <- function(exclude_id, mat, ...,
                             file_prefix = "factcons",
                             dir_output = ".output/factor-consistency") {
@@ -150,11 +125,6 @@ list(
       )
   ),
   tar_target(
-    task_orders,
-    prob_one_fact_avg |>
-      pmap_chr(output_taskorder)
-  ),
-  tar_target(
     files_plots,
     prob_one_fact_avg |>
       pmap_chr(output_factcons)
@@ -167,11 +137,6 @@ list(
         mat = list(reduce(mat, `+`) / n()),
         .by = c(exclude_id, exclude)
       )
-  ),
-  tar_target(
-    task_orders_large,
-    prob_one_fact_large |>
-      pmap_chr(output_taskorder, file_prefix = "taskorder_nfact-large")
   ),
   tar_target(
     files_plots_large,
@@ -201,11 +166,16 @@ list(
   tar_target(
     cluster_result,
     prob_one_fact_avg |>
+      # keep "格子卡片" only considering n-back tests are too similar
       filter(exclude_id == 3) |>
       mutate(mat = map(mat, ~ 1 - .x)) |>
       pluck("mat", 1) |>
       as.dist() |>
-      hclust(method = "ward.D2") |>
+      hclust(method = "ward.D2")
+  ),
+  tar_target(
+    cluster_best,
+    cluster_result |>
       dendextend::find_k() |>
       pluck("pamobject", "silinfo", "widths") |>
       as_tibble(rownames = "game_index") |>
@@ -217,8 +187,8 @@ list(
       )
   ),
   tar_target(
-    filte_cluster_result,
-    cluster_result |>
+    file_cluster_best,
+    cluster_best |>
       separate_wider_delim(
         game_index,
         delim = ".",
