@@ -1,0 +1,131 @@
+---
+title: Notes on Select Best Tasks for Cognitive Sub-Domain
+author: Zhang, Liang
+date: 2023-11-01
+date-modified: last-modified
+format: 
+  html: 
+    code-fold: true
+    toc: true
+execute: 
+  warning: false
+---
+
+```{r}
+#| label: setup
+
+library(tidyverse)
+library(lavaan)
+# we need bit64 package to handle large integers
+requireNamespace("bit64")
+source("R/modeling.R")
+
+projects <- targets::tar_config_yaml()
+targets::tar_load(
+  c(dims_origin, indices_wider_clean,
+    fit_origin_bifactor, fit_origin_highorder,
+    scores_origin),
+  store = projects$confirm_factors$store
+)
+exclude <- c(
+  "CalcSpdMed.nc", "Lexic.nc", "Tone.nc",
+  "NsymNCmp.w", "TOVAS.dprime"
+)
+task_loadings <- list(
+  highorder = fit_origin_highorder, 
+  bifactor = fit_origin_bifactor
+) |>
+  map(
+    ~ parameters::model_parameters(.x, standardize = TRUE) |> 
+      filter(Component == "Loading") |>
+      as_tibble()
+  ) |> 
+  bind_rows(.id = "model")
+```
+
+以下是一些基本的前提要求：
+
+- 每个维度选择3个任务
+- 保证选择出来的任务不能太类似
+- 保证拟合优度达标
+- 排除n-back任务
+- 排除专注大师_中级（和速算师太类似）
+- 排除词汇判断、声调判断（和语义判断太类似）
+- 排除数感（目前它被归入抑制类任务，不太典型）
+- 排除捉虫高级版（目前它被归入抑制类任务，不太典型）
+
+基于以上规则然后选择每个维度载荷最高的任务（基于2nd order model）：
+
+```{r}
+#| label: select-results
+selection <- task_loadings |> 
+  filter(
+    To != "g", 
+    !From %in% exclude, 
+    model == "highorder"
+  ) |> 
+  slice_max(Coefficient, n = 3, by = To)
+selection |> 
+  separate_wider_delim(
+    From, ".",
+    names = c("game_name_abbr", "index_name")
+  ) |> 
+  left_join(data.iquizoo::game_info, by = "game_name_abbr") |> 
+  select(game_name, dim_label = To, load = Coefficient) |> 
+  gt::gt() |> 
+  gt::opt_interactive(page_size_default = 12)
+```
+
+这些任务的拟合情况总结（整体上模型拟合优度良好）：
+
+```{r}
+#| label: show-fit-measure
+
+fit <- selection |> 
+  prepare_model(
+    col_dim = "To", 
+    col_task = "From", 
+    hierarchical = "bifactor"
+  ) |> 
+  fit_cfa(indices_wider_clean, orthogonal = TRUE)
+summary(fit, fit.measures = TRUE, standardized = TRUE)
+```
+
+<!-- TODO: 加入简短版本拟合情况 -->
+
+```{r}
+#| eval: false
+
+cor_task_dim <- indices_wider_clean |> 
+  pivot_longer(
+    -user_id,
+    names_to = "game_index",
+    values_to = "score_game"
+  ) |> 
+  inner_join(dims_origin, by = "game_index") |> 
+  inner_join(
+    scores_origin |> 
+      pivot_longer(
+        -c(hierarchical, user_id),
+        names_to = "dim_label",
+        values_to = "score_latent"
+      ),
+    by = c("user_id", "dim_label"),
+    relationship = "many-to-many"
+  ) |> 
+  summarise(
+    r = cor(score_game, score_latent, use = "pairwise"),
+    .by = c(hierarchical, game_index, dim_label)
+  )
+selection_1 <- cor_task_dim |> 
+  filter(!game_index %in% exclude, hierarchical == "highorder") |> 
+  slice_max(r, n = 3, by = dim_label)
+fit_1 <- selection_1 |> 
+  prepare_model(
+    col_dim = "dim_label", 
+    col_task = "game_index", 
+    hierarchical = "bifactor"
+  ) |> 
+  fit_cfa(indices_wider_clean, orthogonal = TRUE)
+summary(fit_1, fit.measures = TRUE, standardized = TRUE)
+```
