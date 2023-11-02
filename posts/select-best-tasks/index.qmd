@@ -29,7 +29,8 @@ targets::tar_load(
 )
 exclude <- c(
   "CalcSpdMed.nc", "Lexic.nc", "Tone.nc",
-  "NsymNCmp.w", "TOVAS.dprime"
+  "NsymNCmp.w", "TOVAS.dprime", 
+  "AntiSac.ies", "FPTPro.nc"
 )
 task_loadings <- list(
   highorder = fit_origin_highorder, 
@@ -51,8 +52,8 @@ task_loadings <- list(
 - 排除n-back任务
 - 排除专注大师_中级（和速算师太类似）
 - 排除词汇判断、声调判断（和语义判断太类似）
-- 排除数感（目前它被归入抑制类任务，不太典型）
-- 排除捉虫高级版（目前它被归入抑制类任务，不太典型）
+- 排除数感、捉虫高级版（目前被归入抑制类任务，不太典型）
+- 排除连点成画、变戏法（目前被归入分配注意类任务，不太典型）
 
 基于以上规则然后选择每个维度载荷最高的任务（基于2nd order model）：
 
