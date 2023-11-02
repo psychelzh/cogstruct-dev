@@ -11,7 +11,7 @@ tar_option_set(
 )
 
 game_id_rapm <- bit64::as.integer64(265520726213317) # 瑞文高级推理
-game_id_cr <- bit64::as.integer64(380174879445893) # 人工语言
+game_id_cr <- bit64::as.integer64(380174879445893) # 人工词典
 path_archive <- Sys.getenv("OneDriveConsumer") |>
   fs::path("Documents/Research/archived/cogstruct-dev-archived")
 path_restore <- withr::with_dir(
