@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://github.com/psychelzh/cogstruct-dev/posts/presentations/index.html</loc>
-    <lastmod>2023-11-01T03:13:44.801Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/psychelzh/cogstruct-dev/index.html</loc>
-    <lastmod>2023-11-01T03:13:41.233Z</lastmod>
-  </url>
-  <url>
-    <loc>https://github.com/psychelzh/cogstruct-dev/about.html</loc>
-    <lastmod>2023-11-01T03:13:39.357Z</lastmod>
+    <loc>https://github.com/psychelzh/cogstruct-dev/posts/select-best-tasks/index.html</loc>
+    <lastmod>2023-11-02T07:45:29.357Z</lastmod>
   </url>
   <url>
     <loc>https://github.com/psychelzh/cogstruct-dev/posts/train-multi-domain/index.html</loc>
-    <lastmod>2023-11-01T03:13:42.857Z</lastmod>
+    <lastmod>2023-11-02T07:45:27.873Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/psychelzh/cogstruct-dev/index.html</loc>
+    <lastmod>2023-11-02T07:45:26.149Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/psychelzh/cogstruct-dev/about.html</loc>
+    <lastmod>2023-11-02T07:45:26.653Z</lastmod>
+  </url>
+  <url>
+    <loc>https://github.com/psychelzh/cogstruct-dev/posts/presentations/index.html</loc>
+    <lastmod>2023-11-02T07:45:28.569Z</lastmod>
   </url>
 </urlset>

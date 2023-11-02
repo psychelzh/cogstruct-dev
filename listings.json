@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/select-best-tasks/index.html",
       "/posts/train-multi-domain/index.html",
       "/posts/presentations/index.html"
     ]
