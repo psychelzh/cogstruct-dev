@@ -20,6 +20,7 @@ thresh_by_cutoff <- function(params, level) {
     filter(Coefficient >= cutoff_loadings[level]) |>
     filter(n() >= 3, .by = To)
 }
+
 thresh_by_numtask <- function(params, level) {
   cutoff_numtasks <- c(three = 3, four = 4)
   params |>
@@ -29,11 +30,22 @@ thresh_by_numtask <- function(params, level) {
       by = To
     )
 }
+
 thresh_by_trimdim <- function(params, level) {
   params |>
     filter(To != level)
 }
-add_targets_fitting <- function(dims, col_dim, col_task, suffix = NULL) {
+
+extract_latent_scores <- function(fit) {
+  fit |>
+    lavPredict() |>
+    unclass() |>
+    as_tibble()
+}
+
+add_targets_fitting <- function(dims, data, col_dim, col_task,
+                                add_scores = TRUE,
+                                suffix = NULL) {
   add_suffix <- function(name) {
     if (!is.null(suffix)) {
       name <- paste0(name, "_", suffix)
@@ -43,31 +55,40 @@ add_targets_fitting <- function(dims, col_dim, col_task, suffix = NULL) {
   list(
     tar_target_raw(
       add_suffix("model"),
-      rlang::expr(
+      substitute(
         prepare_model(
-          !!rlang::enexpr(dims),
+          dims,
           hierarchical = hierarchical,
-          col_dim = !!col_dim,
-          col_task = !!col_task
+          col_dim = col_dim,
+          col_task = col_task
         )
       )
     ),
     tar_target_raw(
       add_suffix("fit"),
-      rlang::expr(
+      bquote(
         fit_cfa(
-          !!rlang::sym(add_suffix("model")),
-          indices_wider_clean,
+          .(as.symbol(add_suffix("model"))),
+          .(substitute(data)),
           orthogonal = hierarchical == "bifactor"
         )
       )
     ),
     tar_target_raw(
       add_suffix("gof"),
-      rlang::expr(
-        fitmeasures(!!rlang::sym(add_suffix("fit")))
+      bquote(
+        fitmeasures(.(as.symbol(add_suffix("fit"))))
       )
-    )
+    ),
+    if (add_scores) {
+      tar_target_raw(
+        add_suffix("scores"),
+        bquote(
+          extract_latent_scores(.(as.symbol(add_suffix("fit")))) |>
+            add_column(user_id = .(substitute(data))$user_id, .before = 1)
+        )
+      )
+    }
   )
 }
 
@@ -95,6 +116,7 @@ targets_origin <- tarchetypes::tar_map(
   values = hypers_model,
   add_targets_fitting(
     dims_origin,
+    indices_wider_clean,
     suffix = "origin",
     col_dim = "dim_label",
     col_task = "game_index"
@@ -112,9 +134,11 @@ targets_updation <- tarchetypes::tar_map(
       values = hypers_model,
       add_targets_fitting(
         dims_updated,
+        indices_wider_clean,
         suffix = "updated",
         col_dim = "To",
-        col_task = "From"
+        col_task = "From",
+        add_scores = FALSE
       )
     )
   )
@@ -132,9 +156,11 @@ targets_updation2 <- tarchetypes::tar_map(
       values = hypers_model,
       add_targets_fitting(
         dims_updated2,
+        indices_wider_clean,
         suffix = "updated2",
         col_dim = "To",
-        col_task = "From"
+        col_task = "From",
+        add_scores = FALSE
       )
     )
   )
@@ -147,7 +173,7 @@ targets_gof <- lapply(
       name,
       targets_updation,
       cols_targets = c("method", "level"),
-      fun = \(x) as_tibble_row(unclass(x))
+      fun_pre = \(x) as_tibble_row(unclass(x))
     )
   }
 )
@@ -159,7 +185,7 @@ targets_gof2 <- lapply(
       name,
       targets_updation2,
       cols_targets = c("method", "level"),
-      fun = \(x) as_tibble_row(unclass(x))
+      fun_pre = \(x) as_tibble_row(unclass(x))
     )
   }
 )
@@ -191,7 +217,13 @@ list(
     gof_origin,
     targets_origin,
     cols_targets = "hierarchical",
-    fun = \(x) as_tibble_row(unclass(x))
+    fun_pre = \(x) as_tibble_row(unclass(x))
+  ),
+  combine_targets(
+    scores_origin,
+    targets_origin,
+    cols_targets = "hierarchical",
+    fun_post = \(.data) .data |> relocate(g, .after = user_id)
   ),
   tar_target(
     model_params_ref,
