@@ -29,7 +29,7 @@ output_factcons <- function(exclude_id, mat, ...,
     type = "upper",
     method = "color",
     order = "hclust",
-    hclust.method = "ward",
+    hclust.method = "ward.D2",
     col.lim = c(0, 1),
     col = corrplot::COL2("RdBu")
   )
