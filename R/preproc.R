@@ -28,6 +28,7 @@ validate_data <- function(data_parsed, require_keyboard) {
   data_parsed[ver_keep & dev_keep, ]
 }
 
+#' Correct raw data of category retrieval
 correct_cr <- function(data, correction) {
   data |>
     mutate(
