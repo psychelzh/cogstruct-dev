@@ -102,31 +102,7 @@ list(
   targets_main,
   targets_valid_raw,
   targets_preproc,
-  tarchetypes::tar_file_read(
-    cr_correction,
-    "data/cr_correction.parquet",
-    read = arrow::read_parquet(!!.x)
-  ),
-  tarchetypes::tar_file_read(
-    aut_grade_scores,
-    "data/aut_grade_scores.parquet",
-    read = arrow::read_parquet(!!.x)
-  ),
-  tarchetypes::tar_file_read(
-    aut_grade_types,
-    "data/aut_grade_types.parquet",
-    read = arrow::read_parquet(!!.x)
-  ),
-  tarchetypes::tar_file_read(
-    vg_dists,
-    "data/vg_dists.parquet",
-    read = arrow::read_parquet(!!.x)
-  ),
-  tarchetypes::tar_file_read(
-    dat_w2v,
-    "data/dat_w2v.qs",
-    read = qs::qread(!!.x)
-  ),
+  tar_prep_creativity(),
   tarchetypes::tar_file_read(
     users_project_progress,
     "sql/progress.tmpl.sql",
