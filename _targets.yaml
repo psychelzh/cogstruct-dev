@@ -1,6 +1,9 @@
 prepare_source_data:
   script: _scripts/prepare_source_data.R
   store: _targets/prepare_source_data
+prepare_source_data_retest:
+  script: _scripts/prepare_source_data_retest.R
+  store: _targets/prepare_source_data_retest
 preproc_short:
   script: _scripts/preproc_short.R
   store: _targets/preproc_short
