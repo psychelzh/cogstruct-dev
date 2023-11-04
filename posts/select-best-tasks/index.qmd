@@ -111,8 +111,14 @@ dim_task_sel |>
       rows = ver_major_latest > ver_major
     )
   ) |> 
+  gt::tab_footnote(
+    paste(
+      "Based on 75% quantile,",
+      "i.e., 75% people will finish the task within given time (unit: minutes)."
+    ),
+    gt::cells_column_labels(dur_min)
+  ) |> 
   gt::opt_footnote_marks("standard")
-  # gt::opt_interactive(page_size_default = 12)
 ```
 
 这些任务的拟合情况总结（整体上模型拟合优度良好）：
