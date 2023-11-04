@@ -89,8 +89,10 @@ list(
   targets_valid_raw,
   targets_preproc,
   targets_reliabilty,
-  tarchetypes::tar_combine(
+  combine_targets(
     reliability,
-    targets_reliabilty$reliability
+    targets_reliabilty,
+    cols_targets = "game_id",
+    fun_post = \(.data) .data |> mutate(game_id = bit64::as.integer64(game_id))
   )
 )

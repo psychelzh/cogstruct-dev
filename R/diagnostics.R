@@ -5,21 +5,22 @@ calc_reliability <- function(indices) {
       by = join_by(game_id, index_name == index_main)
     ) |>
     filter(is.finite(score)) |>
-    group_by(user_id, game_version, index_name) |>
+    mutate(ver_major = str_extract(game_version, "\\d")) |>
+    group_by(user_id, ver_major, index_name) |>
     filter(row_number(desc(game_time)) <= 2) |>
     mutate(is_retest = row_number(game_time) > 1) |>
     ungroup() |>
-    filter(sum(is_retest) > 30, .by = c(game_version, index_name)) |>
+    filter(sum(is_retest) > 30, .by = c(ver_major, index_name)) |>
     mutate(
       occasion = case_match(
         row_number(game_time),
         1 ~ "test",
         2 ~ "retest"
       ),
-      .by = c(user_id, game_version, index_name)
+      .by = c(user_id, ver_major, index_name)
     ) |>
     pivot_wider(
-      id_cols = c(game_id, game_version, user_id, index_name),
+      id_cols = c(ver_major, user_id, index_name),
       names_from = occasion,
       values_from = score
     ) |>
@@ -36,7 +37,7 @@ calc_reliability <- function(indices) {
           pick(c(test, retest)),
           method = "mcd"
         ),
-        .by = c(game_version, index_name)
+        .by = c(ver_major, index_name)
       ),
     .id = "origin"
   ) |>
@@ -47,6 +48,6 @@ calc_reliability <- function(indices) {
         # use ICC(2, 1)
         icc = psych::ICC(pick(test, retest))$results$ICC[[2]]
       ),
-      .by = c(game_id, game_version, origin, index_name)
+      .by = c(ver_major, origin, index_name)
     )
 }
