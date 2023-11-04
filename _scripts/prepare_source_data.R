@@ -10,6 +10,13 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 8)
 )
 
+read_archived <- function(...) {
+  select(
+    targets::tar_read(...),
+    !contains("name")
+  )
+}
+
 game_id_rapm <- bit64::as.integer64(265520726213317) # 瑞文高级推理
 # 注意警觉, 注意指向: 1.0.0 records device for all right arrow resp as "mouse"
 game_id_dev_err <- bit64::as.integer64(c(380173315257221, 380174783693701))
@@ -53,14 +60,7 @@ targets_main <- tarchetypes::tar_map(
     data_full,
     bind_rows(
       select(name_current, -project_id),
-      purrr::possibly(
-        \(...) {
-          select(
-            targets::tar_read(...),
-            !contains("name")
-          )
-        }
-      )(name_restore, store = path_restore)
+      possibly(read_archived)(name_restore, store = path_restore)
     ) |>
       distinct()
   ),
