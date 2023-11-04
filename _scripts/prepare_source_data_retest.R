@@ -53,6 +53,29 @@ targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
   add_combine_pre = FALSE
 )
 
+targets_reliabilty <- tarchetypes::tar_map(
+  values = contents |>
+    dplyr::distinct(game_id) |>
+    data.iquizoo::match_preproc(type = "semi") |>
+    dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
+    dplyr::mutate(
+      game_id_rel = dplyr::coalesce(game_id_parallel, game_id)
+    ) |>
+    dplyr::summarise(
+      tar_indices = rlang::syms(
+        stringr::str_glue("indices_{game_id}")
+      ) |>
+        list(),
+      .by = game_id_rel
+    ) |>
+    dplyr::mutate(game_id_rel = as.character(game_id_rel)),
+  names = game_id_rel,
+  tar_target(
+    reliability,
+    calc_reliability(bind_rows(tar_indices))
+  )
+)
+
 # Replace the target list below with your own:
 list(
   tarflow.iquizoo::tar_prep_iquizoo(
@@ -64,5 +87,10 @@ list(
   # more targets goes here
   tar_prep_creativity(),
   targets_valid_raw,
-  targets_preproc
+  targets_preproc,
+  targets_reliabilty,
+  tarchetypes::tar_combine(
+    reliability,
+    targets_reliabilty$reliability
+  )
 )
