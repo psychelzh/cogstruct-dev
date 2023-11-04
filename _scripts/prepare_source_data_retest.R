@@ -42,7 +42,7 @@ targets_valid_raw <- tarchetypes::tar_map(
   names = game_id,
   tar_target(
     data_valid,
-    validate_data(tar_parsed, require_keyboard)
+    tar_parsed[check_device(tar_parsed, require_keyboard), ]
   )
 )
 targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
