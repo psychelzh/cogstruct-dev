@@ -102,14 +102,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </script>
 <script async="" src="https://hypothes.is/embed.js"></script>
 
-<script src="../../site_libs/core-js-2.5.3/shim.min.js"></script>
-<script src="../../site_libs/react-18.2.0/react.min.js"></script>
-<script src="../../site_libs/react-18.2.0/react-dom.min.js"></script>
-<script src="../../site_libs/reactwidget-1.0.0/react-tools.js"></script>
-<script src="../../site_libs/htmlwidgets-1.6.2/htmlwidgets.js"></script>
-<link href="../../site_libs/reactable-0.4.4/reactable.css" rel="stylesheet">
-<script src="../../site_libs/reactable-binding-0.4.4/reactable.js"></script>
-
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -183,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">November 2, 2023</p>
+      <p class="date-modified">November 4, 2023</p>
     </div>
   </div>
     
@@ -208,21 +200,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    scores_origin),</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">store =</span> projects<span class="sc">$</span>confirm_factors<span class="sc">$</span>store</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>exclude <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CalcSpdMed.nc"</span>, <span class="st">"Lexic.nc"</span>, <span class="st">"Tone.nc"</span>,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"NsymNCmp.w"</span>, <span class="st">"TOVAS.dprime"</span>, </span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"AntiSac.ies"</span>, <span class="st">"FPTPro.nc"</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>task_loadings <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">highorder =</span> fit_origin_highorder, </span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="at">bifactor =</span> fit_origin_bifactor</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> parameters<span class="sc">::</span><span class="fu">model_parameters</span>(.x, <span class="at">standardize =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(Component <span class="sc">==</span> <span class="st">"Loading"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">as_tibble</span>()</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="at">.id =</span> <span class="st">"model"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_load</span>(</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(indices, durations),</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">store =</span> projects<span class="sc">$</span>prepare_source_data<span class="sc">$</span>store</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_load</span>(</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  reliability,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="at">store =</span> projects<span class="sc">$</span>prepare_source_data_retest<span class="sc">$</span>store</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>exclude <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"CalcSpdMed.nc"</span>, <span class="st">"Lexic.nc"</span>, <span class="st">"Tone.nc"</span>,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="st">"NsymNCmp.w"</span>, <span class="st">"TOVAS.dprime"</span>, </span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="st">"AntiSac.ies"</span>, <span class="st">"FPTPro.nc"</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>task_loadings <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">highorder =</span> fit_origin_highorder, </span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">bifactor =</span> fit_origin_bifactor</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map</span>(</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="sc">~</span> parameters<span class="sc">::</span><span class="fu">model_parameters</span>(.x, <span class="at">standardize =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(Component <span class="sc">==</span> <span class="st">"Loading"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>      <span class="fu">as_tibble</span>()</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="at">.id =</span> <span class="st">"model"</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>game_ver_latest <span class="ot">&lt;-</span> indices <span class="sc">|&gt;</span> </span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">ver_major_latest =</span> <span class="fu">max</span>(<span class="fu">str_extract</span>(game_version, <span class="st">"</span><span class="sc">\\</span><span class="st">d"</span>)), </span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> game_id</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>以下是一些基本的前提要求：</p>
@@ -240,42 +245,66 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>selection <span class="ot">&lt;-</span> task_loadings <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>dim_task_sel <span class="ot">&lt;-</span> task_loadings <span class="sc">|&gt;</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    To <span class="sc">!=</span> <span class="st">"g"</span>, </span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="sc">!</span>From <span class="sc">%in%</span> exclude, </span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    model <span class="sc">==</span> <span class="st">"highorder"</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(Coefficient, <span class="at">n =</span> <span class="dv">3</span>, <span class="at">by =</span> To)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>selection <span class="sc">|&gt;</span> </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>dim_task_sel <span class="sc">|&gt;</span> </span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    From, <span class="st">"."</span>,</span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"game_name_abbr"</span>, <span class="st">"index_name"</span>)</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(data.iquizoo<span class="sc">::</span>game_info, <span class="at">by =</span> <span class="st">"game_name_abbr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(game_name, <span class="at">dim_label =</span> To, <span class="at">load =</span> Coefficient) <span class="sc">|&gt;</span> </span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">opt_interactive</span>(<span class="at">page_size_default =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(game_ver_latest, <span class="at">by =</span> <span class="st">"game_id"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(durations, <span class="at">by =</span> <span class="st">"game_id"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    reliability <span class="sc">|&gt;</span> </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        origin <span class="sc">==</span> <span class="st">"rm_out"</span>,</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        ver_major <span class="sc">==</span> <span class="fu">max</span>(ver_major), </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">.by =</span> game_id</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">join_by</span>(game_id, index_name)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    game_id, game_name, <span class="at">dim_label =</span> To, <span class="at">load =</span> Coefficient, </span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">dur_min =</span> numeric.p75, <span class="at">N =</span> n, r, icc,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    ver_major_latest, ver_major</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="sc">-</span>N) <span class="sc">|&gt;</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">cols_hide</span>(<span class="fu">contains</span>(<span class="st">"ver_major"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">tab_footnote</span>(</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Reliability measure is based on an older version."</span>,</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">cells_body</span>(</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">columns =</span> game_name,</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">rows =</span> ver_major_latest <span class="sc">&gt;</span> ver_major</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">opt_footnote_marks</span>(<span class="st">"standard"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 
-<div id="vaohulzbcj" class=".gt_table" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#vaohulzbcj table {
+<div id="cnebibiwyq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cnebibiwyq table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#vaohulzbcj thead, #vaohulzbcj tbody, #vaohulzbcj tfoot, #vaohulzbcj tr, #vaohulzbcj td, #vaohulzbcj th {
+#cnebibiwyq thead, #cnebibiwyq tbody, #cnebibiwyq tfoot, #cnebibiwyq tr, #cnebibiwyq td, #cnebibiwyq th {
   border-style: none;
 }
 
-#vaohulzbcj p {
+#cnebibiwyq p {
   margin: 0;
   padding: 0;
 }
 
-#vaohulzbcj .gt_table {
+#cnebibiwyq .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -301,12 +330,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_caption {
+#cnebibiwyq .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#vaohulzbcj .gt_title {
+#cnebibiwyq .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -318,7 +347,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#vaohulzbcj .gt_subtitle {
+#cnebibiwyq .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -330,7 +359,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#vaohulzbcj .gt_heading {
+#cnebibiwyq .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -342,13 +371,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_bottom_border {
+#cnebibiwyq .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_col_headings {
+#cnebibiwyq .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -363,7 +392,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_col_heading {
+#cnebibiwyq .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -383,7 +412,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#vaohulzbcj .gt_column_spanner_outer {
+#cnebibiwyq .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -395,15 +424,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#vaohulzbcj .gt_column_spanner_outer:first-child {
+#cnebibiwyq .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vaohulzbcj .gt_column_spanner_outer:last-child {
+#cnebibiwyq .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vaohulzbcj .gt_column_spanner {
+#cnebibiwyq .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -415,11 +444,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#vaohulzbcj .gt_spanner_row {
+#cnebibiwyq .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#vaohulzbcj .gt_group_heading {
+#cnebibiwyq .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -445,7 +474,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#vaohulzbcj .gt_empty_group_heading {
+#cnebibiwyq .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -460,15 +489,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#vaohulzbcj .gt_from_md > :first-child {
+#cnebibiwyq .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vaohulzbcj .gt_from_md > :last-child {
+#cnebibiwyq .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vaohulzbcj .gt_row {
+#cnebibiwyq .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -487,7 +516,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#vaohulzbcj .gt_stub {
+#cnebibiwyq .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -500,7 +529,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#vaohulzbcj .gt_stub_row_group {
+#cnebibiwyq .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -514,15 +543,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#vaohulzbcj .gt_row_group_first td {
+#cnebibiwyq .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#vaohulzbcj .gt_row_group_first th {
+#cnebibiwyq .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#vaohulzbcj .gt_summary_row {
+#cnebibiwyq .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -532,16 +561,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#vaohulzbcj .gt_first_summary_row {
+#cnebibiwyq .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_first_summary_row.thick {
+#cnebibiwyq .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#vaohulzbcj .gt_last_summary_row {
+#cnebibiwyq .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -551,7 +580,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_grand_summary_row {
+#cnebibiwyq .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -561,7 +590,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#vaohulzbcj .gt_first_grand_summary_row {
+#cnebibiwyq .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -571,7 +600,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_last_grand_summary_row_top {
+#cnebibiwyq .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -581,11 +610,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_striped {
+#cnebibiwyq .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vaohulzbcj .gt_table_body {
+#cnebibiwyq .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -594,7 +623,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_footnotes {
+#cnebibiwyq .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -608,7 +637,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_footnote {
+#cnebibiwyq .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -617,7 +646,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#vaohulzbcj .gt_sourcenotes {
+#cnebibiwyq .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -631,7 +660,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#vaohulzbcj .gt_sourcenote {
+#cnebibiwyq .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -639,83 +668,300 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#vaohulzbcj .gt_left {
+#cnebibiwyq .gt_left {
   text-align: left;
 }
 
-#vaohulzbcj .gt_center {
+#cnebibiwyq .gt_center {
   text-align: center;
 }
 
-#vaohulzbcj .gt_right {
+#cnebibiwyq .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vaohulzbcj .gt_font_normal {
+#cnebibiwyq .gt_font_normal {
   font-weight: normal;
 }
 
-#vaohulzbcj .gt_font_bold {
+#cnebibiwyq .gt_font_bold {
   font-weight: bold;
 }
 
-#vaohulzbcj .gt_font_italic {
+#cnebibiwyq .gt_font_italic {
   font-style: italic;
 }
 
-#vaohulzbcj .gt_super {
+#cnebibiwyq .gt_super {
   font-size: 65%;
 }
 
-#vaohulzbcj .gt_footnote_marks {
+#cnebibiwyq .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#vaohulzbcj .gt_asterisk {
+#cnebibiwyq .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#vaohulzbcj .gt_indent_1 {
+#cnebibiwyq .gt_indent_1 {
   text-indent: 5px;
 }
 
-#vaohulzbcj .gt_indent_2 {
+#cnebibiwyq .gt_indent_2 {
   text-indent: 10px;
 }
 
-#vaohulzbcj .gt_indent_3 {
+#cnebibiwyq .gt_indent_3 {
   text-indent: 15px;
 }
 
-#vaohulzbcj .gt_indent_4 {
+#cnebibiwyq .gt_indent_4 {
   text-indent: 20px;
 }
 
-#vaohulzbcj .gt_indent_5 {
+#cnebibiwyq .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
-<div id="vaohulzbcj" class="reactable html-widget " style="width:auto;height:auto;"></div>
-<script type="application/json" data-for="vaohulzbcj">{"x":{"tag":{"name":"Reactable","attribs":{"data":{"game_name":["小狗回家","一心二用PRO","我是大厨","万花筒","社交达人","词汇学习","候鸟迁徙PRO","多彩文字PRO","变色魔块PRO","察颜观色PRO","随机应变","多变计数师","速算师（中级）","语义判断","舒尔特方格（中级）","三维心理旋转测试A","图形折叠","图形推理","幸运小球PRO","井然有序","顺背数PRO","蝴蝶照相机","位置记忆PRO","打靶场"],"dim_label":["AttDiv","AttDiv","AttDiv","EM","EM","EM","Inh","Inh","Inh","Shift","Shift","Shift","Spd","Spd","Spd","Rsn","Rsn","Rsn","VSTM","VSTM","VSTM","SSTM","SSTM","SSTM"],"load":[0.656511768210391,0.654774982093465,0.56019054062906,0.696905111416635,0.629253348981631,0.628332656268323,0.662220588989922,0.430809094345059,0.400600529192412,0.553794424550905,0.497201054004893,0.450227418212406,0.696976322971321,0.607394786946737,0.428636547375336,0.757609130334492,0.750088940199076,0.683205155153805,0.686141627991854,0.675644244722673,0.613719048793056,0.74198626331376,0.68104943238347,0.650709521501602]},"columns":[{"id":"game_name","name":"game_name","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["小狗回家","一心二用PRO","我是大厨","万花筒","社交达人","词汇学习","候鸟迁徙PRO","多彩文字PRO","变色魔块PRO","察颜观色PRO","随机应变","多变计数师","速算师（中级）","语义判断","舒尔特方格（中级）","三维心理旋转测试A","图形折叠","图形推理","幸运小球PRO","井然有序","顺背数PRO","蝴蝶照相机","位置记忆PRO","打靶场"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"dim_label","name":"dim_label","type":"character","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["AttDiv","AttDiv","AttDiv","EM","EM","EM","Inh","Inh","Inh","Shift","Shift","Shift","Spd","Spd","Spd","Rsn","Rsn","Rsn","VSTM","VSTM","VSTM","SSTM","SSTM","SSTM"],"html":true,"align":"left","headerStyle":{"font-weight":"normal"}},{"id":"load","name":"load","type":"numeric","style":"function(rowInfo, colInfo) {\nconst rowIndex = rowInfo.index + 1\n}","cell":["0.6565118","0.6547750","0.5601905","0.6969051","0.6292533","0.6283327","0.6622206","0.4308091","0.4006005","0.5537944","0.4972011","0.4502274","0.6969763","0.6073948","0.4286365","0.7576091","0.7500889","0.6832052","0.6861416","0.6756442","0.6137190","0.7419863","0.6810494","0.6507095"],"html":true,"align":"right","headerStyle":{"font-weight":"normal"}}],"defaultPageSize":12,"showPageSizeOptions":false,"pageSizeOptions":[10,25,50,100],"paginationType":"numbers","showPagination":true,"showPageInfo":true,"minRows":1,"showSortable":true,"height":"auto","theme":{"color":"#333333","backgroundColor":"#FFFFFF","stripedColor":"rgba(128,128,128,0.05)","style":{"fontFamily":"system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"},"headerStyle":{"borderTopStyle":"solid","borderTopWidth":"2px","borderTopColor":"#D3D3D3","borderBottomStyle":"solid","borderBottomWidth":"2px","borderBottomColor":"#D3D3D3"}},"elementId":"vaohulzbcj","dataKey":"fc059916c5629d080480d283170315a8"},"children":[]},"class":"reactR_markup"},"evals":["tag.attribs.columns.0.style","tag.attribs.columns.1.style","tag.attribs.columns.2.style"],"jsHooks":[]}</script>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="game_id">game_id</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="game_name">game_name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="dim_label">dim_label</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="load">load</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="dur_min">dur_min</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="N">N</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="r">r</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="icc">icc</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="game_id" class="gt_row gt_center">265086851706949</td>
+<td headers="game_name" class="gt_row gt_left">小狗回家</td>
+<td headers="dim_label" class="gt_row gt_left">AttDiv</td>
+<td headers="load" class="gt_row gt_right">0.66</td>
+<td headers="dur_min" class="gt_row gt_right">6.41</td>
+<td headers="N" class="gt_row gt_right">127</td>
+<td headers="r" class="gt_row gt_right">0.73</td>
+<td headers="icc" class="gt_row gt_right">0.68</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">268008982659192</td>
+<td headers="game_name" class="gt_row gt_left">一心二用PRO</td>
+<td headers="dim_label" class="gt_row gt_left">AttDiv</td>
+<td headers="load" class="gt_row gt_right">0.65</td>
+<td headers="dur_min" class="gt_row gt_right">6.00</td>
+<td headers="N" class="gt_row gt_right">189</td>
+<td headers="r" class="gt_row gt_right">0.84</td>
+<td headers="icc" class="gt_row gt_right">0.56</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">240406295777861</td>
+<td headers="game_name" class="gt_row gt_left">我是大厨</td>
+<td headers="dim_label" class="gt_row gt_left">AttDiv</td>
+<td headers="load" class="gt_row gt_right">0.56</td>
+<td headers="dur_min" class="gt_row gt_right">5.62</td>
+<td headers="N" class="gt_row gt_right">84</td>
+<td headers="r" class="gt_row gt_right">0.54</td>
+<td headers="icc" class="gt_row gt_right">0.37</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">375916542735109</td>
+<td headers="game_name" class="gt_row gt_left">万花筒</td>
+<td headers="dim_label" class="gt_row gt_left">EM</td>
+<td headers="load" class="gt_row gt_right">0.70</td>
+<td headers="dur_min" class="gt_row gt_right">6.18</td>
+<td headers="N" class="gt_row gt_right">80</td>
+<td headers="r" class="gt_row gt_right">0.69</td>
+<td headers="icc" class="gt_row gt_right">0.65</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">381576542159749</td>
+<td headers="game_name" class="gt_row gt_left">社交达人</td>
+<td headers="dim_label" class="gt_row gt_left">EM</td>
+<td headers="load" class="gt_row gt_right">0.63</td>
+<td headers="dur_min" class="gt_row gt_right">7.54</td>
+<td headers="N" class="gt_row gt_right">83</td>
+<td headers="r" class="gt_row gt_right">0.74</td>
+<td headers="icc" class="gt_row gt_right">0.60</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">386185817178885</td>
+<td headers="game_name" class="gt_row gt_left">词汇学习</td>
+<td headers="dim_label" class="gt_row gt_left">EM</td>
+<td headers="load" class="gt_row gt_right">0.63</td>
+<td headers="dur_min" class="gt_row gt_right">12.96</td>
+<td headers="N" class="gt_row gt_right">45</td>
+<td headers="r" class="gt_row gt_right">0.64</td>
+<td headers="icc" class="gt_row gt_right">0.34</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">224377200398533</td>
+<td headers="game_name" class="gt_row gt_left">候鸟迁徙PRO</td>
+<td headers="dim_label" class="gt_row gt_left">Inh</td>
+<td headers="load" class="gt_row gt_right">0.66</td>
+<td headers="dur_min" class="gt_row gt_right">6.58</td>
+<td headers="N" class="gt_row gt_right">271</td>
+<td headers="r" class="gt_row gt_right">0.66</td>
+<td headers="icc" class="gt_row gt_right">0.65</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">224378628399301</td>
+<td headers="game_name" class="gt_row gt_left">多彩文字PRO</td>
+<td headers="dim_label" class="gt_row gt_left">Inh</td>
+<td headers="load" class="gt_row gt_right">0.43</td>
+<td headers="dur_min" class="gt_row gt_right">6.02</td>
+<td headers="N" class="gt_row gt_right">179</td>
+<td headers="r" class="gt_row gt_right">0.58</td>
+<td headers="icc" class="gt_row gt_right">0.50</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">224375977935045</td>
+<td headers="game_name" class="gt_row gt_left">变色魔块PRO</td>
+<td headers="dim_label" class="gt_row gt_left">Inh</td>
+<td headers="load" class="gt_row gt_right">0.40</td>
+<td headers="dur_min" class="gt_row gt_right">7.27</td>
+<td headers="N" class="gt_row gt_right">176</td>
+<td headers="r" class="gt_row gt_right">0.55</td>
+<td headers="icc" class="gt_row gt_right">0.48</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">224376556507589</td>
+<td headers="game_name" class="gt_row gt_left">察颜观色PRO</td>
+<td headers="dim_label" class="gt_row gt_left">Shift</td>
+<td headers="load" class="gt_row gt_right">0.55</td>
+<td headers="dur_min" class="gt_row gt_right">6.64</td>
+<td headers="N" class="gt_row gt_right">267</td>
+<td headers="r" class="gt_row gt_right">0.39</td>
+<td headers="icc" class="gt_row gt_right">0.39</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">375903641948933</td>
+<td headers="game_name" class="gt_row gt_left">随机应变</td>
+<td headers="dim_label" class="gt_row gt_left">Shift</td>
+<td headers="load" class="gt_row gt_right">0.50</td>
+<td headers="dur_min" class="gt_row gt_right">8.01</td>
+<td headers="N" class="gt_row gt_right">81</td>
+<td headers="r" class="gt_row gt_right">0.57</td>
+<td headers="icc" class="gt_row gt_right">0.47</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">380176247862021</td>
+<td headers="game_name" class="gt_row gt_left">多变计数师</td>
+<td headers="dim_label" class="gt_row gt_left">Shift</td>
+<td headers="load" class="gt_row gt_right">0.45</td>
+<td headers="dur_min" class="gt_row gt_right">5.05</td>
+<td headers="N" class="gt_row gt_right">83</td>
+<td headers="r" class="gt_row gt_right">0.45</td>
+<td headers="icc" class="gt_row gt_right">0.45</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">268008982659166</td>
+<td headers="game_name" class="gt_row gt_left">速算师（中级）</td>
+<td headers="dim_label" class="gt_row gt_left">Spd</td>
+<td headers="load" class="gt_row gt_right">0.70</td>
+<td headers="dur_min" class="gt_row gt_right">6.00</td>
+<td headers="N" class="gt_row gt_right">230</td>
+<td headers="r" class="gt_row gt_right">0.78</td>
+<td headers="icc" class="gt_row gt_right">0.70</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">268008982650988</td>
+<td headers="game_name" class="gt_row gt_left">语义判断</td>
+<td headers="dim_label" class="gt_row gt_left">Spd</td>
+<td headers="load" class="gt_row gt_right">0.61</td>
+<td headers="dur_min" class="gt_row gt_right">3.02</td>
+<td headers="N" class="gt_row gt_right">163</td>
+<td headers="r" class="gt_row gt_right">0.70</td>
+<td headers="icc" class="gt_row gt_right">0.62</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">268008982667380</td>
+<td headers="game_name" class="gt_row gt_left">舒尔特方格（中级）</td>
+<td headers="dim_label" class="gt_row gt_left">Spd</td>
+<td headers="load" class="gt_row gt_right">0.43</td>
+<td headers="dur_min" class="gt_row gt_right">5.19</td>
+<td headers="N" class="gt_row gt_right">145</td>
+<td headers="r" class="gt_row gt_right">0.64</td>
+<td headers="icc" class="gt_row gt_right">0.64</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">268008982659144</td>
+<td headers="game_name" class="gt_row gt_left">三维心理旋转测试A<span class="gt_footnote_marks gt_asterisk" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>*</sup></span></td>
+<td headers="dim_label" class="gt_row gt_left">Rsn</td>
+<td headers="load" class="gt_row gt_right">0.76</td>
+<td headers="dur_min" class="gt_row gt_right">10.84</td>
+<td headers="N" class="gt_row gt_right">199</td>
+<td headers="r" class="gt_row gt_right">0.70</td>
+<td headers="icc" class="gt_row gt_right">0.70</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">361750352892805</td>
+<td headers="game_name" class="gt_row gt_left">图形折叠</td>
+<td headers="dim_label" class="gt_row gt_left">Rsn</td>
+<td headers="load" class="gt_row gt_right">0.75</td>
+<td headers="dur_min" class="gt_row gt_right">17.29</td>
+<td headers="N" class="gt_row gt_right">89</td>
+<td headers="r" class="gt_row gt_right">0.68</td>
+<td headers="icc" class="gt_row gt_right">0.63</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">355740333933445</td>
+<td headers="game_name" class="gt_row gt_left">图形推理</td>
+<td headers="dim_label" class="gt_row gt_left">Rsn</td>
+<td headers="load" class="gt_row gt_right">0.68</td>
+<td headers="dur_min" class="gt_row gt_right">14.49</td>
+<td headers="N" class="gt_row gt_right">85</td>
+<td headers="r" class="gt_row gt_right">0.55</td>
+<td headers="icc" class="gt_row gt_right">0.43</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">238279920537669</td>
+<td headers="game_name" class="gt_row gt_left">幸运小球PRO<span class="gt_footnote_marks gt_asterisk" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>*</sup></span></td>
+<td headers="dim_label" class="gt_row gt_left">VSTM</td>
+<td headers="load" class="gt_row gt_right">0.69</td>
+<td headers="dur_min" class="gt_row gt_right">15.55</td>
+<td headers="N" class="gt_row gt_right">183</td>
+<td headers="r" class="gt_row gt_right">0.56</td>
+<td headers="icc" class="gt_row gt_right">0.54</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">386196539900677</td>
+<td headers="game_name" class="gt_row gt_left">井然有序</td>
+<td headers="dim_label" class="gt_row gt_left">VSTM</td>
+<td headers="load" class="gt_row gt_right">0.68</td>
+<td headers="dur_min" class="gt_row gt_right">10.76</td>
+<td headers="N" class="gt_row gt_right">35</td>
+<td headers="r" class="gt_row gt_right">0.52</td>
+<td headers="icc" class="gt_row gt_right">0.38</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">268008982655090</td>
+<td headers="game_name" class="gt_row gt_left">顺背数PRO</td>
+<td headers="dim_label" class="gt_row gt_left">VSTM</td>
+<td headers="load" class="gt_row gt_right">0.61</td>
+<td headers="dur_min" class="gt_row gt_right">5.20</td>
+<td headers="N" class="gt_row gt_right">276</td>
+<td headers="r" class="gt_row gt_right">0.63</td>
+<td headers="icc" class="gt_row gt_right">0.59</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">268008982663278</td>
+<td headers="game_name" class="gt_row gt_left">蝴蝶照相机<span class="gt_footnote_marks gt_asterisk" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>*</sup></span></td>
+<td headers="dim_label" class="gt_row gt_left">SSTM</td>
+<td headers="load" class="gt_row gt_right">0.74</td>
+<td headers="dur_min" class="gt_row gt_right">8.02</td>
+<td headers="N" class="gt_row gt_right">198</td>
+<td headers="r" class="gt_row gt_right">0.60</td>
+<td headers="icc" class="gt_row gt_right">0.59</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">268008982642798</td>
+<td headers="game_name" class="gt_row gt_left">位置记忆PRO</td>
+<td headers="dim_label" class="gt_row gt_left">SSTM</td>
+<td headers="load" class="gt_row gt_right">0.68</td>
+<td headers="dur_min" class="gt_row gt_right">5.14</td>
+<td headers="N" class="gt_row gt_right">289</td>
+<td headers="r" class="gt_row gt_right">0.63</td>
+<td headers="icc" class="gt_row gt_right">0.61</td></tr>
+    <tr><td headers="game_id" class="gt_row gt_center">225528186135045</td>
+<td headers="game_name" class="gt_row gt_left">打靶场</td>
+<td headers="dim_label" class="gt_row gt_left">SSTM</td>
+<td headers="load" class="gt_row gt_right">0.65</td>
+<td headers="dur_min" class="gt_row gt_right">9.13</td>
+<td headers="N" class="gt_row gt_right">79</td>
+<td headers="r" class="gt_row gt_right">0.57</td>
+<td headers="icc" class="gt_row gt_right">0.48</td></tr>
+  </tbody>
+  
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" colspan="8"><span class="gt_footnote_marks gt_asterisk" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>*</sup></span> Reliability measure is based on an older version.</td>
+    </tr>
+  </tfoot>
+</table>
 </div>
 </div>
-</div>
-<p>这些任务的拟合情况总结（整体上模型拟合优度良好）：</p>
-<div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> selection <span class="sc">|&gt;</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prepare_model</span>(</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_dim =</span> <span class="st">"To"</span>, </span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_task =</span> <span class="st">"From"</span>, </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">hierarchical =</span> <span class="st">"bifactor"</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_cfa</span>(indices_wider_clean, <span class="at">orthogonal =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>, <span class="at">standardized =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># gt::opt_interactive(page_size_default = 12)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>这些任务的拟合情况总结（整体上模型拟合优度良好）：</p>
+<div class="cell" data-hash="index_cache/html/show-fit-measure_976268259fa1c8144ef7f77a5178fdb2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> dim_task_sel <span class="sc">|&gt;</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prepare_model</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_dim =</span> <span class="st">"To"</span>, </span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_task =</span> <span class="st">"From"</span>, </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">hierarchical =</span> <span class="st">"bifactor"</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_cfa</span>(indices_wider_clean, <span class="at">orthogonal =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>, <span class="at">standardized =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>lavaan 0.6.16 ended normally after 37 iterations
@@ -964,38 +1210,38 @@ Variances:
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cor_task_dim <span class="ot">&lt;-</span> indices_wider_clean <span class="sc">|&gt;</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>user_id,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"game_index"</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"score_game"</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(dims_origin, <span class="at">by =</span> <span class="st">"game_index"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    scores_origin <span class="sc">|&gt;</span> </span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="sc">-</span><span class="fu">c</span>(hierarchical, user_id),</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">names_to =</span> <span class="st">"dim_label"</span>,</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">values_to =</span> <span class="st">"score_latent"</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"user_id"</span>, <span class="st">"dim_label"</span>),</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">relationship =</span> <span class="st">"many-to-many"</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">r =</span> <span class="fu">cor</span>(score_game, score_latent, <span class="at">use =</span> <span class="st">"pairwise"</span>),</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(hierarchical, game_index, dim_label)</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>selection_1 <span class="ot">&lt;-</span> cor_task_dim <span class="sc">|&gt;</span> </span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>game_index <span class="sc">%in%</span> exclude, hierarchical <span class="sc">==</span> <span class="st">"highorder"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(r, <span class="at">n =</span> <span class="dv">3</span>, <span class="at">by =</span> dim_label)</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>fit_1 <span class="ot">&lt;-</span> selection_1 <span class="sc">|&gt;</span> </span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prepare_model</span>(</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_dim =</span> <span class="st">"dim_label"</span>, </span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_task =</span> <span class="st">"game_index"</span>, </span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">hierarchical =</span> <span class="st">"bifactor"</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_cfa</span>(indices_wider_clean, <span class="at">orthogonal =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_1, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>, <span class="at">standardized =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cor_task_dim <span class="ot">&lt;-</span> indices_wider_clean <span class="sc">|&gt;</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>user_id,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"game_index"</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"score_game"</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(dims_origin, <span class="at">by =</span> <span class="st">"game_index"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    scores_origin <span class="sc">|&gt;</span> </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="sc">-</span><span class="fu">c</span>(hierarchical, user_id),</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">names_to =</span> <span class="st">"dim_label"</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">values_to =</span> <span class="st">"score_latent"</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"user_id"</span>, <span class="st">"dim_label"</span>),</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">relationship =</span> <span class="st">"many-to-many"</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">r =</span> <span class="fu">cor</span>(score_game, score_latent, <span class="at">use =</span> <span class="st">"pairwise"</span>),</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(hierarchical, game_index, dim_label)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>selection_1 <span class="ot">&lt;-</span> cor_task_dim <span class="sc">|&gt;</span> </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>game_index <span class="sc">%in%</span> exclude, hierarchical <span class="sc">==</span> <span class="st">"highorder"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(r, <span class="at">n =</span> <span class="dv">3</span>, <span class="at">by =</span> dim_label)</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>fit_1 <span class="ot">&lt;-</span> selection_1 <span class="sc">|&gt;</span> </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prepare_model</span>(</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_dim =</span> <span class="st">"dim_label"</span>, </span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_task =</span> <span class="st">"game_index"</span>, </span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">hierarchical =</span> <span class="st">"bifactor"</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_cfa</span>(indices_wider_clean, <span class="at">orthogonal =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_1, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>, <span class="at">standardized =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 
