@@ -27,6 +27,14 @@ targets::tar_load(
     scores_origin),
   store = projects$confirm_factors$store
 )
+targets::tar_load(
+  c(indices, durations),
+  store = projects$prepare_source_data$store
+)
+targets::tar_load(
+  reliability,
+  store = projects$prepare_source_data_retest$store
+)
 exclude <- c(
   "CalcSpdMed.nc", "Lexic.nc", "Tone.nc",
   "NsymNCmp.w", "TOVAS.dprime", 
@@ -42,6 +50,11 @@ task_loadings <- list(
       as_tibble()
   ) |> 
   bind_rows(.id = "model")
+game_ver_latest <- indices |> 
+  summarise(
+    ver_major_latest = max(str_extract(game_version, "\\d")), 
+    .by = game_id
+  )
 ```
 
 以下是一些基本的前提要求：
@@ -59,30 +72,56 @@ task_loadings <- list(
 
 ```{r}
 #| label: select-results
-selection <- task_loadings |> 
+dim_task_sel <- task_loadings |> 
   filter(
     To != "g", 
     !From %in% exclude, 
     model == "highorder"
   ) |> 
   slice_max(Coefficient, n = 3, by = To)
-selection |> 
+dim_task_sel |> 
   separate_wider_delim(
     From, ".",
     names = c("game_name_abbr", "index_name")
   ) |> 
   left_join(data.iquizoo::game_info, by = "game_name_abbr") |> 
-  select(game_name, dim_label = To, load = Coefficient) |> 
+  left_join(game_ver_latest, by = "game_id") |> 
+  left_join(durations, by = "game_id") |> 
+  left_join(
+    reliability |> 
+      filter(
+        origin == "rm_out",
+        ver_major == max(ver_major), 
+        .by = game_id
+      ),
+    by = join_by(game_id, index_name)
+  ) |> 
+  select(
+    game_id, game_name, dim_label = To, load = Coefficient, 
+    dur_min = numeric.p75, N = n, r, icc,
+    ver_major_latest, ver_major
+  ) |> 
   gt::gt() |> 
-  gt::opt_interactive(page_size_default = 12)
+  gt::fmt_number(-N) |>
+  gt::cols_hide(contains("ver_major")) |> 
+  gt::tab_footnote(
+    "Reliability measure is based on an older version.",
+    gt::cells_body(
+      columns = game_name,
+      rows = ver_major_latest > ver_major
+    )
+  ) |> 
+  gt::opt_footnote_marks("standard")
+  # gt::opt_interactive(page_size_default = 12)
 ```
 
 这些任务的拟合情况总结（整体上模型拟合优度良好）：
 
 ```{r}
 #| label: show-fit-measure
+#| cache: true
 
-fit <- selection |> 
+fit <- dim_task_sel |> 
   prepare_model(
     col_dim = "To", 
     col_task = "From", 
