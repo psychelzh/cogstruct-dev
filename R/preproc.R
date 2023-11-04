@@ -28,6 +28,23 @@ validate_data <- function(data_parsed, require_keyboard) {
   data_parsed[ver_keep & dev_keep, ]
 }
 
+#' Correct device error
+correct_device <- function(data) {
+  data |>
+    mutate(
+      raw_parsed = map2(
+        raw_parsed, game_version,
+        correct_device_issue
+      )
+    )
+}
+
+#' Correct game duration error
+correct_game_dur <- function(data) {
+  data |>
+    mutate(game_duration = game_duration / 1000)
+}
+
 #' Correct raw data of category retrieval
 correct_cr <- function(data, correction) {
   data |>
@@ -72,36 +89,22 @@ check_device <- function(data_parsed, require_keyboard) {
   if (!require_keyboard) {
     return(TRUE)
   }
-  if (data_parsed$game_id[[1]] %in%
-      c("380173315257221", "380174783693701")) {
-    # "注意警觉", "注意指向"
-    data_parsed <- correct_device_issue(data_parsed)
-  }
-  map_lgl(data_parsed$raw_parsed, is_valid_device)
+  map_lgl(
+    data_parsed$raw_parsed,
+    ~ !"mouse" %in% unlist(str_split(.x$device, "-"))
+  )
 }
 
-correct_device_issue <- function(data_parsed) {
-  data_parsed |>
+correct_device_issue <- function(raw_parsed, game_version) {
+  raw_parsed |>
     mutate(
-      raw_parsed = map2(
-        raw_parsed, game_version,
-        \(raw_parsed, game_version) {
-          raw_parsed |>
-            mutate(
-              device = if_else(
-                # 1.0.0 erroneously records device for right resp as "mouse"
-                resp == "right" & game_version == "1.0.0",
-                "keyboard",
-                device
-              )
-            )
-        }
+      device = if_else(
+        # 1.0.0 erroneously records device for right resp as "mouse"
+        resp == "right" & game_version == "1.0.0",
+        "keyboard",
+        device
       )
     )
-}
-
-is_valid_device <- function(raw_parsed) {
-  !"mouse" %in% unlist(str_split(raw_parsed$device, "-"))
 }
 
 correct_cr_acc_issue <- function(raw_parsed, correction) {
