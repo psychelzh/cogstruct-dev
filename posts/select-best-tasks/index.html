@@ -284,27 +284,34 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>      <span class="at">rows =</span> ver_major_latest <span class="sc">&gt;</span> ver_major</span>
 <span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">opt_footnote_marks</span>(<span class="st">"standard"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">tab_footnote</span>(</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste</span>(</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Based on 75% quantile,"</span>,</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>      <span class="st">"i.e., 75% people will finish the task within given time (unit: minutes)."</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    gt<span class="sc">::</span><span class="fu">cells_column_labels</span>(dur_min)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">opt_footnote_marks</span>(<span class="st">"standard"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 
-<div id="cnebibiwyq" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#cnebibiwyq table {
+<div id="kxktbcuetc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#kxktbcuetc table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#cnebibiwyq thead, #cnebibiwyq tbody, #cnebibiwyq tfoot, #cnebibiwyq tr, #cnebibiwyq td, #cnebibiwyq th {
+#kxktbcuetc thead, #kxktbcuetc tbody, #kxktbcuetc tfoot, #kxktbcuetc tr, #kxktbcuetc td, #kxktbcuetc th {
   border-style: none;
 }
 
-#cnebibiwyq p {
+#kxktbcuetc p {
   margin: 0;
   padding: 0;
 }
 
-#cnebibiwyq .gt_table {
+#kxktbcuetc .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -330,12 +337,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_caption {
+#kxktbcuetc .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#cnebibiwyq .gt_title {
+#kxktbcuetc .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -347,7 +354,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#cnebibiwyq .gt_subtitle {
+#kxktbcuetc .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -359,7 +366,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#cnebibiwyq .gt_heading {
+#kxktbcuetc .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -371,13 +378,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_bottom_border {
+#kxktbcuetc .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_col_headings {
+#kxktbcuetc .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -392,7 +399,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_col_heading {
+#kxktbcuetc .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -412,7 +419,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#cnebibiwyq .gt_column_spanner_outer {
+#kxktbcuetc .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -424,15 +431,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#cnebibiwyq .gt_column_spanner_outer:first-child {
+#kxktbcuetc .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#cnebibiwyq .gt_column_spanner_outer:last-child {
+#kxktbcuetc .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#cnebibiwyq .gt_column_spanner {
+#kxktbcuetc .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -444,11 +451,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#cnebibiwyq .gt_spanner_row {
+#kxktbcuetc .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#cnebibiwyq .gt_group_heading {
+#kxktbcuetc .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -474,7 +481,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#cnebibiwyq .gt_empty_group_heading {
+#kxktbcuetc .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -489,15 +496,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#cnebibiwyq .gt_from_md > :first-child {
+#kxktbcuetc .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#cnebibiwyq .gt_from_md > :last-child {
+#kxktbcuetc .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#cnebibiwyq .gt_row {
+#kxktbcuetc .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -516,7 +523,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#cnebibiwyq .gt_stub {
+#kxktbcuetc .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -529,7 +536,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#cnebibiwyq .gt_stub_row_group {
+#kxktbcuetc .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -543,15 +550,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#cnebibiwyq .gt_row_group_first td {
+#kxktbcuetc .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#cnebibiwyq .gt_row_group_first th {
+#kxktbcuetc .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#cnebibiwyq .gt_summary_row {
+#kxktbcuetc .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -561,16 +568,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#cnebibiwyq .gt_first_summary_row {
+#kxktbcuetc .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_first_summary_row.thick {
+#kxktbcuetc .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#cnebibiwyq .gt_last_summary_row {
+#kxktbcuetc .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -580,7 +587,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_grand_summary_row {
+#kxktbcuetc .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -590,7 +597,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#cnebibiwyq .gt_first_grand_summary_row {
+#kxktbcuetc .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -600,7 +607,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_last_grand_summary_row_top {
+#kxktbcuetc .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -610,11 +617,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_striped {
+#kxktbcuetc .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#cnebibiwyq .gt_table_body {
+#kxktbcuetc .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -623,7 +630,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_footnotes {
+#kxktbcuetc .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -637,7 +644,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_footnote {
+#kxktbcuetc .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -646,7 +653,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#cnebibiwyq .gt_sourcenotes {
+#kxktbcuetc .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -660,7 +667,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#cnebibiwyq .gt_sourcenote {
+#kxktbcuetc .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -668,63 +675,63 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#cnebibiwyq .gt_left {
+#kxktbcuetc .gt_left {
   text-align: left;
 }
 
-#cnebibiwyq .gt_center {
+#kxktbcuetc .gt_center {
   text-align: center;
 }
 
-#cnebibiwyq .gt_right {
+#kxktbcuetc .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#cnebibiwyq .gt_font_normal {
+#kxktbcuetc .gt_font_normal {
   font-weight: normal;
 }
 
-#cnebibiwyq .gt_font_bold {
+#kxktbcuetc .gt_font_bold {
   font-weight: bold;
 }
 
-#cnebibiwyq .gt_font_italic {
+#kxktbcuetc .gt_font_italic {
   font-style: italic;
 }
 
-#cnebibiwyq .gt_super {
+#kxktbcuetc .gt_super {
   font-size: 65%;
 }
 
-#cnebibiwyq .gt_footnote_marks {
+#kxktbcuetc .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#cnebibiwyq .gt_asterisk {
+#kxktbcuetc .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#cnebibiwyq .gt_indent_1 {
+#kxktbcuetc .gt_indent_1 {
   text-indent: 5px;
 }
 
-#cnebibiwyq .gt_indent_2 {
+#kxktbcuetc .gt_indent_2 {
   text-indent: 10px;
 }
 
-#cnebibiwyq .gt_indent_3 {
+#kxktbcuetc .gt_indent_3 {
   text-indent: 15px;
 }
 
-#cnebibiwyq .gt_indent_4 {
+#kxktbcuetc .gt_indent_4 {
   text-indent: 20px;
 }
 
-#cnebibiwyq .gt_indent_5 {
+#kxktbcuetc .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -736,7 +743,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="game_name">game_name</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="dim_label">dim_label</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="load">load</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="dur_min">dur_min</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="dur_min<span class=&quot;gt_footnote_marks gt_asterisk&quot; style=&quot;white-space:nowrap;font-style:italic;font-weight:normal;&quot;><sup>*</sup></span>">dur_min<span class="gt_footnote_marks gt_asterisk" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>*</sup></span></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="N">N</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="r">r</th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="icc">icc</th>
@@ -864,7 +871,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td headers="r" class="gt_row gt_right">0.64</td>
 <td headers="icc" class="gt_row gt_right">0.64</td></tr>
     <tr><td headers="game_id" class="gt_row gt_center">268008982659144</td>
-<td headers="game_name" class="gt_row gt_left">三维心理旋转测试A<span class="gt_footnote_marks gt_asterisk" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>*</sup></span></td>
+<td headers="game_name" class="gt_row gt_left">三维心理旋转测试A<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>†</sup></span></td>
 <td headers="dim_label" class="gt_row gt_left">Rsn</td>
 <td headers="load" class="gt_row gt_right">0.76</td>
 <td headers="dur_min" class="gt_row gt_right">10.84</td>
@@ -888,7 +895,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td headers="r" class="gt_row gt_right">0.55</td>
 <td headers="icc" class="gt_row gt_right">0.43</td></tr>
     <tr><td headers="game_id" class="gt_row gt_center">238279920537669</td>
-<td headers="game_name" class="gt_row gt_left">幸运小球PRO<span class="gt_footnote_marks gt_asterisk" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>*</sup></span></td>
+<td headers="game_name" class="gt_row gt_left">幸运小球PRO<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>†</sup></span></td>
 <td headers="dim_label" class="gt_row gt_left">VSTM</td>
 <td headers="load" class="gt_row gt_right">0.69</td>
 <td headers="dur_min" class="gt_row gt_right">15.55</td>
@@ -912,7 +919,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td headers="r" class="gt_row gt_right">0.63</td>
 <td headers="icc" class="gt_row gt_right">0.59</td></tr>
     <tr><td headers="game_id" class="gt_row gt_center">268008982663278</td>
-<td headers="game_name" class="gt_row gt_left">蝴蝶照相机<span class="gt_footnote_marks gt_asterisk" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>*</sup></span></td>
+<td headers="game_name" class="gt_row gt_left">蝴蝶照相机<span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>†</sup></span></td>
 <td headers="dim_label" class="gt_row gt_left">SSTM</td>
 <td headers="load" class="gt_row gt_right">0.74</td>
 <td headers="dur_min" class="gt_row gt_right">8.02</td>
@@ -939,29 +946,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   
   <tfoot class="gt_footnotes">
     <tr>
-      <td class="gt_footnote" colspan="8"><span class="gt_footnote_marks gt_asterisk" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>*</sup></span> Reliability measure is based on an older version.</td>
+      <td class="gt_footnote" colspan="8"><span class="gt_footnote_marks gt_asterisk" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>*</sup></span> Based on 75% quantile, i.e., 75% people will finish the task within given time (unit: minutes).</td>
+    </tr>
+    <tr>
+      <td class="gt_footnote" colspan="8"><span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"><sup>†</sup></span> Reliability measure is based on an older version.</td>
     </tr>
   </tfoot>
 </table>
 </div>
 </div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># gt::opt_interactive(page_size_default = 12)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <p>这些任务的拟合情况总结（整体上模型拟合优度良好）：</p>
 <div class="cell" data-hash="index_cache/html/show-fit-measure_976268259fa1c8144ef7f77a5178fdb2">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> dim_task_sel <span class="sc">|&gt;</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prepare_model</span>(</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_dim =</span> <span class="st">"To"</span>, </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_task =</span> <span class="st">"From"</span>, </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">hierarchical =</span> <span class="st">"bifactor"</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_cfa</span>(indices_wider_clean, <span class="at">orthogonal =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>, <span class="at">standardized =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fit <span class="ot">&lt;-</span> dim_task_sel <span class="sc">|&gt;</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prepare_model</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_dim =</span> <span class="st">"To"</span>, </span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_task =</span> <span class="st">"From"</span>, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">hierarchical =</span> <span class="st">"bifactor"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_cfa</span>(indices_wider_clean, <span class="at">orthogonal =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>, <span class="at">standardized =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>lavaan 0.6.16 ended normally after 37 iterations
@@ -1210,38 +1216,38 @@ Variances:
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>cor_task_dim <span class="ot">&lt;-</span> indices_wider_clean <span class="sc">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>user_id,</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"game_index"</span>,</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"score_game"</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(dims_origin, <span class="at">by =</span> <span class="st">"game_index"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    scores_origin <span class="sc">|&gt;</span> </span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="sc">-</span><span class="fu">c</span>(hierarchical, user_id),</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">names_to =</span> <span class="st">"dim_label"</span>,</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">values_to =</span> <span class="st">"score_latent"</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      ),</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"user_id"</span>, <span class="st">"dim_label"</span>),</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">relationship =</span> <span class="st">"many-to-many"</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">r =</span> <span class="fu">cor</span>(score_game, score_latent, <span class="at">use =</span> <span class="st">"pairwise"</span>),</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(hierarchical, game_index, dim_label)</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>selection_1 <span class="ot">&lt;-</span> cor_task_dim <span class="sc">|&gt;</span> </span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>game_index <span class="sc">%in%</span> exclude, hierarchical <span class="sc">==</span> <span class="st">"highorder"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(r, <span class="at">n =</span> <span class="dv">3</span>, <span class="at">by =</span> dim_label)</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>fit_1 <span class="ot">&lt;-</span> selection_1 <span class="sc">|&gt;</span> </span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prepare_model</span>(</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_dim =</span> <span class="st">"dim_label"</span>, </span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_task =</span> <span class="st">"game_index"</span>, </span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">hierarchical =</span> <span class="st">"bifactor"</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_cfa</span>(indices_wider_clean, <span class="at">orthogonal =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_1, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>, <span class="at">standardized =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cor_task_dim <span class="ot">&lt;-</span> indices_wider_clean <span class="sc">|&gt;</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="sc">-</span>user_id,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"game_index"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"score_game"</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(dims_origin, <span class="at">by =</span> <span class="st">"game_index"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    scores_origin <span class="sc">|&gt;</span> </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">pivot_longer</span>(</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="sc">-</span><span class="fu">c</span>(hierarchical, user_id),</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">names_to =</span> <span class="st">"dim_label"</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">values_to =</span> <span class="st">"score_latent"</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"user_id"</span>, <span class="st">"dim_label"</span>),</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">relationship =</span> <span class="st">"many-to-many"</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">r =</span> <span class="fu">cor</span>(score_game, score_latent, <span class="at">use =</span> <span class="st">"pairwise"</span>),</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(hierarchical, game_index, dim_label)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>selection_1 <span class="ot">&lt;-</span> cor_task_dim <span class="sc">|&gt;</span> </span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>game_index <span class="sc">%in%</span> exclude, hierarchical <span class="sc">==</span> <span class="st">"highorder"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(r, <span class="at">n =</span> <span class="dv">3</span>, <span class="at">by =</span> dim_label)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>fit_1 <span class="ot">&lt;-</span> selection_1 <span class="sc">|&gt;</span> </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">prepare_model</span>(</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_dim =</span> <span class="st">"dim_label"</span>, </span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">col_task =</span> <span class="st">"game_index"</span>, </span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">hierarchical =</span> <span class="st">"bifactor"</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fit_cfa</span>(indices_wider_clean, <span class="at">orthogonal =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(fit_1, <span class="at">fit.measures =</span> <span class="cn">TRUE</span>, <span class="at">standardized =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 
