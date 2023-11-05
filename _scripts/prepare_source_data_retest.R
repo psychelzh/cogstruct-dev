@@ -49,8 +49,7 @@ targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
   contents |>
     dplyr::distinct(game_id),
   name_parsed = "data_valid",
-  action_raw_data = "preproc",
-  add_combine_pre = FALSE
+  action_raw_data = "preproc"
 )
 
 targets_reliabilty <- tarchetypes::tar_map(
