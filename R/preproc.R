@@ -56,6 +56,12 @@ correct_cr <- function(data, correction) {
     )
 }
 
+#' Correct raw data of verbal reasoning
+correct_vr <- function(data) {
+  data |>
+    mutate(raw_parsed = lapply(raw_parsed, correct_vr_acc_issue))
+}
+
 #' Cleanse the calculated scores
 #'
 #' The most important job here is to remove invalid scores for those with scores
@@ -111,4 +117,17 @@ correct_cr_acc_issue <- function(raw_parsed, correction) {
   raw_parsed |>
     select(-acc) |>
     left_join(correction, by = c("concept", "word"))
+}
+
+correct_vr_acc_issue <- function(raw_parsed) {
+  raw_parsed |>
+    mutate(
+      acc = map2_int(
+        cresp, resp,
+        ~ setequal(
+          str_split_1(.x, ","),
+          str_split_1(.y, ",")
+        )
+      )
+    )
 }

@@ -8,10 +8,9 @@ library(targets)
 
 # Set target options:
 tar_option_set(
-  packages = c("tarflow.iquizoo", "tidyverse"), # packages that your targets need to run
+  packages = c("tarflow.iquizoo", "tidyverse"),
   imports = "preproc.iquizoo",
   format = "qs", # Optionally set the default storage format. qs is fast.
-  error = "null",
   #
   # For distributed computing in tar_make(), supply a {crew} controller
   # as discussed at https://books.ropensci.org/targets/crew.html.
@@ -28,21 +27,34 @@ games_keyboard <- readr::read_lines("config/games_keyboard")
 contents <- tarflow.iquizoo:::fetch_iquizoo_mem(
   readr::read_file("sql/contents_with_retest.sql")
 )
-targets_valid_raw <- tarchetypes::tar_map(
-  values = contents |>
-    dplyr::distinct(game_id) |>
-    dplyr::inner_join(data.iquizoo::game_info, by = "game_id") |>
-    dplyr::mutate(
-      game_id = as.character(game_id),
-      require_keyboard = game_name %in% games_keyboard,
-      tar_parsed = rlang::syms(
-        stringr::str_glue("raw_data_parsed_{game_id}")
-      )
-    ),
-  names = game_id,
-  tar_target(
-    data_valid,
-    tar_parsed[check_device(tar_parsed, require_keyboard), ]
+config_contents <- contents |>
+  dplyr::distinct(game_id) |>
+  dplyr::inner_join(data.iquizoo::game_info, by = "game_id") |>
+  dplyr::mutate(
+    game_id = as.character(game_id),
+    require_keyboard = game_name %in% games_keyboard,
+    tar_parsed = rlang::syms(
+      stringr::str_glue("raw_data_parsed_{game_id}")
+    )
+  )
+targets_valid_raw <- c(
+  tarchetypes::tar_map(
+    values = config_contents |>
+      dplyr::filter(game_id != 356101783560965),
+    names = game_id,
+    tar_target(
+      data_valid,
+      tar_parsed[check_device(tar_parsed, require_keyboard), ]
+    )
+  ),
+  tarchetypes::tar_map(
+    values = config_contents |>
+      dplyr::filter(game_id == 356101783560965),
+    names = game_id,
+    tar_target(
+      data_valid,
+      correct_vr(tar_parsed[check_device(tar_parsed, require_keyboard), ])
+    )
   )
 )
 targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
