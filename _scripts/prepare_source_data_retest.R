@@ -23,6 +23,10 @@ tar_option_set(
 # Run the R scripts in the R/ folder with your custom functions:
 tar_source()
 
+# 注意警觉, 注意指向: 1.0.0 records device for all right arrow resp as "mouse"
+game_id_dev_err <- bit64::as.integer64(c(380173315257221, 380174783693701))
+# 文字推理: 1.0.0 incorrect accuracy score
+game_id_vr <-  bit64::as.integer64(356101783560965)
 games_keyboard <- readr::read_lines("config/games_keyboard")
 contents <- tarflow.iquizoo:::fetch_iquizoo_mem(
   readr::read_file("sql/contents_with_retest.sql")
@@ -40,16 +44,28 @@ config_contents <- contents |>
 targets_valid_raw <- c(
   tarchetypes::tar_map(
     values = config_contents |>
-      dplyr::filter(game_id != 356101783560965),
+      dplyr::filter(!game_id %in% c(game_id_dev_err, game_id_vr)),
     names = game_id,
     tar_target(
       data_valid,
       tar_parsed[check_device(tar_parsed, require_keyboard), ]
     )
   ),
+  # correct device error
   tarchetypes::tar_map(
     values = config_contents |>
-      dplyr::filter(game_id == 356101783560965),
+      dplyr::filter(game_id %in% game_id_dev_err),
+    names = game_id,
+    tar_target(
+      data_valid, {
+        data_cor <- correct_device(tar_parsed)
+        data_cor[check_device(data_cor, require_keyboard), ]
+      }
+    )
+  ),
+  tarchetypes::tar_map(
+    values = config_contents |>
+      dplyr::filter(game_id == game_id_vr),
     names = game_id,
     tar_target(
       data_valid,
@@ -99,6 +115,7 @@ list(
   tar_prep_creativity(),
   targets_valid_raw,
   targets_preproc,
+  tarchetypes::tar_combine(indices, targets_preproc$indices),
   targets_reliabilty,
   combine_targets(
     reliability,
