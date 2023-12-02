@@ -172,12 +172,13 @@ corrs_task_dim |>
 
 ## Transfer Tasks
 
-This is relatively simple. We select the task with the largest correlation with each domain (see the highlighted row in @tbl-transfer-tasks).
+For reasoning, we used nonverbal reasoning task (see the highlighted row in @tbl-transfer-tasks).
 
 ```{r}
 #| label: tbl-transfer-tasks
 #| tbl-cap: The selected transfer tasks
 
+tasks_transfer <- c("图形推理", "万花筒")
 corrs_task_dim |>
   filter(dim_name %in% dim_label_map[dim_transfer]) |>
   arrange(desc(g)) |>
@@ -187,7 +188,7 @@ corrs_task_dim |>
     decimals = 2
   ) |>
   gtExtras::gt_highlight_rows(
-    rows = Rsn == max(Rsn) | EM == max(EM),
+    rows = game_name %in% tasks_transfer,
     fill = "#FFCCCC",
     bold_target_only = TRUE,
     target_col = c(game_name, Rsn, EM)
@@ -219,7 +220,7 @@ But here comes the question of selecting single-domain training tasks. There are
 #|   single `"Divided Atetion"` tasks, and the rows with [lightest background]{.green} are
 #|   single `"Spatial STM"` tasks.
 
-tasks_transfer <- c("三维心理旋转测试A", "万花筒")
+tasks_transfer <- c("图形推理", "万花筒")
 tasks_train <- c("蝴蝶照相机", "捉虫高级简版", "我是大厨")
 tasks_train_1 <- c("小狗回家", "一心二用PRO")
 tasks_train_1_alt <- c("打靶场", "位置记忆PRO")
