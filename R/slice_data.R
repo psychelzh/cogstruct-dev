@@ -2,14 +2,15 @@
 slice_data_trials <- function(data, parts, ...,
                               subset = NA,
                               name_raw_parsed = "raw_parsed") {
+  if (!is.na(subset)) {
+    data[[name_raw_parsed]] <- map(
+      data[[name_raw_parsed]],
+      ~ .x |>
+        filter(eval(parse(text = subset)))
+    )
+  }
   cols_meta <- setdiff(names(data), name_raw_parsed)
   num_trials <- nrow(data[[name_raw_parsed]][[1]])
-  data_unnested <- data |>
-    unnest(any_of(name_raw_parsed))
-  if (!is.na(subset)) {
-    data_unnested <- data_unnested |>
-      filter(eval(parse(text = subset)))
-  }
   if (all(map_int(data[[name_raw_parsed]], nrow) == num_trials)) {
     config_parts <- tibble(
       part = seq_len(parts - 1) / parts,
@@ -37,7 +38,8 @@ slice_data_trials <- function(data, parts, ...,
       ungroup()
     by <- join_by(!!!cols_meta, row_num <= row_num_break)
   }
-  data_unnested |>
+  data |>
+    unnest(any_of(name_raw_parsed)) |>
     mutate(row_num = row_number(), .by = all_of(cols_meta)) |>
     inner_join(config_parts, by = by) |>
     select(-contains("row_num")) |>
@@ -73,10 +75,11 @@ slice_data_duration <- function(data, parts, ...,
     nest(.by = all_of(c(cols_meta, "part")), .key = name_raw_parsed)
 }
 
-slice_data_items <- function(data, scores_g, ...,
+slice_data_items <- function(data, crit, ...,
                              name_raw_parsed = "raw_parsed") {
   cols_meta <- setdiff(names(data), name_raw_parsed)
-  if (unique(data$game_name) %in% "远距离联想") {
+  # 远距离联想 has redundant items
+  if (unique(data$game_id) %in% "411281158706373") {
     data[[name_raw_parsed]] <- map(
       data[[name_raw_parsed]],
       ~ filter(., itemid != "268009865429099")
@@ -90,7 +93,7 @@ slice_data_items <- function(data, scores_g, ...,
     unnest(any_of(name_raw_parsed))
   item_order <- data_unnested |>
     mutate(acc = acc == 1) |>
-    left_join(scores_g, by = "user_id") |>
+    left_join(crit, by = "user_id") |>
     summarise(
       cor = psych::biserial(g, acc)[, 1],
       .by = itemid
@@ -120,7 +123,8 @@ slice_data_blocks <- function(data, ...,
   cols_meta <- setdiff(names(data), name_raw_parsed)
   data_unnested <- data |>
     unnest(any_of(name_raw_parsed))
-  if (unique(data$game_name) == "人工语言-高级") {
+  # 人工语言-高级 needs additional step to create blocks
+  if (unique(data$game_id) == "384311706735365") {
     data_unnested <- data_unnested |>
       mutate(
         block = cumsum(type == "learn"),
