@@ -1,3 +1,14 @@
+path_obj_from_proj <- function(object, project) {
+  fs::path(
+    targets::tar_config_get(
+      "store",
+      project = project
+    ),
+    "objects",
+    object
+  )
+}
+
 replace_as_name_cn <- function(name, remove_suffix = FALSE) {
   parts <- str_split(name, "\\.")
   out <- character(length = length(name))
