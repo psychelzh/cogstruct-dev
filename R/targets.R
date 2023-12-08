@@ -1,3 +1,13 @@
+tar_path_obj_from_proj <- function(name, object, project, ...,
+                                   format = "file") {
+  tar_target_raw(
+    deparse1(substitute(name)),
+    substitute(path_obj_from_proj(object, project)),
+    format = format,
+    ...
+  )
+}
+
 targets_sample_tasks <- function(num_tasks, data,
                                  name_id_col = 1,
                                  sample_times = 10,

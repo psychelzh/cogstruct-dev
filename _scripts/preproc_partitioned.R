@@ -10,7 +10,6 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 8)
 )
 
-projects <- targets::tar_config_yaml()
 contents <- tarflow.iquizoo:::fetch_iquizoo_mem(
   readr::read_file("sql/contents_camp.sql")
 ) |>
@@ -64,24 +63,18 @@ targets_indices_partitioned <- c(
 )
 
 list(
-  tar_target(
+  tar_path_obj_from_proj(
     file_crit,
-    fs::path(
-      projects$confirm_factors$store,
-      "objects",
-      "scores_origin_bifactor"
-    )
+    "scores_origin_bifactor",
+    project = "confirm_factors"
   ),
   tarchetypes::tar_map(
     contents,
     names = game_id,
-    tar_target(
+    tar_path_obj_from_proj(
       file_data,
-      fs::path(
-        projects$prepare_source_data$store,
-        "objects",
-        sprintf("data_valid_%s", game_id)
-      )
+      sprintf("data_valid_%s", game_id),
+      project = "prepare_source_data"
     )
   ),
   targets_indices_partitioned,
