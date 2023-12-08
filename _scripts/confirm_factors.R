@@ -169,7 +169,7 @@ targets_gof <- lapply(
   hypers_model$hierarchical,
   \(hier_type) {
     name <- paste0("gof_updated_", hier_type)
-    combine_targets(
+    tar_combine_with_meta(
       name,
       targets_updation,
       cols_targets = c("method", "level"),
@@ -181,7 +181,7 @@ targets_gof2 <- lapply(
   hypers_model$hierarchical,
   \(hier_type) {
     name <- paste0("gof_updated2_", hier_type)
-    combine_targets(
+    tar_combine_with_meta(
       name,
       targets_updation2,
       cols_targets = c("method", "level"),
@@ -213,13 +213,13 @@ list(
       left_join(dimensions, by = "cluster")
   ),
   targets_origin,
-  combine_targets(
+  tar_combine_with_meta(
     gof_origin,
     targets_origin,
     cols_targets = "hierarchical",
     fun_pre = \(x) as_tibble_row(unclass(x))
   ),
-  combine_targets(
+  tar_combine_with_meta(
     scores_origin,
     targets_origin,
     cols_targets = "hierarchical",
@@ -234,7 +234,7 @@ list(
   ),
   targets_updation,
   targets_gof,
-  combine_targets(
+  tar_combine_with_meta(
     dims_updated,
     targets_updation,
     cols_targets = c("method", "level")

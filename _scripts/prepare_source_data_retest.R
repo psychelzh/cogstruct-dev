@@ -117,7 +117,7 @@ list(
   targets_preproc,
   tarchetypes::tar_combine(indices, targets_preproc$indices),
   targets_reliabilty,
-  combine_targets(
+  tar_combine_with_meta(
     reliability,
     targets_reliabilty,
     cols_targets = "game_id",

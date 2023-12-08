@@ -1,8 +1,8 @@
-targets_sample_tasks <- function(num_tasks, data,
-                                 name_id_col = 1,
-                                 sample_times = 10,
-                                 sample_size = 100,
-                                 name_suffix = "") {
+tar_sample_tasks <- function(num_tasks, data,
+                             name_id_col = 1,
+                             sample_times = 10,
+                             sample_size = 100,
+                             name_suffix = "") {
   cfg_rsmp_vars <- withr::with_seed(
     1,
     tidyr::expand_grid(
@@ -56,9 +56,9 @@ targets_sample_tasks <- function(num_tasks, data,
   )
 }
 
-combine_targets <- function(name, targets, cols_targets,
-                            fun_pre = NULL,
-                            fun_post = NULL) {
+tar_combine_with_meta <- function(name, targets, cols_targets,
+                                  fun_pre = NULL,
+                                  fun_post = NULL) {
   ischar_name <- tryCatch(
     is.character(name) && length(name) == 1L,
     error = function(e) FALSE

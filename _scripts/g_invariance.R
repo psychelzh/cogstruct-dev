@@ -11,8 +11,8 @@ tar_option_set(
 )
 tar_source()
 future::plan(future.callr::callr)
-g_invariance <- targets_sample_tasks(77, data)
-g_invariance_random <- targets_sample_tasks(
+g_invariance <- tar_sample_tasks(77, data)
+g_invariance_random <- tar_sample_tasks(
   77, data_random,
   name_suffix = "_random"
 )
@@ -52,7 +52,7 @@ list(
       )
   ),
   g_invariance,
-  combine_targets(scores_g, g_invariance, c("num_vars", "id_pairs")),
+  tar_combine_with_meta(scores_g, g_invariance, c("num_vars", "id_pairs")),
   tar_target(
     scores_g_cor_pairwise,
     scores_g |>
@@ -92,7 +92,7 @@ list(
       mutate(user_id = seq_len(n()), .before = 1L)
   ),
   g_invariance_random,
-  combine_targets(
+  tar_combine_with_meta(
     scores_g_random,
     g_invariance_random,
     c("num_vars", "id_pairs")
