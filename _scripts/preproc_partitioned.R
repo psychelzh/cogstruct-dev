@@ -63,23 +63,31 @@ targets_indices_partitioned <- c(
 )
 
 list(
-  tar_path_obj_from_proj(
+  tar_target(
     file_crit,
-    "scores_origin_bifactor",
-    project = "confirm_factors"
+    path_obj_from_proj("scores_origin_bifactor", "confirm_factors"),
+    format = "file"
   ),
-  tar_path_obj_from_proj(
+  tar_target(
     file_users_completed,
-    "users_completed",
-    project = "prepare_source_data"
+    path_obj_from_proj("users_completed", "prepare_source_data"),
+    format = "file"
+  ),
+  tarchetypes::tar_file_read(
+    durations,
+    path_obj_from_proj("durations", "prepare_source_data"),
+    read = qs::qread(!!.x)
   ),
   tarchetypes::tar_map(
     contents,
     names = game_id,
-    tar_path_obj_from_proj(
+    tar_target(
       file_data,
-      sprintf("data_valid_%s", game_id),
-      project = "prepare_source_data"
+      path_obj_from_proj(
+        sprintf("data_valid_%s", game_id),
+        "prepare_source_data"
+      ),
+      format = "file"
     )
   ),
   targets_indices_partitioned,
