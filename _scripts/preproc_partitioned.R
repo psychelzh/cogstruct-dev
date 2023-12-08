@@ -68,6 +68,11 @@ list(
     "scores_origin_bifactor",
     project = "confirm_factors"
   ),
+  tar_path_obj_from_proj(
+    file_users_completed,
+    "users_completed",
+    project = "prepare_source_data"
+  ),
   tarchetypes::tar_map(
     contents,
     names = game_id,
@@ -81,5 +86,26 @@ list(
   tarchetypes::tar_combine(
     indices_slices,
     targets_indices_partitioned
+  ),
+  tar_target(
+    indices_slices_clean,
+    clean_indices(
+      indices_slices,
+      qs::qread(file_users_completed),
+      id_cols = c(user_id, part)
+    )
+  ),
+  tar_target(
+    indices_slices_of_interest,
+    indices_slices_clean |>
+      inner_join(
+        data.iquizoo::game_indices,
+        join_by(game_id, index_name == index_main)
+      ) |>
+      mutate(score_adj = if_else(index_reverse, -score, score)) |>
+      mutate(
+        is_outlier_iqr = score %in% boxplot.stats(score)$out,
+        .by = c(game_id, index_name, part)
+      )
   )
 )
