@@ -25,8 +25,10 @@ tar_source()
 
 # 注意警觉, 注意指向: 1.0.0 records device for all right arrow resp as "mouse"
 game_id_dev_err <- bit64::as.integer64(c(380173315257221, 380174783693701))
-# 文字推理: 1.0.0 incorrect accuracy score
-game_id_vr <-  bit64::as.integer64(356101783560965)
+# 多彩文字PRO: correct game duration data
+game_id_strp <- bit64::as.integer64(224378628399301)
+# 人工词典: re-grade accuracy based on raters
+game_id_cr <- bit64::as.integer64(380174879445893)
 games_keyboard <- readr::read_lines("config/games_keyboard")
 contents <- tarflow.iquizoo:::fetch_iquizoo_mem(
   readr::read_file("sql/contents_with_retest.sql")
@@ -41,14 +43,16 @@ config_contents <- contents |>
       stringr::str_glue("raw_data_parsed_{game_id}")
     )
   )
+
+# TODO: currently replicated codes, consider adding function
 targets_valid_raw <- c(
   tarchetypes::tar_map(
     values = config_contents |>
-      dplyr::filter(!game_id %in% c(game_id_dev_err, game_id_vr)),
+      dplyr::filter(!game_id %in% c(game_id_dev_err, game_id_strp, game_id_cr)),
     names = game_id,
     tar_target(
       data_valid,
-      tar_parsed[check_device(tar_parsed, require_keyboard), ]
+      validate_data(tar_parsed, require_keyboard)
     )
   ),
   # correct device error
@@ -57,25 +61,37 @@ targets_valid_raw <- c(
       dplyr::filter(game_id %in% game_id_dev_err),
     names = game_id,
     tar_target(
-      data_valid, {
-        data_cor <- correct_device(tar_parsed)
-        data_cor[check_device(data_cor, require_keyboard), ]
-      }
+      data_valid,
+      correct_device(tar_parsed) |>
+        validate_data(require_keyboard)
     )
   ),
   tarchetypes::tar_map(
     values = config_contents |>
-      dplyr::filter(game_id == game_id_vr),
+      dplyr::filter(game_id %in% game_id_strp),
     names = game_id,
     tar_target(
       data_valid,
-      correct_vr(tar_parsed[check_device(tar_parsed, require_keyboard), ])
+      validate_data(tar_parsed, require_keyboard) |>
+        correct_game_dur()
+    )
+  ),
+  # correct accuracy scores for CR
+  tarchetypes::tar_map(
+    values = config_contents |>
+      dplyr::filter(game_id == game_id_cr),
+    names = game_id,
+    tar_target(
+      data_valid,
+      validate_data(tar_parsed, require_keyboard) |>
+        correct_cr(cr_correction)
     )
   )
 )
 targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
   contents |>
-    dplyr::distinct(game_id),
+    dplyr::distinct(game_id) |>
+    data.iquizoo::match_preproc(type = "semi", rm_tagged = TRUE),
   name_parsed = "data_valid",
   action_raw_data = "preproc"
 )
@@ -83,7 +99,7 @@ targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
 targets_reliabilty <- tarchetypes::tar_map(
   values = contents |>
     dplyr::distinct(game_id) |>
-    data.iquizoo::match_preproc(type = "semi") |>
+    data.iquizoo::match_preproc(type = "semi", rm_tagged = TRUE) |>
     dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
     dplyr::mutate(
       game_id_rel = dplyr::coalesce(game_id_parallel, game_id)

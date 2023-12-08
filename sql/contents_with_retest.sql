@@ -17,7 +17,7 @@ FROM
     INNER JOIN iquizoo_content_db.content c2 ON c2.Id = ccc.ContentId AND c2.ContentType <> 4 AND c2.Deleted <> 1
     INNER JOIN iquizoo_user_db.base_organization bo ON bo.Id = pcc.OrganizationId AND bo.Deleted <> 1
 WHERE
-    bo.Name IN ('北京师范大学', '清华大学认知实验', '四川师范大学')
+    bo.Name IN ('北京师范大学', '清华大学认知实验', '四川师范大学', '天津师范大学')
     AND c.CourseSeriesId <> (
         SELECT Id
         FROM iquizoo_content_db.course_series
