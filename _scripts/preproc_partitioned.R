@@ -78,17 +78,16 @@ list(
     path_obj_from_proj("durations", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
-  tarchetypes::tar_map(
-    contents,
-    names = game_id,
+  tarchetypes::tar_eval(
     tar_target(
-      file_data,
+      tar_file_data,
       path_obj_from_proj(
         sprintf("data_valid_%s", game_id),
         "prepare_source_data"
       ),
       format = "file"
-    )
+    ),
+    values = contents
   ),
   targets_indices_partitioned,
   tarchetypes::tar_combine(
