@@ -2,7 +2,7 @@ library(targets)
 future::plan(future.callr::callr)
 tar_source()
 tar_option_set(
-  package = c("tidyverse", "bit64", "lavaan"),
+  package = c("tidyverse", "bit64", "lavaan", "preproc.iquizoo"),
   format = "qs",
   imports = "preproc.iquizoo",
   memory = "transient",
@@ -112,7 +112,10 @@ targets_valid_raw <- list(
 targets_preproc <- tarchetypes::tar_map(
   values = contents |>
     dplyr::distinct(game_id) |>
-    data.iquizoo::match_preproc(type = "inner") |>
+    data.iquizoo::match_preproc(
+      type = "inner",
+      rm_tagged = TRUE # the tagged are experimental or unavailable
+    ) |>
     dplyr::mutate(
       game_id = as.character(.data$game_id),
       tar_parsed = rlang::syms(stringr::str_glue("data_valid_{game_id}"))
