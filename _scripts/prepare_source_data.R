@@ -7,108 +7,13 @@ tar_option_set(
   imports = "preproc.iquizoo",
   memory = "transient",
   garbage_collection = TRUE,
-  controller = crew::crew_controller_local(workers = 8)
+  controller = crew::crew_controller_local(workers = 12)
 )
 
-read_archived <- function(...) {
-  select(
-    targets::tar_read(...),
-    !contains("name")
-  )
-}
-
-game_id_rapm <- bit64::as.integer64(265520726213317) # 瑞文高级推理
-# 注意警觉, 注意指向: 1.0.0 records device for all right arrow resp as "mouse"
-game_id_dev_err <- bit64::as.integer64(c(380173315257221, 380174783693701))
-# 多彩文字PRO: correct game duration data
-game_id_strp <- bit64::as.integer64(224378628399301)
-# 人工词典: re-grade accuracy based on raters
-game_id_cr <- bit64::as.integer64(380174879445893)
-path_archive <- Sys.getenv("OneDriveConsumer") |>
-  fs::path("Documents/Research/archived/cogstruct-dev-archived")
-path_restore <- withr::with_dir(
-  path_archive,
-  fs::path(
-    path_archive,
-    tar_config_get("store", project = "preproc_behav")
-  )
-)
 contents <- tarflow.iquizoo:::fetch_iquizoo_mem(
   readr::read_file("sql/contents_camp.sql")
 )
-games_keyboard <- readr::read_lines("config/games_keyboard")
-targets_current <- tarflow.iquizoo::tar_prep_iquizoo(
-  contents = contents,
-  what = "raw_data",
-  action_raw_data = "none",
-  check_progress = FALSE
-)
-config_contents <- contents |>
-  dplyr::distinct(game_id) |>
-  dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
-  dplyr::mutate(
-    game_id = as.character(game_id),
-    name_current = rlang::syms(stringr::str_glue("raw_data_{game_id}")),
-    name_restore = rlang::syms(stringr::str_glue("data_{game_name_abbr}")),
-    require_keyboard = game_name %in% games_keyboard,
-    tar_parsed = rlang::syms(stringr::str_glue("data_parsed_{game_id}"))
-  )
-targets_main <- tarchetypes::tar_map(
-  values = config_contents,
-  names = game_id,
-  tar_target(
-    data_full,
-    bind_rows(
-      select(name_current, -project_id),
-      possibly(read_archived)(name_restore, store = path_restore)
-    ) |>
-      distinct()
-  ),
-  tar_target(data_parsed, wrangle_data(data_full))
-)
-targets_valid_raw <- list(
-  tarchetypes::tar_map(
-    values = config_contents |>
-      dplyr::filter(!game_id %in% c(game_id_dev_err, game_id_strp, game_id_cr)),
-    names = game_id,
-    tar_target(
-      data_valid,
-      validate_data(tar_parsed, require_keyboard)
-    )
-  ),
-  # correct device error
-  tarchetypes::tar_map(
-    values = config_contents |>
-      dplyr::filter(game_id %in% game_id_dev_err),
-    names = game_id,
-    tar_target(
-      data_valid,
-      correct_device(tar_parsed) |>
-        validate_data(require_keyboard)
-    )
-  ),
-  tarchetypes::tar_map(
-    values = config_contents |>
-      dplyr::filter(game_id %in% game_id_strp),
-    names = game_id,
-    tar_target(
-      data_valid,
-      validate_data(tar_parsed, require_keyboard) |>
-        correct_game_dur()
-    )
-  ),
-  # correct accuracy scores for CR
-  tarchetypes::tar_map(
-    values = config_contents |>
-      dplyr::filter(game_id == game_id_cr),
-    names = game_id,
-    tar_target(
-      data_valid,
-      validate_data(tar_parsed, require_keyboard) |>
-        correct_cr(cr_correction)
-    )
-  )
-)
+
 targets_preproc <- tarchetypes::tar_map(
   values = contents |>
     dplyr::distinct(game_id) |>
@@ -137,9 +42,14 @@ targets_preproc <- tarchetypes::tar_map(
 )
 
 list(
-  targets_current,
-  targets_main,
-  targets_valid_raw,
+  tarflow.iquizoo::tar_prep_iquizoo(
+    contents = contents,
+    what = "raw_data",
+    action_raw_data = "none",
+    check_progress = FALSE
+  ),
+  tar_collect_camp(contents),
+  tar_validate_rawdata(contents),
   targets_preproc,
   tarchetypes::tar_combine(indices, targets_preproc$indices),
   tarchetypes::tar_combine(durations, targets_preproc$durations),

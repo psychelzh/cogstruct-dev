@@ -87,6 +87,94 @@ tar_combine_with_meta <- function(name, targets, cols_targets,
   )
 }
 
+tar_collect_camp <- function(contents, name_parsed = "raw_data_parsed") {
+  path_archive <- Sys.getenv("OneDriveConsumer") |>
+    fs::path("Documents/Research/archived/cogstruct-dev-archived")
+  path_restore <- withr::with_dir(
+    path_archive,
+    fs::path(
+      path_archive,
+      tar_config_get("store", project = "preproc_behav")
+    )
+  )
+  tarchetypes::tar_map(
+    values = contents |>
+      dplyr::distinct(game_id) |>
+      dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
+      dplyr::mutate(
+        game_id = as.character(game_id),
+        name_current = rlang::syms(sprintf("raw_data_%s", game_id)),
+        name_restore = rlang::syms(sprintf("data_%s", game_name_abbr))
+      ),
+    names = game_id,
+    tar_target(
+      data_full,
+      bind_rows(
+        select(name_current, -project_id),
+        possibly(read_archived)(name_restore, store = path_restore)
+      ) |>
+        distinct()
+    ),
+    tar_target_raw(name_parsed, quote(wrangle_data(data_full)))
+  )
+}
+
+tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
+  config_contents <- contents |>
+    dplyr::distinct(game_id) |>
+    dplyr::inner_join(data.iquizoo::game_info, by = "game_id") |>
+    dplyr::mutate(
+      game_id = as.character(game_id),
+      require_keyboard = game_name %in% games_keyboard,
+      tar_parsed = rlang::syms(sprintf("%s_%s", name_parsed, game_id))
+    )
+  c(
+    tarchetypes::tar_map(
+      values = config_contents |>
+        dplyr::filter(
+          !game_id %in% c(game_id_dev_err, game_id_strp, game_id_cr)
+        ),
+      names = game_id,
+      tar_target(
+        data_valid,
+        validate_data(tar_parsed, require_keyboard)
+      )
+    ),
+    # correct device error
+    tarchetypes::tar_map(
+      values = config_contents |>
+        dplyr::filter(game_id %in% game_id_dev_err),
+      names = game_id,
+      tar_target(
+        data_valid,
+        correct_device(tar_parsed) |>
+          validate_data(require_keyboard)
+      )
+    ),
+    tarchetypes::tar_map(
+      values = config_contents |>
+        dplyr::filter(game_id %in% game_id_strp),
+      names = game_id,
+      tar_target(
+        data_valid,
+        validate_data(tar_parsed, require_keyboard) |>
+          correct_game_dur()
+      )
+    ),
+    # correct accuracy scores for CR
+    tarchetypes::tar_map(
+      values = config_contents |>
+        dplyr::filter(game_id == game_id_cr),
+      names = game_id,
+      tar_target(
+        data_valid,
+        validate_data(tar_parsed, require_keyboard) |>
+          correct_cr(cr_correction)
+      )
+    )
+  )
+}
+
 tar_prep_creativity <- function() {
   list(
     tarchetypes::tar_file_read(

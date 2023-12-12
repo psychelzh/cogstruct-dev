@@ -28,3 +28,10 @@ replace_as_name_cn <- function(name, remove_suffix = FALSE) {
   }
   out
 }
+
+read_archived <- function(...) {
+  select(
+    targets::tar_read(...),
+    !contains("name")
+  )
+}
