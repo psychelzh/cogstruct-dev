@@ -10,64 +10,14 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 8)
 )
 
-contents <- tarflow.iquizoo:::fetch_iquizoo_mem(
-  readr::read_file("sql/contents_camp.sql")
-) |>
-  dplyr::distinct(game_id) |>
-  dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
-  data.iquizoo::match_preproc(type = "inner") |>
-  dplyr::inner_join(
-    readr::read_csv("config/game_format.csv", show_col_types = FALSE),
-    by = "game_name"
-  ) |>
-  dplyr::filter(!is.na(format)) |>
-  dplyr::mutate(
-    game_id = as.character(game_id),
-    prep_fun = dplyr::if_else(
-      game_name == "社交达人",
-      rlang::syms("fname_slices"),
-      prep_fun
-    ),
-    tar_file_data = rlang::syms(
-      stringr::str_glue("file_data_{game_id}")
-    )
-  )
-targets_indices_partitioned <- c(
-  tarchetypes::tar_map(
-    contents |>
-      dplyr::filter(format != "items") |>
-      dplyr::mutate(
-        slice_fun = rlang::syms(
-          stringr::str_glue("slice_data_{format}")
-        )
-      ),
-    names = game_id,
-    tar_target(
-      indices_slices,
-      qs::qread(tar_file_data) |>
-        slice_fun(parts, subset = subset) |>
-        preproc_data(prep_fun, .input = input, .extra = extra)
-    )
+targets_indices_partitioned <- tar_partition_rawdata(
+  tarflow.iquizoo:::fetch_iquizoo_mem(
+    readr::read_file("sql/contents_camp.sql")
   ),
-  tarchetypes::tar_map(
-    contents |>
-      dplyr::filter(format == "items"),
-    names = game_id,
-    tar_target(
-      indices_slices,
-      qs::qread(tar_file_data) |>
-        slice_data_items(qs::qread(file_crit)) |>
-        preproc_data(prep_fun, .input = input, .extra = extra)
-    )
-  )
+  project_rawdata = "prepare_source_data"
 )
 
 list(
-  tar_target(
-    file_crit,
-    path_obj_from_proj("scores_origin_bifactor", "confirm_factors"),
-    format = "file"
-  ),
   tar_target(
     file_users_completed,
     path_obj_from_proj("users_completed", "prepare_source_data"),
@@ -78,21 +28,10 @@ list(
     path_obj_from_proj("durations", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
-  tarchetypes::tar_eval(
-    tar_target(
-      tar_file_data,
-      path_obj_from_proj(
-        sprintf("data_valid_%s", game_id),
-        "prepare_source_data"
-      ),
-      format = "file"
-    ),
-    values = contents
-  ),
   targets_indices_partitioned,
   tarchetypes::tar_combine(
     indices_slices,
-    targets_indices_partitioned
+    tail(targets_indices_partitioned, 2)
   ),
   tar_target(
     indices_slices_clean,

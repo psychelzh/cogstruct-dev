@@ -175,6 +175,108 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
   )
 }
 
+tar_partition_rawdata <- function(contents,
+                                  csv_format = "config/game_format.csv",
+                                  name_rawdata = "data_valid",
+                                  project_rawdata = NULL,
+                                  path_crit = NULL) {
+  config_contents <- dplyr::distinct(contents, game_id)
+  if (is.null(path_crit)) {
+    path_crit <- quote(
+      path_obj_from_proj(
+        "scores_origin_bifactor",
+        "confirm_factors"
+      )
+    )
+  }
+  if (!is.null(project_rawdata)) {
+    config_contents <- config_contents |>
+      dplyr::mutate(
+        tar_file_data = rlang::syms(
+          stringr::str_glue("file_data_{game_id}")
+        ),
+        file_path = path_obj_from_proj(
+          sprintf("%s_%s", name_rawdata, game_id),
+          project_rawdata
+        )
+      )
+    expr_rawdata <- quote(qs::qread(tar_file_data))
+  } else {
+    config_contents <- config_contents |>
+      dplyr::mutate(
+        tar_data = rlang::syms(
+          stringr::str_glue("{name_rawdata}_{game_id}")
+        )
+      )
+    expr_rawdata <- quote(tar_data)
+  }
+  config_contents <- config_contents |>
+    dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
+    data.iquizoo::match_preproc(type = "inner") |>
+    dplyr::inner_join(
+      readr::read_csv(csv_format, show_col_types = FALSE),
+      by = "game_name"
+    ) |>
+    dplyr::filter(!is.na(format)) |>
+    dplyr::mutate(
+      game_id = as.character(game_id),
+      prep_fun = dplyr::if_else(
+        game_name == "社交达人",
+        rlang::syms("fname_slices"),
+        prep_fun
+      )
+    )
+  c(
+    if (!is.null(project_rawdata)) {
+      tarchetypes::tar_eval_raw(
+        substitute(
+          tar_target(
+            tar_file_data,
+            path_obj_from_proj(
+              sprintf("%s_%s", name_rawdata, game_id),
+              project_rawdata
+            ),
+            format = "file"
+          )
+        ),
+        values = config_contents
+      )
+    },
+    tar_target_raw("file_crit", substitute(path_crit), format = "file"),
+    tarchetypes::tar_map(
+      config_contents |>
+        dplyr::filter(format != "items") |>
+        dplyr::mutate(
+          slice_fun = rlang::syms(
+            stringr::str_glue("slice_data_{format}")
+          )
+        ),
+      names = game_id,
+      tar_target_raw(
+        "indices_slices",
+        substitute(
+          expr_rawdata |>
+            slice_fun(parts, subset = subset) |>
+            preproc_data(prep_fun, .input = input, .extra = extra)
+        )
+      )
+    ),
+    tarchetypes::tar_map(
+      config_contents |>
+        dplyr::filter(format == "items"),
+      names = game_id,
+      tar_target_raw(
+        "indices_slices",
+        substitute(
+          expr_rawdata |>
+            slice_data_items(qs::qread(file_crit)) |>
+            preproc_data(prep_fun, .input = input, .extra = extra)
+        )
+      )
+    )
+  )
+}
+
 tar_prep_creativity <- function() {
   list(
     tarchetypes::tar_file_read(

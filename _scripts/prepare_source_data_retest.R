@@ -8,7 +8,7 @@ library(targets)
 
 # Set target options:
 tar_option_set(
-  packages = c("tarflow.iquizoo", "tidyverse"),
+  packages = c("tidyverse", "tarflow.iquizoo", "preproc.iquizoo"),
   imports = "preproc.iquizoo",
   format = "qs", # Optionally set the default storage format. qs is fast.
   #
@@ -68,6 +68,8 @@ targets_reliabilty <- tarchetypes::tar_map(
   )
 )
 
+targets_indices_partitioned <- tar_partition_rawdata(contents)
+
 # Replace the target list below with your own:
 list(
   tarflow.iquizoo::tar_prep_iquizoo(
@@ -87,5 +89,6 @@ list(
     targets_reliabilty,
     cols_targets = "game_id",
     fun_post = \(.data) .data |> mutate(game_id = bit64::as.integer64(game_id))
-  )
+  ),
+  targets_indices_partitioned
 )
