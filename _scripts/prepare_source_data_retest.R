@@ -26,16 +26,6 @@ tar_source()
 contents <- tarflow.iquizoo:::fetch_iquizoo_mem(
   readr::read_file("sql/contents_with_retest.sql")
 )
-config_contents <- contents |>
-  dplyr::distinct(game_id) |>
-  dplyr::inner_join(data.iquizoo::game_info, by = "game_id") |>
-  dplyr::mutate(
-    game_id = as.character(game_id),
-    require_keyboard = game_name %in% games_keyboard,
-    tar_parsed = rlang::syms(
-      stringr::str_glue("raw_data_parsed_{game_id}")
-    )
-  )
 
 targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
   contents |>
