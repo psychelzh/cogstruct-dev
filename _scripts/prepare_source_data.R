@@ -10,7 +10,7 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 12)
 )
 
-contents <- tarflow.iquizoo:::fetch_iquizoo_mem(
+contents <- tarflow.iquizoo::fetch_iquizoo_mem()(
   readr::read_file("sql/contents_camp.sql")
 )
 

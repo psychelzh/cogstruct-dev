@@ -11,7 +11,7 @@ tar_option_set(
 )
 
 targets_indices_partitioned <- tar_partition_rawdata(
-  tarflow.iquizoo:::fetch_iquizoo_mem(
+  tarflow.iquizoo::fetch_iquizoo_mem()(
     readr::read_file("sql/contents_camp.sql")
   ),
   project_rawdata = "prepare_source_data"

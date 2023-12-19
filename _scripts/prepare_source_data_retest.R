@@ -23,7 +23,7 @@ tar_option_set(
 # Run the R scripts in the R/ folder with your custom functions:
 tar_source()
 
-contents <- tarflow.iquizoo:::fetch_iquizoo_mem(
+contents <- tarflow.iquizoo::fetch_iquizoo_mem()(
   readr::read_file("sql/contents_with_retest.sql")
 )
 
