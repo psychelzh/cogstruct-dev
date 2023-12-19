@@ -123,6 +123,7 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
   config_contents <- contents |>
     dplyr::distinct(game_id) |>
     dplyr::inner_join(data.iquizoo::game_info, by = "game_id") |>
+    dplyr::left_join(game_data_names, by = "game_id") |>
     dplyr::mutate(
       game_id = as.character(game_id),
       require_keyboard = game_name %in% games_keyboard,
@@ -137,7 +138,11 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
       names = game_id,
       tar_target(
         data_valid,
-        validate_data(tar_parsed, require_keyboard)
+        validate_data(
+          tar_parsed,
+          require_keyboard = require_keyboard,
+          list_names = list_names
+        )
       )
     ),
     # correct device error
@@ -148,7 +153,10 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
       tar_target(
         data_valid,
         correct_device(tar_parsed) |>
-          validate_data(require_keyboard)
+          validate_data(
+            require_keyboard = require_keyboard,
+            list_names = list_names
+          )
       )
     ),
     tarchetypes::tar_map(
@@ -157,7 +165,11 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
       names = game_id,
       tar_target(
         data_valid,
-        validate_data(tar_parsed, require_keyboard) |>
+        validate_data(
+          tar_parsed,
+          require_keyboard = require_keyboard,
+          list_names = list_names
+        ) |>
           correct_game_dur()
       )
     ),
@@ -168,7 +180,11 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
       names = game_id,
       tar_target(
         data_valid,
-        validate_data(tar_parsed, require_keyboard) |>
+        validate_data(
+          tar_parsed,
+          require_keyboard = require_keyboard,
+          list_names = list_names
+        ) |>
           correct_cr(cr_correction)
       )
     )

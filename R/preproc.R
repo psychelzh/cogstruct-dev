@@ -14,18 +14,27 @@ fname_slices <- function(data, .by = NULL, .input = NULL, .extra = NULL) {
 #'
 #' @param data_parsed Data with parsed raw data.
 #' @param require_keyboard Logical indicating if keyboard response is required.
+#' @param list_names A [list()] of possible column names.
 #' @return Validated data of class [data.frame()].
-validate_data <- function(data_parsed, require_keyboard) {
-  game_id <- data_parsed$game_id[[1]]
-
+validate_data <- function(data_parsed, require_keyboard, list_names) {
   # keep data with the largest major version only
   # e.g., remove 2.9.0 and keep 3.0.0 or 3.1.0
   ver_major <- str_extract(data_parsed$game_version, "\\d+")
   ver_keep <- ver_major == max(ver_major)
 
+  # check if keyboard is used for certain tasks
   dev_keep <- check_device(data_parsed, require_keyboard)
 
-  data_parsed[ver_keep & dev_keep, ]
+  # check data names
+  names_keep <- TRUE
+  if (!is.null(list_names)) {
+    names_keep <- map_lgl(
+      data_parsed$raw_parsed,
+      ~ list(colnames(.x)) %in% list_names
+    )
+  }
+
+  data_parsed[ver_keep & dev_keep & names_keep, ]
 }
 
 #' Correct device error
