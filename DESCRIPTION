@@ -1,0 +1,15 @@
+Package: cogstruct-dev
+Title: Analysis Pipelines for Cognitive Structural Models
+Version: 0.0.0.9000
+Authors@R:
+    person("Liang", "Zhang", , "psychelzh@outlook.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-9041-1150"))
+Description: This project provides analysis pipelines for cognitive
+    structural models. Note it is not a real package, but only mimicks a
+    package for development purpose.
+License: CC BY 4.0
+Depends: 
+    tidyverse
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
