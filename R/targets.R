@@ -74,7 +74,7 @@ tar_combine_with_meta <- function(name, targets, cols_targets,
   }
   tarchetypes::tar_combine_raw(
     name,
-    targets[[name]],
+    targets,
     command = bquote(
       list(!!!.x) |>
         lapply(.(rlang::as_function(fun_pre))) |>

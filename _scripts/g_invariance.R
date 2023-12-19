@@ -52,7 +52,11 @@ list(
       )
   ),
   g_invariance,
-  tar_combine_with_meta(scores_g, g_invariance, c("num_vars", "id_pairs")),
+  tar_combine_with_meta(
+    scores_g,
+    g_invariance$scores_g,
+    c("num_vars", "id_pairs")
+  ),
   tar_target(
     scores_g_cor_pairwise,
     scores_g |>
@@ -94,7 +98,7 @@ list(
   g_invariance_random,
   tar_combine_with_meta(
     scores_g_random,
-    g_invariance_random,
+    g_invariance_random$scores_g_random,
     c("num_vars", "id_pairs")
   ),
   tar_target(

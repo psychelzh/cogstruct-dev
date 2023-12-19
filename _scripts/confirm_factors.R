@@ -171,7 +171,7 @@ targets_gof <- lapply(
     name <- paste0("gof_updated_", hier_type)
     tar_combine_with_meta(
       name,
-      targets_updation,
+      targets_updation[[name]],
       cols_targets = c("method", "level"),
       fun_pre = \(x) as_tibble_row(unclass(x))
     )
@@ -183,7 +183,7 @@ targets_gof2 <- lapply(
     name <- paste0("gof_updated2_", hier_type)
     tar_combine_with_meta(
       name,
-      targets_updation2,
+      targets_updation2[[name]],
       cols_targets = c("method", "level"),
       fun_pre = \(x) as_tibble_row(unclass(x))
     )
@@ -215,13 +215,13 @@ list(
   targets_origin,
   tar_combine_with_meta(
     gof_origin,
-    targets_origin,
+    targets_origin$gof_origin,
     cols_targets = "hierarchical",
     fun_pre = \(x) as_tibble_row(unclass(x))
   ),
   tar_combine_with_meta(
     scores_origin,
-    targets_origin,
+    targets_origin$scores_origin,
     cols_targets = "hierarchical",
     fun_post = \(.data) .data |> relocate(g, .after = user_id)
   ),
@@ -236,7 +236,7 @@ list(
   targets_gof,
   tar_combine_with_meta(
     dims_updated,
-    targets_updation,
+    targets_updation$dims_updated,
     cols_targets = c("method", "level")
   ),
   tarchetypes::tar_combine(

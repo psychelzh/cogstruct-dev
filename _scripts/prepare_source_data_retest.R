@@ -76,7 +76,7 @@ list(
   targets_reliabilty,
   tar_combine_with_meta(
     reliability,
-    targets_reliabilty,
+    targets_reliabilty$reliability,
     cols_targets = "game_id",
     fun_post = \(.data) .data |> mutate(game_id = bit64::as.integer64(game_id))
   ),
