@@ -9,125 +9,62 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 8)
 )
 
-store_preproc <- fs::path(
-  tar_config_get("store", project = "prepare_source_data"),
-  "objects"
+games_nback <- c(
+  "Nback4", "Digit3back", "Verbal3back", "Grid2back", "Paint2back"
+)
+config <- tibble::tribble(
+  ~schema, ~exclude,
+  "all", character(),
+  "nbackfree", games_nback, # exclude all N-back
+  "nbackone", setdiff(games_nback, "Grid2back") # keep grid 2-back only
 )
 
-output_factcons <- function(exclude_id, mat, ...,
-                            file_prefix = "factcons",
-                            dir_output = ".output/factor-consistency") {
-  file <- fs::path(
-    dir_output,
-    str_glue("{file_prefix}_exclude-{exclude_id}.png")
+targets_fact_resamples <- tarchetypes::tar_map(
+  config,
+  names = -exclude,
+  tarchetypes::tar_map(
+    list(n_fact = 4:10),
+    tarchetypes::tar_rep(
+      fact_attribution,
+      resample_fact_attribution(
+        indices_wider_clean,
+        n_fact,
+        exclude
+      ),
+      batches = 10,
+      reps = 10
+    ),
+    tar_target(
+      prob_one_fact,
+      extract_prob_one_fact(fact_attribution)
+    )
   )
-  rownames(mat) <- replace_as_name_cn(rownames(mat))
-  colnames(mat) <- replace_as_name_cn(colnames(mat))
-  ragg::agg_png(file, width = 1980, height = 1980, res = 100)
-  corrplot::corrplot(
-    mat,
-    type = "upper",
-    method = "color",
-    order = "hclust",
-    hclust.method = "ward.D2",
-    col.lim = c(0, 1),
-    col = corrplot::COL2("RdBu")
-  )
-  dev.off()
-  file
-}
-
-games_nback <- c("Nback4", "Digit3back", "Verbal3back", "Grid2back", "Paint2back")
-games_filt <- c("FiltColor", "FiltOrient")
-config <- tidyr::expand_grid(
-  exclude_nback = combn(games_nback, length(games_nback) - 1, simplify = FALSE),
-  exclude_filt = combn(games_filt, length(games_filt) - 1, simplify = FALSE)
-) |>
-  dplyr::mutate(
-    exclude = purrr::map2(exclude_nback, exclude_filt, c),
-    include = purrr::map(exclude, ~ setdiff(c(games_nback, games_filt), .x)),
-    .keep = "unused"
-  ) |>
-  tibble::add_row(
-    exclude = list(character(), c(games_nback, games_filt), games_filt)
-  ) |>
-  dplyr::mutate(exclude_id = dplyr::consecutive_id(exclude), .before = 1) |>
-  tidyr::expand_grid(n_fact = 4:10)
+)
 
 list(
   tarchetypes::tar_file_read(
     indices_wider_clean,
-    fs::path(store_preproc, "indices_wider_clean"),
-    read = qs::qread(!!.x)
+    path_obj_from_proj("indices_wider_clean", "prepare_source_data"),
+    read = select(qs::qread(!!.x), !user_id)
   ),
-  tarchetypes::tar_map_rep(
-    fact_attribution,
-    indices_wider_clean |>
-      select(-user_id) |>
-      resample_fact_attribution(n_fact, exclude),
-    values = dplyr::select(config, -include),
-    names = c(exclude_id, n_fact),
-    batches = 10,
-    reps = 10
-  ),
-  tarchetypes::tar_group_by(
-    fact_attribution_groups,
-    fact_attribution,
-    exclude_id,
-    exclude,
-    n_fact
-  ),
-  tar_target(
+  targets_fact_resamples,
+  tar_combine_with_meta(
     prob_one_fact,
-    fact_attribution_groups |>
-      mutate(
-        pairs = map(
-          game_index,
-          ~ if (length(.x) > 1) {
-            combn(.x, 2, sort, simplify = FALSE)
-          }
-        ),
-        .keep = "unused"
-      ) |>
-      unnest(pairs) |>
-      summarise(
-        prob = n() / 100,
-        .by = c(exclude_id, exclude, n_fact, pairs)
-      ) |>
-      mutate(
-        x = purrr::map_chr(pairs, 1),
-        y = purrr::map_chr(pairs, 2),
-        .keep = "unused"
-      ) |>
-      group_by(exclude_id, exclude, n_fact) |>
-      group_modify(
-        ~ tibble(
-          mat = {
-            mat_origin <- .x |>
-              select(x, y, prob) |>
-              igraph::graph_from_data_frame(directed = FALSE) |>
-              igraph::as_adjacency_matrix(attr = "prob") |>
-              as.matrix()
-            order <- sort(colnames(mat_origin))
-            list(mat_origin[order, order])
-          }
-        )
-      ) |>
-      ungroup(),
-    pattern = map(fact_attribution_groups)
+    select_list(targets_fact_resamples, starts_with("prob_one_fact")),
+    cols_targets = c("n_fact", "schema"),
+    fun_pre = \(mat) tibble(mat = list(mat))
   ),
   tar_target(
     prob_one_fact_avg,
     prob_one_fact |>
       summarise(
         mat = list(reduce(mat, `+`) / n()),
-        .by = c(exclude_id, exclude)
+        .by = schema
       )
   ),
   tar_target(
     files_plots,
-    prob_one_fact_avg |>
-      pmap_chr(output_factcons)
+    pmap_chr(prob_one_fact_avg, output_factcons)
   ),
   tar_target(
     prob_one_fact_large,
@@ -135,7 +72,7 @@ list(
       filter(n_fact > 7) |>
       summarise(
         mat = list(reduce(mat, `+`) / n()),
-        .by = c(exclude_id, exclude)
+        .by = schema
       )
   ),
   tar_target(
@@ -166,8 +103,7 @@ list(
   tar_target(
     cluster_result,
     prob_one_fact_avg |>
-      # keep "格子卡片" only considering n-back tests are too similar
-      filter(exclude_id == 3) |>
+      filter(schema == "nbackone") |>
       mutate(mat = map(mat, ~ 1 - .x)) |>
       pluck("mat", 1) |>
       as.dist() |>

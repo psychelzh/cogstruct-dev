@@ -29,9 +29,50 @@ replace_as_name_cn <- function(name, remove_suffix = FALSE) {
   out
 }
 
+output_factcons <- function(schema, mat, ...,
+                            file_prefix = "factcons",
+                            dir_output = "_output/factor-consistency") {
+  file <- fs::path(
+    dir_output,
+    str_glue("{file_prefix}_schema-{schema}.png")
+  )
+  rownames(mat) <- replace_as_name_cn(rownames(mat))
+  colnames(mat) <- replace_as_name_cn(colnames(mat))
+  ragg::agg_png(file, width = 1980, height = 1980, res = 100)
+  corrplot::corrplot(
+    mat,
+    type = "upper",
+    method = "color",
+    order = "hclust",
+    hclust.method = "ward.D2",
+    col.lim = c(0, 1),
+    col = corrplot::COL2("RdBu")
+  )
+  dev.off()
+  file
+}
+
 read_archived <- function(...) {
   select(
     targets::tar_read(...),
     !contains("name")
   )
+}
+
+select_list <- function(.l, ...) {
+  pos <- tidyselect::eval_select(rlang::expr(c(...)), .l)
+  rlang::set_names(.l[pos], names(pos))
+}
+
+retract_tbl_to_mat <- function(.data, sort_names = TRUE) {
+  stopifnot(ncol(.data) == 3)
+  attr <- colnames(.data)[[3]]
+  mat <- igraph::graph_from_data_frame(.data, directed = FALSE) |>
+    igraph::as_adj(attr = attr) |>
+    as.matrix()
+  if (sort_names) {
+    order <- sort(colnames(mat))
+    mat <- mat[order, order]
+  }
+  mat
 }
