@@ -194,17 +194,8 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
 tar_partition_rawdata <- function(contents,
                                   csv_format = "config/game_format.csv",
                                   name_rawdata = "data_valid",
-                                  project_rawdata = NULL,
-                                  path_crit = NULL) {
+                                  project_rawdata = NULL) {
   config_contents <- dplyr::distinct(contents, game_id)
-  if (is.null(path_crit)) {
-    path_crit <- quote(
-      path_obj_from_proj(
-        "scores_origin_bifactor",
-        "confirm_factors"
-      )
-    )
-  }
   if (!is.null(project_rawdata)) {
     config_contents <- config_contents |>
       dplyr::mutate(
@@ -258,21 +249,28 @@ tar_partition_rawdata <- function(contents,
         values = config_contents
       )
     },
-    tar_target_raw("file_crit", substitute(path_crit), format = "file"),
     tarchetypes::tar_map(
       config_contents |>
-        dplyr::filter(format != "items") |>
-        dplyr::mutate(
-          slice_fun = rlang::syms(
-            stringr::str_glue("slice_data_{format}")
-          )
-        ),
+        dplyr::filter(format == "trials"),
       names = game_id,
       tar_target_raw(
         "indices_slices",
         substitute(
           expr_rawdata |>
-            slice_fun(parts, subset = subset) |>
+            slice_data_trials(num_parts, subset = subset) |>
+            preproc_data(prep_fun, .input = input, .extra = extra)
+        )
+      )
+    ),
+    tarchetypes::tar_map(
+      config_contents |>
+        dplyr::filter(format == "duration"),
+      names = game_id,
+      tar_target_raw(
+        "indices_slices",
+        substitute(
+          expr_rawdata |>
+            slice_data_duration(num_parts) |>
             preproc_data(prep_fun, .input = input, .extra = extra)
         )
       )
@@ -285,7 +283,20 @@ tar_partition_rawdata <- function(contents,
         "indices_slices",
         substitute(
           expr_rawdata |>
-            slice_data_items(qs::qread(file_crit)) |>
+            slice_data_items() |>
+            preproc_data(prep_fun, .input = input, .extra = extra)
+        )
+      )
+    ),
+    tarchetypes::tar_map(
+      config_contents |>
+        dplyr::filter(format == "blocks"),
+      names = game_id,
+      tar_target_raw(
+        "indices_slices",
+        substitute(
+          expr_rawdata |>
+            slice_data_blocks() |>
             preproc_data(prep_fun, .input = input, .extra = extra)
         )
       )

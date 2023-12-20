@@ -31,7 +31,7 @@ list(
   targets_indices_partitioned,
   tarchetypes::tar_combine(
     indices_slices,
-    tail(targets_indices_partitioned, 2)
+    select_list(targets_indices_partitioned, contains("indices_slices"))
   ),
   tar_target(
     indices_slices_clean,

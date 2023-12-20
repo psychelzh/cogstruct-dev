@@ -1,5 +1,9 @@
 # Support for each type of data slicing ----
-slice_data_trials <- function(data, parts, ...,
+
+#' Slice data for equal trials format
+#'
+#' Logic: partition into parts with equal number of trials (roughly one-minute)
+slice_data_trials <- function(data, num_parts, ...,
                               subset = NA,
                               name_raw_parsed = "raw_parsed") {
   if (!is.na(subset)) {
@@ -9,75 +13,58 @@ slice_data_trials <- function(data, parts, ...,
         filter(eval(parse(text = subset)))
     )
   }
-  cols_meta <- setdiff(names(data), name_raw_parsed)
-  num_trials <- nrow(data[[name_raw_parsed]][[1]])
-  if (all(map_int(data[[name_raw_parsed]], nrow) == num_trials)) {
-    config_parts <- tibble(
-      part = seq_len(parts - 1) / parts,
-      row_num_break = num_trials * part
-    )
-    by <- join_by(row_num <= row_num_break)
-  } else {
-    warning("For trials format, all data must have equal number of rows.")
-    config_parts <- data |>
-      group_by(pick(all_of(cols_meta))) |>
-      summarise(
-        num_trials = map_int(.data[[name_raw_parsed]], nrow),
-        .groups = "keep"
-      ) |>
-      reframe(
-        map(
-          num_trials,
-          ~ tibble(
-            part = seq_len(parts - 1) / parts,
-            row_num_break = .x * part
-          )
-        ) |>
-          list_rbind()
-      ) |>
-      ungroup()
-    by <- join_by(!!!cols_meta, row_num <= row_num_break)
-  }
   data |>
-    unnest(any_of(name_raw_parsed)) |>
-    mutate(row_num = row_number(), .by = all_of(cols_meta)) |>
-    inner_join(config_parts, by = by) |>
-    select(-contains("row_num")) |>
-    nest(.by = all_of(c(cols_meta, "part")), .key = name_raw_parsed)
+    mutate(
+      parts = map(
+        .data[[name_raw_parsed]],
+        ~ tibble(
+          part = seq_len(num_parts - 1) / num_parts,
+          row_num_break = nrow(.x) * part
+        ) |>
+          inner_join(
+            mutate(.x, row_num = row_number()),
+            by = join_by(row_num_break >= row_num)
+          ) |>
+          select(-contains("row_num")) |>
+          nest(.by = part, .key = name_raw_parsed)
+      ),
+      .keep = "unused"
+    ) |>
+    unnest(parts)
 }
 
-slice_data_duration <- function(data, parts, ...,
-                                subset = NA,
+#' Slice data for equal duration format
+#'
+#' Logic: partition into parts with equal duration (roughly one-minute)
+slice_data_duration <- function(data, num_parts, ...,
                                 name_raw_parsed = "raw_parsed") {
-  cols_meta <- setdiff(names(data), name_raw_parsed)
-  data_rt_cum <- data |>
-    unnest(any_of(name_raw_parsed)) |>
-    mutate(rt_cum = cumsum(rt), .by = all_of(cols_meta))
-  config_parts <- data_rt_cum |>
-    group_by(pick(all_of(cols_meta))) |>
-    slice_tail(n = 1) |>
-    reframe(
-      tibble(
-        part = seq_len(parts - 1) / parts,
-        rt_cum_break = rt_cum * part
-      )
+  data |>
+    mutate(
+      parts = map(
+        .data[[name_raw_parsed]],
+        ~ tibble(
+          part = seq_len(num_parts - 1) / num_parts,
+          rt_cum_break = sum(.x$rt) * part
+        ) |>
+          inner_join(
+            mutate(.x, rt_cum = cumsum(rt)),
+            by = join_by(rt_cum_break >= rt_cum)
+          ) |>
+          select(-contains("rt_cum")) |>
+          nest(.by = part, .key = name_raw_parsed)
+      ),
+      .keep = "unused"
     ) |>
-    ungroup()
-  data_rt_cum |>
-    inner_join(
-      config_parts,
-      by = join_by(
-        !!!cols_meta,
-        rt_cum <= rt_cum_break
-      )
-    ) |>
-    select(-contains("rt_cum")) |>
-    nest(.by = all_of(c(cols_meta, "part")), .key = name_raw_parsed)
+    unnest(parts)
 }
 
-slice_data_items <- function(data, crit, ...,
+
+#' Slice data for item-based format
+#'
+#' Item means one separate question. This function will do a basic item analysis
+#' to reorder the items based on the item discrimination.
+slice_data_items <- function(data, ...,
                              name_raw_parsed = "raw_parsed") {
-  cols_meta <- setdiff(names(data), name_raw_parsed)
   # 远距离联想 has redundant items
   if (unique(data$game_id) %in% "411281158706373") {
     data[[name_raw_parsed]] <- map(
@@ -85,71 +72,91 @@ slice_data_items <- function(data, crit, ...,
       ~ filter(., itemid != "268009865429099")
     )
   }
-  num_items <- nrow(data[[name_raw_parsed]][[1]])
-  if (!all(map_int(data[[name_raw_parsed]], nrow) == num_items)) {
-    warning("For trials format, all data must have equal number of rows.")
-  }
-  data_unnested <- data |>
-    unnest(any_of(name_raw_parsed))
-  item_order <- data_unnested |>
-    mutate(acc = acc == 1) |>
-    left_join(crit, by = "user_id") |>
-    summarise(
-      cor = psych::biserial(g, acc)[, 1],
-      .by = itemid
+  stopifnot(
+    "For items format, all data must have equal number of items." =
+      n_distinct(map_int(data[[name_raw_parsed]], nrow)) == 1
+  )
+  data_flat <- data |>
+    filter(row_number(desc(game_time)) == 1, .by = user_id) |>
+    tidytable::unnest(raw_parsed) |>
+    filter(acc != -1)
+  item_order <- data_flat |>
+    pivot_wider(
+      id_cols = user_id,
+      names_from = itemid,
+      values_from = acc
     ) |>
-    arrange(desc(cor))
-  item_dur <- data_unnested |>
-    summarise(mrt = mean(rt[acc != -1]), .by = itemid)
-  parts <- max(round(sum(item_dur$mrt) / 60000), 2)
+    select(-user_id) |>
+    psych::alpha() |>
+    pluck("item.stats") |>
+    arrange(desc(r.drop)) |> # this is item discrimination
+    rownames()
+  item_dur <- data_flat |>
+    summarise(mrt = mean(rt), .by = itemid)
+  num_parts <- max(round(sum(item_dur$mrt) / 60000), 2)
   config_parts <- tibble(
-    part = seq_len(parts - 1) / parts,
+    part = seq_len(num_parts - 1) / num_parts,
     rt_cum_break = sum(item_dur$mrt) * part
   ) |>
     inner_join(
-      item_order |>
-        left_join(item_dur, by = "itemid") |>
+      item_dur |>
+        slice(match(item_order, itemid)) |>
         mutate(rt_cum = cumsum(mrt)),
       by = join_by(rt_cum_break >= rt_cum)
     ) |>
     select(part, itemid)
-  data_unnested |>
-    inner_join(config_parts, by = "itemid", relationship = "many-to-many") |>
-    nest(.by = all_of(c(cols_meta, "part")), .key = name_raw_parsed)
+  data |>
+    mutate(
+      parts = map(
+        .data[[name_raw_parsed]],
+        ~ .x |>
+          inner_join(config_parts, by = join_by(itemid)) |>
+          nest(.by = part, .key = name_raw_parsed)
+      ),
+      .keep = "unused"
+    ) |>
+    unnest(parts)
 }
 
+#' Slice data with explicit blocks
+#'
+#' Directly partition into different blocks.
 slice_data_blocks <- function(data, ...,
                               name_raw_parsed = "raw_parsed") {
-  cols_meta <- setdiff(names(data), name_raw_parsed)
-  data_unnested <- data |>
-    unnest(any_of(name_raw_parsed))
-  # 人工语言-高级 needs additional step to create blocks
-  if (unique(data$game_id) == "384311706735365") {
-    data_unnested <- data_unnested |>
-      mutate(
-        block = cumsum(type == "learn"),
-        .by = all_of(cols_meta)
-      )
-  }
-  if (!has_name(data_unnested, "block")) {
-    if (has_name(data_unnested, "phase")) {
-      data_unnested$block <- data_unnested$phase
+  # add block info if not found
+  data_names <- colnames(data[[name_raw_parsed]][[1]])
+  add_block <- function(.x) {
+    if (unique(data$game_id) == "384311706735365") {
+      mutate(.x, block = cumsum(type == "learn"))
+    } else if ("phase" %in% data_names) {
+      rename(.x, block = phase)
     } else {
-      data_unnested <- data_unnested |>
-        mutate(
-          block = row_number(),
-          .by = all_of(cols_meta)
-        )
+      mutate(.x, block = row_number())
     }
   }
-  blocks <- unique(data_unnested$block)
-  config_parts <- tibble(
-    part = seq_along(blocks) / length(blocks),
-    block = accumulate(blocks, c)
-  ) |>
-    filter(part != 1) |>
-    unchop(block)
-  data_unnested |>
-    inner_join(config_parts, by = "block", relationship = "many-to-many") |>
-    nest(.by = all_of(c(cols_meta, "part")), .key = name_raw_parsed)
+  if (!"block" %in% data_names) {
+    data[[name_raw_parsed]] <- map(
+      data[[name_raw_parsed]],
+      add_block
+    )
+  }
+  data |>
+    mutate(
+      parts = map(
+        .data[[name_raw_parsed]],
+        ~ {
+          blocks <- unique(.x$block)
+          tibble(
+            part = seq_along(blocks) / length(blocks),
+            block = accumulate(blocks, c)
+          ) |>
+            filter(part != 1) |>
+            unchop(block) |>
+            inner_join(.x, by = join_by(block)) |>
+            nest(.by = part, .key = name_raw_parsed)
+        }
+      ),
+      .keep = "unused"
+    ) |>
+    unnest(parts)
 }
