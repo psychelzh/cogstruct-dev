@@ -39,30 +39,17 @@ targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
   action_raw_data = "preproc"
 )
 
-targets_reliabilty <- tarchetypes::tar_map(
-  values = contents |>
-    dplyr::distinct(game_id) |>
-    data.iquizoo::match_preproc(type = "semi", rm_tagged = TRUE) |>
-    dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
-    dplyr::mutate(
-      game_id_rel = dplyr::coalesce(game_id_parallel, game_id)
-    ) |>
-    dplyr::summarise(
-      tar_indices = rlang::syms(
-        stringr::str_glue("indices_{game_id}")
-      ) |>
-        list(),
-      .by = game_id_rel
-    ) |>
-    dplyr::mutate(game_id_rel = as.character(game_id_rel)),
-  names = game_id_rel,
-  tar_target(
-    reliability,
-    calc_reliability(bind_rows(tar_indices))
-  )
+targets_test_retest <- tar_test_retest(contents)
+targets_test_retest_slices <- tar_test_retest(
+  contents |>
+    dplyr::semi_join(
+      dplyr::filter(config_format, !is.na(format)),
+      by = "game_id"
+    ),
+  by = "part",
+  name_indices = "indices_slices",
+  name_test_retest = "test_retest_slices"
 )
-
-targets_indices_partitioned <- tar_partition_rawdata(contents)
 
 # Replace the target list below with your own:
 list(
@@ -77,12 +64,20 @@ list(
   tar_validate_rawdata(contents),
   targets_preproc,
   tarchetypes::tar_combine(indices, targets_preproc$indices),
-  targets_reliabilty,
+  targets_test_retest,
   tar_combine_with_meta(
-    reliability,
-    targets_reliabilty$reliability,
+    test_retest,
+    targets_test_retest$test_retest,
     cols_targets = "game_id",
     fun_post = \(.data) .data |> mutate(game_id = bit64::as.integer64(game_id))
   ),
-  targets_indices_partitioned
+  # test retest after partitioning
+  tar_partition_rawdata(contents, config_format),
+  targets_test_retest_slices,
+  tar_combine_with_meta(
+    test_retest_slices,
+    targets_test_retest_slices$test_retest_slices,
+    cols_targets = "game_id",
+    fun_post = \(.data) .data |> mutate(game_id = bit64::as.integer64(game_id))
+  )
 )

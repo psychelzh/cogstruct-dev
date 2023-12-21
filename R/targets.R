@@ -301,6 +301,48 @@ tar_partition_rawdata <- function(contents, config_format, ...,
   )
 }
 
+tar_test_retest <- function(contents, ...,
+                            by = NULL,
+                            name_indices = "indices",
+                            name_test_retest = "test_retest") {
+  rlang::check_dots_empty()
+  tarchetypes::tar_map(
+    values = contents |>
+      dplyr::distinct(game_id) |>
+      data.iquizoo::match_preproc(type = "semi", rm_tagged = TRUE) |>
+      dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
+      dplyr::mutate(
+        game_id_rel = dplyr::coalesce(game_id_parallel, game_id)
+      ) |>
+      dplyr::summarise(
+        tar_indices = rlang::syms(
+          stringr::str_glue("{name_indices}_{game_id}")
+        ) |>
+          list(),
+        .by = game_id_rel
+      ) |>
+      dplyr::mutate(game_id_rel = as.character(game_id_rel)),
+    names = game_id_rel,
+    if (is.null(by)) {
+      tar_target_raw(
+        name_test_retest,
+        quote(calc_test_retest(list_rbind(tar_indices)))
+      )
+    } else {
+      tar_target_raw(
+        name_test_retest,
+        bquote(
+          list_rbind(tar_indices) |>
+            group_by(pick(.(by))) |>
+            group_modify(~ calc_test_retest(.x)) |>
+            ungroup()
+        )
+      )
+    }
+  )
+}
+
+
 tar_prep_creativity <- function() {
   list(
     tarchetypes::tar_file_read(
