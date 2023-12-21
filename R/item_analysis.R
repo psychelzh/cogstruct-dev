@@ -27,7 +27,7 @@ calc_test_retest <- function(indices) {
     drop_na() |>
     select(-user_id)
   if (nrow(indices_retest) == 0 || !has_name(indices_retest, "retest")) {
-    return()
+    return(tibble())
   }
   bind_rows(
     raw = indices_retest,
