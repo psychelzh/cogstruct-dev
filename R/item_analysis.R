@@ -33,10 +33,14 @@ calc_test_retest <- function(indices) {
     raw = indices_retest,
     rm_out = indices_retest |>
       filter(
-        !performance::check_outliers(
-          pick(c(test, retest)),
-          method = "mcd"
-        ),
+        !possibly(
+          ~ performance::check_outliers(
+            .x,
+            method = "mcd"
+          ),
+          # treat all as normal if failed
+          otherwise = FALSE
+        )(pick(test, retest)),
         .by = c(ver_major, index_name)
       ),
     .id = "origin"
