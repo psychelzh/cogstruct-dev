@@ -1,4 +1,4 @@
-calc_reliability <- function(indices) {
+calc_test_retest <- function(indices) {
   indices_retest <- indices |>
     inner_join(
       data.iquizoo::game_indices,
