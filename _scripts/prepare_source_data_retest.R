@@ -26,6 +26,10 @@ tar_source()
 contents <- tarflow.iquizoo::fetch_iquizoo_mem()(
   readr::read_file("sql/contents_with_retest.sql")
 )
+config_format <- readr::read_csv(
+  "config/game_format.csv",
+  col_types = readr::cols(game_id = "I")
+)
 
 targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
   contents |>

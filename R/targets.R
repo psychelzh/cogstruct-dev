@@ -191,10 +191,10 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
   )
 }
 
-tar_partition_rawdata <- function(contents,
-                                  csv_format = "config/game_format.csv",
+tar_partition_rawdata <- function(contents, config_format, ...,
                                   name_rawdata = "data_valid",
                                   project_rawdata = NULL) {
+  rlang::check_dots_empty()
   config_contents <- dplyr::distinct(contents, game_id)
   if (!is.null(project_rawdata)) {
     config_contents <- config_contents |>
@@ -218,17 +218,14 @@ tar_partition_rawdata <- function(contents,
     expr_rawdata <- quote(tar_data)
   }
   config_contents <- config_contents |>
-    dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
     data.iquizoo::match_preproc(type = "inner") |>
-    dplyr::inner_join(
-      readr::read_csv(csv_format, show_col_types = FALSE),
-      by = "game_name"
-    ) |>
+    dplyr::inner_join(config_format, by = "game_id") |>
     dplyr::filter(!is.na(format)) |>
     dplyr::mutate(
       game_id = as.character(game_id),
       prep_fun = dplyr::if_else(
-        game_name == "社交达人",
+        # 社交达人 needs a new prep fun for sliced versions of data
+        game_id == "381576542159749",
         rlang::syms("fname_slices"),
         prep_fun
       )

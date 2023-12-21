@@ -14,6 +14,10 @@ targets_indices_partitioned <- tar_partition_rawdata(
   tarflow.iquizoo::fetch_iquizoo_mem()(
     readr::read_file("sql/contents_camp.sql")
   ),
+  config_format = readr::read_csv(
+    "config/game_format.csv",
+    col_types = readr::cols(game_id = "I")
+  ),
   project_rawdata = "prepare_source_data"
 )
 
