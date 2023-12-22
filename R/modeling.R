@@ -4,18 +4,8 @@
 #' @param vars A character vector specifying observed variables.
 #' @returns A fitted one-g factor model.
 #' @export
-#' @import lavaan
 fit_g <- function(data, vars) {
   efa(data, ov.names = vars, std.ov = TRUE, missing = "ml")
-}
-
-#' Calculate the variance explained by g factor
-#'
-#' @param fit A fitted one-g factor model.
-#' @returns A numeric value indicating the variance explained by g factor.
-#' @export
-calc_var_exp <- function(fit) {
-  mean(loadings(fit)^2)
 }
 
 #' Predict g factor scores
@@ -41,7 +31,7 @@ predict_g_score <- function(data, mdl, id_cols = 1, name_g = "g") {
 }
 
 fit_cfa <- function(model, data, ...) {
-  lavaan::cfa(
+  cfa(
     model,
     data,
     std.ov = TRUE,
@@ -52,7 +42,7 @@ fit_cfa <- function(model, data, ...) {
 }
 
 predict_dim <- function(fitted, data, suffix = "") {
-  lavaan::lavPredict(fitted) |>
+  lavPredict(fitted) |>
     unclass() |>
     as_tibble() |>
     add_column(user_id = data$user_id, .before = 1L) |>

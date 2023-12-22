@@ -1,8 +1,15 @@
-# Support for each type of data slicing ----
-
-#' Slice data for equal trials format
+#' Partition data into roughly equal parts
 #'
-#' Logic: partition into parts with equal number of trials (roughly one-minute)
+#' Data partitioning is essential for further task duration calibration, but
+#' there are different data format to partition. Here we use different functions
+#' to complete this goal.
+#'
+#' @name slice_data
+NULL
+
+#' @describeIn slice_data For trials format: partition into parts with equal
+#'   number of trials (roughly one-minute).
+#' @export
 slice_data_trials <- function(data, num_parts, ...,
                               subset = NA,
                               name_raw_parsed = "raw_parsed") {
@@ -33,9 +40,9 @@ slice_data_trials <- function(data, num_parts, ...,
     unnest(parts)
 }
 
-#' Slice data for equal duration format
-#'
-#' Logic: partition into parts with equal duration (roughly one-minute)
+#' @describeIn slice_data For equal duration format: partition into parts with
+#'   equal duration (roughly one-minute).
+#' @export
 slice_data_duration <- function(data, num_parts, ...,
                                 name_raw_parsed = "raw_parsed") {
   data |>
@@ -58,11 +65,10 @@ slice_data_duration <- function(data, num_parts, ...,
     unnest(parts)
 }
 
-
-#' Slice data for item-based format
-#'
-#' Item means one separate question. This function will do a basic item analysis
-#' to reorder the items based on the item discrimination.
+#' @describeIn slice_data For item-based format: Item means one separate
+#'   question. This function will do a basic item analysis to reorder the items
+#'   based on the item discrimination.
+#' @export
 slice_data_items <- function(data, ...,
                              name_raw_parsed = "raw_parsed") {
   # 远距离联想 has redundant items
@@ -118,9 +124,9 @@ slice_data_items <- function(data, ...,
     unnest(parts)
 }
 
-#' Slice data with explicit blocks
-#'
-#' Directly partition into different blocks.
+#' @describeIn slice_data For data with explicit blocks: Directly partition into
+#'   different blocks.s
+#' @export
 slice_data_blocks <- function(data, ...,
                               name_raw_parsed = "raw_parsed") {
   # add block info if not found

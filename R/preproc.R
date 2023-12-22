@@ -1,31 +1,23 @@
-# pre-processing functions correction ----
-# The separate scores for face and vocation cannot be calculated
-fname_slices <- function(data, .by = NULL, .input = NULL, .extra = NULL) {
-  data |>
-    summarise(fntotal = sum(acc == 1), .by = all_of(.by))
-}
-
-# data cleaning ----
 #' Validate Raw Data
-#'
-#' This step will remove invalid data following these rules:
-#' 1. Only use the data from the correct version ([check_version()]).
-#' 1. Remove data of invalid device (keyboard required, but used mouse).
 #'
 #' @param data_parsed Data with parsed raw data.
 #' @param require_keyboard Logical indicating if keyboard response is required.
 #' @param list_names A [list()] of possible column names.
 #' @return Validated data of class [data.frame()].
 validate_data <- function(data_parsed, require_keyboard, list_names) {
-  # keep data with the largest major version only
-  # e.g., remove 2.9.0 and keep 3.0.0 or 3.1.0
+  #' The validation process contains the following steps:
+  #'
+  #' 1. Keep data with the largest major version only: e.g., remove 2.9.0 and
+  #' keep 3.0.0 or 3.1.0.
   ver_major <- str_extract(data_parsed$game_version, "\\d+")
   ver_keep <- ver_major == max(ver_major)
 
-  # check if keyboard is used for certain tasks
+  #' 1. Check if keyboard is used for certain tasks which require keyboard
+  #' responses.
   dev_keep <- check_device(data_parsed, require_keyboard)
 
-  # check data names
+  #' 1. Check if data names were valid, for some error data contains data from
+  #' another game caused by the technical issues.
   names_keep <- TRUE
   if (!is.null(list_names)) {
     names_keep <- map_lgl(
@@ -35,40 +27,6 @@ validate_data <- function(data_parsed, require_keyboard, list_names) {
   }
 
   data_parsed[ver_keep & dev_keep & names_keep, ]
-}
-
-#' Correct device error
-correct_device <- function(data) {
-  data |>
-    mutate(
-      raw_parsed = map2(
-        raw_parsed, game_version,
-        correct_device_issue
-      )
-    )
-}
-
-#' Correct game duration error
-correct_game_dur <- function(data) {
-  data |>
-    mutate(game_duration = game_duration / 1000)
-}
-
-#' Correct raw data of category retrieval
-correct_cr <- function(data, correction) {
-  data |>
-    mutate(
-      raw_parsed = lapply(
-        raw_parsed,
-        \(raw_parsed) correct_cr_acc_issue(raw_parsed, correction)
-      )
-    )
-}
-
-#' Correct raw data of verbal reasoning
-correct_vr <- function(data) {
-  data |>
-    mutate(raw_parsed = lapply(raw_parsed, correct_vr_acc_issue))
 }
 
 #' Cleanse the calculated scores
@@ -99,7 +57,7 @@ clean_indices_short <- function(indices, contents) {
     mutate(score = if_else(index_reverse, -score, score))
 }
 
-# helper functions ----
+# helper functions
 check_device <- function(data_parsed, require_keyboard) {
   if (!require_keyboard) {
     return(TRUE)
@@ -108,35 +66,4 @@ check_device <- function(data_parsed, require_keyboard) {
     data_parsed$raw_parsed,
     ~ !"mouse" %in% unlist(str_split(.x$device, "-"))
   )
-}
-
-correct_device_issue <- function(raw_parsed, game_version) {
-  raw_parsed |>
-    mutate(
-      device = if_else(
-        # 1.0.0 erroneously records device for right resp as "mouse"
-        resp == "right" & game_version == "1.0.0",
-        "keyboard",
-        device
-      )
-    )
-}
-
-correct_cr_acc_issue <- function(raw_parsed, correction) {
-  raw_parsed |>
-    select(-acc) |>
-    left_join(correction, by = c("concept", "word"))
-}
-
-correct_vr_acc_issue <- function(raw_parsed) {
-  raw_parsed |>
-    mutate(
-      acc = map2_int(
-        cresp, resp,
-        ~ setequal(
-          str_split_1(.x, ","),
-          str_split_1(.y, ",")
-        )
-      )
-    )
 }
