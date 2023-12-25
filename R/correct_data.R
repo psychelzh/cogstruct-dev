@@ -32,6 +32,17 @@ correct_cr <- function(data, correction) {
 }
 
 #' @rdname correct_data
+correct_mst <- function(data) {
+  data |>
+    mutate(
+      raw_parsed = lapply(
+        raw_parsed,
+        \(raw_parsed) filter(raw_parsed, phase == "test")
+      )
+    )
+}
+
+#' @rdname correct_data
 correct_vr <- function(data) {
   data |>
     mutate(raw_parsed = lapply(raw_parsed, correct_vr_acc_issue))
