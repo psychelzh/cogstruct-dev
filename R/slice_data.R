@@ -11,15 +11,7 @@ NULL
 #'   number of trials (roughly one-minute).
 #' @export
 slice_data_trials <- function(data, num_parts, ...,
-                              subset = NA,
                               name_raw_parsed = "raw_parsed") {
-  if (!is.na(subset)) {
-    data[[name_raw_parsed]] <- map(
-      data[[name_raw_parsed]],
-      ~ .x |>
-        filter(eval(parse(text = subset)))
-    )
-  }
   data |>
     mutate(
       parts = map(

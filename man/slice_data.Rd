@@ -8,13 +8,7 @@
 \alias{slice_data_blocks}
 \title{Partition data into roughly equal parts}
 \usage{
-slice_data_trials(
-  data,
-  num_parts,
-  ...,
-  subset = NA,
-  name_raw_parsed = "raw_parsed"
-)
+slice_data_trials(data, num_parts, ..., name_raw_parsed = "raw_parsed")
 
 slice_data_duration(data, num_parts, ..., name_raw_parsed = "raw_parsed")
 

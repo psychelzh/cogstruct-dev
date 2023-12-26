@@ -245,6 +245,9 @@ tar_partition_rawdata <- function(contents, config_format, ...,
         game_id == "381576542159749",
         rlang::syms("fname_slices"),
         prep_fun
+      ),
+      slice_fun = rlang::syms(
+        stringr::str_glue("slice_data_{format}")
       )
     )
   c(
@@ -265,52 +268,26 @@ tar_partition_rawdata <- function(contents, config_format, ...,
     },
     tarchetypes::tar_map(
       config_contents |>
-        dplyr::filter(format == "trials"),
+        dplyr::filter(format %in% c("trials", "duration")),
       names = game_id,
       tar_target_raw(
         "indices_slices",
         substitute(
           expr_rawdata |>
-            slice_data_trials(num_parts, subset = subset) |>
+            slice_fun(num_parts) |>
             preproc_data(prep_fun, .input = input, .extra = extra)
         )
       )
     ),
     tarchetypes::tar_map(
       config_contents |>
-        dplyr::filter(format == "duration"),
+        dplyr::filter(format %in% c("items", "blocks")),
       names = game_id,
       tar_target_raw(
         "indices_slices",
         substitute(
           expr_rawdata |>
-            slice_data_duration(num_parts) |>
-            preproc_data(prep_fun, .input = input, .extra = extra)
-        )
-      )
-    ),
-    tarchetypes::tar_map(
-      config_contents |>
-        dplyr::filter(format == "items"),
-      names = game_id,
-      tar_target_raw(
-        "indices_slices",
-        substitute(
-          expr_rawdata |>
-            slice_data_items() |>
-            preproc_data(prep_fun, .input = input, .extra = extra)
-        )
-      )
-    ),
-    tarchetypes::tar_map(
-      config_contents |>
-        dplyr::filter(format == "blocks"),
-      names = game_id,
-      tar_target_raw(
-        "indices_slices",
-        substitute(
-          expr_rawdata |>
-            slice_data_blocks() |>
+            slice_fun() |>
             preproc_data(prep_fun, .input = input, .extra = extra)
         )
       )
