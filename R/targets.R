@@ -132,11 +132,7 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
   c(
     tarchetypes::tar_map(
       values = config_contents |>
-        dplyr::filter(
-          !game_id %in% c(
-            game_id_dev_err, game_id_strp, game_id_cr, gem_id_mst
-          )
-        ),
+        dplyr::filter(!game_id %in% do.call(c, game_id_cor)),
       names = game_id,
       tar_target(
         data_valid,
@@ -150,7 +146,7 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
     # correct device error
     tarchetypes::tar_map(
       values = config_contents |>
-        dplyr::filter(game_id %in% game_id_dev_err),
+        dplyr::filter(game_id %in% game_id_cor$dev_err),
       names = game_id,
       tar_target(
         data_valid,
@@ -163,7 +159,7 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
     ),
     tarchetypes::tar_map(
       values = config_contents |>
-        dplyr::filter(game_id %in% game_id_strp),
+        dplyr::filter(game_id %in% game_id_cor$dur_err),
       names = game_id,
       tar_target(
         data_valid,
@@ -178,7 +174,7 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
     # correct accuracy scores for Category Retrieval (CR)
     tarchetypes::tar_map(
       values = config_contents |>
-        dplyr::filter(game_id == game_id_cr),
+        dplyr::filter(game_id == game_id_cor$cr),
       names = game_id,
       tar_target(
         data_valid,
@@ -193,7 +189,7 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
     # keep test phase only for Mnemonic Similarity Task (MST)
     tarchetypes::tar_map(
       values = config_contents |>
-        dplyr::filter(game_id %in% gem_id_mst),
+        dplyr::filter(game_id %in% game_id_cor$mst),
       names = game_id,
       tar_target(
         data_valid,
@@ -203,6 +199,21 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
           list_names = list_names
         ) |>
           correct_mst()
+      )
+    ),
+    # correct reaction time error for flanker test
+    tarchetypes::tar_map(
+      values = config_contents |>
+        dplyr::filter(game_id %in% game_id_cor$flkr),
+      names = game_id,
+      tar_target(
+        data_valid,
+        validate_data(
+          tar_parsed,
+          require_keyboard = require_keyboard,
+          list_names = list_names
+        ) |>
+          correct_flkr()
       )
     )
   )

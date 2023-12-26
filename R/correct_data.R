@@ -43,6 +43,17 @@ correct_mst <- function(data) {
 }
 
 #' @rdname correct_data
+correct_flkr <- function(data) {
+  data |>
+    mutate(
+      raw_parsed = lapply(
+        raw_parsed,
+        \(raw_parsed) mutate(raw_parsed, rt = rt + 100)
+      )
+    )
+}
+
+#' @rdname correct_data
 correct_vr <- function(data) {
   data |>
     mutate(raw_parsed = lapply(raw_parsed, correct_vr_acc_issue))
