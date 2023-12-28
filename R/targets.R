@@ -204,7 +204,13 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
     # correct reaction time error for flanker test
     tarchetypes::tar_map(
       values = config_contents |>
-        dplyr::filter(game_id %in% game_id_cor$flkr),
+        dplyr::filter(game_id %in% game_id_cor$rt) |>
+        dplyr::mutate(
+          adjust = dplyr::case_when(
+            game_id == "224379118576069" ~ 100,
+            game_id == "268008982667347" ~ 300
+          )
+        ),
       names = game_id,
       tar_target(
         data_valid,
@@ -213,7 +219,7 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
           require_keyboard = require_keyboard,
           list_names = list_names
         ) |>
-          correct_flkr()
+          correct_rt(adjust = adjust)
       )
     )
   )

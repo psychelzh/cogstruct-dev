@@ -8,8 +8,10 @@ game_id_cor <- list(
   cr = bit64::as.integer64(380174879445893),
   # 图片记忆: keep test phase data only
   mst = bit64::as.integer64(c(268008982671439, 268008982671433)),
-  # 太空飞船PRO：reaction time should be added 100 ms
-  flkr = bit64::as.integer64(224379118576069)
+  rt = bit64::as.integer64(
+    c(224379118576069, # 太空飞船PRO：reaction time should be added 100 ms
+      268008982667347) # 捉虫高级简版：reaction time should be added 300 ms
+  )
 )
 
 games_keyboard <- readr::read_lines("config/games_keyboard")
