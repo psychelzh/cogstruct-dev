@@ -64,7 +64,7 @@ list(
   targets_preproc,
   tarchetypes::tar_combine(indices, targets_preproc$indices),
   tarchetypes::tar_combine(durations, targets_preproc$durations),
-  tar_prep_creativity(),
+  if (FALSE) tar_prep_creativity(),
   tarchetypes::tar_file_read(
     users_project_progress,
     "sql/progress.tmpl.sql",

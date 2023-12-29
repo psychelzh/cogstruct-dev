@@ -172,20 +172,22 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
       )
     ),
     # correct accuracy scores for Category Retrieval (CR)
-    tarchetypes::tar_map(
-      values = config_contents |>
-        dplyr::filter(game_id == game_id_cor$cr),
-      names = game_id,
-      tar_target(
-        data_valid,
-        validate_data(
-          tar_parsed,
-          require_keyboard = require_keyboard,
-          list_names = list_names
-        ) |>
-          correct_cr(cr_correction)
+    if (FALSE) { # disabled because it requires more additional work
+      tarchetypes::tar_map(
+        values = config_contents |>
+          dplyr::filter(game_id == game_id_cor$cr),
+        names = game_id,
+        tar_target(
+          data_valid,
+          validate_data(
+            tar_parsed,
+            require_keyboard = require_keyboard,
+            list_names = list_names
+          ) |>
+            correct_cr(cr_correction)
+        )
       )
-    ),
+    },
     # keep test phase only for Mnemonic Similarity Task (MST)
     tarchetypes::tar_map(
       values = config_contents |>

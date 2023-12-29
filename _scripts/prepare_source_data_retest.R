@@ -60,7 +60,7 @@ list(
     check_progress = FALSE # set as `FALSE` if projects finalized
   ),
   # more targets goes here
-  tar_prep_creativity(),
+  if (FALSE) tar_prep_creativity(),
   tar_validate_rawdata(contents),
   targets_preproc,
   tarchetypes::tar_combine(indices, targets_preproc$indices),
