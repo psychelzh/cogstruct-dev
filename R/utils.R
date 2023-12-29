@@ -76,3 +76,15 @@ retract_tbl_to_mat <- function(.data, sort_names = TRUE) {
   }
   mat
 }
+
+call_full <- function(.fn) {
+  syms_named <- function(x) {
+    setNames(rlang::syms(x), x)
+  }
+  fun <- .fn
+  if (is.character(.fn)) {
+    fun <- get(.fn)
+  }
+  args <- syms_named(formalArgs(fun))
+  rlang::call2(.fn, !!!args)
+}

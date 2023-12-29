@@ -14,6 +14,9 @@ game_id_cor <- list(
   )
 )
 
+thresh_prop_miss <- 0.25
+thresh_prop_guess <- 0.25
+
 games_keyboard <- readr::read_lines("config/games_keyboard")
 game_data_names <- readr::read_csv(
   "config/game_data_names.csv",

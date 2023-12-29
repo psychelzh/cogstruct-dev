@@ -40,6 +40,12 @@ targets_preproc <- tarchetypes::tar_map(
       ungroup()
   )
 )
+targets_check_motivated <- tar_check_motivated(
+  config = readr::read_csv(
+    "config/rules_unmotivated.csv",
+    col_types = readr::cols(game_id = "I")
+  )
+)
 
 list(
   tarflow.iquizoo::tar_prep_iquizoo(
@@ -50,6 +56,11 @@ list(
   ),
   tar_collect_camp(contents),
   tar_validate_rawdata(contents),
+  targets_check_motivated,
+  tarchetypes::tar_combine(
+    res_motivated,
+    targets_check_motivated$res_motivated
+  ),
   targets_preproc,
   tarchetypes::tar_combine(indices, targets_preproc$indices),
   tarchetypes::tar_combine(durations, targets_preproc$durations),

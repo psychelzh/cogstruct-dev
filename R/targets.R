@@ -225,6 +225,58 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
   )
 }
 
+tar_check_motivated <- function(config) {
+  config_branches <- config |>
+    dplyr::filter(!is.na(rule)) |>
+    tidyr::separate_longer_delim(rule, ";") |>
+    dplyr::mutate(
+      game_id = as.character(game_id),
+      data_valid = rlang::syms(
+        sprintf("data_valid_%s", game_id)
+      ),
+      tar_name_motivated = rlang::syms(
+        sprintf("res_motivated_%s_%s", rule, game_id)
+      )
+    )
+  c(
+    purrr::imap(
+      split(config_branches, ~rule),
+      \(config, rule) {
+        tarchetypes::tar_eval(
+          tar_target(
+            tar_name_motivated,
+            data_valid |>
+              mutate(
+                is_motivated = map_lgl(
+                  raw_parsed,
+                  \(data) .(call_full(sprintf("check_%s", rule)))
+                ),
+                .keep = "unused"
+              )
+          ),
+          config
+        ) |>
+          bquote() |>
+          eval()
+      }
+    ),
+    tarchetypes::tar_map(
+      config_branches |>
+        dplyr::select(game_id, tar_name_motivated) |>
+        tidyr::chop(tar_name_motivated),
+      names = game_id,
+      tar_target(
+        res_motivated,
+        bind_rows(tar_name_motivated) |>
+          summarise(
+            is_motivated = all(is_motivated),
+            .by = !is_motivated
+          )
+      )
+    )
+  )
+}
+
 tar_partition_rawdata <- function(contents, config_format, ...,
                                   name_rawdata = "data_valid",
                                   project_rawdata = NULL) {
