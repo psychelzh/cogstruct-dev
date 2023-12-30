@@ -29,21 +29,6 @@ validate_data <- function(data_parsed, require_keyboard, list_names) {
   data_parsed[ver_keep & dev_keep & names_keep, ]
 }
 
-#' Cleanse the calculated scores
-#'
-#' The most important job here is to remove invalid scores for those with scores
-#' from multiple session, and here just keep the scores from the last session.
-clean_indices <- function(indices, users_completed, id_cols = user_id) {
-  indices |>
-    semi_join(users_completed, by = "user_id") |>
-    # https://github.com/r-lib/vctrs/issues/1787
-    arrange(desc(game_time)) |>
-    distinct(pick({{ id_cols }}), game_id, index_name, .keep_all = TRUE) |>
-    left_join(data.iquizoo::game_info, by = c("game_id")) |>
-    select({{ id_cols }}, game_id, game_name, game_name_abbr,
-           game_time, game_duration, index_name, score)
-}
-
 clean_indices_short <- function(indices, contents) {
   contents |>
     inner_join(indices, by = join_by(project_id, game_id)) |>

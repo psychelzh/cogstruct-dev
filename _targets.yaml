@@ -16,6 +16,3 @@ explore_factors:
 confirm_factors:
   script: _scripts/confirm_factors.R
   store: _targets/confirm_factors
-preproc_partitioned:
-  script: _scripts/preproc_partitioned.R
-  store: _targets/preproc_partitioned

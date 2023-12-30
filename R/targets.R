@@ -1,92 +1,4 @@
-tar_sample_tasks <- function(num_tasks, data,
-                             name_id_col = 1,
-                             sample_times = 10,
-                             sample_size = 100,
-                             name_suffix = "") {
-  cfg_rsmp_vars <- withr::with_seed(
-    1,
-    tidyr::expand_grid(
-      num_vars = round(seq(3, floor(num_tasks / 2), length.out = sample_times)),
-      idx_rsmp = seq_len(sample_size)
-    ) |>
-      dplyr::reframe(
-        purrr::map(
-          num_vars,
-          ~ data.frame(
-            id_pairs = rep(c(1, 2), .),
-            idx_vars = sample.int(num_tasks, . * 2, replace = FALSE)
-          )
-        ) |>
-          purrr::list_rbind(),
-        .by = c(num_vars, idx_rsmp)
-      ) |>
-      tidyr::chop(idx_vars) |>
-      tidyr::chop(c(idx_rsmp, idx_vars))
-  )
-  tarchetypes::tar_map(
-    values = cfg_rsmp_vars,
-    names = c(num_vars, id_pairs),
-    tar_target_raw(
-      paste0("data_names", name_suffix),
-      tibble(
-        idx_rsmp = idx_rsmp, # use this to track samples
-        tasks = map(idx_vars, ~ names(data)[-name_id_col][.])
-      ) |>
-        substitute(),
-      deployment = "main"
-    ),
-    tar_target_raw(
-      paste0("mdl_fitted", name_suffix),
-      .(as.name(paste0("data_names", name_suffix))) |>
-        mutate(
-          mdl = map(tasks, ~ fit_g(.(substitute(data)), all_of(.))),
-          .keep = "unused"
-        ) |>
-        bquote()
-    ),
-    tar_target_raw(
-      paste0("scores_g", name_suffix),
-      .(as.name(paste0("mdl_fitted", name_suffix))) |>
-        mutate(
-          scores = map(mdl, ~ predict_g_score(.(substitute(data)), .)),
-          .keep = "unused"
-        ) |>
-        bquote()
-    )
-  )
-}
-
-tar_combine_with_meta <- function(name, targets, cols_targets,
-                                  fun_pre = NULL,
-                                  fun_post = NULL) {
-  ischar_name <- tryCatch(
-    is.character(name) && length(name) == 1L,
-    error = function(e) FALSE
-  )
-  if (!ischar_name) {
-    name <- deparse1(substitute(name))
-  }
-  if (is.null(fun_pre)) {
-    fun_pre <- \(x) x
-  }
-  if (is.null(fun_post)) {
-    fun_post <- \(x) x
-  }
-  tarchetypes::tar_combine_raw(
-    name,
-    targets,
-    command = bquote(
-      list(!!!.x) |>
-        lapply(.(rlang::as_function(fun_pre))) |>
-        bind_rows(.id = "id") |>
-        # note there is delimiter after name should be removed too
-        mutate(id = str_remove(id, str_c(.(name), "."))) |>
-        separate(id, .(cols_targets), convert = TRUE) |>
-        .(rlang::as_function(fun_post))()
-    )
-  )
-}
-
+# data wrangling ----
 tar_collect_camp <- function(contents, name_parsed = "raw_data_parsed") {
   path_archive <- Sys.getenv("OneDriveConsumer") |>
     fs::path("Documents/Research/archived/cogstruct-dev-archived")
@@ -228,6 +140,24 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
 }
 
 tar_check_motivated <- function(config) {
+  tar_check_motivated_ <- function(config, rule) {
+    tarchetypes::tar_eval(
+      tar_target(
+        tar_name_motivated,
+        data_valid |>
+          mutate(
+            is_motivated = map_lgl(
+              raw_parsed,
+              \(data) .(call_full(sprintf("check_%s", rule)))
+            ),
+            .keep = "unused"
+          )
+      ),
+      config
+    ) |>
+      bquote() |>
+      eval()
+  }
   config_branches <- config |>
     dplyr::filter(!is.na(rule)) |>
     tidyr::separate_longer_delim(rule, ";") |>
@@ -243,24 +173,7 @@ tar_check_motivated <- function(config) {
   c(
     purrr::imap(
       split(config_branches, ~rule),
-      \(config, rule) {
-        tarchetypes::tar_eval(
-          tar_target(
-            tar_name_motivated,
-            data_valid |>
-              mutate(
-                is_motivated = map_lgl(
-                  raw_parsed,
-                  \(data) .(call_full(sprintf("check_%s", rule)))
-                ),
-                .keep = "unused"
-              )
-          ),
-          config
-        ) |>
-          bquote() |>
-          eval()
-      }
+      tar_check_motivated_
     ),
     tarchetypes::tar_map(
       config_branches |>
@@ -366,6 +279,70 @@ tar_partition_rawdata <- function(contents, config_format, ...,
   )
 }
 
+tar_clean_indices <- function(name_indices = "indices",
+                              name_users_completed = "users_completed",
+                              name_res_motivated = "res_motivated",
+                              id_cols = "user_id",
+                              name_suffix = "") {
+  tar_name_indices <- paste0(name_indices, name_suffix)
+  tar_name_indices_clean <- paste0(tar_name_indices, "_clean")
+  tar_name_indices_of_interest <- paste0(tar_name_indices, "_of_interest")
+  tar_name_indices_wider_clean <- paste0(tar_name_indices, "_wider_clean")
+  list(
+    tar_target_raw(
+      tar_name_indices_clean,
+      bquote(
+        .(as.symbol(tar_name_indices)) |>
+          semi_join(.(as.symbol(name_users_completed)), by = "user_id") |>
+          # https://github.com/r-lib/vctrs/issues/1787
+          arrange(desc(game_time)) |>
+          distinct(pick(.(id_cols)), game_id, index_name, .keep_all = TRUE) |>
+          left_join(
+            .(as.symbol(name_res_motivated)),
+            by = setdiff(
+              colnames(.(as.symbol(name_res_motivated))),
+              "is_motivated"
+            )
+          )
+      )
+    ),
+    tar_target_raw(
+      tar_name_indices_of_interest,
+      bquote(
+        .(as.symbol(tar_name_indices_clean)) |>
+          inner_join(
+            data.iquizoo::game_indices,
+            join_by(game_id, index_name == index_main)
+          ) |>
+          mutate(score_adj = if_else(index_reverse, -score, score)) |>
+          mutate(
+            is_outlier_iqr = score %in% boxplot.stats(score)$out,
+            .by = c(game_id, index_name)
+          )
+      )
+    ),
+    tar_target_raw(
+      tar_name_indices_wider_clean,
+      bquote(
+        .(as.symbol(tar_name_indices_of_interest)) |>
+          filter(
+            !is_outlier_iqr & is_motivated,
+            # RAPM test is not included in the factor analysis
+            game_id != game_id_rapm
+          ) |>
+          left_join(data.iquizoo::game_info, by = "game_id") |>
+          mutate(game_index = str_c(game_name_abbr, index_name, sep = ".")) |>
+          pivot_wider(
+            id_cols = .(id_cols),
+            names_from = game_index,
+            values_from = score_adj
+          )
+      )
+    )
+  )
+}
+
+# item analysis related ----
 tar_test_retest <- function(contents, ...,
                             by = NULL,
                             name_indices = "indices",
@@ -407,6 +384,96 @@ tar_test_retest <- function(contents, ...,
   )
 }
 
+# modeling related ----
+tar_sample_tasks <- function(num_tasks, data,
+                             name_id_col = 1,
+                             sample_times = 10,
+                             sample_size = 100,
+                             name_suffix = "") {
+  cfg_rsmp_vars <- withr::with_seed(
+    1,
+    tidyr::expand_grid(
+      num_vars = round(seq(3, floor(num_tasks / 2), length.out = sample_times)),
+      idx_rsmp = seq_len(sample_size)
+    ) |>
+      dplyr::reframe(
+        purrr::map(
+          num_vars,
+          ~ data.frame(
+            id_pairs = rep(c(1, 2), .),
+            idx_vars = sample.int(num_tasks, . * 2, replace = FALSE)
+          )
+        ) |>
+          purrr::list_rbind(),
+        .by = c(num_vars, idx_rsmp)
+      ) |>
+      tidyr::chop(idx_vars) |>
+      tidyr::chop(c(idx_rsmp, idx_vars))
+  )
+  tarchetypes::tar_map(
+    values = cfg_rsmp_vars,
+    names = c(num_vars, id_pairs),
+    tar_target_raw(
+      paste0("data_names", name_suffix),
+      tibble(
+        idx_rsmp = idx_rsmp, # use this to track samples
+        tasks = map(idx_vars, ~ names(data)[-name_id_col][.])
+      ) |>
+        substitute(),
+      deployment = "main"
+    ),
+    tar_target_raw(
+      paste0("mdl_fitted", name_suffix),
+      .(as.name(paste0("data_names", name_suffix))) |>
+        mutate(
+          mdl = map(tasks, ~ fit_g(.(substitute(data)), all_of(.))),
+          .keep = "unused"
+        ) |>
+        bquote()
+    ),
+    tar_target_raw(
+      paste0("scores_g", name_suffix),
+      .(as.name(paste0("mdl_fitted", name_suffix))) |>
+        mutate(
+          scores = map(mdl, ~ predict_g_score(.(substitute(data)), .)),
+          .keep = "unused"
+        ) |>
+        bquote()
+    )
+  )
+}
+
+# general targets factory ----
+tar_combine_with_meta <- function(name, targets, cols_targets,
+                                  fun_pre = NULL,
+                                  fun_post = NULL) {
+  ischar_name <- tryCatch(
+    is.character(name) && length(name) == 1L,
+    error = function(e) FALSE
+  )
+  if (!ischar_name) {
+    name <- deparse1(substitute(name))
+  }
+  if (is.null(fun_pre)) {
+    fun_pre <- \(x) x
+  }
+  if (is.null(fun_post)) {
+    fun_post <- \(x) x
+  }
+  tarchetypes::tar_combine_raw(
+    name,
+    targets,
+    command = bquote(
+      list(!!!.x) |>
+        lapply(.(rlang::as_function(fun_pre))) |>
+        bind_rows(.id = "id") |>
+        # note there is delimiter after name should be removed too
+        mutate(id = str_remove(id, str_c(.(name), "."))) |>
+        separate(id, .(cols_targets), convert = TRUE) |>
+        .(rlang::as_function(fun_post))()
+    )
+  )
+}
 
 tar_prep_creativity <- function() {
   list(

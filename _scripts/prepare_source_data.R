@@ -40,9 +40,18 @@ targets_preproc <- tarchetypes::tar_map(
       ungroup()
   )
 )
+
 targets_check_motivated <- tar_check_motivated(
   config = readr::read_csv(
     "config/rules_unmotivated.csv",
+    col_types = readr::cols(game_id = "I")
+  )
+)
+
+targets_indices_partitioned <- tar_partition_rawdata(
+  contents,
+  config_format = readr::read_csv(
+    "config/game_format.csv",
     col_types = readr::cols(game_id = "I")
   )
 )
@@ -80,42 +89,20 @@ list(
       summarise(n = sum(project_progress) / 100, .by = user_id) |>
       filter(n >= 4)
   ),
-  tar_target(
-    indices_clean,
-    clean_indices(indices, users_completed)
-  ),
-  tar_target(
-    indices_of_interest,
-    indices_clean |>
-      inner_join(
-        data.iquizoo::game_indices,
-        join_by(game_id, index_name == index_main)
-      ) |>
-      mutate(score_adj = if_else(index_reverse, -score, score)) |>
-      mutate(
-        is_outlier_iqr = score %in% boxplot.stats(score)$out,
-        .by = c(game_id, index_name)
-      )
-  ),
-  tar_target(
-    indices_wider_clean,
-    indices_of_interest |>
-      filter(
-        !is_outlier_iqr,
-        # RAPM test is not included in the factor analysis
-        game_id != game_id_rapm
-      ) |>
-      mutate(game_index = str_c(game_name_abbr, index_name, sep = ".")) |>
-      pivot_wider(
-        id_cols = user_id,
-        names_from = game_index,
-        values_from = score_adj
-      )
-  ),
+  tar_clean_indices(),
   tar_target(
     indices_rapm,
     indices_of_interest |>
-      filter(game_id == game_id_rapm) |>
+      filter(
+        !is_outlier_iqr & is_motivated,
+        game_id == game_id_rapm
+      ) |>
       select(user_id, index_name, score = score_adj)
-  )
+  ),
+  targets_indices_partitioned,
+  tarchetypes::tar_combine(
+    indices_slices,
+    select_list(targets_indices_partitioned, contains("indices_slices"))
+  ),
+  tar_clean_indices(id_cols = c("user_id", "part"), name_suffix = "_slices")
 )
