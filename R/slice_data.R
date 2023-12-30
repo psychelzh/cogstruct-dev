@@ -10,12 +10,11 @@ NULL
 #' @describeIn slice_data For trials format: partition into parts with equal
 #'   number of trials (roughly one-minute).
 #' @export
-slice_data_trials <- function(data, num_parts, ...,
-                              name_raw_parsed = "raw_parsed") {
+slice_data_trials <- function(data, num_parts) {
   data |>
     mutate(
       parts = map(
-        .data[[name_raw_parsed]],
+        .data[[col_raw_parsed]],
         ~ tibble(
           part = seq_len(num_parts - 1) / num_parts,
           row_num_break = nrow(.x) * part
@@ -25,7 +24,7 @@ slice_data_trials <- function(data, num_parts, ...,
             by = join_by(row_num_break >= row_num)
           ) |>
           select(-contains("row_num")) |>
-          nest(.by = part, .key = name_raw_parsed)
+          nest(.by = part, .key = col_raw_parsed)
       ),
       .keep = "unused"
     ) |>
@@ -35,12 +34,11 @@ slice_data_trials <- function(data, num_parts, ...,
 #' @describeIn slice_data For equal duration format: partition into parts with
 #'   equal duration (roughly one-minute).
 #' @export
-slice_data_duration <- function(data, num_parts, ...,
-                                name_raw_parsed = "raw_parsed") {
+slice_data_duration <- function(data, num_parts) {
   data |>
     mutate(
       parts = map(
-        .data[[name_raw_parsed]],
+        .data[[col_raw_parsed]],
         ~ tibble(
           part = seq_len(num_parts - 1) / num_parts,
           rt_cum_break = sum(.x$rt) * part
@@ -50,7 +48,7 @@ slice_data_duration <- function(data, num_parts, ...,
             by = join_by(rt_cum_break >= rt_cum)
           ) |>
           select(-contains("rt_cum")) |>
-          nest(.by = part, .key = name_raw_parsed)
+          nest(.by = part, .key = col_raw_parsed)
       ),
       .keep = "unused"
     ) |>
@@ -61,18 +59,17 @@ slice_data_duration <- function(data, num_parts, ...,
 #'   question. This function will do a basic item analysis to reorder the items
 #'   based on the item discrimination.
 #' @export
-slice_data_items <- function(data, ...,
-                             name_raw_parsed = "raw_parsed") {
+slice_data_items <- function(data) {
   # 远距离联想 has redundant items
   if (unique(data$game_id) %in% "411281158706373") {
-    data[[name_raw_parsed]] <- map(
-      data[[name_raw_parsed]],
+    data[[col_raw_parsed]] <- map(
+      data[[col_raw_parsed]],
       ~ filter(., itemid != "268009865429099")
     )
   }
   stopifnot(
     "For items format, all data must have equal number of items." =
-      n_distinct(map_int(data[[name_raw_parsed]], nrow)) == 1
+      n_distinct(map_int(data[[col_raw_parsed]], nrow)) == 1
   )
   data_flat <- data |>
     filter(row_number(desc(game_time)) == 1, .by = user_id) |>
@@ -106,10 +103,10 @@ slice_data_items <- function(data, ...,
   data |>
     mutate(
       parts = map(
-        .data[[name_raw_parsed]],
+        .data[[col_raw_parsed]],
         ~ .x |>
           inner_join(config_parts, by = join_by(itemid)) |>
-          nest(.by = part, .key = name_raw_parsed)
+          nest(.by = part, .key = col_raw_parsed)
       ),
       .keep = "unused"
     ) |>
@@ -119,10 +116,9 @@ slice_data_items <- function(data, ...,
 #' @describeIn slice_data For data with explicit blocks: Directly partition into
 #'   different blocks.s
 #' @export
-slice_data_blocks <- function(data, ...,
-                              name_raw_parsed = "raw_parsed") {
+slice_data_blocks <- function(data) {
   # add block info if not found
-  data_names <- colnames(data[[name_raw_parsed]][[1]])
+  data_names <- colnames(data[[col_raw_parsed]][[1]])
   add_block <- function(.x) {
     if (unique(data$game_id) == "384311706735365") {
       mutate(.x, block = cumsum(type == "learn"))
@@ -133,15 +129,15 @@ slice_data_blocks <- function(data, ...,
     }
   }
   if (!"block" %in% data_names) {
-    data[[name_raw_parsed]] <- map(
-      data[[name_raw_parsed]],
+    data[[col_raw_parsed]] <- map(
+      data[[col_raw_parsed]],
       add_block
     )
   }
   data |>
     mutate(
       parts = map(
-        .data[[name_raw_parsed]],
+        .data[[col_raw_parsed]],
         ~ {
           blocks <- unique(.x$block)
           tibble(
@@ -151,7 +147,7 @@ slice_data_blocks <- function(data, ...,
             filter(part != 1) |>
             unchop(block) |>
             inner_join(.x, by = join_by(block)) |>
-            nest(.by = part, .key = name_raw_parsed)
+            nest(.by = part, .key = col_raw_parsed)
         }
       ),
       .keep = "unused"

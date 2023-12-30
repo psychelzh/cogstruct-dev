@@ -1,3 +1,6 @@
+# special column names
+col_raw_parsed <- "raw_parsed"
+
 game_id_rapm <- bit64::as.integer64(265520726213317) # 瑞文高级推理
 game_id_cor <- list(
   # 注意警觉, 注意指向: 1.0.0 records device for all right arrow resp as "mouse"
@@ -14,9 +17,11 @@ game_id_cor <- list(
   )
 )
 
+# used in users' motivation check
 thresh_prop_miss <- 0.25
 thresh_prop_guess <- 0.25
 
+# used in raw data validation
 games_keyboard <- readr::read_lines("config/games_keyboard")
 game_data_names <- readr::read_csv(
   "config/game_data_names.csv",
