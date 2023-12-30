@@ -146,7 +146,11 @@ slice_data_blocks <- function(data) {
           ) |>
             filter(part != 1) |>
             unchop(block) |>
-            inner_join(.x, by = join_by(block)) |>
+            inner_join(
+              .x,
+              by = join_by(block),
+              relationship = "many-to-many"
+            ) |>
             nest(.by = part, .key = col_raw_parsed)
         }
       ),
