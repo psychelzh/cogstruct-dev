@@ -102,7 +102,7 @@ list(
   targets_indices_partitioned,
   tarchetypes::tar_combine(
     indices_slices,
-    select_list(targets_indices_partitioned, contains("indices_slices"))
+    targets_indices_partitioned
   ),
   tar_clean_indices(id_cols = c("user_id", "part"), name_suffix = "_slices")
 )

@@ -141,48 +141,52 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
 
 tar_check_motivated <- function(config) {
   tar_check_motivated_ <- function(config, rule) {
-    tarchetypes::tar_eval(
-      tar_target(
-        tar_name_motivated,
-        data_valid |>
-          mutate(
-            is_motivated = map_lgl(
-              raw_parsed,
-              \(data) .(call_full(sprintf("check_%s", rule)))
-            ),
-            .keep = "unused"
-          )
+    tarchetypes::tar_eval_raw(
+      bquote(
+        tar_target(
+          tar_name_motivated,
+          tar_name_data_valid |>
+            mutate(
+              is_motivated = map_lgl(
+                raw_parsed,
+                \(data) .(call_full(sprintf("check_%s", rule)))
+              ),
+              .keep = "unused"
+            )
+        )
       ),
       config
-    ) |>
-      bquote() |>
-      eval()
+    )
   }
   config_branches <- config |>
     dplyr::filter(!is.na(rule)) |>
     tidyr::separate_longer_delim(rule, ";") |>
     dplyr::mutate(
-      game_id = as.character(game_id),
-      data_valid = rlang::syms(
+      tar_name_data_valid = rlang::syms(
         sprintf("data_valid_%s", game_id)
       ),
-      tar_name_motivated = rlang::syms(
-        sprintf("res_motivated_%s_%s", rule, game_id)
-      )
+      tar_name_motivated = sprintf("res_motivated_%s_%s", rule, game_id)
     )
   c(
     purrr::imap(
       split(config_branches, ~rule),
       tar_check_motivated_
     ),
+    # https://github.com/ropensci/tarchetypes/discussions/153
     tarchetypes::tar_map(
       config_branches |>
         dplyr::select(game_id, tar_name_motivated) |>
-        tidyr::chop(tar_name_motivated),
+        tidyr::chop(tar_name_motivated) |>
+        dplyr::mutate(
+          game_id = as.character(game_id),
+          tar_name_motivated_list = purrr::map(
+            tar_name_motivated, rlang::syms
+          )
+        ),
       names = game_id,
       tar_target(
         res_motivated,
-        bind_rows(tar_name_motivated) |>
+        bind_rows(tar_name_motivated_list) |>
           summarise(
             is_motivated = all(is_motivated),
             .by = !is_motivated
@@ -193,90 +197,39 @@ tar_check_motivated <- function(config) {
 }
 
 tar_partition_rawdata <- function(contents, config_format, ...,
-                                  name_rawdata = "data_valid",
-                                  project_rawdata = NULL) {
+                                  name_rawdata = "data_valid") {
   rlang::check_dots_empty()
-  config_contents <- dplyr::distinct(contents, game_id)
-  if (!is.null(project_rawdata)) {
-    config_contents <- config_contents |>
-      dplyr::mutate(
-        tar_file_data = rlang::syms(
-          stringr::str_glue("file_data_{game_id}")
-        ),
-        file_path = path_obj_from_proj(
-          sprintf("%s_%s", name_rawdata, game_id),
-          project_rawdata
+  tar_partition_rawdata_ <- function(config, format) {
+    tarchetypes::tar_eval_raw(
+      bquote(
+        tar_target(
+          tar_name_indices,
+          .(call_full(sprintf("slice_data_%s", format))) |>
+            preproc_data(prep_fun, .input = input, .extra = extra)
         )
-      )
-    expr_rawdata <- quote(qs::qread(tar_file_data))
-  } else {
-    config_contents <- config_contents |>
-      dplyr::mutate(
-        tar_data = rlang::syms(
-          stringr::str_glue("{name_rawdata}_{game_id}")
-        )
-      )
-    expr_rawdata <- quote(tar_data)
+      ),
+      config
+    )
   }
-  config_contents <- config_contents |>
+  contents |>
+    dplyr::distinct(game_id) |>
     data.iquizoo::match_preproc(type = "inner") |>
     dplyr::inner_join(config_format, by = "game_id") |>
     dplyr::filter(!is.na(format)) |>
     dplyr::mutate(
-      game_id = as.character(game_id),
+      data = rlang::syms(sprintf("%s_%s", name_rawdata, game_id)),
+      tar_name_indices = rlang::syms(
+        sprintf("indices_slices_%s", game_id)
+      ),
       prep_fun = dplyr::if_else(
         # 社交达人 needs a new prep fun for sliced versions of data
         game_id == "381576542159749",
         rlang::syms("fname_slices"),
         prep_fun
-      ),
-      slice_fun = rlang::syms(
-        stringr::str_glue("slice_data_{format}")
       )
-    )
-  c(
-    if (!is.null(project_rawdata)) {
-      tarchetypes::tar_eval_raw(
-        substitute(
-          tar_target(
-            tar_file_data,
-            path_obj_from_proj(
-              sprintf("%s_%s", name_rawdata, game_id),
-              project_rawdata
-            ),
-            format = "file"
-          )
-        ),
-        values = config_contents
-      )
-    },
-    tarchetypes::tar_map(
-      config_contents |>
-        dplyr::filter(format %in% c("trials", "duration")),
-      names = game_id,
-      tar_target_raw(
-        "indices_slices",
-        substitute(
-          expr_rawdata |>
-            slice_fun(num_parts) |>
-            preproc_data(prep_fun, .input = input, .extra = extra)
-        )
-      )
-    ),
-    tarchetypes::tar_map(
-      config_contents |>
-        dplyr::filter(format %in% c("items", "blocks")),
-      names = game_id,
-      tar_target_raw(
-        "indices_slices",
-        substitute(
-          expr_rawdata |>
-            slice_fun() |>
-            preproc_data(prep_fun, .input = input, .extra = extra)
-        )
-      )
-    )
-  )
+    ) |>
+    split(~format) |>
+    purrr::imap(tar_partition_rawdata_)
 }
 
 tar_clean_indices <- function(name_indices = "indices",
