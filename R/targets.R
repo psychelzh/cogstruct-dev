@@ -19,13 +19,15 @@ tar_collect_camp <- function(contents, name_parsed = "raw_data_parsed") {
         name_restore = rlang::syms(sprintf("data_%s", game_name_abbr))
       ),
     names = game_id,
-    tar_target(
-      data_full,
-      bind_rows(
-        select(name_current, -project_id),
-        possibly(read_archived)(name_restore, store = path_restore)
-      ) |>
-        distinct()
+    tar_target_raw(
+      "data_full",
+      bquote(
+        bind_rows(
+          select(name_current, -project_id),
+          possibly(read_archived)(name_restore, store = .(path_restore))
+        ) |>
+          distinct()
+      )
     ),
     tar_target_raw(name_parsed, quote(wrangle_data(data_full)))
   )
