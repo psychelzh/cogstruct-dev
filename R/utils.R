@@ -53,9 +53,15 @@ output_factcons <- function(schema, mat, ...,
 }
 
 read_archived <- function(...) {
-  select(
-    targets::tar_read(...),
-    !contains("name")
+  tryCatch(
+    select(
+      targets::tar_read(...),
+      !contains("name")
+    ),
+    error = function(e) {
+      warning(conditionMessage(e))
+      invisible()
+    }
   )
 }
 

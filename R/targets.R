@@ -24,7 +24,7 @@ tar_collect_camp <- function(contents, name_parsed = "raw_data_parsed") {
       bquote(
         bind_rows(
           select(name_current, -project_id),
-          possibly(read_archived)(name_restore, store = .(path_restore))
+          read_archived(name_restore, store = .(path_restore))
         ) |>
           distinct()
       )
