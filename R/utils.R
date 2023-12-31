@@ -39,24 +39,28 @@ syms_args <- function(.fn) {
 }
 
 # misc ----
-replace_as_name_cn <- function(name, remove_suffix = FALSE) {
-  parts <- str_split(name, "\\.")
-  out <- character(length = length(name))
-  for (i in seq_along(name)) {
-    this_parts <- parts[[i]]
-    this_parts[[1]] <- data.iquizoo::game_info |>
-      select(game_name_abbr, game_name) |>
-      deframe() |>
-      _[this_parts[[1]]]
-    if (remove_suffix) {
-      this_parts[[1]] <- str_remove(
-        this_parts[[1]],
-        "[a-zA-Z]+$"
-      )
-    }
-    out[[i]] <- str_c(this_parts, collapse = ".")
-  }
-  out
+replace_as_name_cn <- function(game_index,
+                               remove_suffix = FALSE,
+                               delim = ".") {
+  tibble(game_index) |>
+    separate_wider_delim(
+      game_index, delim,
+      names = c("game_name_abbr", "index_name")
+    ) |>
+    left_join(
+      data.iquizoo::game_info |>
+        select(game_name_abbr, game_name),
+      by = join_by(game_name_abbr)
+    ) |>
+    mutate(
+      game_name = if (remove_suffix) {
+        str_remove(game_name, "[a-zA-Z]+$")
+      } else {
+        game_name
+      }
+    ) |>
+    unite(res, game_name, index_name, sep = delim) |>
+    pull(res)
 }
 
 retract_tbl_to_mat <- function(.data, sort_names = TRUE) {
