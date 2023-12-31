@@ -167,33 +167,36 @@ tar_check_motivated <- function(config) {
       tar_name_data_valid = rlang::syms(
         sprintf("data_valid_%s", game_id)
       ),
-      tar_name_motivated = sprintf("res_motivated_%s_%s", rule, game_id)
+      tar_name_motivated = rlang::syms(
+        sprintf("res_motivated_%s_%s", rule, game_id)
+      )
     )
-  c(
+  list(
     purrr::imap(
       split(config_branches, ~rule),
       tar_check_motivated_
     ),
-    # https://github.com/ropensci/tarchetypes/discussions/153
-    tarchetypes::tar_map(
-      config_branches |>
-        dplyr::select(game_id, tar_name_motivated) |>
-        tidyr::chop(tar_name_motivated) |>
-        dplyr::mutate(
-          game_id = as.character(game_id),
-          tar_name_motivated_list = purrr::map(
-            tar_name_motivated, rlang::syms
-          )
-        ),
-      names = game_id,
+    res_motivated = tarchetypes::tar_eval(
       tar_target(
-        res_motivated,
+        tar_name_motivated_final,
         bind_rows(tar_name_motivated_list) |>
           summarise(
             is_motivated = all(is_motivated),
             .by = !is_motivated
           )
-      )
+      ),
+      config_branches |>
+        dplyr::select(game_id, tar_name_motivated) |>
+        tidyr::chop(tar_name_motivated) |>
+        dplyr::mutate(
+          tar_name_motivated_list = lapply(
+            tar_name_motivated,
+            \(x) as.call(c(as.symbol("list"), x))
+          ),
+          tar_name_motivated_final = rlang::syms(
+            sprintf("res_motivated_%s", game_id)
+          )
+        )
     )
   )
 }
