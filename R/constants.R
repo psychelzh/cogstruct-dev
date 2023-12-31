@@ -1,6 +1,7 @@
 # special column names
 col_raw_parsed <- "raw_parsed"
 
+# games require special correction
 game_id_rapm <- bit64::as.integer64(265520726213317) # 瑞文高级推理
 game_id_cor <- list(
   # 注意警觉, 注意指向: 1.0.0 records device for all right arrow resp as "mouse"
