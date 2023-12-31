@@ -63,35 +63,6 @@ efa_to_cfa <- function(fit,
     )
 }
 
-resample_fact_attribution <- function(data, n_fact, exclude = character()) {
-  data |>
-    select(!contains(exclude)) |>
-    slice_sample(prop = 1, replace = TRUE) |>
-    psych::fa(n_fact) |>
-    extract_efa_params(drop_load = TRUE) |>
-    chop(game_index)
-}
-
-extract_prob_one_fact <- function(fact_attribution) {
-  fact_attribution |>
-    mutate(
-      pairs = map(
-        game_index,
-        ~ if (length(.x) > 1) {
-          combn(.x, 2, sort, simplify = FALSE) |>
-            do.call(rbind, args = _) |>
-            as_tibble(.name_repair = ~ c("x", "y"))
-        }
-      ),
-      .keep = "unused"
-    ) |>
-    add_count(mr, name = "num_samples") |>
-    unnest(pairs) |>
-    count(num_samples, x, y, name = "num_occur") |>
-    mutate(prob = num_occur / num_samples, .keep = "unused") |>
-    retract_tbl_to_mat(sort_names = TRUE)
-}
-
 extract_efa_params <- function(fit,
                                name_task = "game_index",
                                name_mr = "mr",

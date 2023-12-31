@@ -1,3 +1,4 @@
+# files processing ----
 path_obj_from_proj <- function(object, project) {
   fs::path(
     targets::tar_config_get(
@@ -9,6 +10,35 @@ path_obj_from_proj <- function(object, project) {
   )
 }
 
+read_archived <- function(...) {
+  tryCatch(
+    select(
+      targets::tar_read(...),
+      !contains("name")
+    ),
+    error = function(e) {
+      warning(conditionMessage(e))
+      invisible()
+    }
+  )
+}
+
+# programming ----
+select_list <- function(.l, ...) {
+  pos <- tidyselect::eval_select(rlang::expr(c(...)), .l)
+  rlang::set_names(.l[pos], names(pos))
+}
+
+call_full <- function(.fn) {
+  rlang::call2(.fn, !!!syms_args(.fn))
+}
+
+syms_args <- function(.fn) {
+  args <- formalArgs(rlang::as_function(.fn))
+  setNames(rlang::syms(args), args)
+}
+
+# misc ----
 replace_as_name_cn <- function(name, remove_suffix = FALSE) {
   parts <- str_split(name, "\\.")
   out <- character(length = length(name))
@@ -29,47 +59,6 @@ replace_as_name_cn <- function(name, remove_suffix = FALSE) {
   out
 }
 
-output_factcons <- function(schema, mat, ...,
-                            file_prefix = "factcons",
-                            dir_output = "_output/factor-consistency") {
-  file <- fs::path(
-    dir_output,
-    str_glue("{file_prefix}_schema-{schema}.png")
-  )
-  rownames(mat) <- replace_as_name_cn(rownames(mat))
-  colnames(mat) <- replace_as_name_cn(colnames(mat))
-  ragg::agg_png(file, width = 1980, height = 1980, res = 100)
-  corrplot::corrplot(
-    mat,
-    type = "upper",
-    method = "color",
-    order = "hclust",
-    hclust.method = "ward.D2",
-    col.lim = c(0, 1),
-    col = corrplot::COL2("RdBu")
-  )
-  dev.off()
-  file
-}
-
-read_archived <- function(...) {
-  tryCatch(
-    select(
-      targets::tar_read(...),
-      !contains("name")
-    ),
-    error = function(e) {
-      warning(conditionMessage(e))
-      invisible()
-    }
-  )
-}
-
-select_list <- function(.l, ...) {
-  pos <- tidyselect::eval_select(rlang::expr(c(...)), .l)
-  rlang::set_names(.l[pos], names(pos))
-}
-
 retract_tbl_to_mat <- function(.data, sort_names = TRUE) {
   stopifnot(ncol(.data) == 3)
   attr <- colnames(.data)[[3]]
@@ -81,13 +70,4 @@ retract_tbl_to_mat <- function(.data, sort_names = TRUE) {
     mat <- mat[order, order]
   }
   mat
-}
-
-call_full <- function(.fn) {
-  rlang::call2(.fn, !!!syms_args(.fn))
-}
-
-syms_args <- function(.fn) {
-  args <- formalArgs(rlang::as_function(.fn))
-  setNames(rlang::syms(args), args)
 }

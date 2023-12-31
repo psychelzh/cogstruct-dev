@@ -9,6 +9,58 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 8)
 )
 
+resample_fact_attribution <- function(data, n_fact, exclude = character()) {
+  data |>
+    select(!contains(exclude)) |>
+    slice_sample(prop = 1, replace = TRUE) |>
+    psych::fa(n_fact) |>
+    extract_efa_params(drop_load = TRUE) |>
+    chop(game_index)
+}
+
+extract_prob_one_fact <- function(fact_attribution) {
+  fact_attribution |>
+    mutate(
+      pairs = map(
+        game_index,
+        ~ if (length(.x) > 1) {
+          combn(.x, 2, sort, simplify = FALSE) |>
+            do.call(rbind, args = _) |>
+            as_tibble(.name_repair = ~ c("x", "y"))
+        }
+      ),
+      .keep = "unused"
+    ) |>
+    add_count(mr, name = "num_samples") |>
+    unnest(pairs) |>
+    count(num_samples, x, y, name = "num_occur") |>
+    mutate(prob = num_occur / num_samples, .keep = "unused") |>
+    retract_tbl_to_mat(sort_names = TRUE)
+}
+
+output_factcons <- function(schema, mat, ...,
+                            file_prefix = "factcons",
+                            dir_output = "_output/factor-consistency") {
+  file <- fs::path(
+    dir_output,
+    str_glue("{file_prefix}_schema-{schema}.png")
+  )
+  rownames(mat) <- replace_as_name_cn(rownames(mat))
+  colnames(mat) <- replace_as_name_cn(colnames(mat))
+  ragg::agg_png(file, width = 1980, height = 1980, res = 100)
+  corrplot::corrplot(
+    mat,
+    type = "upper",
+    method = "color",
+    order = "hclust",
+    hclust.method = "ward.D2",
+    col.lim = c(0, 1),
+    col = corrplot::COL2("RdBu")
+  )
+  dev.off()
+  file
+}
+
 games_nback <- c(
   "Nback4", "Digit3back", "Verbal3back", "Grid2back", "Paint2back"
 )
