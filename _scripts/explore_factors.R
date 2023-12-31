@@ -20,14 +20,11 @@ resample_fact_attribution <- function(data, n_fact, exclude = character()) {
 
 extract_prob_one_fact <- function(fact_attribution) {
   fact_attribution |>
+    complete(mr, nesting(tar_batch, tar_rep, tar_seed)) |>
     mutate(
       pairs = map(
         game_index,
-        ~ if (length(.x) > 1) {
-          combn(.x, 2, sort, simplify = FALSE) |>
-            do.call(rbind, args = _) |>
-            as_tibble(.name_repair = ~ c("x", "y"))
-        }
+        ~ expand.grid(x = .x, y = .x)
       ),
       .keep = "unused"
     ) |>
