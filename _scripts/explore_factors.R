@@ -61,18 +61,24 @@ output_factcons <- function(schema, mat, ...,
 games_nback <- c(
   "Nback4", "Digit3back", "Verbal3back", "Grid2back", "Paint2back"
 )
+games_flanker <- c("AttenAlert", "AttenOrient", "FlkrPro")
+games_calc <- c("CalcSpdMed", "CalcMed")
 config <- tibble::tribble(
   ~schema, ~exclude,
   "all", character(),
-  "nbackfree", games_nback, # exclude all N-back
-  "nbackone", setdiff(games_nback, "Grid2back") # keep grid 2-back only
+  "thin", c(
+    setdiff(games_nback, "Grid2back"),
+    setdiff(games_flanker, "AttenOrient"),
+    setdiff(games_calc, "CalcMed")
+  )
 )
+range_n_fact <- 4:20
 
 targets_fact_resamples <- tarchetypes::tar_map(
   config,
   names = -exclude,
   tarchetypes::tar_map(
-    list(n_fact = 4:10),
+    list(n_fact = range_n_fact),
     tarchetypes::tar_rep(
       fact_attribution,
       resample_fact_attribution(
@@ -152,7 +158,7 @@ list(
   tar_target(
     cluster_result,
     prob_one_fact_avg |>
-      filter(schema == "nbackone") |>
+      filter(schema == "thin") |>
       mutate(mat = map(mat, ~ 1 - .x)) |>
       pluck("mat", 1) |>
       as.dist() |>
@@ -161,7 +167,7 @@ list(
   tar_target(
     cluster_best,
     cluster_result |>
-      dendextend::find_k() |>
+      dendextend::find_k(krange = range_n_fact) |>
       pluck("pamobject", "silinfo", "widths") |>
       as_tibble(rownames = "game_index") |>
       mutate(
