@@ -4,9 +4,6 @@ prepare_source_data:
 prepare_source_data_retest:
   script: _scripts/prepare_source_data_retest.R
   store: _targets/prepare_source_data_retest
-preproc_short:
-  script: _scripts/preproc_short.R
-  store: _targets/preproc_short
 g_invariance:
   script: _scripts/g_invariance.R
   store: _targets/g_invariance

@@ -29,19 +29,6 @@ validate_data <- function(data_parsed, require_keyboard, list_names) {
   data_parsed[ver_keep & dev_keep & names_keep, ]
 }
 
-clean_indices_short <- function(indices, contents) {
-  contents |>
-    inner_join(indices, by = join_by(project_id, game_id)) |>
-    inner_join(data.iquizoo::game_info, by = join_by(game_id)) |>
-    inner_join(
-      data.iquizoo::game_indices,
-      by = join_by(game_id, index_name == index_main)
-    ) |>
-    arrange(game_time) |>
-    distinct(user_id, game_id, course_period, .keep_all = TRUE) |>
-    mutate(score = if_else(index_reverse, -score, score))
-}
-
 # helper functions
 check_device <- function(data_parsed, require_keyboard) {
   if (!require_keyboard) {
