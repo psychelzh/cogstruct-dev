@@ -1,5 +1,5 @@
 # data wrangling ----
-tar_collect_camp <- function(contents, name_parsed = "raw_data_parsed") {
+tar_collect_camp <- function(contents) {
   path_archive <- Sys.getenv("OneDriveConsumer") |>
     fs::path("Documents/Research/archived/cogstruct-dev-archived")
   path_restore <- withr::with_dir(
@@ -9,31 +9,41 @@ tar_collect_camp <- function(contents, name_parsed = "raw_data_parsed") {
       tar_config_get("store", project = "preproc_behav")
     )
   )
-  tarchetypes::tar_map(
-    values = contents |>
-      dplyr::distinct(game_id) |>
-      dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
-      dplyr::mutate(
-        game_id = as.character(game_id),
-        name_current = rlang::syms(sprintf("raw_data_%s", game_id)),
-        name_restore = rlang::syms(sprintf("data_%s", game_name_abbr))
-      ),
-    names = game_id,
-    tar_target_raw(
-      "data_full",
+  config_contents <- contents |>
+    dplyr::distinct(game_id) |>
+    dplyr::inner_join(data.iquizoo::game_info, by = "game_id") |>
+    dplyr::left_join(game_data_names, by = "game_id") |>
+    dplyr::mutate(
+      tar_name_current = rlang::syms(sprintf("raw_data_%s", game_id)),
+      tar_name_restore = rlang::syms(sprintf("data_%s", game_name_abbr)),
+      tar_name_data_full = rlang::syms(sprintf("data_full_%s", game_id)),
+      tar_name_data_parsed = rlang::syms(sprintf("raw_data_parsed_%s", game_id))
+    )
+  list(
+    data_full = tarchetypes::tar_eval_raw(
       bquote(
-        bind_rows(
-          select(name_current, -project_id),
-          read_archived(name_restore, store = .(path_restore))
-        ) |>
-          distinct()
-      )
+        tar_target(
+          tar_name_data_full,
+          bind_rows(
+            select(tar_name_current, -project_id),
+            read_archived(tar_name_restore, store = .(path_restore))
+          ) |>
+            distinct()
+        )
+      ),
+      config_contents
     ),
-    tar_target_raw(name_parsed, quote(wrangle_data(data_full)))
+    raw_data_parsed = tarchetypes::tar_eval(
+      tar_target(
+        tar_name_data_parsed,
+        wrangle_data(tar_name_data_full)
+      ),
+      config_contents
+    )
   )
 }
 
-tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
+tar_validate_rawdata <- function(contents) {
   config_contents <- contents |>
     dplyr::distinct(game_id) |>
     dplyr::inner_join(data.iquizoo::game_info, by = "game_id") |>
@@ -41,7 +51,7 @@ tar_validate_rawdata <- function(contents, name_parsed = "raw_data_parsed") {
     dplyr::mutate(
       game_id = as.character(game_id),
       require_keyboard = game_name %in% games_keyboard,
-      tar_parsed = rlang::syms(sprintf("%s_%s", name_parsed, game_id))
+      tar_parsed = rlang::syms(sprintf("raw_data_parsed_%s", game_id))
     )
   c(
     tarchetypes::tar_map(
@@ -201,9 +211,7 @@ tar_check_motivated <- function(config) {
   )
 }
 
-tar_partition_rawdata <- function(contents, config_format, ...,
-                                  name_rawdata = "data_valid") {
-  rlang::check_dots_empty()
+tar_partition_rawdata <- function(contents, config_format) {
   tar_partition_rawdata_ <- function(config, format) {
     tarchetypes::tar_eval_raw(
       bquote(
@@ -222,7 +230,7 @@ tar_partition_rawdata <- function(contents, config_format, ...,
     dplyr::inner_join(config_format, by = "game_id") |>
     dplyr::filter(!is.na(format)) |>
     dplyr::mutate(
-      data = rlang::syms(sprintf("%s_%s", name_rawdata, game_id)),
+      data = rlang::syms(sprintf("data_valid_%s", game_id)),
       tar_name_indices = rlang::syms(
         sprintf("indices_slices_%s", game_id)
       ),
@@ -237,12 +245,8 @@ tar_partition_rawdata <- function(contents, config_format, ...,
     purrr::imap(tar_partition_rawdata_)
 }
 
-tar_clean_indices <- function(name_indices = "indices",
-                              name_users_completed = "users_completed",
-                              name_res_motivated = "res_motivated",
-                              id_cols = "user_id",
-                              name_suffix = "") {
-  tar_name_indices <- paste0(name_indices, name_suffix)
+tar_clean_indices <- function(tar_name_indices = "indices",
+                              id_cols = "user_id") {
   tar_name_indices_clean <- paste0(tar_name_indices, "_clean")
   tar_name_indices_of_interest <- paste0(tar_name_indices, "_of_interest")
   tar_name_indices_wider_clean <- paste0(tar_name_indices, "_wider_clean")
@@ -251,16 +255,13 @@ tar_clean_indices <- function(name_indices = "indices",
       tar_name_indices_clean,
       bquote(
         .(as.symbol(tar_name_indices)) |>
-          semi_join(.(as.symbol(name_users_completed)), by = "user_id") |>
+          semi_join(users_completed, by = "user_id") |>
           # https://github.com/r-lib/vctrs/issues/1787
           arrange(desc(game_time)) |>
           distinct(pick(.(id_cols)), game_id, index_name, .keep_all = TRUE) |>
           left_join(
-            .(as.symbol(name_res_motivated)),
-            by = setdiff(
-              colnames(.(as.symbol(name_res_motivated))),
-              "is_motivated"
-            )
+            res_motivated,
+            by = setdiff(colnames(res_motivated), "is_motivated")
           )
       )
     ),

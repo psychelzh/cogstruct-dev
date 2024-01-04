@@ -104,5 +104,8 @@ list(
     indices_slices,
     targets_indices_partitioned
   ),
-  tar_clean_indices(id_cols = c("user_id", "part"), name_suffix = "_slices")
+  tar_clean_indices(
+    tar_name_indices = "indices_slices",
+    id_cols = c("user_id", "part")
+  )
 )
