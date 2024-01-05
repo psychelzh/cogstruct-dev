@@ -1,35 +1,3 @@
-#' Fit a one-g factor model for given observed variables
-#'
-#' @param data Raw behavior data.
-#' @param vars A character vector specifying observed variables.
-#' @returns A fitted one-g factor model.
-#' @export
-fit_g <- function(data, vars) {
-  efa(data, ov.names = vars, std.ov = TRUE, missing = "ml")
-}
-
-#' Predict g factor scores
-#'
-#' @param data Raw behavior data.
-#' @param mdl A fitted one-g factor model.
-#' @param id_cols A numeric vector specifying the column indices of subject
-#'   identifiers.
-#' @returns A data frame with g factor scores.
-#' @export
-predict_g_score <- function(data, mdl, id_cols = 1, name_g = "g") {
-  g <- lavPredict(mdl)[, 1]
-  data_names <- rownames(loadings(mdl))
-  for (data_name in data_names) {
-    test <- cor.test(g, data[[data_name]], use = "pairwise")
-    # if g is anti-correlated significantly with any ov, inverse it
-    if (test$estimate < 0 && test$p.value < 0.05) {
-      g <- -g
-      break
-    }
-  }
-  add_column(data[, id_cols], "{name_g}" := g)
-}
-
 fit_cfa <- function(model, data, ...) {
   cfa(
     model,
@@ -39,46 +7,6 @@ fit_cfa <- function(model, data, ...) {
     missing = "ml",
     ...
   )
-}
-
-predict_dim <- function(fitted, data, suffix = "") {
-  lavPredict(fitted) |>
-    unclass() |>
-    as_tibble() |>
-    add_column(user_id = data$user_id, .before = 1L) |>
-    pivot_longer(
-      -user_id,
-      names_to = "dim_simple",
-      values_to = paste0("score_dim", suffix)
-    )
-}
-
-efa_to_cfa <- function(fit,
-                       hierarchical = c("none", "bifactor", "highorder")) {
-  extract_efa_params(fit) |>
-    prepare_model(
-      col_dim = "mr",
-      col_task = "game_index",
-      hierarchical = hierarchical
-    )
-}
-
-extract_efa_params <- function(fit,
-                               name_task = "game_index",
-                               name_mr = "mr",
-                               name_load = "load",
-                               drop_load = TRUE) {
-  params <- parameters::model_parameters(fit, threshold = "max") |>
-    rename(game_index = Variable) |>
-    select(-Complexity, -Uniqueness) |>
-    pivot_longer(
-      starts_with("MR"),
-      names_to = name_mr,
-      values_to = name_load,
-      values_drop_na = TRUE
-    )
-  if (drop_load) params[[name_load]] <- NULL
-  params
 }
 
 prepare_model <- function(config,

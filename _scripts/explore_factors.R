@@ -14,7 +14,14 @@ resample_fact_attribution <- function(data, n_fact, exclude = character()) {
     select(!contains(exclude)) |>
     slice_sample(prop = 1, replace = TRUE) |>
     psych::fa(n_fact) |>
-    extract_efa_params(drop_load = TRUE) |>
+    parameters::model_parameters(threshold = "max") |>
+    pivot_longer(
+      starts_with("MR"),
+      names_to = "mr",
+      values_to = "loading",
+      values_drop_na = TRUE
+    ) |>
+    select(mr, game_index = Variable) |>
     chop(game_index)
 }
 
