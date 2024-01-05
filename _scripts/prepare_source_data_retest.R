@@ -65,19 +65,19 @@ list(
   targets_preproc,
   tarchetypes::tar_combine(indices, targets_preproc$indices),
   targets_test_retest,
-  tar_combine_with_meta(
+  zutils::tar_combine_with_meta(
     test_retest,
+    "game_id",
     targets_test_retest$test_retest,
-    cols_targets = "game_id",
     fun_post = \(.data) .data |> mutate(game_id = bit64::as.integer64(game_id))
   ),
   # test retest after partitioning
   tar_partition_rawdata(contents, config_format),
   targets_test_retest_slices,
-  tar_combine_with_meta(
+  zutils::tar_combine_with_meta(
     test_retest_slices,
+    "game_id",
     targets_test_retest_slices$test_retest_slices,
-    cols_targets = "game_id",
     fun_post = \(.data) .data |> mutate(game_id = bit64::as.integer64(game_id))
   )
 )

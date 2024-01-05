@@ -118,10 +118,10 @@ list(
     read = select(qs::qread(!!.x), !user_id)
   ),
   targets_fact_resamples,
-  tar_combine_with_meta(
+  zutils::tar_combine_with_meta(
     prob_one_fact,
+    c("n_fact", "schema"),
     select_list(targets_fact_resamples, starts_with("prob_one_fact")),
-    cols_targets = c("n_fact", "schema"),
     fun_pre = \(mat) tibble(mat = list(mat))
   ),
   tar_target(

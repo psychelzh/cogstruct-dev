@@ -13,3 +13,7 @@ Depends:
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Imports: 
+    zutils (>= 0.0.0.9000)
+Remotes:  
+    psychelzh/zutils

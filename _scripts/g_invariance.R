@@ -52,10 +52,10 @@ list(
       )
   ),
   g_invariance,
-  tar_combine_with_meta(
+  zutils::tar_combine_with_meta(
     scores_g,
-    g_invariance$scores_g,
-    c("num_vars", "id_pairs")
+    c("num_vars", "id_pairs"),
+    g_invariance$scores_g
   ),
   tar_target(
     scores_g_cor_pairwise,
@@ -96,10 +96,10 @@ list(
       mutate(user_id = seq_len(n()), .before = 1L)
   ),
   g_invariance_random,
-  tar_combine_with_meta(
+  zutils::tar_combine_with_meta(
     scores_g_random,
-    g_invariance_random$scores_g_random,
-    c("num_vars", "id_pairs")
+    c("num_vars", "id_pairs"),
+    g_invariance_random$scores_g_random
   ),
   tar_target(
     scores_g_cor_pairwise_random,
