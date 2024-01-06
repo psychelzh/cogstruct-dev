@@ -344,6 +344,39 @@ tar_test_retest <- function(contents, ...,
 }
 
 # modeling related ----
+tar_fit_cfa <- function(data, config, col_latent, col_manifest, hierarchical) {
+  list(
+    tar_target_raw(
+      "fit",
+      substitute(
+        fit_cfa(
+          config,
+          data,
+          col_latent = col_latent,
+          col_manifest = col_manifest,
+          hierarchical = hierarchical
+        )
+      )
+    ),
+    tar_target_raw(
+      "gof",
+      quote(as_tibble_row(unclass(fitmeasures(fit))))
+    ),
+    tar_target_raw(
+      "scores",
+      substitute(extract_latent_scores(fit, data))
+    ),
+    tar_target(
+      results,
+      list(
+        fit = list(fit),
+        gof = list(gof),
+        scores = list(scores)
+      )
+    )
+  )
+}
+
 tar_sample_tasks <- function(num_tasks, data,
                              name_id_col = 1,
                              sample_times = 10,

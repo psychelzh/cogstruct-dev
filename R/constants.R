@@ -34,3 +34,11 @@ game_data_names <- readr::read_csv(
     .keep = "unused"
   ) |>
   tidyr::chop(list_names)
+
+# used in cfa modeling building
+hypers_config_dims <- tibble::tibble(
+  name = c("full", "bigsil", "top4")
+)
+hypers_model_type <- tibble::tibble(
+  hierarchical = c("none", "bifactor", "highorder")
+)
