@@ -18,11 +18,14 @@ prepare_config <- function(config, name) {
           sil_width > mean(sil_width),
         .by = cluster
       ),
-    top4 = config |>
-      filter(
-        row_number(desc(sil_width)) <= 4,
-        .by = cluster
-      )
+    if (startsWith(name, "top")) {
+      n <- as.integer(str_remove(name, "top"))
+      config |>
+        filter(
+          row_number(desc(sil_width)) <= n,
+          .by = cluster
+        )
+    }
   )
 }
 

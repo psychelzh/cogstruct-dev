@@ -37,7 +37,7 @@ game_data_names <- readr::read_csv(
 
 # used in cfa modeling building
 hypers_config_dims <- tibble::tibble(
-  name = c("full", "bigsil", "top4")
+  name = c("full", "bigsil", "top3", "top4")
 )
 hypers_model_type <- tibble::tibble(
   hierarchical = c("none", "bifactor", "highorder")
