@@ -68,10 +68,9 @@ list(
   tarchetypes::tar_combine(
     test_retest,
     targets_test_retest$test_retest,
-    command = zutils::bind_with_meta(
+    command = zutils::vec_rbind_meta(
       !!!.x,
       .names_meta = "game_id",
-      .prefix = "test_retest",
       .fun_post = \(.data) mutate(.data, game_id = bit64::as.integer64(game_id))
     )
   ),
@@ -81,10 +80,9 @@ list(
   tarchetypes::tar_combine(
     test_retest_slices,
     targets_test_retest_slices$test_retest,
-    command = zutils::bind_with_meta(
+    command = zutils::vec_rbind_meta(
       !!!.x,
       .names_meta = "game_id",
-      .prefix = "test_retest_slices",
       .fun_post = \(.data) mutate(.data, game_id = bit64::as.integer64(game_id))
     )
   )

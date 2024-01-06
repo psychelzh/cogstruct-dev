@@ -121,10 +121,9 @@ list(
   tarchetypes::tar_combine(
     prob_one_fact,
     zutils::select_list(targets_fact_resamples, starts_with("prob_one_fact")),
-    command = zutils::bind_with_meta(
+    command = zutils::vec_rbind_meta(
       !!!.x,
       .names_meta = c("n_fact", "schema"),
-      .prefix = "prob_one_fact",
       .fun_pre = \(mat) tibble(mat = list(mat))
     )
   ),

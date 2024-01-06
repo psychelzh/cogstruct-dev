@@ -55,10 +55,9 @@ list(
   tarchetypes::tar_combine(
     scores_g,
     g_invariance$scores_g,
-    command = zutils::bind_with_meta(
+    command = zutils::vec_rbind_meta(
       !!!.x,
-      .names_meta = c("num_vars", "id_pairs"),
-      .prefix = "scores_g"
+      .names_meta = c("num_vars", "id_pairs")
     )
   ),
   tar_target(
@@ -103,10 +102,9 @@ list(
   tarchetypes::tar_combine(
     scores_g_random,
     g_invariance_random$scores_g_random,
-    command = zutils::bind_with_meta(
+    command = zutils::vec_rbind_meta(
       !!!.x,
-      .names_meta = c("num_vars", "id_pairs"),
-      .prefix = "scores_g_random"
+      .names_meta = c("num_vars", "id_pairs")
     )
   ),
   tar_target(
