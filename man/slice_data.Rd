@@ -8,13 +8,13 @@
 \alias{slice_data_blocks}
 \title{Partition data into roughly equal parts}
 \usage{
-slice_data_trials(data, num_parts, ..., name_raw_parsed = "raw_parsed")
+slice_data_trials(data, num_parts)
 
-slice_data_duration(data, num_parts, ..., name_raw_parsed = "raw_parsed")
+slice_data_duration(data, num_parts)
 
-slice_data_items(data, ..., name_raw_parsed = "raw_parsed")
+slice_data_items(data)
 
-slice_data_blocks(data, ..., name_raw_parsed = "raw_parsed")
+slice_data_blocks(data)
 }
 \description{
 Data partitioning is essential for further task duration calibration, but
