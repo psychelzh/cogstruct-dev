@@ -79,7 +79,10 @@ list(
     zutils::select_list(targets_cfa, starts_with("results")),
     command = zutils::vec_rbind_meta(
       !!!.x,
-      .names_meta = c(names(hypers_model_type), names(hypers_config_dims))
+      .names_meta = c(
+        names(hypers_model_type),
+        names(hypers_config_dims)
+      )
     )
   )
 )
