@@ -36,13 +36,13 @@ targets_cfa <- tarchetypes::tar_map(
     prepare_config(config_dims, name)
   ),
   tarchetypes::tar_map(
-    hypers_model_type,
+    hypers_model,
     tar_fit_cfa(
       indices_wider_clean,
       config,
-      col_latent = dim_label,
       col_manifest = game_index,
-      hierarchical = hierarchical
+      col_latent = dim_label,
+      theory = theory
     )
   )
 )
@@ -80,7 +80,7 @@ list(
     command = zutils::vec_rbind_meta(
       !!!.x,
       .names_meta = c(
-        names(hypers_model_type),
+        names(hypers_model),
         names(hypers_config_dims)
       )
     )
