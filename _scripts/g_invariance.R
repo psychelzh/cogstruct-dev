@@ -52,10 +52,14 @@ list(
       )
   ),
   g_invariance,
-  zutils::tar_combine_with_meta(
+  tarchetypes::tar_combine(
     scores_g,
-    c("num_vars", "id_pairs"),
-    g_invariance$scores_g
+    g_invariance$scores_g,
+    command = zutils::bind_with_meta(
+      !!!.x,
+      .names_meta = c("num_vars", "id_pairs"),
+      .prefix = "scores_g"
+    )
   ),
   tar_target(
     scores_g_cor_pairwise,
@@ -96,10 +100,14 @@ list(
       mutate(user_id = seq_len(n()), .before = 1L)
   ),
   g_invariance_random,
-  zutils::tar_combine_with_meta(
+  tarchetypes::tar_combine(
     scores_g_random,
-    c("num_vars", "id_pairs"),
-    g_invariance_random$scores_g_random
+    g_invariance_random$scores_g_random,
+    command = zutils::bind_with_meta(
+      !!!.x,
+      .names_meta = c("num_vars", "id_pairs"),
+      .prefix = "scores_g_random"
+    )
   ),
   tar_target(
     scores_g_cor_pairwise_random,

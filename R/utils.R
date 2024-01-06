@@ -23,21 +23,6 @@ read_archived <- function(...) {
   )
 }
 
-# programming ----
-select_list <- function(.l, ...) {
-  pos <- tidyselect::eval_select(rlang::expr(c(...)), .l)
-  rlang::set_names(.l[pos], names(pos))
-}
-
-call_full <- function(.fn) {
-  rlang::call2(.fn, !!!syms_args(.fn))
-}
-
-syms_args <- function(.fn) {
-  args <- formalArgs(rlang::as_function(.fn))
-  setNames(rlang::syms(args), args)
-}
-
 # misc ----
 replace_as_name_cn <- function(game_index,
                                remove_suffix = FALSE,

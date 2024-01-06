@@ -161,7 +161,7 @@ tar_check_motivated <- function(config) {
             mutate(
               is_motivated = map_lgl(
                 raw_parsed,
-                \(data) .(call_full(sprintf("check_%s", rule)))
+                \(data) .(zutils::call_full(sprintf("check_%s", rule)))
               ),
               .keep = "unused"
             )
@@ -217,7 +217,7 @@ tar_partition_rawdata <- function(contents, config_format) {
       bquote(
         tar_target(
           tar_name_indices,
-          .(call_full(sprintf("slice_data_%s", format))) |>
+          .(zutils::call_full(sprintf("slice_data_%s", format))) |>
             preproc_data(prep_fun, .input = input, .extra = extra)
         )
       ),
