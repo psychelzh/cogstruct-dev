@@ -140,20 +140,6 @@ list(
     files_plots,
     pmap_chr(prob_one_fact_avg, output_factcons)
   ),
-  tar_target(
-    prob_one_fact_large,
-    prob_one_fact |>
-      filter(n_fact > 7) |>
-      summarise(
-        mat = list(reduce(mat, `+`) / n()),
-        .by = schema
-      )
-  ),
-  tar_target(
-    files_plots_large,
-    prob_one_fact_large |>
-      pmap_chr(output_factcons, file_prefix = "factcons_nfact-large")
-  ),
   tarchetypes::tar_map(
     values = tibble::tibble(
       thresh_value = seq(0.4, 0.8, 0.1),
@@ -177,39 +163,46 @@ list(
   tar_target(
     cluster_result,
     prob_one_fact_avg |>
-      filter(schema == "thin") |>
-      mutate(mat = map(mat, ~ 1 - .x)) |>
-      pluck("mat", 1) |>
-      as.dist() |>
-      hclust(method = "ward.D2")
-  ),
-  tar_target(
-    cluster_best,
-    cluster_result |>
-      dendextend::find_k(krange = range_n_fact) |>
-      pluck("pamobject", "silinfo", "widths") |>
-      as_tibble(rownames = "game_index") |>
       mutate(
-        # at least keep 5 tasks
-        include = row_number(desc(sil_width)) <= 5 |
-          sil_width > mean(sil_width),
-        .by = cluster
+        cluster = map(
+          mat,
+          \(mat) hclust(as.dist(1 - mat), method = "ward.D2")
+        ),
+        best_k = map(
+          cluster,
+          dendextend::find_k,
+          krange = range_n_fact
+        ),
+        silinfo = map(
+          best_k,
+          \(best_k) {
+            best_k |>
+              pluck("pamobject", "silinfo", "widths") |>
+              as_tibble(rownames = "game_index")
+          }
+        ),
+        .keep = "unused"
       )
   ),
   tar_target(
-    file_cluster_best,
-    cluster_best |>
-      separate_wider_delim(
-        game_index,
-        delim = ".",
-        names = c("game_name_abbr", "index_name"),
-        cols_remove = FALSE
+    file_cluster_silinfo,
+    cluster_result |>
+      mutate(
+        silinfo = lapply(
+          silinfo,
+          \(x) {
+            x |>
+              mutate(game_index = replace_as_name_cn(game_index)) |>
+              separate_wider_delim(
+                game_index,
+                delim = ".",
+                names = c("game_name", "index_name")
+              )
+          }
+        )
       ) |>
-      left_join(
-        select(data.iquizoo::game_info, game_name, game_name_abbr),
-        by = "game_name_abbr"
-      ) |>
-      relocate(game_name, .before = 1L) |>
-      write_excel_csv("config/factcons_clustering.csv")
+      select(schema, silinfo) |>
+      deframe() |>
+      writexl::write_xlsx("config.local/silinfo.xlsx")
   )
 )
