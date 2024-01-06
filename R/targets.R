@@ -368,7 +368,7 @@ tar_fit_cfa <- function(data, config, col_latent, col_manifest, hierarchical) {
     ),
     tar_target(
       results,
-      list(
+      tibble(
         fit = list(fit),
         gof = list(gof),
         scores = list(scores)
