@@ -55,10 +55,11 @@ list(
   tarchetypes::tar_combine(
     scores_g,
     g_invariance$scores_g,
-    command = zutils::vec_rbind_meta(
-      !!!.x,
-      .names_meta = c("num_vars", "id_pairs")
-    )
+    command = bind_rows(!!!.x, .id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id", c("num_vars", "id_pairs"),
+        prefix = "scores_g"
+      )
   ),
   tar_target(
     scores_g_cor_pairwise,
@@ -102,10 +103,11 @@ list(
   tarchetypes::tar_combine(
     scores_g_random,
     g_invariance_random$scores_g_random,
-    command = zutils::vec_rbind_meta(
-      !!!.x,
-      .names_meta = c("num_vars", "id_pairs")
-    )
+    command = bind_rows(!!!.x, .id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id", c("num_vars", "id_pairs"),
+        prefix = "scores_g_random"
+      )
   ),
   tar_target(
     scores_g_cor_pairwise_random,

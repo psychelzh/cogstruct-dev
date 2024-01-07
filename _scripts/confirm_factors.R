@@ -77,12 +77,11 @@ list(
   tarchetypes::tar_combine(
     results,
     zutils::select_list(targets_cfa, starts_with("results")),
-    command = zutils::vec_rbind_meta(
-      !!!.x,
-      .names_meta = c(
-        names(hypers_model),
-        names(hypers_config_dims)
+    command = bind_rows(!!!.x, .id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id",
+        c(names(hypers_model), names(hypers_config_dims)),
+        prefix = "results"
       )
-    )
   )
 )

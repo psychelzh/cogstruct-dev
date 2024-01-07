@@ -68,11 +68,12 @@ list(
   tarchetypes::tar_combine(
     test_retest,
     targets_test_retest$test_retest,
-    command = zutils::vec_rbind_meta(
-      !!!.x,
-      .names_meta = "game_id",
-      .fun_post = \(.data) mutate(.data, game_id = bit64::as.integer64(game_id))
-    )
+    command = bind_rows(!!!.x, .id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id", "game_id",
+        prefix = "test_retest"
+      ) |>
+      mutate(game_id = bit64::as.integer64(game_id))
   ),
   # test retest after partitioning
   tar_partition_rawdata(contents, config_format),
@@ -80,10 +81,11 @@ list(
   tarchetypes::tar_combine(
     test_retest_slices,
     targets_test_retest_slices$test_retest,
-    command = zutils::vec_rbind_meta(
-      !!!.x,
-      .names_meta = "game_id",
-      .fun_post = \(.data) mutate(.data, game_id = bit64::as.integer64(game_id))
-    )
+    command = bind_rows(!!!.x, .id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id", "game_id",
+        prefix = "test_retest_slices"
+      ) |>
+      mutate(game_id = bit64::as.integer64(game_id))
   )
 )

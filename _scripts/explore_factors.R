@@ -121,11 +121,14 @@ list(
   tarchetypes::tar_combine(
     prob_one_fact,
     zutils::select_list(targets_fact_resamples, starts_with("prob_one_fact")),
-    command = zutils::vec_rbind_meta(
-      !!!.x,
-      .names_meta = c("n_fact", "schema"),
-      .fun_pre = \(mat) tibble(mat = list(mat))
-    )
+    command = list(!!!.x) |>
+      map(\(mat) tibble(mat = list(mat))) |>
+      bind_rows(.id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id",
+        c("n_fact", "schema"),
+        prefix = "prob_one_fact"
+      )
   ),
   tar_target(
     prob_one_fact_avg,
