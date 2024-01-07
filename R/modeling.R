@@ -1,9 +1,13 @@
 #' Fit a confirmatory factor analysis model
 #'
-#' Note different theories will lead to different models. Specifically, `"of"`
-#' is one-factor model, `"fo"` is a first-order model, `"ho"` is a higher-order
-#' model, and `"bf"` is a bi-factor model. See Brunner et al. (2012) for
-#' detailed discussion of the models and the naming conventions used here.
+#' This is just a wrapper of [lavaan::cfa()] that allows the model to be
+#' specified in a data frame and allows users to choose from four pre-defined
+#' theories of the model.
+#'
+#' Specifically, `"of"` is one-factor model, `"fo"` is a first-order model,
+#' `"ho"` is a higher-order model, and `"bf"` is a bi-factor model. See Brunner
+#' et al. (2012) for detailed discussion of the models and the naming
+#' conventions used here.
 #'
 #' @param config A data frame with columns `latent` and `manifest` that
 #'   specifies the model. The `latent` column specifies the latent variables and

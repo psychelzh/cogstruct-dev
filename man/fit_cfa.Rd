@@ -32,8 +32,13 @@ specifies the manifest and latent variables.}
 The same as \code{\link[lavaan:cfa]{lavaan::cfa()}}.
 }
 \description{
-Note different theories will lead to different models. Specifically, \code{"of"}
-is one-factor model, \code{"fo"} is a first-order model, \code{"ho"} is a higher-order
-model, and \code{"bf"} is a bi-factor model. See Brunner et al. (2012) for
-detailed discussion of the models and the naming conventions used here.
+This is just a wrapper of \code{\link[lavaan:cfa]{lavaan::cfa()}} that allows the model to be
+specified in a data frame and allows users to choose from four pre-defined
+theories of the model.
+}
+\details{
+Specifically, \code{"of"} is one-factor model, \code{"fo"} is a first-order model,
+\code{"ho"} is a higher-order model, and \code{"bf"} is a bi-factor model. See Brunner
+et al. (2012) for detailed discussion of the models and the naming
+conventions used here.
 }
