@@ -15,8 +15,8 @@ game_id_cor <- list(
   rt = bit64::as.integer64(
     c(
       224379118576069, # 太空飞船PRO：reaction time should be added 100 ms
-      268008982667347
-    ) # 捉虫高级简版：reaction time should be added 300 ms
+      268008982667347 # 捉虫高级简版：reaction time should be added 300 ms
+    )
   )
 )
 
