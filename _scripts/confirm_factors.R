@@ -9,31 +9,64 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 8)
 )
 
-prepare_config <- function(config, name) {
+prepare_config <- function(config, name, loadings = NULL) {
   switch(name,
     full = config,
-    bigsil = config |>
+    big_sil = config |>
       filter(
         row_number(desc(sil_width)) <= 5 |
           sil_width > mean(sil_width),
         .by = cluster
       ),
     if (startsWith(name, "top")) {
-      n <- as.integer(str_remove(name, "top"))
-      config |>
-        filter(
-          row_number(desc(sil_width)) <= n,
-          .by = cluster
-        )
+      parsed <- str_match(
+        name,
+        "top_(?<crit>.+)_(?<n>.+)"
+      )
+      n <- as.integer(parsed[, "n"])
+      switch(parsed[, "crit"],
+        sil = config |>
+          filter(
+            row_number(desc(sil_width)) <= n,
+            .by = cluster
+          ),
+        load = loadings |>
+          as_tibble() |>
+          select(
+            dim_label = To,
+            game_index = From,
+            load = Coefficient
+          ) |>
+          left_join(config, by = c("dim_label", "game_index")) |>
+          filter(
+            row_number(desc(load)) <= n,
+            .by = cluster
+          )
+      )
     }
   )
 }
 
 targets_cfa <- tarchetypes::tar_map(
-  hypers_config_dims,
+  hypers_config_dims |>
+    dplyr::mutate(
+      call_config = purrr::map(
+        name,
+        ~ if (stringr::str_detect(.x, "load")) {
+          bquote(
+            prepare_config(config_dims, .(.x), loadings_full)
+          )
+        } else {
+          bquote(
+            prepare_config(config_dims, .(.x))
+          )
+        }
+      )
+    ),
+  names = name,
   tar_target(
     config,
-    prepare_config(config_dims, name)
+    call_config
   ),
   tarchetypes::tar_map(
     hypers_model,
@@ -74,6 +107,13 @@ list(
     )
   ),
   targets_cfa,
+  tar_target(
+    loadings_full,
+    parameters::model_parameters(
+      fit_fo_full,
+      component = "loading"
+    )
+  ),
   tarchetypes::tar_combine(
     results,
     zutils::select_list(targets_cfa, starts_with("results")),
@@ -81,6 +121,7 @@ list(
       zutils::separate_wider_dsv(
         ".id",
         c(names(hypers_model), names(hypers_config_dims)),
+        patterns = c(".+?", ".+"),
         prefix = "results"
       )
   )

@@ -39,7 +39,14 @@ game_data_names <- readr::read_csv(
 
 # used in cfa modeling building
 hypers_config_dims <- tibble::tibble(
-  name = c("full", "bigsil", "top3", "top4")
+  name = c(
+    "full", # all kept items after thinning
+    "big_sil", # items with big silhouette (larger than mean of each cluster)
+    "top_sil_3", # top 3 biggest silhouette items
+    "top_sil_4", # top 4 biggest silhouette items
+    "top_load_3", # top 3 biggest loading items
+    "top_load_4" # top 4 biggest loading items
+  )
 )
 hypers_model <- tibble::tibble(
   theory = c(
