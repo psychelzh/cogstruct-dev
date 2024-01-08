@@ -35,11 +35,8 @@ extract_prob_one_fact <- function(fact_attribution) {
       ),
       .keep = "unused"
     ) |>
-    add_count(mr, name = "num_samples") |>
     unnest(pairs) |>
-    count(num_samples, x, y, name = "num_occur") |>
-    mutate(prob = num_occur / num_samples, .keep = "unused") |>
-    retract_tbl_to_mat(sort_names = TRUE)
+    xtabs(~ x + y, data = _)
 }
 
 output_factcons <- function(schema, mat, ...,
@@ -58,8 +55,7 @@ output_factcons <- function(schema, mat, ...,
     method = "color",
     order = "hclust",
     hclust.method = "ward.D2",
-    col.lim = c(0, 1),
-    col = corrplot::COL2("RdBu")
+    is.corr = FALSE
   )
   dev.off()
   file
@@ -134,7 +130,7 @@ list(
     prob_one_fact_avg,
     prob_one_fact |>
       summarise(
-        mat = list(reduce(mat, `+`) / n()),
+        mat = list(do.call(matsbyname::mean_byname, mat)),
         .by = schema
       )
   ),
@@ -144,7 +140,7 @@ list(
   ),
   tarchetypes::tar_map(
     values = tibble::tibble(
-      thresh_value = seq(0.4, 0.8, 0.1),
+      thresh_value = seq(40, 80, 10),
       thresh_level = seq_along(thresh_value)
     ),
     names = thresh_level,
@@ -168,7 +164,7 @@ list(
       mutate(
         cluster = map(
           mat,
-          \(mat) hclust(as.dist(1 - mat), method = "ward.D2")
+          \(mat) hclust(as.dist(100 - mat), method = "ward.D2")
         ),
         best_k = map(
           cluster,

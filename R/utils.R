@@ -47,17 +47,3 @@ replace_as_name_cn <- function(game_index,
     unite(res, game_name, index_name, sep = delim) |>
     pull(res)
 }
-
-retract_tbl_to_mat <- function(.data, ..., sort_names = TRUE) {
-  rlang::check_dots_used()
-  stopifnot(ncol(.data) == 3)
-  attr <- colnames(.data)[[3]]
-  mat <- igraph::graph_from_data_frame(.data, ...) |>
-    igraph::as_adj(attr = attr) |>
-    as.matrix()
-  if (sort_names) {
-    order <- sort(colnames(mat))
-    mat <- mat[order, order]
-  }
-  mat
-}
