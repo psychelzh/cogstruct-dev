@@ -13,3 +13,6 @@ explore_factors:
 confirm_factors:
   script: _scripts/confirm_factors.R
   store: _targets/confirm_factors
+preproc_neural:
+  script: _scripts/preproc_neural.R
+  store: _targets/preproc_neural

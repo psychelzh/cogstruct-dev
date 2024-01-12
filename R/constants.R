@@ -56,3 +56,23 @@ hypers_model <- tibble::tibble(
     "bf" # bifactor
   )
 )
+
+# used in functional connectivity settings
+hypers_xcpd_config <- tibble::tibble(
+  config = c(
+    "default", # with global signal regression
+    "no_gsr" # no global signal regression
+  )
+)
+hypers_fmri_dataset <- tidyr::expand_grid(
+  tibble::tribble(
+    ~session, ~task,
+    "1", "rest",
+    "1", "am",
+    "1", "movie",
+    "2", "rest",
+    "2", "wm",
+    "2", "movie"
+  ),
+  atlas = sprintf("Schaefer%d17", 1:4)
+)
