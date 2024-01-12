@@ -44,7 +44,8 @@ prepare_config <- function(config, name, loadings = NULL) {
           )
       )
     }
-  )
+  ) |>
+    select(dim_label, game_index)
 }
 
 targets_cfa <- tarchetypes::tar_map(
