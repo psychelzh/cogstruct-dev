@@ -1,0 +1,77 @@
+game_id	game_name	game_name_abbr	index_name	same_id	thin
+356101783560965	文字推理	VR	nc		f
+411281158706373	远距离联想	RAT	nc		f
+225525822632453	美术卡片	Paint2back	dprime	1	t
+268008982663269	魔术师终极	Nback4	dprime	1	t
+324182449562501	视觉记忆测试	VMT	nc		f
+324177880433541	物体旋转	ObjRot	nc	7	t
+322148361573125	阅读判断	Reading	nc		f
+224383397556421	过目不忘PRO	FWSPro	nc		f
+268008982659144	三维心理旋转测试A	MR3DA	nc	7	f
+268008982650985	登陆月球（中级）	NLEMed	mean_log_err		f
+381576542159749	社交达人	FName	fntotal		f
+380173961339781	事件记忆	EOT	nc		f
+375916542735109	万花筒	ObjSpan	nc		f
+268008982663260	萤火虫PRO	MOTPro	nc		f
+386185817178885	词汇学习	VL	nc		f
+375934626087813	色彩检测	FiltColor	k	2	t
+268008982671439	图片记忆A	BPSA	bps_score		f
+239263162577477	时间顺序判断	TOJ	thresh_last_block		f
+224376556507589	察颜观色PRO	FacesPro	switch_cost_ies		f
+265086851706949	小狗回家	Racer	mean_score		f
+225191359021253	数字卡片PRO	Digit3back	dprime	1	t
+268008982650988	语义判断	Seman	nc		f
+268008982642772	专注大师_中级	CalcSpdMed	nc	4	t
+268008982663290	词语判断	Lexic	nc		f
+268008982667391	声调判断	Tone	nc		f
+380174783693701	注意指向	AttenOrient	cong_eff_ies	3	f
+380176247862021	多变计数师	ReflectCount	switch_cost_ies		f
+268008982659192	一心二用PRO	DualTaskPro	nc		f
+224374703641029	快速归类PRO	CRTPro	ies		f
+224375977935045	变色魔块PRO	StopSigPro	ssrt		f
+224377200398533	候鸟迁徙PRO	BirdsPro	switch_cost_ies		f
+224377200398533	候鸟迁徙PRO	BirdsPro	cong_eff_ies		f
+224377872388293	卡片分类PRO	CardSortPro	switch_cost_ies		f
+224378628399301	多彩文字PRO	ColStrpPro	cong_eff_ies		f
+224379118576069	太空飞船PRO	FlkrPro	cong_eff_ies	3	t
+225525419221509	文字卡片	Verbal3back	dprime	1	t
+361750352892805	图形折叠	FR	nc	6	f
+324179964613381	视角判断	VAT	nc		f
+380173315257221	注意警觉	AttenAlert	cong_eff_ies	3	t
+375917961736965	方向检测	FiltOrient	k	2	f
+375903641948933	随机应变	NumLet	switch_cost_ies		f
+225191769534981	格子卡片	Grid2back	dprime	1	f
+268008982655053	塔罗牌	WxPred	nc		f
+355740871500677	数字推理	DR	nc		f
+386196539900677	井然有序	ManipSpan	nc		f
+355740333933445	图形推理	NVR	nc		f
+268008982642811	城市导航	LocMemAdv	nc	5	t
+324179001000709	平面展开	Unfolding	nc	6	t
+268008982667358	宇宙黑洞A	LocMemStd	nc	5	f
+375917432341381	路径学习	PL	nc		f
+268008982667350	火眼金睛	AttSrc	nc		f
+268008982655069	言语记忆A	DRMA	fm_dprime		f
+268008982642793	强化学习	ProbRL	pc_test		f
+268008982667347	捉虫高级简版	TOVAS	dprime		f
+268008982659166	速算师（中级）	CalcMed	nc	4	f
+238239294447813	变戏法	AntiSac	ies		f
+281039429226565	连续再认PRO	ConRecPro	dprime		f
+268008982655059	数感	NsymNCmp	w		f
+239263721484357	节奏感知	RP	thresh_last_block		f
+268008982646874	超级秒表PRO	SRTPro	mrt		f
+239264243732549	时长分辨	DD	thresh_last_block		f
+238279920537669	幸运小球PRO	OCSpanPro	nc		f
+384311706735365	人工语言-高级	AscLanAdv	nc		f
+279330041741381	欢乐餐厅PRO	AscMemPro	nc		f
+268008982667381	密码箱	KeepTrack	nc		f
+268008982663278	蝴蝶照相机	SCSpan	nc		f
+268008982667368	各得其所	LdnTwr	prop_perfect		f
+268008982667388	按图索骥	HOP	mean_log_err_both		f
+238267995484229	雪花收藏家	DirectSrc	nc_cor		f
+225528186135045	打靶场	RSpan	nc		f
+268008982655090	顺背数PRO	FDSPro	nc		f
+268008982667380	舒尔特方格（中级）	SchulteMed	nc_cor		f
+268008982642798	位置记忆PRO	SSTMPro	nc		f
+240406295777861	我是大厨	MSynWin	score_total		f
+268008982642792	方向临摹	JLO	mean_log_err		f
+268008982663267	连点成画PRO	FPTPro	nc		f

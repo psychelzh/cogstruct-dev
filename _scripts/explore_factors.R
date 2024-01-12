@@ -61,26 +61,15 @@ output_factcons <- function(schema, mat, ...,
   file
 }
 
-games_nback <- c(
-  "Nback4", "Digit3back", "Verbal3back", "Grid2back", "Paint2back"
-)
-games_filt <- c("FiltColor", "FiltOrient")
-games_flanker <- c("AttenAlert", "AttenOrient", "FlkrPro")
-games_calc <- c("CalcSpdMed", "CalcMed")
-games_locmem <- c("LocMemAdv", "LocMemStd")
-games_folding <- c("FR", "Unfolding")
-games_mr <- c("MR3DA", "ObjRot")
 config <- tibble::tribble(
   ~schema, ~exclude,
   "all", character(),
-  "thin", c(
-    setdiff(games_nback, "Grid2back"),
-    setdiff(games_flanker, "AttenOrient"),
-    setdiff(games_calc, "CalcMed"),
-    setdiff(games_locmem, "LocMemStd"),
-    setdiff(games_folding, "Unfolding"),
-    setdiff(games_mr, "MR3DA"),
-    setdiff(games_filt, "FiltOrient")
+  "thin", with(
+    readr::read_tsv(
+      "config/games_thin.tsv",
+      show_col_types = FALSE
+    ),
+    sort(game_name_abbr[thin])
   )
 )
 range_n_fact <- 4:20
