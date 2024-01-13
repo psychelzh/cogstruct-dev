@@ -60,6 +60,29 @@ targets_fact_resamples <- tarchetypes::tar_map(
   )
 )
 
+evaluate_best <- tarchetypes::tar_map(
+  tibble::tibble(
+    n = 1:10,
+    name = sprintf("best_%d", n)
+  ),
+  names = name,
+  tar_target(
+    config,
+    silinfo_best |>
+      filter(row_number(desc(crit)) == n) |>
+      pluck("sil", 1) |>
+      filter(sil_width > 0.5) |>
+      mutate(latent = sprintf("F%d", cluster))
+  ),
+  tar_fit_cfa(
+    indices_wider_clean,
+    config,
+    col_manifest = game_index,
+    col_latent = latent,
+    theory = "fo"
+  )
+)
+
 list(
   tarchetypes::tar_file_read(
     indices_wider_clean,
@@ -106,8 +129,8 @@ list(
   tar_target(
     silinfo_best,
     cluster_stats |>
-      slice_max(crit, by = c("schema", "n_fact")) |>
-      slice_max(crit, by = "schema") |>
+      filter(k == nc) |>
+      select("schema", "n_fact", "nc", "crit") |>
       left_join(cluster_result, by = c("schema", "n_fact")) |>
       mutate(
         sil = map(
@@ -116,22 +139,18 @@ list(
             .x$pamobject$silinfo$widths,
             rownames = "game_index"
           )
-        )
-      ) |>
-      pull(sil, name = "schema")
+        ),
+        .keep = "unused"
+      )
   ),
-  tar_target(
-    fil_silinfo_best,
-    silinfo_best |>
-      map(
-        ~ .x |>
-          mutate(game_index = replace_as_name_cn(game_index)) |>
-          separate_wider_delim(
-            game_index, ".",
-            names = c("game_name", "index_name")
-          )
-      ) |>
-      writexl::write_xlsx("config.local/silinfo.xlsx"),
-    format = "file"
+  evaluate_best,
+  tarchetypes::tar_combine(
+    results_best,
+    evaluate_best$results,
+    command = bind_rows(!!!.x, .id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id", "n",
+        prefix = "results_best"
+      )
   )
 )
