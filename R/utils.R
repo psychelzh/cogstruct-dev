@@ -27,23 +27,9 @@ read_archived <- function(...) {
 replace_as_name_cn <- function(game_index,
                                remove_suffix = FALSE,
                                delim = ".") {
-  tibble(game_index) |>
-    separate_wider_delim(
-      game_index, delim,
-      names = c("game_name_abbr", "index_name")
-    ) |>
-    left_join(
-      data.iquizoo::game_info |>
-        select(game_name_abbr, game_name),
-      by = join_by(game_name_abbr)
-    ) |>
-    mutate(
-      game_name = if (remove_suffix) {
-        str_remove(game_name, "[a-zA-Z]+$")
-      } else {
-        game_name
-      }
-    ) |>
-    unite(res, game_name, index_name, sep = delim) |>
-    pull(res)
+  splitted <- str_split(game_index, fixed(delim), simplify = TRUE)
+  map_names <- pull(data.iquizoo::game_info, game_name, name = game_name_abbr)
+  splitted[, 1] <- map_names[splitted[, 1]]
+  if (remove_suffix) splitted[, 1] <- str_remove(splitted[, 1], "[a-zA-Z]+$")
+  str_c(splitted[, 1], splitted[, 2], sep = delim)
 }
