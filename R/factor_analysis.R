@@ -58,10 +58,10 @@ output_factcons <- function(schema, mat, ...,
 #' specified in a data frame and allows users to choose from four pre-defined
 #' theories of the model.
 #'
-#' Specifically, `"of"` is one-factor model, `"fo"` is a first-order model,
-#' `"ho"` is a higher-order model, and `"bf"` is a bi-factor model. See Brunner
-#' et al. (2012) for detailed discussion of the models and the naming
-#' conventions used here.
+#' Specifically, `"fo"` is a first-order model, `"ho"` is a higher-order model,
+#' `"bf"` is a bi-factor model and `"of"` is one-factor model. See Brunner et
+#' al. (2012) for detailed discussion of the models and the naming conventions
+#' used here.
 #'
 #' @param config A data frame with columns `latent` and `manifest` that
 #'   specifies the model. The `latent` column specifies the latent variables and
@@ -77,7 +77,7 @@ output_factcons <- function(schema, mat, ...,
 fit_cfa <- function(config, data, ...,
                     col_manifest = manifest,
                     col_latent = latent,
-                    theory = c("of", "fo", "ho", "bf")) {
+                    theory = c("fo", "ho", "bf", "of")) {
   rlang::check_dots_used()
   theory <- match.arg(theory)
   prepare_model(config, {{ col_manifest }}, {{ col_latent }}, theory) |>
