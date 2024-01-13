@@ -17,7 +17,13 @@ games_thin <- with(
   sort(game_name_abbr[thin])
 )
 
-config <- tibble::tribble(
+# parameters for resampling
+n_resamples <- 1000
+n_batches <- 10
+n_reps <- n_resamples / n_batches
+
+# configurations for factor analysis
+config_var_selection <- tibble::tribble(
   ~schema, ~exclude,
   "all", character(),
   "thin", games_thin
@@ -25,23 +31,31 @@ config <- tibble::tribble(
 range_n_fact <- 4:20
 
 targets_fact_resamples <- tarchetypes::tar_map(
-  config,
-  names = -exclude,
-  tarchetypes::tar_map(
-    list(n_fact = range_n_fact),
-    tarchetypes::tar_rep(
-      fact_attribution,
-      resample_fact_attribution(
-        indices_wider_clean,
-        n_fact,
-        exclude
-      ),
-      batches = 10,
-      reps = 10
+  tidyr::expand_grid(
+    config_var_selection,
+    n_fact = range_n_fact
+  ),
+  names = !exclude,
+  tarchetypes::tar_rep(
+    fact_attribution,
+    resample_fact_attribution(
+      indices_wider_clean,
+      n_fact,
+      exclude
     ),
-    tar_target(
-      prob_one_fact,
-      extract_prob_one_fact(fact_attribution)
+    batches = n_batches,
+    reps = n_reps
+  ),
+  tar_target(
+    prob_one_fact,
+    extract_prob_one_fact(fact_attribution)
+  ),
+  tar_target(
+    cluster_result,
+    # use pam clustering method to account for possible outliers
+    fpc::pamk(
+      as.dist(n_resamples - prob_one_fact),
+      krange = range_n_fact
     )
   )
 )
@@ -53,8 +67,8 @@ list(
     read = select(qs::qread(!!.x), !user_id)
   ),
   tarchetypes::tar_map(
-    config,
-    names = -exclude,
+    config_var_selection,
+    names = !exclude,
     tar_target(
       n_factors_test,
       indices_wider_clean |>
@@ -64,91 +78,60 @@ list(
   ),
   targets_fact_resamples,
   tarchetypes::tar_combine(
-    prob_one_fact,
-    zutils::select_list(targets_fact_resamples, starts_with("prob_one_fact")),
+    cluster_result,
+    targets_fact_resamples$cluster_result,
     command = list(!!!.x) |>
-      map(\(mat) tibble(mat = list(mat))) |>
+      map(\(pk) tibble(pk = list(pk))) |>
       bind_rows(.id = ".id") |>
       zutils::separate_wider_dsv(
         ".id",
-        c("n_fact", "schema"),
-        prefix = "prob_one_fact"
+        c("schema", "n_fact"),
+        prefix = "cluster_result"
       )
   ),
   tar_target(
-    prob_one_fact_avg,
-    prob_one_fact |>
-      summarise(
-        mat = list(do.call(matsbyname::mean_byname, mat)),
-        .by = schema
-      )
-  ),
-  tar_target(
-    files_plots,
-    pmap_chr(prob_one_fact_avg, output_factcons)
-  ),
-  tarchetypes::tar_map(
-    values = tibble::tibble(
-      thresh_value = seq(40, 80, 10),
-      thresh_level = seq_along(thresh_value)
-    ),
-    names = thresh_level,
-    tar_target(
-      fact_cons_bin,
-      prob_one_fact_avg |>
-        mutate(mat = map(mat, ~ .x > thresh_value))
-    ),
-    tar_target(
-      files_plots_bin,
-      fact_cons_bin |>
-        pmap_chr(
-          output_factcons,
-          file_prefix = str_c("factcons_thresh-", thresh_level)
-        )
-    )
-  ),
-  tar_target(
-    cluster_result,
-    prob_one_fact_avg |>
-      mutate(
-        cluster = map(
-          mat,
-          \(mat) hclust(as.dist(100 - mat), method = "ward.D2")
-        ),
-        best_k = map(
-          cluster,
-          dendextend::find_k,
-          krange = range_n_fact
-        ),
-        silinfo = map(
-          best_k,
-          \(best_k) {
-            best_k |>
-              pluck("pamobject", "silinfo", "widths") |>
-              as_tibble(rownames = "game_index")
-          }
-        ),
-        .keep = "unused"
-      )
-  ),
-  tar_target(
-    file_cluster_silinfo,
+    cluster_stats,
     cluster_result |>
+      reframe(
+        map(
+          pk,
+          ~ as_tibble(.x[c("nc", "crit")]) |>
+            mutate(k = seq_len(n()), .before = 1L) |>
+            filter(k %in% range_n_fact)
+        ) |>
+          list_rbind(),
+        .by = c("schema", "n_fact")
+      )
+  ),
+  tar_target(
+    silinfo_best,
+    cluster_stats |>
+      slice_max(crit, by = c("schema", "n_fact")) |>
+      slice_max(crit, by = "schema") |>
+      left_join(cluster_result, by = c("schema", "n_fact")) |>
       mutate(
-        silinfo = lapply(
-          silinfo,
-          \(x) {
-            x |>
-              mutate(game_index = replace_as_name_cn(game_index)) |>
-              separate_wider_delim(
-                game_index,
-                delim = ".",
-                names = c("game_name", "index_name")
-              )
-          }
+        sil = map(
+          pk,
+          ~ as_tibble(
+            .x$pamobject$silinfo$widths,
+            rownames = "game_index"
+          )
         )
       ) |>
-      pull(silinfo, name = schema) |>
-      writexl::write_xlsx("config.local/silinfo.xlsx")
+      pull(sil, name = "schema")
+  ),
+  tar_target(
+    fil_silinfo_best,
+    silinfo_best |>
+      map(
+        ~ .x |>
+          mutate(game_index = replace_as_name_cn(game_index)) |>
+          separate_wider_delim(
+            game_index, ".",
+            names = c("game_name", "index_name")
+          )
+      ) |>
+      writexl::write_xlsx("config.local/silinfo.xlsx"),
+    format = "file"
   )
 )

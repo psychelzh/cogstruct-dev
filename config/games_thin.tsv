@@ -20,10 +20,10 @@ game_id	game_name	game_name_abbr	index_name	same_id	thin
 224376556507589	察颜观色PRO	FacesPro	switch_cost_ies		f
 265086851706949	小狗回家	Racer	mean_score		f
 225191359021253	数字卡片PRO	Digit3back	dprime	1	t
-268008982650988	语义判断	Seman	nc		f
+268008982650988	语义判断	Seman	nc	8	f
 268008982642772	专注大师_中级	CalcSpdMed	nc	4	t
-268008982663290	词语判断	Lexic	nc		f
-268008982667391	声调判断	Tone	nc		f
+268008982663290	词语判断	Lexic	nc	8	t
+268008982667391	声调判断	Tone	nc	8	t
 380174783693701	注意指向	AttenOrient	cong_eff_ies	3	f
 380176247862021	多变计数师	ReflectCount	switch_cost_ies		f
 268008982659192	一心二用PRO	DualTaskPro	nc		f
