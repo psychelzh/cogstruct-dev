@@ -200,8 +200,7 @@ list(
           }
         )
       ) |>
-      select(schema, silinfo) |>
-      deframe() |>
+      pull(silinfo, name = schema) |>
       writexl::write_xlsx("config.local/silinfo.xlsx")
   )
 )
