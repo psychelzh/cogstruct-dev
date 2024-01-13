@@ -61,16 +61,18 @@ output_factcons <- function(schema, mat, ...,
   file
 }
 
+games_thin <- with(
+  readr::read_tsv(
+    "config/games_thin.tsv",
+    show_col_types = FALSE
+  ),
+  sort(game_name_abbr[thin])
+)
+
 config <- tibble::tribble(
   ~schema, ~exclude,
   "all", character(),
-  "thin", with(
-    readr::read_tsv(
-      "config/games_thin.tsv",
-      show_col_types = FALSE
-    ),
-    sort(game_name_abbr[thin])
-  )
+  "thin", games_thin
 )
 range_n_fact <- 4:20
 
@@ -101,6 +103,16 @@ list(
     indices_wider_clean,
     path_obj_from_proj("indices_wider_clean", "prepare_source_data"),
     read = select(qs::qread(!!.x), !user_id)
+  ),
+  tarchetypes::tar_map(
+    config,
+    names = -exclude,
+    tar_target(
+      n_factors_test,
+      indices_wider_clean |>
+        select(!contains(exclude)) |>
+        parameters::n_factors(rotation = "oblimin")
+    )
   ),
   targets_fact_resamples,
   tarchetypes::tar_combine(
