@@ -1,12 +1,20 @@
 library(targets)
-future::plan(future.callr::callr)
+if (Sys.info()["sysname"] == "Windows") {
+  future::plan(future.callr::callr)
+} else {
+  future::plan(future::multicore)
+}
 tar_source()
 tar_option_set(
   package = c("tidyverse", "bit64", "lavaan"),
   format = "qs",
   memory = "transient",
   garbage_collection = TRUE,
-  controller = crew::crew_controller_local(workers = 8)
+  controller = crew.cluster::crew_controller_sge(
+    name = "efa",
+    workers = 16,
+    sge_log_output = "logs/sge"
+  )
 )
 
 games_thin <- with(
@@ -39,7 +47,7 @@ targets_fact_resamples <- tarchetypes::tar_map(
   tarchetypes::tar_rep(
     fact_attribution,
     resample_fact_attribution(
-      indices_wider_clean,
+      select(indices_wider_clean, !user_id),
       n_fact,
       exclude
     ),
@@ -61,17 +69,16 @@ targets_fact_resamples <- tarchetypes::tar_map(
 )
 
 evaluate_best <- tarchetypes::tar_map(
-  tibble::tibble(
-    n = 1:10,
-    name = sprintf("best_%d", n)
+  tidyr::expand_grid(
+    schema = config_var_selection$schema,
+    n = 1:10
   ),
-  names = name,
   tar_target(
     config,
     silinfo_best |>
+      filter(.data[["schema"]] == schema) |>
       filter(row_number(desc(crit)) == n) |>
       pluck("sil", 1) |>
-      filter(sil_width > 0.5) |>
       mutate(latent = sprintf("F%d", cluster))
   ),
   tar_fit_cfa(
@@ -87,7 +94,7 @@ list(
   tarchetypes::tar_file_read(
     indices_wider_clean,
     path_obj_from_proj("indices_wider_clean", "prepare_source_data"),
-    read = select(qs::qread(!!.x), !user_id)
+    read = qs::qread(!!.x)
   ),
   tarchetypes::tar_map(
     config_var_selection,
@@ -95,7 +102,7 @@ list(
     tar_target(
       n_factors_test,
       indices_wider_clean |>
-        select(!contains(exclude)) |>
+        select(!user_id, !contains(exclude)) |>
         parameters::n_factors(rotation = "oblimin")
     )
   ),
@@ -145,12 +152,30 @@ list(
   ),
   evaluate_best,
   tarchetypes::tar_combine(
-    results_best,
+    results_cfa,
     evaluate_best$results,
     command = bind_rows(!!!.x, .id = ".id") |>
       zutils::separate_wider_dsv(
-        ".id", "n",
-        prefix = "results_best"
+        ".id", c("schema", "n"),
+        prefix = "results"
       )
+  ),
+  tarchetypes::tar_map(
+    tidyr::expand_grid(
+      schema = config_var_selection$schema,
+      x = seq_len(10),
+      y = seq_len(10)
+    ) |>
+      dplyr::filter(x > y),
+    tar_target(
+      comparison,
+      with(
+        filter(results_cfa, .data[["schema"]] == schema),
+        nonnest2::vuongtest(
+          fit[[which(n == x)]],
+          fit[[which(n == y)]]
+        )
+      )
+    )
   )
 )
