@@ -11,7 +11,6 @@ tar_source()
 
 # these external data paths are specially for current pipeline
 root_bids_xcpd <- r"(F:\CAMP)"
-root_bids_fmriprep <- r"(Z:\seastor\CAMP\derivatives\fmriprep)"
 
 fc_preparation <- tarchetypes::tar_map(
   tidyr::expand_grid(
@@ -30,19 +29,6 @@ fc_preparation <- tarchetypes::tar_map(
   tar_target(fc_orig_full, prepare_data_fc(ts_merged))
 )
 
-confounds_preparation <- tarchetypes::tar_map(
-  hypers_fmri_dataset,
-  tar_target(
-    files_confounds,
-    prepare_files_confounds(session, task)
-  ),
-  tar_target(
-    confounds,
-    prepare_data_confounds(files_confounds)
-  )
-)
-
 list(
-  fc_preparation,
-  confounds_preparation
+  fc_preparation
 )
