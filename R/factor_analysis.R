@@ -132,7 +132,7 @@ prepare_model <- function(config, col_manifest, col_latent, theory) {
 extract_latent_scores <- function(fit, data = NULL, id_cols_data = NULL) {
   scores <- as_tibble(unclass(lavPredict(fit, data)))
   if (!is.null(data)) {
-    id_cols_data <- substitute(id_cols_data) %||% 1
+    id_cols_data <- substitute(id_cols_data) %||% quote(user_id)
     scores <- bind_cols(select(data, {{ id_cols_data }}), scores)
   }
   scores
