@@ -344,7 +344,7 @@ tar_test_retest <- function(contents, ...,
 }
 
 # modeling related ----
-tar_fit_cfa <- function(data, config, col_latent, col_manifest, theory) {
+tar_fit_cfa <- function(config, data, col_latent, col_manifest, theory) {
   list(
     tar_target_raw(
       "fit",

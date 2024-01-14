@@ -75,8 +75,8 @@ evaluate_best <- tarchetypes::tar_map(
       mutate(latent = sprintf("F%d", cluster))
   ),
   tar_fit_cfa(
-    indices_wider_clean,
     config,
+    indices_wider_clean,
     col_manifest = game_index,
     col_latent = latent,
     theory = "fo"

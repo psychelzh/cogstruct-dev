@@ -72,8 +72,8 @@ targets_cfa <- tarchetypes::tar_map(
   tarchetypes::tar_map(
     hypers_model,
     tar_fit_cfa(
-      indices_wider_clean,
       config,
+      indices_wider_clean,
       col_manifest = game_index,
       col_latent = dim_label,
       theory = theory
