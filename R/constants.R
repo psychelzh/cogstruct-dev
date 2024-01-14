@@ -64,15 +64,15 @@ hypers_xcpd_config <- tibble::tibble(
     "no_gsr" # no global signal regression
   )
 )
-hypers_fmri_dataset <- tidyr::expand_grid(
-  tibble::tribble(
-    ~session, ~task,
-    "1", "rest",
-    "1", "am",
-    "1", "movie",
-    "2", "rest",
-    "2", "wm",
-    "2", "movie"
-  ),
+hypers_fmri_dataset <- tibble::tribble(
+  ~session, ~task,
+  "1", "rest",
+  "1", "am",
+  "1", "movie",
+  "2", "rest",
+  "2", "wm",
+  "2", "movie"
+)
+hypers_atlas <- tibble::tibble(
   atlas = sprintf("Schaefer%d17", 1:4)
 )
