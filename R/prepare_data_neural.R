@@ -81,7 +81,18 @@ extract_bids_files <- function(path_bids, path_db, ...) {
 merge_runs <- function(files) {
   dat <- lapply(files, data.table::fread)
   structure(
-    data.table::rbindlist(dat),
+    tryCatch(
+      data.table::rbindlist(dat),
+      error = function(e) {
+        msg <- conditionMessage(e)
+        if (grepl("fill=TRUE", msg)) {
+          warning(msg)
+          data.table::rbindlist(dat, fill = TRUE)
+        } else {
+          rlang::abort(parent = e)
+        }
+      }
+    ),
     rows = map_int(dat, nrow)
   )
 }
