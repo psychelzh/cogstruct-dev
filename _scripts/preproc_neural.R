@@ -3,8 +3,8 @@ tar_option_set(
   packages = c("tidyverse", "bit64"),
   format = "qs",
   controller = crew.cluster::crew_controller_sge(
-    name = "liang",
-    workers = 20
+    name = "prep_neural",
+    workers = 40
   )
 )
 tar_source()

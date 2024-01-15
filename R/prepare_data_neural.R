@@ -59,10 +59,6 @@ prepare_files_confounds <- function(session, task) {
 }
 
 # helper functions
-calc_fc <- function(ts) {
-  as.dist(atanh(cor(ts)))
-}
-
 extract_bids_files <- function(path_bids, path_db, ...) {
   reticulate::use_condaenv("bids")
   bids <- reticulate::import("bids")
@@ -95,4 +91,8 @@ merge_runs <- function(files) {
     ),
     rows = map_int(dat, nrow)
   )
+}
+
+calc_fc <- function(ts) {
+  as.dist(atanh(cor(ts)))
 }
