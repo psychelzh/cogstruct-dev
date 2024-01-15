@@ -12,7 +12,8 @@ tar_option_set(
   garbage_collection = TRUE,
   controller = crew.cluster::crew_controller_sge(
     name = "efa",
-    workers = 40
+    workers = 40,
+    seconds_idle = 30
   )
 )
 
@@ -94,6 +95,28 @@ evaluate_best <- tarchetypes::tar_map(
   )
 )
 
+model_comparison <- tarchetypes::tar_map(
+  tidyr::expand_grid(
+    schema = config_var_selection$schema,
+    x = seq_len(10),
+    y = seq_len(10)
+  ) |>
+    dplyr::filter(x > y),
+  tar_target(
+    comparison,
+    with(
+      filter(results_cfa, .data[["schema"]] == schema),
+      possibly(
+        nonnest2::vuongtest,
+        quiet = FALSE
+      )(
+        fit[[which(n == x)]],
+        fit[[which(n == y)]]
+      )
+    )
+  )
+)
+
 list(
   tarchetypes::tar_file_read(
     indices_wider_clean,
@@ -164,25 +187,26 @@ list(
         prefix = "results"
       )
   ),
-  tarchetypes::tar_map(
-    tidyr::expand_grid(
-      schema = config_var_selection$schema,
-      x = seq_len(10),
-      y = seq_len(10)
-    ) |>
-      dplyr::filter(x > y),
-    tar_target(
-      comparison,
-      with(
-        filter(results_cfa, .data[["schema"]] == schema),
-        possibly(
-          nonnest2::vuongtest,
-          quiet = FALSE
-        )(
-          fit[[which(n == x)]],
-          fit[[which(n == y)]]
-        )
-      )
-    )
+  model_comparison,
+  tarchetypes::tar_combine(
+    comparison,
+    model_comparison$comparison,
+    command = list(!!!.x) |>
+      purrr::map(
+        ~ if (inherits(.x, "vuongtest")) {
+          tibble(
+            omega = .x$omega,
+            p_omega = .x$p_omega,
+            p_left_better = .x$p_LRT$A,
+            p_right_better = .x$p_LRT$B
+          )
+        }
+      ) |>
+      bind_rows(.id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id", c("schema", "left", "right"),
+        prefix = "comparison"
+      ),
+    deployment = "main"
   )
 )
