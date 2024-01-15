@@ -70,6 +70,8 @@ output_factcons <- function(schema, mat, ...,
 #' @param ... Other arguments passed to `cfa()`.
 #' @param col_manifest,col_latent The name of the column in `config` that
 #'   specifies the manifest and latent variables.
+#' @param col_fix The name of the column in `config` that specifies the fixed
+#'   parameters. Only used for loadings. If `NULL`, all parameters are free.
 #' @return The same as [lavaan::cfa()].
 #' @references
 #'
@@ -79,10 +81,17 @@ output_factcons <- function(schema, mat, ...,
 #' @export
 fit_cfa <- function(config, data, theory, ...,
                     col_manifest = manifest,
-                    col_latent = latent) {
+                    col_latent = latent,
+                    col_fix = NULL) {
   rlang::check_dots_used()
   theory <- match.arg(theory, c("fo", "ho", "bf", "of"))
-  prepare_model(config, {{ col_manifest }}, {{ col_latent }}, theory) |>
+  prepare_model(
+    config,
+    theory,
+    {{ col_manifest }},
+    {{ col_latent }},
+    {{ col_fix }}
+  ) |>
     cfa(
       data,
       std.ov = TRUE,
@@ -93,42 +102,50 @@ fit_cfa <- function(config, data, theory, ...,
     )
 }
 
-prepare_model <- function(config, theory, col_manifest, col_latent) {
-  str_c_safe <- function(x, collapse = NULL) {
-    str_c("`", x, "`", collapse = collapse)
+prepare_model <- function(config, theory, col_manifest, col_latent,
+                          col_fix = NULL) {
+  if (is.null(substitute(col_fix))) {
+    # see https://lavaan.ugent.be/tutorial/syntax2.html
+    # modifier `NA` is used to specify free parameters
+    config$fix <- NA_character_
+  } else {
+    config <- rename(config, fix = {{ col_fix }})
   }
-  model_g <- switch(theory,
-    of = ,
-    bf = str_c(
-      "g =~ ",
-      str_c_safe(
-        unique(pull(config, {{ col_manifest }})),
-        collapse = " + "
-      )
-    ),
-    ho = str_c(
-      "g =~ ",
-      str_c_safe(
-        unique(pull(config, {{ col_latent }})),
+  # no g factor in first-order theory
+  model_g <- if (theory != "fo") {
+    sprintf(
+      "g =~ %s",
+      paste0(
+        switch(theory,
+          of = ,
+          bf = unique(pull(config, {{ col_manifest }})),
+          ho = unique(pull(config, {{ col_latent }}))
+        ),
         collapse = " + "
       )
     )
-  )
+  }
+  # no group factors in one-factor theory
   model_facts <- if (theory != "of") {
     config |>
       summarise(
-        manifests = str_c_safe({{ col_manifest }}, collapse = " + "),
+        manifests = sprintf(
+          "%s * `%s`",
+          fix,
+          {{ col_manifest }}
+        ) |>
+          paste(collapse = " + "),
         .by = {{ col_latent }}
       ) |>
       summarise(
-        spec = str_c(
+        spec = paste0(
           {{ col_latent }}, " =~ ", manifests,
           collapse = "\n"
         )
       ) |>
       pull(spec)
   }
-  str_c(model_g, model_facts, sep = "\n")
+  paste(c(model_g, model_facts), collapse = "\n")
 }
 
 extract_latent_scores <- function(fit, data = NULL, id_cols_data = NULL) {

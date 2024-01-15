@@ -10,7 +10,8 @@ fit_cfa(
   theory,
   ...,
   col_manifest = manifest,
-  col_latent = latent
+  col_latent = latent,
+  col_fix = NULL
 )
 }
 \arguments{
@@ -30,6 +31,9 @@ conventions used here.}
 
 \item{col_manifest, col_latent}{The name of the column in \code{config} that
 specifies the manifest and latent variables.}
+
+\item{col_fix}{The name of the column in \code{config} that specifies the fixed
+parameters. Only used for loadings. If \code{NULL}, all parameters are free.}
 }
 \value{
 The same as \code{\link[lavaan:cfa]{lavaan::cfa()}}.

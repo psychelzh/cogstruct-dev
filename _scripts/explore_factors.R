@@ -12,7 +12,7 @@ tar_option_set(
   garbage_collection = TRUE,
   controller = crew.cluster::crew_controller_sge(
     name = "efa",
-    workers = 16,
+    workers = 40,
     sge_log_output = "logs/sge"
   )
 )
@@ -79,14 +79,19 @@ evaluate_best <- tarchetypes::tar_map(
       filter(.data[["schema"]] == schema) |>
       filter(row_number(desc(crit)) == n) |>
       pluck("sil", 1) |>
-      mutate(latent = sprintf("F%d", cluster))
+      mutate(
+        latent = sprintf("F%d", cluster),
+        # `NA` means free parameter
+        fix = if_else(sil_width > 0.5, NA, 0)
+      )
   ),
   tar_fit_cfa(
     config,
     indices_wider_clean,
+    "fo",
     col_manifest = game_index,
     col_latent = latent,
-    theory = "fo"
+    col_fix = fix
   )
 )
 
