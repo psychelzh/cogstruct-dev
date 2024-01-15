@@ -176,7 +176,10 @@ list(
       comparison,
       with(
         filter(results_cfa, .data[["schema"]] == schema),
-        nonnest2::vuongtest(
+        possibly(
+          nonnest2::vuongtest,
+          quiet = FALSE
+        )(
           fit[[which(n == x)]],
           fit[[which(n == y)]]
         )
