@@ -20,7 +20,7 @@ prepare_ts_merged <- function(files) {
 
 prepare_files_ts <- function(config, session, task, atlas) {
   path_config <- fs::path(
-    root_bids_xcpd,
+    Sys.getenv("ROOT_BIDS_DERIV"),
     sprintf("xcpd_%s", config)
   )
   extract_bids_files(
@@ -49,8 +49,8 @@ prepare_data_confounds <- function(files) {
 
 prepare_files_confounds <- function(session, task) {
   extract_bids_files(
-    root_bids_fmriprep,
-    "layout_fmriprep",
+    fs::path(Sys.getenv("ROOT_BIDS_DERIV"), "fmriprep"),
+    fs::path(Sys.getenv("ROOT_BIDS_DERIV"), "layout_fmriprep"),
     session = session,
     task = task,
     desc = "confounds",

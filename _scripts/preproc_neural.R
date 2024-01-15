@@ -2,15 +2,12 @@ library(targets)
 tar_option_set(
   packages = c("tidyverse", "bit64"),
   format = "qs",
-  controller = crew::crew_controller_local(
+  controller = crew.cluster::crew_controller_sge(
     name = "liang",
-    workers = 16
+    workers = 20
   )
 )
 tar_source()
-
-# these external data paths are specially for current pipeline
-root_bids_xcpd <- r"(F:\CAMP)"
 
 list(
   tarchetypes::tar_map(
@@ -28,5 +25,16 @@ list(
       prepare_ts_merged(files_ts)
     ),
     tar_target(fc_orig_full, prepare_data_fc(ts_merged))
+  ),
+  tarchetypes::tar_map(
+    hypers_fmri_dataset,
+    tar_target(
+      files_confounds,
+      prepare_files_confounds(session, task)
+    ),
+    tar_target(
+      confounds,
+      prepare_data_confounds(files_confounds)
+    )
   )
 )
