@@ -7,10 +7,10 @@
 fit_cfa(
   config,
   data,
+  theory,
   ...,
   col_manifest = manifest,
-  col_latent = latent,
-  theory = c("fo", "ho", "bf", "of")
+  col_latent = latent
 )
 }
 \arguments{
@@ -21,12 +21,15 @@ can be omitted if the model is one-factor model.}
 
 \item{data}{A data frame with the manifest variables.}
 
+\item{theory}{The theory of the model. Should be one of \code{"fo"} (first-order),
+\code{"ho"} (higher-order), \code{"bf"} (bi-factor) and \code{"of"} (one-factor). See
+Brunner et al. (2012) for detailed discussion of the models and the naming
+conventions used here.}
+
 \item{...}{Other arguments passed to \code{cfa()}.}
 
 \item{col_manifest, col_latent}{The name of the column in \code{config} that
 specifies the manifest and latent variables.}
-
-\item{theory}{The theory of the model. See details.}
 }
 \value{
 The same as \code{\link[lavaan:cfa]{lavaan::cfa()}}.
@@ -36,9 +39,8 @@ This is just a wrapper of \code{\link[lavaan:cfa]{lavaan::cfa()}} that allows th
 specified in a data frame and allows users to choose from four pre-defined
 theories of the model.
 }
-\details{
-Specifically, \code{"fo"} is a first-order model, \code{"ho"} is a higher-order model,
-\code{"bf"} is a bi-factor model and \code{"of"} is one-factor model. See Brunner et
-al. (2012) for detailed discussion of the models and the naming conventions
-used here.
+\references{
+Brunner, M., Nagy, G., & Wilhelm, O. (2012). A Tutorial on Hierarchically
+Structured Constructs. Journal of Personality, 80(4), 796–846.
+https://doi.org/10.1111/j.1467-6494.2011.00749.x
 }

@@ -58,28 +58,30 @@ output_factcons <- function(schema, mat, ...,
 #' specified in a data frame and allows users to choose from four pre-defined
 #' theories of the model.
 #'
-#' Specifically, `"fo"` is a first-order model, `"ho"` is a higher-order model,
-#' `"bf"` is a bi-factor model and `"of"` is one-factor model. See Brunner et
-#' al. (2012) for detailed discussion of the models and the naming conventions
-#' used here.
-#'
 #' @param config A data frame with columns `latent` and `manifest` that
 #'   specifies the model. The `latent` column specifies the latent variables and
 #'   the `manifest` column specifies the manifest variables. The `latent` column
 #'   can be omitted if the model is one-factor model.
 #' @param data A data frame with the manifest variables.
+#' @param theory The theory of the model. Should be one of `"fo"` (first-order),
+#'   `"ho"` (higher-order), `"bf"` (bi-factor) and `"of"` (one-factor). See
+#'   Brunner et al. (2012) for detailed discussion of the models and the naming
+#'   conventions used here.
 #' @param ... Other arguments passed to `cfa()`.
 #' @param col_manifest,col_latent The name of the column in `config` that
 #'   specifies the manifest and latent variables.
-#' @param theory The theory of the model. See details.
 #' @return The same as [lavaan::cfa()].
+#' @references
+#'
+#' Brunner, M., Nagy, G., & Wilhelm, O. (2012). A Tutorial on Hierarchically
+#' Structured Constructs. Journal of Personality, 80(4), 796–846.
+#' https://doi.org/10.1111/j.1467-6494.2011.00749.x
 #' @export
-fit_cfa <- function(config, data, ...,
+fit_cfa <- function(config, data, theory, ...,
                     col_manifest = manifest,
-                    col_latent = latent,
-                    theory = c("fo", "ho", "bf", "of")) {
+                    col_latent = latent) {
   rlang::check_dots_used()
-  theory <- match.arg(theory)
+  theory <- match.arg(theory, c("fo", "ho", "bf", "of"))
   prepare_model(config, {{ col_manifest }}, {{ col_latent }}, theory) |>
     cfa(
       data,
@@ -91,7 +93,7 @@ fit_cfa <- function(config, data, ...,
     )
 }
 
-prepare_model <- function(config, col_manifest, col_latent, theory) {
+prepare_model <- function(config, theory, col_manifest, col_latent) {
   str_c_safe <- function(x, collapse = NULL) {
     str_c("`", x, "`", collapse = collapse)
   }
