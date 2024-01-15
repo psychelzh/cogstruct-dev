@@ -350,7 +350,10 @@ tar_fit_cfa <- function(config, data, theory, col_latent, col_manifest,
     tar_target_raw(
       "fit",
       substitute(
-        fit_cfa(
+        possibly(
+          fit_cfa,
+          quiet = FALSE
+        )(
           config,
           data,
           theory,
@@ -362,11 +365,19 @@ tar_fit_cfa <- function(config, data, theory, col_latent, col_manifest,
     ),
     tar_target_raw(
       "gof",
-      quote(as_tibble_row(unclass(fitmeasures(fit))))
+      quote(
+        if (inherits(fit, "lavaan")) {
+          as_tibble_row(unclass(fitmeasures(fit)))
+        }
+      )
     ),
     tar_target_raw(
       "scores",
-      substitute(extract_latent_scores(fit, data))
+      substitute(
+        if (inherits(fit, "lavaan")) {
+          extract_latent_scores(fit, data)
+        }
+      )
     ),
     tar_target(
       results,
