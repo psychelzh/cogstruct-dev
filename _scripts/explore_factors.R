@@ -12,8 +12,7 @@ tar_option_set(
   garbage_collection = TRUE,
   controller = crew.cluster::crew_controller_sge(
     name = "efa",
-    workers = 40,
-    sge_log_output = "logs/sge"
+    workers = 40
   )
 )
 
