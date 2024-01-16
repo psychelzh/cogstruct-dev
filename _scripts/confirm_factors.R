@@ -12,10 +12,9 @@ tar_option_set(
 prepare_config <- function(config, name, loadings = NULL) {
   switch(name,
     full = config,
-    big_sil = config |>
+    good_sil = config |>
       filter(
-        row_number(desc(sil_width)) <= 5 |
-          sil_width > mean(sil_width),
+        sil_width > 0.5,
         .by = cluster
       ),
     if (startsWith(name, "top")) {
@@ -90,10 +89,11 @@ list(
   ),
   tarchetypes::tar_file_read(
     dim_silinfo,
-    path_obj_from_proj("cluster_result", "explore_factors"),
+    path_obj_from_proj("silinfo_best", "explore_factors"),
     read = qs::qread(!!.x) |>
       filter(schema == "thin") |>
-      pluck("silinfo", 1)
+      filter(crit == max(crit)) |>
+      pluck("sil", 1)
   ),
   tar_target(
     file_dim_labels,

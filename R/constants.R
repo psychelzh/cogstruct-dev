@@ -41,7 +41,7 @@ game_data_names <- readr::read_csv(
 hypers_config_dims <- tibble::tibble(
   name = c(
     "full", # all kept items after thinning
-    "big_sil", # items with big silhouette (larger than mean of each cluster)
+    "good_sil", # items with good silhouette (larger than 0.5)
     "top_sil_3", # top 3 biggest silhouette items
     "top_sil_4", # top 4 biggest silhouette items
     "top_load_3", # top 3 biggest loading items
