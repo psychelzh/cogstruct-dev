@@ -18,6 +18,7 @@ Imports:
     crew.cluster,
     data.camp,
     data.iquizoo,
+    devtools,
     easystats,
     future,
     future.callr,
