@@ -5,6 +5,10 @@
       {
         "Name": "CRAN",
         "URL": "https://mirrors.tuna.tsinghua.edu.cn/CRAN"
+      },
+      {
+        "Name": "psychelzh",
+        "URL": "https://psychelzh.r-universe.dev"
       }
     ]
   },
