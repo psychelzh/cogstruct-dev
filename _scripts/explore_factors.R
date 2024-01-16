@@ -99,7 +99,8 @@ evaluate_best <- tarchetypes::tar_map(
     "fo",
     col_latent = latent,
     col_manifest = game_index,
-    col_fix = fix
+    col_fix = fix,
+    add_scores = FALSE
   )
 )
 
@@ -113,7 +114,7 @@ model_comparison <- tarchetypes::tar_map(
   tar_target(
     comparison,
     with(
-      filter(results_cfa, .data[["schema"]] == schema),
+      filter(fits_best, .data[["schema"]] == schema),
       possibly(
         nonnest2::vuongtest,
         quiet = FALSE
@@ -187,12 +188,25 @@ list(
   ),
   evaluate_best,
   tarchetypes::tar_combine(
-    results_cfa,
-    evaluate_best$results,
-    command = bind_rows(!!!.x, .id = ".id") |>
+    gofs_best,
+    evaluate_best$gof,
+    command = list(!!!.x) |>
+      map(\(x) tibble(gof = list(x))) |>
+      bind_rows(.id = ".id") |>
       zutils::separate_wider_dsv(
         ".id", c("schema", "n"),
-        prefix = "results"
+        prefix = "gof"
+      )
+  ),
+  tarchetypes::tar_combine(
+    fits_best,
+    evaluate_best$fit,
+    command = list(!!!.x) |>
+      map(\(x) tibble(fit = list(x))) |>
+      bind_rows(.id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id", c("schema", "n"),
+        prefix = "fit"
       )
   ),
   model_comparison,
