@@ -345,15 +345,12 @@ tar_test_retest <- function(contents, ...,
 
 # modeling related ----
 tar_fit_cfa <- function(config, data, theory, col_latent, col_manifest,
-                        col_fix = NULL) {
+                        col_fix = NULL, add_gof = TRUE, add_scores = TRUE) {
   list(
     tar_target_raw(
       "fit",
       substitute(
-        possibly(
-          fit_cfa,
-          quiet = FALSE
-        )(
+        fit_cfa(
           config,
           data,
           theory,
@@ -363,30 +360,27 @@ tar_fit_cfa <- function(config, data, theory, col_latent, col_manifest,
         )
       )
     ),
-    tar_target_raw(
-      "gof",
-      quote(
-        if (inherits(fit, "lavaan")) {
-          as_tibble_row(unclass(fitmeasures(fit)))
-        }
+    if (add_gof) {
+      tar_target_raw(
+        "gof",
+        quote(
+          if (inherits(fit, "lavaan")) {
+            as_tibble_row(unclass(fitmeasures(fit)))
+          }
+        )
       )
-    ),
-    tar_target_raw(
-      "scores",
-      substitute(
-        if (inherits(fit, "lavaan")) {
-          extract_latent_scores(fit, data)
-        }
+
+    },
+    if (add_scores) {
+      tar_target_raw(
+        "scores",
+        substitute(
+          if (inherits(fit, "lavaan")) {
+            extract_latent_scores(fit, data)
+          }
+        )
       )
-    ),
-    tar_target(
-      results,
-      tibble(
-        fit = list(fit),
-        gof = list(gof),
-        scores = list(scores)
-      )
-    )
+    }
   )
 }
 

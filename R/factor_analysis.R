@@ -85,21 +85,28 @@ fit_cfa <- function(config, data, theory, ...,
                     col_fix = NULL) {
   rlang::check_dots_used()
   theory <- match.arg(theory, c("fo", "ho", "bf", "of"))
-  prepare_model(
+  model <- prepare_model(
     config,
     theory,
     {{ col_manifest }},
     {{ col_latent }},
     {{ col_fix }}
-  ) |>
+  )
+  tryCatch(
     cfa(
+      model,
       data,
       std.ov = TRUE,
       std.lv = TRUE,
       missing = "ml",
       orthogonal = theory == "bf",
       ...
-    )
+    ),
+    error = function(e) {
+      rlang::warn(conditionMessage(e))
+      invisible()
+    }
+  )
 }
 
 prepare_model <- function(config, theory, col_manifest, col_latent,
