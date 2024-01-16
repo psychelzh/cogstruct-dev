@@ -3,24 +3,202 @@ title: Notes on Select Best Tasks for Cognitive Sub-Domain
 author: Zhang, Liang
 date: 2023-11-01
 date-modified: last-modified
-format: 
-  html: 
+format:
+  html:
     code-fold: true
     toc: true
-execute: 
+execute:
   warning: false
+crossref:
+  fig-title: 图
+  fig-prefix: 图
+  tbl-title: 表
+  tbl-prefix: 表
+bibliography: references.bib
 ---
 
 ```{r}
 #| label: setup
+#| cache: false
 
-library(tidyverse)
-library(lavaan)
-# we need bit64 package to handle large integers
+devtools::load_all()
+# the identifiers are large integers
 requireNamespace("bit64")
-source("R/modeling.R")
+requireNamespace("parameters")
 
 projects <- targets::tar_config_yaml()
+```
+
+# 最佳因子模型
+
+我们采用了基于自助法（bootstrap）的因子聚类方法探索任务的因子归类。不过在开始之前，一些特别类似范式的任务仅保留了一个，如 @tbl-schema-thin，其中`thin`一列为`TRUE`的是被去掉的任务。以下用`all`表示使用全部任务，用`thin`表示去掉类似范式任务的结果。
+
+```{r}
+#| label: tbl-schema-thin
+#| tbl-cap: 相似任务保留情况
+
+read_tsv("config/games_thin.tsv", show_col_types = FALSE) |>
+  filter(!is.na(same_id)) |>
+  mutate(thin = if_else(thin, "是", "否")) |>
+  select(same_id, 名称 = game_name, 是否去掉 = thin) |>
+  arrange(same_id, 是否去掉) |>
+  gt::gt(
+    groupname_col = "same_id",
+    row_group_as_column = TRUE
+  ) |>
+  gtExtras::gt_highlight_rows(
+    rows = 是否去掉 == "是",
+    fill = "gray"
+  )
+```
+
+由于因子个数对于我们的研究很重要，我们尝试了很多传统办法，结果很不稳定：
+
+```{r}
+#| label: fig-nfactors
+#| fig-cap: 传统方法的因子个数结果
+#| fig-subcap:
+#|   - 包含全部任务
+#|   - 去除同范式任务
+
+targets::tar_read(
+  n_factors_test_all,
+  store = projects$explore_factors$store
+) |>
+  plot()
+
+targets::tar_read(
+  n_factors_test_thin,
+  store = projects$explore_factors$store
+) |>
+  plot()
+```
+
+采用基于自助法的因子聚类方法，结果如 @fig-compare-cluster-factors。
+
+```{r}
+#| label: fig-compare-cluster-factors
+#| fig-width: 10
+#| fig-height: 8
+#| fig-cap: Evaluation of clustering results
+
+targets::tar_read(cluster_stats, store = projects$explore_factors$store) |>
+  ggplot(aes(n_fact, k, fill = crit)) +
+  geom_raster() +
+  geom_point(aes(n_fact, nc), color = "white") +
+  facet_wrap(~schema) +
+  scale_x_continuous(name = "Number of Factors", expand = c(0, 0)) +
+  scale_y_continuous(name = "Number of Clusters", expand = c(0, 0)) +
+  scale_fill_viridis_c(
+    name = "Silhouette Score",
+    breaks = scales::breaks_pretty(n = 4)
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(legend.position = "top") +
+  coord_fixed()
+```
+
+我们从中选出轮廓系数（silhouette score）最大的10个因子聚类结果，并进一步用验证性因子分析确定是否最优轮廓系数的结果是否最佳。注意，我们可以得到每个任务指标的轮廓系数，因此可以用此系数来确定该任务归入对应类别的可信度。一般而言，轮廓系数大于0.5[^1]时才可靠。同时，为了保证因子分析结果的可比性，我们将轮廓系数不达标的的任务指标的载荷固定为0后做验证性因素分析。
+
+[^1]: 查看[ResearchGate上的一个讨论](https://www.researchgate.net/post/Threshold_silhouette_score_for_cluster_analysis)确定这标准来源。
+
+```{r}
+#| label: fig-fitmeas-models
+#| fig-cap: 最佳10个模型拟合情况（仅展示成功拟合的模型）
+#| fig-subcap: 
+#|   - BIC
+#|   - CFI
+#|   - RMSEA
+
+gof_best_modesl <- tar_read(
+  results_cfa, 
+  store = projects$explore_factors$store
+) |> 
+  select(schema, n, gof) |> 
+  unnest(gof)
+
+measures <- c("bic", "cfi", "rmsea")
+for (measure in measures) {
+  p <- gof_best_modesl |> 
+    ggplot(aes(n, .data[[measure]])) +
+    geom_point() +
+    geom_line() +
+    scale_x_continuous(
+      name = "Model Rank", 
+      breaks = scales::breaks_width(1)
+    ) +
+    facet_wrap(~ schema, scales = "free_y") +
+    ggpubr::theme_pubclean()
+  print(p)
+}
+```
+
+进一步，根据Vuong [-@vuong1989]提出的比较非嵌套模型的检验，我们也对拟合成功的模型做了两两比较。结果发现仅有`thin`的前5个有两两比较结果。
+
+```{r}
+targets::tar_read(comparison, store = projects$explore_factors$store) |> 
+  select(left, right, everything()) |> 
+  arrange(right) |> 
+  gt::gt(groupname_col = "schema", row_group_as_column = TRUE) |> 
+  gt::fmt_number()
+```
+
+因此，最终采用`thin`里面最佳聚类结果的模型，其具体结果如 @fig-best-model 。基于此结果我们可以比较确定地指出我们的数据可以很好地拟合一个包含七个因子的模型，根据每一个因子里面包含任务之间的关系，我们给出这些因子的名字见。
+
+```{r}
+#| label: fig-best-model
+#| column: page
+#| fig-width: 10
+#| fig-height: 6
+#| fig-cap: 最佳模型各因子所含任务指标
+
+targets::tar_read(config_thin_1, store = projects$explore_factors$store) |>
+  separate_wider_delim(
+    game_index, ".",
+    names = c("game_name_abbr", "index_name")
+  ) |>
+  mutate(
+    game_name = pull(
+      data.iquizoo::game_info,
+      game_name,
+      game_name_abbr
+    )[game_name_abbr]
+  ) |>
+  ggplot(aes(label = game_name, size = sil_width, color = sil_width < 0.5)) +
+  ggwordcloud::geom_text_wordcloud() +
+  scale_color_grey() +
+  facet_wrap(~latent) +
+  theme_minimal()
+```
+
+```{r}
+#| label: tbl-dimensions
+#| tbl-cap: 各维度命名
+
+read_csv("config/dimensions.csv", show_col_types = FALSE) |> 
+  mutate(factor = str_c("F", cluster), .keep = "unused", .before = 1L) |> 
+  gt::gt(rowname_col = "factor")
+```
+
+# 拟合优化
+
+以下是一些基本的前提要求：
+
+-   每个维度选择3个任务
+-   保证选择出来的任务不能太类似
+-   保证拟合优度达标
+-   排除n-back任务
+-   排除专注大师_中级（和速算师太类似）
+-   排除词汇判断、声调判断（和语义判断太类似）
+-   排除数感、捉虫高级版（目前被归入抑制类任务，不太典型）
+-   排除连点成画、变戏法（目前被归入分配注意类任务，不太典型）
+
+基于以上规则然后选择每个维度载荷最高的任务（基于2nd order model）：
+
+```{r}
+#| label: select-results
+#| eval: false
+
 targets::tar_load(
   c(dims_origin, indices_wider_clean,
     fit_origin_bifactor, fit_origin_highorder,
@@ -37,87 +215,71 @@ targets::tar_load(
 )
 exclude <- c(
   "CalcSpdMed.nc", "Lexic.nc", "Tone.nc",
-  "NsymNCmp.w", "TOVAS.dprime", 
+  "NsymNCmp.w", "TOVAS.dprime",
   "AntiSac.ies", "FPTPro.nc"
 )
 task_loadings <- list(
-  highorder = fit_origin_highorder, 
+  highorder = fit_origin_highorder,
   bifactor = fit_origin_bifactor
 ) |>
   map(
-    ~ parameters::model_parameters(.x, standardize = TRUE) |> 
+    ~ parameters::model_parameters(.x, standardize = TRUE) |>
       filter(Component == "Loading") |>
       as_tibble()
-  ) |> 
+  ) |>
   bind_rows(.id = "model")
-game_ver_latest <- indices |> 
+game_ver_latest <- indices |>
   summarise(
-    ver_major_latest = max(str_extract(game_version, "\\d")), 
+    ver_major_latest = max(str_extract(game_version, "\\d")),
     .by = game_id
   )
-```
 
-以下是一些基本的前提要求：
-
-- 每个维度选择3个任务
-- 保证选择出来的任务不能太类似
-- 保证拟合优度达标
-- 排除n-back任务
-- 排除专注大师_中级（和速算师太类似）
-- 排除词汇判断、声调判断（和语义判断太类似）
-- 排除数感、捉虫高级版（目前被归入抑制类任务，不太典型）
-- 排除连点成画、变戏法（目前被归入分配注意类任务，不太典型）
-
-基于以上规则然后选择每个维度载荷最高的任务（基于2nd order model）：
-
-```{r}
-#| label: select-results
-dim_task_sel <- task_loadings |> 
+dim_task_sel <- task_loadings |>
   filter(
-    To != "g", 
-    !From %in% exclude, 
+    To != "g",
+    !From %in% exclude,
     model == "highorder"
-  ) |> 
+  ) |>
   slice_max(Coefficient, n = 3, by = To)
-dim_task_sel |> 
+dim_task_sel |>
   separate_wider_delim(
     From, ".",
     names = c("game_name_abbr", "index_name")
-  ) |> 
-  left_join(data.iquizoo::game_info, by = "game_name_abbr") |> 
-  left_join(game_ver_latest, by = "game_id") |> 
-  left_join(durations, by = "game_id") |> 
+  ) |>
+  left_join(data.iquizoo::game_info, by = "game_name_abbr") |>
+  left_join(game_ver_latest, by = "game_id") |>
+  left_join(durations, by = "game_id") |>
   left_join(
-    reliability |> 
+    reliability |>
       filter(
         origin == "rm_out",
-        ver_major == max(ver_major), 
+        ver_major == max(ver_major),
         .by = game_id
       ),
     by = join_by(game_id, index_name)
-  ) |> 
+  ) |>
   select(
-    game_id, game_name, dim_label = To, load = Coefficient, 
+    game_id, game_name, dim_label = To, load = Coefficient,
     dur_min = numeric.p75, N = n, r, icc,
     ver_major_latest, ver_major
-  ) |> 
-  gt::gt() |> 
+  ) |>
+  gt::gt() |>
   gt::fmt_number(-N) |>
-  gt::cols_hide(contains("ver_major")) |> 
+  gt::cols_hide(contains("ver_major")) |>
   gt::tab_footnote(
     "Reliability measure is based on an older version.",
     gt::cells_body(
       columns = game_name,
       rows = ver_major_latest > ver_major
     )
-  ) |> 
+  ) |>
   gt::tab_footnote(
     paste(
       "Based on 75% quantile,",
       "i.e., 75% people will finish the task within given time (unit: minutes)."
     ),
     gt::cells_column_labels(dur_min)
-  ) |> 
+  ) |>
   gt::opt_footnote_marks("standard")
 ```
 
@@ -126,13 +288,14 @@ dim_task_sel |>
 ```{r}
 #| label: show-fit-measure
 #| cache: true
+#| eval: false
 
-fit <- dim_task_sel |> 
+fit <- dim_task_sel |>
   prepare_model(
-    col_dim = "To", 
-    col_task = "From", 
+    col_dim = "To",
+    col_task = "From",
     hierarchical = "bifactor"
-  ) |> 
+  ) |>
   fit_cfa(indices_wider_clean, orthogonal = TRUE)
 summary(fit, fit.measures = TRUE, standardized = TRUE)
 ```
@@ -142,15 +305,15 @@ summary(fit, fit.measures = TRUE, standardized = TRUE)
 ```{r}
 #| eval: false
 
-cor_task_dim <- indices_wider_clean |> 
+cor_task_dim <- indices_wider_clean |>
   pivot_longer(
     -user_id,
     names_to = "game_index",
     values_to = "score_game"
-  ) |> 
-  inner_join(dims_origin, by = "game_index") |> 
+  ) |>
+  inner_join(dims_origin, by = "game_index") |>
   inner_join(
-    scores_origin |> 
+    scores_origin |>
       pivot_longer(
         -c(hierarchical, user_id),
         names_to = "dim_label",
@@ -158,20 +321,20 @@ cor_task_dim <- indices_wider_clean |>
       ),
     by = c("user_id", "dim_label"),
     relationship = "many-to-many"
-  ) |> 
+  ) |>
   summarise(
     r = cor(score_game, score_latent, use = "pairwise"),
     .by = c(hierarchical, game_index, dim_label)
   )
-selection_1 <- cor_task_dim |> 
-  filter(!game_index %in% exclude, hierarchical == "highorder") |> 
+selection_1 <- cor_task_dim |>
+  filter(!game_index %in% exclude, hierarchical == "highorder") |>
   slice_max(r, n = 3, by = dim_label)
-fit_1 <- selection_1 |> 
+fit_1 <- selection_1 |>
   prepare_model(
-    col_dim = "dim_label", 
-    col_task = "game_index", 
+    col_dim = "dim_label",
+    col_task = "game_index",
     hierarchical = "bifactor"
-  ) |> 
+  ) |>
   fit_cfa(indices_wider_clean, orthogonal = TRUE)
 summary(fit_1, fit.measures = TRUE, standardized = TRUE)
 ```

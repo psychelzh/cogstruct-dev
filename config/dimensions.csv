@@ -1,10 +1,8 @@
 ﻿cluster,dim_name,dim_label
-1,Divided Attention,AttDiv
-2,Episodic Memory,EM
-3,Inhibition,Inh
-4,Visual Search,VS
-5,Shifting,Shift
-6,Speed,Spd
-7,Reasoning,Rsn
-8,Verbal STM,VSTM
-9,Spatial STM,SSTM
+1,WM-Reasoning,WM_Rsn
+2,Inhibition,Inh
+3,Verbal STM,VSTM
+4,Spatial STM,SSTM
+5,Attention and Speed,Att_Spd
+6,Episodic Memory,EM
+7,Shifting,Shift
