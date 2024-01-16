@@ -10,7 +10,7 @@ tar_option_set(
   format = "qs",
   memory = "transient",
   garbage_collection = TRUE,
-  controller = if (Sys.info()["nodename"] == "Shadow") {
+  controller = if (Sys.info()["nodename"] == "shadow") {
     crew.cluster::crew_controller_sge(
       name = "efa",
       workers = 40,

@@ -6,7 +6,19 @@ tar_option_set(
   format = "qs",
   memory = "transient",
   garbage_collection = TRUE,
-  controller = crew::crew_controller_local(workers = 8)
+  controller = if (Sys.info()["nodename"] == "shadow") {
+    crew.cluster::crew_controller_sge(
+      name = "cfa",
+      workers = 40,
+      seconds_idle = 30
+    )
+  } else {
+    crew::crew_controller_local(
+      name = "cfa-local",
+      workers = 16,
+      seconds_idle = 10
+    )
+  }
 )
 
 prepare_config <- function(config, name, loadings = NULL) {
