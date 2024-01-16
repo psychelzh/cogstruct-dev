@@ -10,11 +10,19 @@ tar_option_set(
   format = "qs",
   memory = "transient",
   garbage_collection = TRUE,
-  controller = crew.cluster::crew_controller_sge(
-    name = "efa",
-    workers = 40,
-    seconds_idle = 30
-  )
+  controller = if (Sys.info()["nodename"] == "Shadow") {
+    crew.cluster::crew_controller_sge(
+      name = "efa",
+      workers = 40,
+      seconds_idle = 30
+    )
+  } else {
+    crew::crew_controller_local(
+      name = "efa-local",
+      workers = 16,
+      seconds_idle = 10
+    )
+  }
 )
 
 games_thin <- with(
@@ -89,8 +97,8 @@ evaluate_best <- tarchetypes::tar_map(
     config,
     indices_wider_clean,
     "fo",
-    col_manifest = game_index,
     col_latent = latent,
+    col_manifest = game_index,
     col_fix = fix
   )
 )
