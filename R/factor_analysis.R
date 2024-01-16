@@ -104,48 +104,40 @@ fit_cfa <- function(config, data, theory, ...,
 
 prepare_model <- function(config, theory, col_manifest, col_latent,
                           col_fix = NULL) {
-  if (is.null(substitute(col_fix))) {
-    # see https://lavaan.ugent.be/tutorial/syntax2.html
-    # modifier `NA` is used to specify free parameters
-    config$fix <- NA_character_
-  } else {
-    config <- rename(config, fix = {{ col_fix }})
+  no_fix <- rlang::quo_is_null(rlang::enquo(col_fix))
+  config <- config |>
+    rename(
+      manifest = {{ col_manifest }},
+      latent = {{ col_latent }}
+    )
+  if (!no_fix) {
+    config <- config |>
+      rename(fix = {{ col_fix }})
   }
   # no g factor in first-order theory
   model_g <- if (theory != "fo") {
-    sprintf(
-      "g =~ %s",
-      paste0(
-        switch(theory,
-          of = ,
-          bf = unique(pull(config, {{ col_manifest }})),
-          ho = unique(pull(config, {{ col_latent }}))
-        ),
-        collapse = " + "
+    str_glue_data(
+      config,
+      switch(theory,
+        of = ,
+        bf = "g =~ {manifest}",
+        ho = "g =~ {latent}"
       )
-    )
+    ) |>
+      unique()
   }
   # no group factors in one-factor theory
   model_facts <- if (theory != "of") {
-    config |>
-      summarise(
-        manifests = sprintf(
-          "%s * `%s`",
-          fix,
-          {{ col_manifest }}
-        ) |>
-          paste(collapse = " + "),
-        .by = {{ col_latent }}
-      ) |>
-      summarise(
-        spec = paste0(
-          {{ col_latent }}, " =~ ", manifests,
-          collapse = "\n"
-        )
-      ) |>
-      pull(spec)
+    str_glue_data(
+      config,
+      if (no_fix) {
+        "{latent} =~ {manifest}"
+      } else {
+        "{latent} =~ {fix} * {manifest}"
+      }
+    )
   }
-  paste(c(model_g, model_facts), collapse = "\n")
+  c(model_g, model_facts)
 }
 
 extract_latent_scores <- function(fit, data = NULL, id_cols_data = NULL) {
