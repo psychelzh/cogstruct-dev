@@ -10,11 +10,41 @@ Description: This project provides analysis pipelines for cognitive
 License: CC BY 4.0
 Depends: 
     tidyverse
+Imports: 
+    arrow,
+    corrplot,
+    cpmr,
+    crew,
+    crew.cluster,
+    data.camp,
+    data.iquizoo,
+    easystats,
+    future,
+    future.callr,
+    ggpubr,
+    ggrepel,
+    ggthemes,
+    ggwordcloud,
+    GPArotation,
+    gt,
+    gtExtras,
+    igraph,
+    lavaan,
+    matsbyname,
+    nFactors,
+    patchwork,
+    penfa,
+    preproc.iquizoo,
+    proxy,
+    psych,
+    qs,
+    quarto,
+    reticulate,
+    skimr,
+    tarchetypes,
+    tarflow.iquizoo,
+    targets,
+    zutils
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.0
-Imports: 
-    matsbyname,
-    zutils (>= 0.0.0.9000)
-Remotes: 
-    psychelzh/zutils
