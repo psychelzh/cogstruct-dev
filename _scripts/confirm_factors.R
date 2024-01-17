@@ -132,7 +132,7 @@ list(
     gofs,
     zutils::select_list(targets_cfa, starts_with("gof")),
     command = list(!!!.x) |>
-      map(\(x) tibble(gof = list(x))) |>
+      map(\(x) as_tibble(x)) |>
       bind_rows(.id = ".id") |>
       zutils::separate_wider_dsv(
         ".id",

@@ -191,7 +191,7 @@ list(
     gofs_best,
     evaluate_best$gof,
     command = list(!!!.x) |>
-      map(\(x) tibble(gof = list(x))) |>
+      map(\(x) as_tibble(x)) |>
       bind_rows(.id = ".id") |>
       zutils::separate_wider_dsv(
         ".id", c("schema", "n"),
