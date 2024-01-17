@@ -73,20 +73,13 @@ targets_fact_resamples <- tarchetypes::tar_map(
       as.dist(n_resamples - prob_one_fact),
       krange = range_n_fact
     )
-  )
-)
-
-evaluate_best <- tarchetypes::tar_map(
-  tidyr::expand_grid(
-    schema = config_var_selection$schema,
-    n = 1:10
   ),
   tar_target(
     config,
-    silinfo_best |>
-      filter(.data[["schema"]] == schema) |>
-      filter(row_number(desc(crit)) == n) |>
-      pluck("sil", 1) |>
+    as_tibble(
+      cluster_result$pamobject$silinfo$widths,
+      rownames = "game_index"
+    ) |>
       mutate(
         latent = sprintf("F%d", cluster),
         # `NA` means free parameter
@@ -107,20 +100,20 @@ evaluate_best <- tarchetypes::tar_map(
 model_comparison <- tarchetypes::tar_map(
   tidyr::expand_grid(
     schema = config_var_selection$schema,
-    x = seq_len(10),
-    y = seq_len(10)
+    x = range_n_fact,
+    y = range_n_fact
   ) |>
     dplyr::filter(x > y),
   tar_target(
     comparison,
     with(
-      filter(fits_best, .data[["schema"]] == schema),
+      filter(fits, .data[["schema"]] == schema),
       possibly(
         nonnest2::vuongtest,
         quiet = FALSE
       )(
-        fit[[which(n == x)]],
-        fit[[which(n == y)]]
+        fit[[which(n_fact == x)]],
+        fit[[which(n_fact == y)]]
       )
     )
   )
@@ -144,10 +137,16 @@ list(
   ),
   targets_fact_resamples,
   tarchetypes::tar_combine(
-    cluster_result,
+    cluster_stats,
     targets_fact_resamples$cluster_result,
     command = list(!!!.x) |>
-      map(\(pk) tibble(pk = list(pk))) |>
+      map(
+        \(pk) {
+          as_tibble(pk[c("nc", "crit")]) |>
+            mutate(k = seq_len(n()), .before = 1L) |>
+            filter(k %in% range_n_fact)
+        }
+      ) |>
       bind_rows(.id = ".id") |>
       zutils::separate_wider_dsv(
         ".id",
@@ -155,57 +154,25 @@ list(
         prefix = "cluster_result"
       )
   ),
-  tar_target(
-    cluster_stats,
-    cluster_result |>
-      reframe(
-        map(
-          pk,
-          ~ as_tibble(.x[c("nc", "crit")]) |>
-            mutate(k = seq_len(n()), .before = 1L) |>
-            filter(k %in% range_n_fact)
-        ) |>
-          list_rbind(),
-        .by = c("schema", "n_fact")
-      )
-  ),
-  tar_target(
-    silinfo_best,
-    cluster_stats |>
-      filter(k == nc) |>
-      select("schema", "n_fact", "nc", "crit") |>
-      left_join(cluster_result, by = c("schema", "n_fact")) |>
-      mutate(
-        sil = map(
-          pk,
-          ~ as_tibble(
-            .x$pamobject$silinfo$widths,
-            rownames = "game_index"
-          )
-        ),
-        .keep = "unused"
-      )
-  ),
-  evaluate_best,
   tarchetypes::tar_combine(
-    gofs_best,
-    evaluate_best$gof,
+    gofs,
+    targets_fact_resamples$gof,
     command = list(!!!.x) |>
       map(\(x) as_tibble(x)) |>
       bind_rows(.id = ".id") |>
       zutils::separate_wider_dsv(
-        ".id", c("schema", "n"),
+        ".id", c("schema", "n_fact"),
         prefix = "gof"
       )
   ),
   tarchetypes::tar_combine(
-    fits_best,
-    evaluate_best$fit,
+    fits,
+    targets_fact_resamples$fit,
     command = list(!!!.x) |>
       map(\(x) tibble(fit = list(x))) |>
       bind_rows(.id = ".id") |>
       zutils::separate_wider_dsv(
-        ".id", c("schema", "n"),
+        ".id", c("schema", "n_fact"),
         prefix = "fit"
       )
   ),
