@@ -77,7 +77,7 @@ targets_cfa <- tarchetypes::tar_map(
         name,
         ~ if (stringr::str_detect(.x, "load")) {
           bquote(
-            prepare_config(config_dims, .(.x), loadings_full)
+            prepare_config(config_dims, .(.x), loadings)
           )
         } else {
           bquote(
@@ -132,9 +132,9 @@ list(
   ),
   targets_cfa,
   tar_target(
-    loadings_full,
+    loadings,
     parameters::model_parameters(
-      fit_fo_full,
+      fit_fo_good_sil,
       component = "loading"
     )
   ),
