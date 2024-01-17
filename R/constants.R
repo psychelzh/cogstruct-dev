@@ -44,6 +44,7 @@ hypers_config_dims <- tibble::tibble(
     "good_sil", # items with good silhouette (larger than 0.5)
     "top_sil_3", # top 3 biggest silhouette items
     "top_sil_4", # top 4 biggest silhouette items
+    "good_load", # items with good loading (larger than 0.4)
     "top_load_3", # top 3 biggest loading items
     "top_load_4" # top 4 biggest loading items
   )

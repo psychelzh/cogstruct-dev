@@ -22,11 +22,29 @@ tar_option_set(
 )
 
 prepare_config <- function(config, name, loadings = NULL) {
+  if (!is.null(loadings)) {
+    config <- loadings |>
+      as_tibble() |>
+      select(
+        dim_label = To,
+        game_index = From,
+        load = Coefficient
+      ) |>
+      left_join(
+        config,
+        by = c("dim_label", "game_index")
+      )
+  }
   switch(name,
     full = config,
     good_sil = config |>
       filter(
         sil_width > 0.5,
+        .by = cluster
+      ),
+    good_load = config |>
+      filter(
+        load > 0.4,
         .by = cluster
       ),
     if (startsWith(name, "top")) {
@@ -41,14 +59,7 @@ prepare_config <- function(config, name, loadings = NULL) {
             row_number(desc(sil_width)) <= n,
             .by = cluster
           ),
-        load = loadings |>
-          as_tibble() |>
-          select(
-            dim_label = To,
-            game_index = From,
-            load = Coefficient
-          ) |>
-          left_join(config, by = c("dim_label", "game_index")) |>
+        load = config |>
           filter(
             row_number(desc(load)) <= n,
             .by = cluster
