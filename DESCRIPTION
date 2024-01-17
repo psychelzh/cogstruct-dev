@@ -23,6 +23,7 @@ Imports:
     fpc,
     future,
     future.callr,
+    GGally,
     ggpubr,
     ggrepel,
     ggthemes,
