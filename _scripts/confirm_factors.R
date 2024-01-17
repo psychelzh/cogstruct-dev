@@ -87,8 +87,7 @@ targets_cfa <- tarchetypes::tar_map(
       indices_wider_clean,
       col_manifest = game_index,
       col_latent = dim_label,
-      theory = theory,
-      add_scores = FALSE
+      theory = theory
     )
   )
 )
@@ -139,6 +138,17 @@ list(
         c(names(hypers_model), names(hypers_config_dims)),
         patterns = c(".+?", ".+"),
         prefix = "gof"
+      )
+  ),
+  tarchetypes::tar_combine(
+    scores_factor,
+    zutils::select_list(targets_cfa, starts_with("scores")),
+    command = bind_rows(!!!.x, .id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id",
+        c(names(hypers_model), names(hypers_config_dims)),
+        patterns = c(".+?", ".+"),
+        prefix = "scores"
       )
   )
 )
