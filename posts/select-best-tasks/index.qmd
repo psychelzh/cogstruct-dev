@@ -98,33 +98,36 @@ targets::tar_read(cluster_stats, store = projects$explore_factors$store) |>
   coord_fixed()
 ```
 
-我们从中选出轮廓系数（silhouette score）最大的10个因子聚类结果，并进一步用验证性因子分析确定是否最优轮廓系数的结果是否最佳。注意，我们可以得到每个任务指标的轮廓系数，因此可以用此系数来确定该任务归入对应类别的可信度。一般而言，轮廓系数大于0.5[^1]时才可靠。同时，为了保证因子分析结果的可比性，我们将轮廓系数不达标的的任务指标的载荷固定为0后做验证性因素分析。
+我们将每种因子个数条件的最佳聚类结果进一步用验证性因子分析确定哪个模型最佳。注意，我们可以得到每个任务指标的轮廓系数（silhouette score），并且可以用此系数来确定该任务归入对应类别的可信度。一般而言，轮廓系数大于0.5[^1]时才可靠。同时，为了保证因子分析结果的可比性，我们将轮廓系数不达标的的任务指标的载荷固定为0后做验证性因素分析。注意这样也会导致一些聚类结果中部分因子的所有成分指标载荷为0，从而导致模型不能成功拟合，也说明这种聚类结果的不可靠。
 
 [^1]: 查看[ResearchGate上的一个讨论](https://www.researchgate.net/post/Threshold_silhouette_score_for_cluster_analysis)确定这标准来源。
 
 ```{r}
 #| label: fig-fitmeas-models
-#| fig-cap: 最佳10个模型拟合情况（仅展示成功拟合的模型）
+#| fig-cap: 所有聚类模型拟合情况（仅展示成功拟合的模型）
 #| fig-subcap: 
+#|   - Mean Silhouette Score
 #|   - BIC
 #|   - CFI
 #|   - RMSEA
 
-gof_best_modesl <- tar_read(
-  results_cfa, 
+tar_load(
+  c(gofs, cluster_stats), 
   store = projects$explore_factors$store
-) |> 
-  select(schema, n, gof) |> 
-  unnest(gof)
+)
+stats <- cluster_stats |> 
+  filter(k == nc) |> 
+  full_join(gofs, by = c("schema", "n_fact"))
 
-measures <- c("bic", "cfi", "rmsea")
+measures <- c("crit", "bic", "cfi", "rmsea")
 for (measure in measures) {
-  p <- gof_best_modesl |> 
-    ggplot(aes(n, .data[[measure]])) +
+  p <- stats |> 
+    filter(!is.na(.data[[measure]])) |> 
+    ggplot(aes(n_fact, .data[[measure]])) +
     geom_point() +
     geom_line() +
     scale_x_continuous(
-      name = "Model Rank", 
+      name = "Number of Factors", 
       breaks = scales::breaks_width(1)
     ) +
     facet_wrap(~ schema, scales = "free_y") +
@@ -133,14 +136,14 @@ for (measure in measures) {
 }
 ```
 
-进一步，根据Vuong [-@vuong1989]提出的比较非嵌套模型的检验，我们也对拟合成功的模型做了两两比较。结果发现仅有`thin`的前5个有两两比较结果。
+进一步，根据Vuong [-@vuong1989]提出的比较非嵌套模型的检验，我们也对拟合成功的模型做了两两比较。
 
 ```{r}
 targets::tar_read(comparison, store = projects$explore_factors$store) |> 
   select(left, right, everything()) |> 
   arrange(right) |> 
   gt::gt(groupname_col = "schema", row_group_as_column = TRUE) |> 
-  gt::fmt_number()
+  gt::fmt_number(columns = !c(left, right))
 ```
 
 因此，最终采用`thin`里面最佳聚类结果的模型，其具体结果如 @fig-best-model 。基于此结果我们可以比较确定地指出我们的数据可以很好地拟合一个包含七个因子的模型，根据每一个因子里面包含任务之间的关系，我们给出这些因子的名字见。
@@ -175,12 +178,67 @@ targets::tar_read(config_thin_1, store = projects$explore_factors$store) |>
 #| label: tbl-dimensions
 #| tbl-cap: 各维度命名
 
-read_csv("config/dimensions.csv", show_col_types = FALSE) |> 
+dimensions <- read_csv("config/dimensions.csv", show_col_types = FALSE) 
+dimensions |> 
   mutate(factor = str_c("F", cluster), .keep = "unused", .before = 1L) |> 
   gt::gt(rowname_col = "factor")
 ```
 
 # 拟合优化
+
+对于以上的因子聚类结果，采用以下几个方案以寻找优化拟合指标方案：
+
+* `full`：每个因子内部所有成员
+* `good_sil`：仅包含轮廓系数大于0.5的成员
+* `top_sil_3`：仅包含轮廓系数最大三个成员
+* `top_sil_4`：仅包含轮廓系数最大四个成员
+* `good_load`：仅包含因子载荷大于0.4的成员（载荷基于`good_sil`，下同）
+* `top_load_3`：仅包含因子载荷最大三个成员
+* `top_load_4`：仅包含因子载荷最大四个成员
+
+@fig-parsi-models 给出了各种方案不同模型的拟合优度。整体上看，基于载荷或者轮廓系数选出的任务都能得到相对较好的CFI拟合指标（>0.9），我们进一步看看各种方案得到的各个潜变量得分的相关高低。
+
+```{r}
+#| label: fig-parsi-models
+#| fig-cap: 不同方案CFI拟合优度
+
+tar_read(gofs, store = projects$confirm_factors$store) |> 
+  mutate(name = factor(name, hypers_config_dims$name)) |> 
+  ggplot(aes(name, cfi, color = theory)) +
+  geom_point() +
+  geom_line(aes(group = theory)) +
+  ggpubr::theme_pubclean() +
+  scale_x_discrete(name = NULL)
+```
+
+```{r}
+#| label: fig-cor-fact-scores
+#| fig-width: 12
+#| fig-height: 10
+#| fig-cap: 各种方案的因子得分相关
+#| fig-subcap: true
+
+tar_load(scores_factor, store = projects$confirm_factors$store)
+factors <- c("g", dimensions$dim_label)
+for (factor in factors) {
+  p <- scores_factor |> 
+    filter(theory == "bf") |> 
+    pivot_wider(
+      id_cols = user_id,
+      names_from = name,
+      values_from = all_of(factor)
+    ) |> 
+    select(-user_id) |> 
+    GGally::ggpairs() +
+    ggtitle(factor)
+  print(p)
+}
+```
+
+因此，我们确定了所有测评的维度，以及每个维度最佳的3-4个测评任务。同时，由于部分任务的轮廓系数值太低，我们将它们从模型中移除。这里假定这些任务背后有主要的几个认知维度起作用，而一些别的任务要么是类似任务太少从而不能较准确形成分组因子，要么是很复杂的任务，至少两个我们找到的因子对其有贡献。进一步地，我们还去掉了因子载荷低于0.4的任务，并基于此计算各个因子的得分。
+
+# 短版本
+
 
 以下是一些基本的前提要求：
 
