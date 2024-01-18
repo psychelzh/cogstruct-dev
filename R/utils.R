@@ -10,19 +10,6 @@ path_obj_from_proj <- function(object, project) {
   )
 }
 
-read_archived <- function(...) {
-  tryCatch(
-    select(
-      targets::tar_read(...),
-      !contains("name")
-    ),
-    error = function(e) {
-      warning(conditionMessage(e))
-      invisible()
-    }
-  )
-}
-
 # misc ----
 replace_as_name_cn <- function(game_index,
                                remove_suffix = FALSE,

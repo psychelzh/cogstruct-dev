@@ -26,7 +26,10 @@ tar_collect_camp <- function(contents) {
           tar_name_data_full,
           bind_rows(
             select(tar_name_current, -project_id),
-            read_archived(tar_name_restore, store = .(path_restore))
+            zutils::cautiously(targets::tar_read, tibble())(
+              tar_name_restore, store = .(path_restore)
+            ) |>
+              select(!contains("name"))
           ) |>
             distinct()
         )
@@ -369,7 +372,6 @@ tar_fit_cfa <- function(config, data, theory, col_latent, col_manifest,
           }
         )
       )
-
     },
     if (add_scores) {
       tar_target_raw(

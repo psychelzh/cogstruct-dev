@@ -92,20 +92,14 @@ fit_cfa <- function(config, data, theory, ...,
     {{ col_latent }},
     {{ col_fix }}
   )
-  tryCatch(
-    cfa(
-      model,
-      data,
-      std.ov = TRUE,
-      std.lv = TRUE,
-      missing = "ml",
-      orthogonal = theory == "bf",
-      ...
-    ),
-    error = function(e) {
-      rlang::warn(conditionMessage(e))
-      invisible()
-    }
+  zutils::cautiously(cfa)(
+    model,
+    data,
+    std.ov = TRUE,
+    std.lv = TRUE,
+    missing = "ml",
+    orthogonal = theory == "bf",
+    ...
   )
 }
 
