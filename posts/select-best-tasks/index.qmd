@@ -155,7 +155,7 @@ targets::tar_read(comparison, store = projects$explore_factors$store) |>
 #| fig-height: 6
 #| fig-cap: 最佳模型各因子所含任务指标
 
-targets::tar_read(config_thin_1, store = projects$explore_factors$store) |>
+targets::tar_read(config_thin_7, store = projects$explore_factors$store) |>
   separate_wider_delim(
     game_index, ".",
     names = c("game_name_abbr", "index_name")
@@ -184,7 +184,7 @@ dimensions |>
   gt::gt(rowname_col = "factor")
 ```
 
-# 拟合优化
+# 任务挑选
 
 对于以上的因子聚类结果，采用以下几个方案以寻找优化拟合指标方案：
 
@@ -235,164 +235,46 @@ for (factor in factors) {
 }
 ```
 
-因此，我们确定了所有测评的维度，以及每个维度最佳的3-4个测评任务。同时，由于部分任务的轮廓系数值太低，我们将它们从模型中移除。这里假定这些任务背后有主要的几个认知维度起作用，而一些别的任务要么是类似任务太少从而不能较准确形成分组因子，要么是很复杂的任务，至少两个我们找到的因子对其有贡献。进一步地，我们还去掉了因子载荷低于0.4的任务，并基于此计算各个因子的得分。
-
-# 短版本
-
-
-以下是一些基本的前提要求：
-
--   每个维度选择3个任务
--   保证选择出来的任务不能太类似
--   保证拟合优度达标
--   排除n-back任务
--   排除专注大师_中级（和速算师太类似）
--   排除词汇判断、声调判断（和语义判断太类似）
--   排除数感、捉虫高级版（目前被归入抑制类任务，不太典型）
--   排除连点成画、变戏法（目前被归入分配注意类任务，不太典型）
-
-基于以上规则然后选择每个维度载荷最高的任务（基于2nd order model）：
+因此，我们确定了所有测评的维度，以及每个维度最佳的3-4个测评任务。
 
 ```{r}
-#| label: select-results
-#| eval: false
 
-targets::tar_load(
-  c(dims_origin, indices_wider_clean,
-    fit_origin_bifactor, fit_origin_highorder,
-    scores_origin),
-  store = projects$confirm_factors$store
-)
-targets::tar_load(
-  c(indices, durations),
-  store = projects$prepare_source_data$store
-)
-targets::tar_load(
-  reliability,
-  store = projects$prepare_source_data_retest$store
-)
-exclude <- c(
-  "CalcSpdMed.nc", "Lexic.nc", "Tone.nc",
-  "NsymNCmp.w", "TOVAS.dprime",
-  "AntiSac.ies", "FPTPro.nc"
-)
-task_loadings <- list(
-  highorder = fit_origin_highorder,
-  bifactor = fit_origin_bifactor
-) |>
-  map(
-    ~ parameters::model_parameters(.x, standardize = TRUE) |>
-      filter(Component == "Loading") |>
-      as_tibble()
-  ) |>
-  bind_rows(.id = "model")
-game_ver_latest <- indices |>
-  summarise(
-    ver_major_latest = max(str_extract(game_version, "\\d")),
-    .by = game_id
-  )
-
-dim_task_sel <- task_loadings |>
-  filter(
-    To != "g",
-    !From %in% exclude,
-    model == "highorder"
-  ) |>
-  slice_max(Coefficient, n = 3, by = To)
-dim_task_sel |>
+targets::tar_read(fit_fo_good_sil, store = projects$confirm_factors$store) |> 
+  parameters::model_parameters(component = "loading") |> 
+  as_tibble() |> 
   separate_wider_delim(
     From, ".",
     names = c("game_name_abbr", "index_name")
-  ) |>
-  left_join(data.iquizoo::game_info, by = "game_name_abbr") |>
-  left_join(game_ver_latest, by = "game_id") |>
-  left_join(durations, by = "game_id") |>
+  ) |> 
+  left_join(data.iquizoo::game_info, by = "game_name_abbr") |> 
   left_join(
-    reliability |>
-      filter(
-        origin == "rm_out",
-        ver_major == max(ver_major),
-        .by = game_id
-      ),
+    targets::tar_read(
+      test_retest, 
+      store = projects$prepare_source_data_retest$store
+    ) |> 
+      filter(origin == "rm_out"),
     by = join_by(game_id, index_name)
-  ) |>
+  ) |> 
+  mutate(Dimension = as_factor(To)) |> 
   select(
-    game_id, game_name, dim_label = To, load = Coefficient,
-    dur_min = numeric.p75, N = n, r, icc,
-    ver_major_latest, ver_major
-  ) |>
-  gt::gt() |>
-  gt::fmt_number(-N) |>
-  gt::cols_hide(contains("ver_major")) |>
-  gt::tab_footnote(
-    "Reliability measure is based on an older version.",
-    gt::cells_body(
-      columns = game_name,
-      rows = ver_major_latest > ver_major
-    )
-  ) |>
-  gt::tab_footnote(
-    paste(
-      "Based on 75% quantile,",
-      "i.e., 75% people will finish the task within given time (unit: minutes)."
-    ),
-    gt::cells_column_labels(dur_min)
-  ) |>
-  gt::opt_footnote_marks("standard")
-```
-
-这些任务的拟合情况总结（整体上模型拟合优度良好）：
-
-```{r}
-#| label: show-fit-measure
-#| cache: true
-#| eval: false
-
-fit <- dim_task_sel |>
-  prepare_model(
-    col_dim = "To",
-    col_task = "From",
-    hierarchical = "bifactor"
-  ) |>
-  fit_cfa(indices_wider_clean, orthogonal = TRUE)
-summary(fit, fit.measures = TRUE, standardized = TRUE)
-```
-
-<!-- TODO: 加入简短版本拟合情况 -->
-
-```{r}
-#| eval: false
-
-cor_task_dim <- indices_wider_clean |>
-  pivot_longer(
-    -user_id,
-    names_to = "game_index",
-    values_to = "score_game"
-  ) |>
-  inner_join(dims_origin, by = "game_index") |>
-  inner_join(
-    scores_origin |>
-      pivot_longer(
-        -c(hierarchical, user_id),
-        names_to = "dim_label",
-        values_to = "score_latent"
-      ),
-    by = c("user_id", "dim_label"),
-    relationship = "many-to-many"
-  ) |>
-  summarise(
-    r = cor(score_game, score_latent, use = "pairwise"),
-    .by = c(hierarchical, game_index, dim_label)
+    Dimension,
+    `Game Name` = game_name,
+    `Index Name` = index_name,
+    Loading = Coefficient,
+    ICC = icc
+  ) |> 
+  arrange(Dimension, desc(Loading)) |> 
+  gt::gt(
+    groupname_col = "Dimension",
+    row_group_as_column = TRUE
   )
-selection_1 <- cor_task_dim |>
-  filter(!game_index %in% exclude, hierarchical == "highorder") |>
-  slice_max(r, n = 3, by = dim_label)
-fit_1 <- selection_1 |>
-  prepare_model(
-    col_dim = "dim_label",
-    col_task = "game_index",
-    hierarchical = "bifactor"
-  ) |>
-  fit_cfa(indices_wider_clean, orthogonal = TRUE)
-summary(fit_1, fit.measures = TRUE, standardized = TRUE)
 ```
+
+# 短版本
+
+原则：在总时长一样的情况下，如何以最高的准确性测量一般智力和各个子能力维度？
+
+重点比较：
+
+1. 单一较长版本任务
+2. 多个较短版本任务

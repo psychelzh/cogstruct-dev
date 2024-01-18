@@ -17,7 +17,9 @@ website:
 
 format:
   html:
-    theme: cosmo
+    theme:
+      dark: darkly
+      light: flatly
     comments:
       hypothesis:
         openSidebar: false
