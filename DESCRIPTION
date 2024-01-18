@@ -44,6 +44,7 @@ Imports:
     qs,
     quarto,
     reticulate,
+    RMariaDB,
     skimr,
     tarchetypes,
     tarflow.iquizoo,
