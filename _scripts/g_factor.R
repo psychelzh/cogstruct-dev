@@ -10,7 +10,6 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 10)
 )
 tar_source()
-future::plan(future.callr::callr)
 g_invariance <- tar_sample_tasks(77, data)
 g_invariance_random <- tar_sample_tasks(
   77, data_random,

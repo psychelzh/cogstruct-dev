@@ -1,9 +1,4 @@
 library(targets)
-if (Sys.info()["sysname"] == "Windows") {
-  future::plan(future.callr::callr)
-} else {
-  future::plan(future::multicore)
-}
 tar_source()
 tar_option_set(
   package = c("tidyverse", "bit64", "lavaan"),

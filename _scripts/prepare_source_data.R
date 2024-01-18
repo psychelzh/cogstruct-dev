@@ -1,5 +1,4 @@
 library(targets)
-future::plan(future.callr::callr)
 tar_source()
 tar_option_set(
   package = c("tidyverse", "bit64", "lavaan", "preproc.iquizoo"),
