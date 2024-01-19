@@ -20,7 +20,7 @@ tar_option_set(
   }
 )
 
-prepare_config <- function(config, name, loadings = NULL) {
+prepare_config <- function(name, config, loadings = NULL) {
   if (!is.null(loadings)) {
     config <- loadings |>
       as_tibble() |>
@@ -37,15 +37,17 @@ prepare_config <- function(config, name, loadings = NULL) {
   switch(name,
     full = config,
     good_sil = config |>
+      filter(sil_width > 0.5),
+    adjusted = config |>
       filter(
         sil_width > 0.5,
-        .by = cluster
+        !str_detect(
+          game_index,
+          str_c(tasks_biased, collapse = "|")
+        )
       ),
     good_load = config |>
-      filter(
-        load > 0.4,
-        .by = cluster
-      ),
+      filter(load > 0.4),
     if (startsWith(name, "top")) {
       parsed <- str_match(
         name,
@@ -76,11 +78,11 @@ targets_cfa <- tarchetypes::tar_map(
         name,
         ~ if (stringr::str_detect(.x, "load")) {
           bquote(
-            prepare_config(config_dims, .(.x), loadings)
+            prepare_config(.(.x), config_dims, loadings)
           )
         } else {
           bquote(
-            prepare_config(config_dims, .(.x))
+            prepare_config(.(.x), config_dims)
           )
         }
       )

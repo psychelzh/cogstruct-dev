@@ -46,7 +46,8 @@ hypers_config_dims <- tibble::tibble(
     "top_sil_4", # top 4 biggest silhouette items
     "good_load", # items with good loading (larger than 0.4)
     "top_load_3", # top 3 biggest loading items
-    "top_load_4" # top 4 biggest loading items
+    "top_load_4", # top 4 biggest loading items
+    "adjusted" # adjusted by removing biased tasks based on `"good_sil"`
   )
 )
 hypers_model <- tibble::tibble(
@@ -57,6 +58,7 @@ hypers_model <- tibble::tibble(
     "bf" # bifactor
   )
 )
+tasks_biased <- c("NsymNCmp", "TOJ", "RP", "DRMA")
 
 # used in functional connectivity settings
 hypers_xcpd_config <- tibble::tibble(
