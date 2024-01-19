@@ -54,6 +54,13 @@ prepare_config <- function(name, config, loadings = NULL) {
         "top_(?<crit>.+)_(?<n>.+)"
       )
       n <- as.integer(parsed[, "n"])
+      config <- config |>
+        filter(
+          !str_detect(
+            game_index,
+            str_c(tasks_biased, collapse = "|")
+          )
+        )
       switch(parsed[, "crit"],
         sil = config |>
           filter(
