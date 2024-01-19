@@ -105,29 +105,29 @@ targets::tar_read(cluster_stats, store = projects$explore_factors$store) |>
 ```{r}
 #| label: fig-fitmeas-models
 #| fig-cap: 所有聚类模型拟合情况（仅展示成功拟合的模型）
-#| fig-subcap: 
+#| fig-subcap:
 #|   - Mean Silhouette Score
 #|   - BIC
 #|   - CFI
 #|   - RMSEA
 
 tar_load(
-  c(gofs, cluster_stats), 
+  c(gofs, cluster_stats),
   store = projects$explore_factors$store
 )
-stats <- cluster_stats |> 
-  filter(k == nc) |> 
+stats <- cluster_stats |>
+  filter(k == nc) |>
   full_join(gofs, by = c("schema", "n_fact"))
 
 measures <- c("crit", "bic", "cfi", "rmsea")
 for (measure in measures) {
-  p <- stats |> 
-    filter(!is.na(.data[[measure]])) |> 
+  p <- stats |>
+    filter(!is.na(.data[[measure]])) |>
     ggplot(aes(n_fact, .data[[measure]])) +
     geom_point() +
     geom_line() +
     scale_x_continuous(
-      name = "Number of Factors", 
+      name = "Number of Factors",
       breaks = scales::breaks_width(1)
     ) +
     facet_wrap(~ schema, scales = "free_y") +
@@ -139,10 +139,10 @@ for (measure in measures) {
 进一步，根据Vuong [-@vuong1989]提出的比较非嵌套模型的检验，我们也对拟合成功的模型做了两两比较。
 
 ```{r}
-targets::tar_read(comparison, store = projects$explore_factors$store) |> 
-  select(left, right, everything()) |> 
-  arrange(right) |> 
-  gt::gt(groupname_col = "schema", row_group_as_column = TRUE) |> 
+targets::tar_read(comparison, store = projects$explore_factors$store) |>
+  select(left, right, everything()) |>
+  arrange(right) |>
+  gt::gt(groupname_col = "schema", row_group_as_column = TRUE) |>
   gt::fmt_number(columns = !c(left, right))
 ```
 
@@ -178,9 +178,9 @@ targets::tar_read(config_thin_7, store = projects$explore_factors$store) |>
 #| label: tbl-dimensions
 #| tbl-cap: 各维度命名
 
-dimensions <- read_csv("config/dimensions.csv", show_col_types = FALSE) 
-dimensions |> 
-  mutate(factor = str_c("F", cluster), .keep = "unused", .before = 1L) |> 
+dimensions <- read_csv("config/dimensions.csv", show_col_types = FALSE)
+dimensions |>
+  mutate(factor = str_c("F", cluster), .keep = "unused", .before = 1L) |>
   gt::gt(rowname_col = "factor")
 ```
 
@@ -188,21 +188,24 @@ dimensions |>
 
 对于以上的因子聚类结果，采用以下几个方案以寻找优化拟合指标方案：
 
-* `full`：每个因子内部所有成员
-* `good_sil`：仅包含轮廓系数大于0.5的成员
-* `top_sil_3`：仅包含轮廓系数最大三个成员
-* `top_sil_4`：仅包含轮廓系数最大四个成员
-* `good_load`：仅包含因子载荷大于0.4的成员（载荷基于`good_sil`，下同）
-* `top_load_3`：仅包含因子载荷最大三个成员
-* `top_load_4`：仅包含因子载荷最大四个成员
+* `full`：每个因子内部所有任务指标
+* `parsimony`: 简化，基于轮廓系数大于0.5的任务指标
+  * `good_sil`：仅包含轮廓系数大于0.5的任务指标
+  * `good_load`：仅包含因子载荷大于0.4的任务指标（载荷基于`good_sil`，下同）
+  * `adjusted`：从`good_sil`结果中去掉`Inh`维度中几个明显不合理任务指标（含两个时间知觉任务、一个数感任务、一个错误记忆任务）
+* `superparsimony`：超简化，选用每个维度最好3-4个任务指标
+  * `top_sil_3`：仅包含每个维度轮廓系数最大三个任务指标
+  * `top_sil_4`：仅包含每个维度轮廓系数最大四个任务指标
+  * `top_load_3`：仅包含每个维度因子载荷最大三个任务指标
+  * `top_load_4`：仅包含每个维度因子载荷最大四个任务指标
 
-@fig-parsi-models 给出了各种方案不同模型的拟合优度。整体上看，基于载荷或者轮廓系数选出的任务都能得到相对较好的CFI拟合指标（>0.9），我们进一步看看各种方案得到的各个潜变量得分的相关高低。
+@fig-parsi-models 给出了各种方案不同模型的拟合优度。整体上看，基于载荷或者轮廓系数选出的任务都能得到相对较好的CFI拟合指标（\>0.9）。
 
 ```{r}
 #| label: fig-parsi-models
 #| fig-cap: 不同方案CFI拟合优度
 
-tar_read(gofs, store = projects$confirm_factors$store) |> 
+tar_read(gofs, store = projects$confirm_factors$store) |>
   mutate(
     name = factor(name, hypers_config_dims$name),
     group = case_match(
@@ -213,7 +216,7 @@ tar_read(gofs, store = projects$confirm_factors$store) |>
       .default = name
     ),
     .after = name
-  ) |> 
+  ) |>
   ggplot(aes(name, cfi, color = theory)) +
   geom_point() +
   geom_line(aes(group = theory)) +
@@ -222,63 +225,94 @@ tar_read(gofs, store = projects$confirm_factors$store) |>
   scale_x_discrete(name = NULL)
 ```
 
-```{r}
-#| label: fig-cor-fact-scores
-#| fig-width: 12
-#| fig-height: 10
-#| fig-cap: 各种方案的因子得分相关
-#| fig-subcap: true
-
-tar_load(scores_factor, store = projects$confirm_factors$store)
-factors <- c("g", dimensions$dim_label)
-for (factor in factors) {
-  p <- scores_factor |> 
-    filter(theory == "bf") |> 
-    pivot_wider(
-      id_cols = user_id,
-      names_from = name,
-      values_from = all_of(factor)
-    ) |> 
-    select(-user_id) |> 
-    GGally::ggpairs() +
-    ggtitle(factor)
-  print(p)
-}
-```
-
-如下展示了基于`adjusted`方案的因子载荷：
+整体上看，包含最完整任务指标的模型为`adjusted`方案。 @tbl-loadings-adjusted 展示了该方案的各任务指标的因子载荷。
 
 ```{r}
+#| label: tbl-loadings-adjusted
+#| tbl-cap: "`adjusted`方案因子载荷"
 
-targets::tar_read(fit_fo_adjusted, store = projects$confirm_factors$store) |> 
-  parameters::model_parameters(component = "loading") |> 
-  as_tibble() |> 
+targets::tar_read(fit_fo_adjusted, store = projects$confirm_factors$store) |>
+  parameters::model_parameters(component = "loading") |>
+  as_tibble() |>
   separate_wider_delim(
     From, ".",
     names = c("game_name_abbr", "index_name")
-  ) |> 
-  left_join(data.iquizoo::game_info, by = "game_name_abbr") |> 
+  ) |>
+  left_join(data.iquizoo::game_info, by = "game_name_abbr") |>
   left_join(
     targets::tar_read(
-      test_retest, 
+      test_retest,
       store = projects$prepare_source_data_retest$store
-    ) |> 
+    ) |>
       filter(origin == "rm_out"),
     by = join_by(game_id, index_name)
-  ) |> 
-  mutate(Dimension = as_factor(To)) |> 
+  ) |>
+  mutate(Dimension = as_factor(To)) |>
   select(
     Dimension,
     `Game Name` = game_name,
     `Index Name` = index_name,
     Loading = Coefficient,
     ICC = icc
-  ) |> 
-  arrange(Dimension, desc(Loading)) |> 
+  ) |>
+  arrange(Dimension, desc(Loading)) |>
   gt::gt(
     groupname_col = "Dimension",
     row_group_as_column = TRUE
   )
+```
+
+# 能力分估计（因子得分）
+
+```{r}
+#| label: fig-cor-fact-scores-among-selection
+#| column: page
+#| fig-width: 12
+#| fig-height: 10
+#| fig-cap: 不同任务选择方案的因子得分相关
+#| fig-subcap: true
+
+tar_load(scores_factor, store = projects$confirm_factors$store)
+factors <- c("g", dimensions$dim_label)
+for (factor in factors) {
+  p <- scores_factor |>
+    filter(theory == "bf") |>
+    pivot_wider(
+      id_cols = user_id,
+      names_from = name,
+      values_from = all_of(factor)
+    ) |>
+    select(!user_id) |>
+    GGally::ggpairs() +
+    ggtitle(factor)
+  print(p)
+}
+```
+
+@fig-cor-fact-scores-among-theory 表明：bi-factor模型和另两个模型拟合出来的特殊能力分数相关仅为0.5上下，这是因为bi-factor模型从这些特殊能力中去掉了一般能力的影响，而另两个模型则一定程度上混入了一般能力[@murray2013]。而bi-factor模型的这一特性正是我们所需要的。
+
+```{r}
+#| label: fig-cor-fact-scores-among-theory
+#| fig-width: 6
+#| fig-height: 5
+#| fig-cap: 不同理论的因子得分相关
+#| fig-subcap: true
+
+factors <- c("g", dimensions$dim_label)
+for (factor in factors) {
+  p <- scores_factor |>
+    filter(name == "adjusted") |>
+    pivot_wider(
+      id_cols = user_id,
+      names_from = theory,
+      values_from = all_of(factor)
+    ) |>
+    select(!where(anyNA)) |>
+    select(!user_id) |>
+    GGally::ggpairs() +
+    ggtitle(factor)
+  print(p)
+}
 ```
 
 # 短版本
