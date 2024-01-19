@@ -171,6 +171,7 @@ div.csl-indent {
   <ul>
   <li><a href="#最佳因子模型" id="toc-最佳因子模型" class="nav-link active" data-scroll-target="#最佳因子模型">最佳因子模型</a></li>
   <li><a href="#任务挑选" id="toc-任务挑选" class="nav-link" data-scroll-target="#任务挑选">任务挑选</a></li>
+  <li><a href="#能力分估计因子得分" id="toc-能力分估计因子得分" class="nav-link" data-scroll-target="#能力分估计因子得分">能力分估计（因子得分）</a></li>
   <li><a href="#短版本" id="toc-短版本" class="nav-link" data-scroll-target="#短版本">短版本</a></li>
   </ul>
 </nav>
@@ -227,7 +228,7 @@ div.csl-indent {
 <section id="最佳因子模型" class="level1 page-columns page-full">
 <h1>最佳因子模型</h1>
 <p>我们采用了基于自助法（bootstrap）的因子聚类方法探索任务的因子归类。不过在开始之前，一些特别类似范式的任务仅保留了一个，如 <a href="#tbl-schema-thin">表&nbsp;1</a>，其中<code>thin</code>一列为<code>TRUE</code>的是被去掉的任务。以下用<code>all</code>表示使用全部任务，用<code>thin</code>表示去掉类似范式任务的结果。</p>
-<div class="cell">
+<div class="cell" data-hash="index_cache/html/tbl-schema-thin_3d85267b50ed92ea0c3136648312fa6b">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_tsv</span>(<span class="st">"config/games_thin.tsv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
@@ -247,23 +248,23 @@ div.csl-indent {
 <div class="cell-output-display">
 <div id="tbl-schema-thin" class="anchored">
 
-<div id="ppbgscwqvs" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ppbgscwqvs table {
+<div id="cmvzufakkh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#cmvzufakkh table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ppbgscwqvs thead, #ppbgscwqvs tbody, #ppbgscwqvs tfoot, #ppbgscwqvs tr, #ppbgscwqvs td, #ppbgscwqvs th {
+#cmvzufakkh thead, #cmvzufakkh tbody, #cmvzufakkh tfoot, #cmvzufakkh tr, #cmvzufakkh td, #cmvzufakkh th {
   border-style: none;
 }
 
-#ppbgscwqvs p {
+#cmvzufakkh p {
   margin: 0;
   padding: 0;
 }
 
-#ppbgscwqvs .gt_table {
+#cmvzufakkh .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -289,12 +290,12 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_caption {
+#cmvzufakkh .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ppbgscwqvs .gt_title {
+#cmvzufakkh .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -306,7 +307,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#ppbgscwqvs .gt_subtitle {
+#cmvzufakkh .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -318,7 +319,7 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#ppbgscwqvs .gt_heading {
+#cmvzufakkh .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -330,13 +331,13 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_bottom_border {
+#cmvzufakkh .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_col_headings {
+#cmvzufakkh .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -351,7 +352,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_col_heading {
+#cmvzufakkh .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -371,7 +372,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#ppbgscwqvs .gt_column_spanner_outer {
+#cmvzufakkh .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -383,15 +384,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#ppbgscwqvs .gt_column_spanner_outer:first-child {
+#cmvzufakkh .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ppbgscwqvs .gt_column_spanner_outer:last-child {
+#cmvzufakkh .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ppbgscwqvs .gt_column_spanner {
+#cmvzufakkh .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -403,11 +404,11 @@ div.csl-indent {
   width: 100%;
 }
 
-#ppbgscwqvs .gt_spanner_row {
+#cmvzufakkh .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ppbgscwqvs .gt_group_heading {
+#cmvzufakkh .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -433,7 +434,7 @@ div.csl-indent {
   text-align: left;
 }
 
-#ppbgscwqvs .gt_empty_group_heading {
+#cmvzufakkh .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -448,15 +449,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#ppbgscwqvs .gt_from_md > :first-child {
+#cmvzufakkh .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ppbgscwqvs .gt_from_md > :last-child {
+#cmvzufakkh .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ppbgscwqvs .gt_row {
+#cmvzufakkh .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -475,7 +476,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#ppbgscwqvs .gt_stub {
+#cmvzufakkh .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -488,7 +489,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ppbgscwqvs .gt_stub_row_group {
+#cmvzufakkh .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -502,15 +503,15 @@ div.csl-indent {
   vertical-align: top;
 }
 
-#ppbgscwqvs .gt_row_group_first td {
+#cmvzufakkh .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ppbgscwqvs .gt_row_group_first th {
+#cmvzufakkh .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ppbgscwqvs .gt_summary_row {
+#cmvzufakkh .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -520,16 +521,16 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ppbgscwqvs .gt_first_summary_row {
+#cmvzufakkh .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_first_summary_row.thick {
+#cmvzufakkh .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ppbgscwqvs .gt_last_summary_row {
+#cmvzufakkh .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -539,7 +540,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_grand_summary_row {
+#cmvzufakkh .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -549,7 +550,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ppbgscwqvs .gt_first_grand_summary_row {
+#cmvzufakkh .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -559,7 +560,7 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_last_grand_summary_row_top {
+#cmvzufakkh .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -569,11 +570,11 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_striped {
+#cmvzufakkh .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ppbgscwqvs .gt_table_body {
+#cmvzufakkh .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -582,7 +583,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_footnotes {
+#cmvzufakkh .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -596,7 +597,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_footnote {
+#cmvzufakkh .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -605,7 +606,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ppbgscwqvs .gt_sourcenotes {
+#cmvzufakkh .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -619,7 +620,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ppbgscwqvs .gt_sourcenote {
+#cmvzufakkh .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -627,63 +628,63 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ppbgscwqvs .gt_left {
+#cmvzufakkh .gt_left {
   text-align: left;
 }
 
-#ppbgscwqvs .gt_center {
+#cmvzufakkh .gt_center {
   text-align: center;
 }
 
-#ppbgscwqvs .gt_right {
+#cmvzufakkh .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ppbgscwqvs .gt_font_normal {
+#cmvzufakkh .gt_font_normal {
   font-weight: normal;
 }
 
-#ppbgscwqvs .gt_font_bold {
+#cmvzufakkh .gt_font_bold {
   font-weight: bold;
 }
 
-#ppbgscwqvs .gt_font_italic {
+#cmvzufakkh .gt_font_italic {
   font-style: italic;
 }
 
-#ppbgscwqvs .gt_super {
+#cmvzufakkh .gt_super {
   font-size: 65%;
 }
 
-#ppbgscwqvs .gt_footnote_marks {
+#cmvzufakkh .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ppbgscwqvs .gt_asterisk {
+#cmvzufakkh .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ppbgscwqvs .gt_indent_1 {
+#cmvzufakkh .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ppbgscwqvs .gt_indent_2 {
+#cmvzufakkh .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ppbgscwqvs .gt_indent_3 {
+#cmvzufakkh .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ppbgscwqvs .gt_indent_4 {
+#cmvzufakkh .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ppbgscwqvs .gt_indent_5 {
+#cmvzufakkh .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -791,7 +792,7 @@ div.csl-indent {
 </figure>
 </div>
 <p>采用基于自助法的因子聚类方法，结果如 <a href="#fig-compare-cluster-factors">图&nbsp;2</a>。</p>
-<div class="cell">
+<div class="cell" data-hash="index_cache/html/fig-compare-cluster-factors_2e827dcfa769413c418c89209f12ad0f">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(cluster_stats, <span class="at">store =</span> projects<span class="sc">$</span>explore_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span></span>
@@ -824,22 +825,22 @@ div.csl-indent {
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_load</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(gofs, cluster_stats), </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(gofs, cluster_stats),</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">store =</span> projects<span class="sc">$</span>explore_factors<span class="sc">$</span>store</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> cluster_stats <span class="sc">|&gt;</span> </span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(k <span class="sc">==</span> nc) <span class="sc">|&gt;</span> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>stats <span class="ot">&lt;-</span> cluster_stats <span class="sc">|&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(k <span class="sc">==</span> nc) <span class="sc">|&gt;</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(gofs, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"schema"</span>, <span class="st">"n_fact"</span>))</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>measures <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"crit"</span>, <span class="st">"bic"</span>, <span class="st">"cfi"</span>, <span class="st">"rmsea"</span>)</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (measure <span class="cf">in</span> measures) {</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> stats <span class="sc">|&gt;</span> </span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(.data[[measure]])) <span class="sc">|&gt;</span> </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> stats <span class="sc">|&gt;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(.data[[measure]])) <span class="sc">|&gt;</span></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggplot</span>(<span class="fu">aes</span>(n_fact, .data[[measure]])) <span class="sc">+</span></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_line</span>() <span class="sc">+</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_x_continuous</span>(</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">name =</span> <span class="st">"Number of Factors"</span>, </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">name =</span> <span class="st">"Number of Factors"</span>,</span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">breaks =</span> scales<span class="sc">::</span><span class="fu">breaks_width</span>(<span class="dv">1</span>)</span>
 <span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">facet_wrap</span>(<span class="sc">~</span> schema, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
@@ -883,34 +884,34 @@ div.csl-indent {
 </figure>
 </div>
 <p>进一步，根据Vuong <span class="citation" data-cites="vuong1989">(<a href="#ref-vuong1989" role="doc-biblioref">1989</a>)</span>提出的比较非嵌套模型的检验，我们也对拟合成功的模型做了两两比较。</p>
-<div class="cell">
+<div class="cell" data-hash="index_cache/html/unnamed-chunk-6_0eb28a7dcf9728d12cd34c5f10d29e9e">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(comparison, <span class="at">store =</span> projects<span class="sc">$</span>explore_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span> </span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(left, right, <span class="fu">everything</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(right) <span class="sc">|&gt;</span> </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">gt</span>(<span class="at">groupname_col =</span> <span class="st">"schema"</span>, <span class="at">row_group_as_column =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(comparison, <span class="at">store =</span> projects<span class="sc">$</span>explore_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(left, right, <span class="fu">everything</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(right) <span class="sc">|&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">gt</span>(<span class="at">groupname_col =</span> <span class="st">"schema"</span>, <span class="at">row_group_as_column =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="sc">!</span><span class="fu">c</span>(left, right))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 
-<div id="tllbttmsvp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#tllbttmsvp table {
+<div id="jacykxhwhx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jacykxhwhx table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#tllbttmsvp thead, #tllbttmsvp tbody, #tllbttmsvp tfoot, #tllbttmsvp tr, #tllbttmsvp td, #tllbttmsvp th {
+#jacykxhwhx thead, #jacykxhwhx tbody, #jacykxhwhx tfoot, #jacykxhwhx tr, #jacykxhwhx td, #jacykxhwhx th {
   border-style: none;
 }
 
-#tllbttmsvp p {
+#jacykxhwhx p {
   margin: 0;
   padding: 0;
 }
 
-#tllbttmsvp .gt_table {
+#jacykxhwhx .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -936,12 +937,12 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_caption {
+#jacykxhwhx .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#tllbttmsvp .gt_title {
+#jacykxhwhx .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -953,7 +954,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#tllbttmsvp .gt_subtitle {
+#jacykxhwhx .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -965,7 +966,7 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#tllbttmsvp .gt_heading {
+#jacykxhwhx .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -977,13 +978,13 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_bottom_border {
+#jacykxhwhx .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_col_headings {
+#jacykxhwhx .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -998,7 +999,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_col_heading {
+#jacykxhwhx .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1018,7 +1019,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#tllbttmsvp .gt_column_spanner_outer {
+#jacykxhwhx .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1030,15 +1031,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#tllbttmsvp .gt_column_spanner_outer:first-child {
+#jacykxhwhx .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#tllbttmsvp .gt_column_spanner_outer:last-child {
+#jacykxhwhx .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#tllbttmsvp .gt_column_spanner {
+#jacykxhwhx .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1050,11 +1051,11 @@ div.csl-indent {
   width: 100%;
 }
 
-#tllbttmsvp .gt_spanner_row {
+#jacykxhwhx .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#tllbttmsvp .gt_group_heading {
+#jacykxhwhx .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1080,7 +1081,7 @@ div.csl-indent {
   text-align: left;
 }
 
-#tllbttmsvp .gt_empty_group_heading {
+#jacykxhwhx .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1095,15 +1096,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#tllbttmsvp .gt_from_md > :first-child {
+#jacykxhwhx .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#tllbttmsvp .gt_from_md > :last-child {
+#jacykxhwhx .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#tllbttmsvp .gt_row {
+#jacykxhwhx .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1122,7 +1123,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#tllbttmsvp .gt_stub {
+#jacykxhwhx .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1135,7 +1136,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#tllbttmsvp .gt_stub_row_group {
+#jacykxhwhx .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1149,15 +1150,15 @@ div.csl-indent {
   vertical-align: top;
 }
 
-#tllbttmsvp .gt_row_group_first td {
+#jacykxhwhx .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#tllbttmsvp .gt_row_group_first th {
+#jacykxhwhx .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#tllbttmsvp .gt_summary_row {
+#jacykxhwhx .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1167,16 +1168,16 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#tllbttmsvp .gt_first_summary_row {
+#jacykxhwhx .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_first_summary_row.thick {
+#jacykxhwhx .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#tllbttmsvp .gt_last_summary_row {
+#jacykxhwhx .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1186,7 +1187,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_grand_summary_row {
+#jacykxhwhx .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1196,7 +1197,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#tllbttmsvp .gt_first_grand_summary_row {
+#jacykxhwhx .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1206,7 +1207,7 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_last_grand_summary_row_top {
+#jacykxhwhx .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1216,11 +1217,11 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_striped {
+#jacykxhwhx .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#tllbttmsvp .gt_table_body {
+#jacykxhwhx .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1229,7 +1230,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_footnotes {
+#jacykxhwhx .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1243,7 +1244,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_footnote {
+#jacykxhwhx .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1252,7 +1253,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#tllbttmsvp .gt_sourcenotes {
+#jacykxhwhx .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1266,7 +1267,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#tllbttmsvp .gt_sourcenote {
+#jacykxhwhx .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1274,63 +1275,63 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#tllbttmsvp .gt_left {
+#jacykxhwhx .gt_left {
   text-align: left;
 }
 
-#tllbttmsvp .gt_center {
+#jacykxhwhx .gt_center {
   text-align: center;
 }
 
-#tllbttmsvp .gt_right {
+#jacykxhwhx .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#tllbttmsvp .gt_font_normal {
+#jacykxhwhx .gt_font_normal {
   font-weight: normal;
 }
 
-#tllbttmsvp .gt_font_bold {
+#jacykxhwhx .gt_font_bold {
   font-weight: bold;
 }
 
-#tllbttmsvp .gt_font_italic {
+#jacykxhwhx .gt_font_italic {
   font-style: italic;
 }
 
-#tllbttmsvp .gt_super {
+#jacykxhwhx .gt_super {
   font-size: 65%;
 }
 
-#tllbttmsvp .gt_footnote_marks {
+#jacykxhwhx .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#tllbttmsvp .gt_asterisk {
+#jacykxhwhx .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#tllbttmsvp .gt_indent_1 {
+#jacykxhwhx .gt_indent_1 {
   text-indent: 5px;
 }
 
-#tllbttmsvp .gt_indent_2 {
+#jacykxhwhx .gt_indent_2 {
   text-indent: 10px;
 }
 
-#tllbttmsvp .gt_indent_3 {
+#jacykxhwhx .gt_indent_3 {
   text-indent: 15px;
 }
 
-#tllbttmsvp .gt_indent_4 {
+#jacykxhwhx .gt_indent_4 {
   text-indent: 20px;
 }
 
-#tllbttmsvp .gt_indent_5 {
+#jacykxhwhx .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1453,7 +1454,7 @@ div.csl-indent {
 </div>
 </div>
 <p>因此，最终采用<code>thin</code>里面最佳聚类结果的模型，其具体结果如 <a href="#fig-best-model">图&nbsp;4</a> 。基于此结果我们可以比较确定地指出我们的数据可以很好地拟合一个包含七个因子的模型，根据每一个因子里面包含任务之间的关系，我们给出这些因子的名字见。</p>
-<div class="cell page-columns page-full">
+<div class="cell page-columns page-full" data-hash="index_cache/html/fig-best-model_e52562526d7fd1a3beb262de2942fe6e">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(config_thin_7, <span class="at">store =</span> projects<span class="sc">$</span>explore_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span></span>
@@ -1483,34 +1484,34 @@ div.csl-indent {
 </div>
 </div>
 </div>
-<div class="cell">
+<div class="cell" data-hash="index_cache/html/tbl-dimensions_f442e35f2acac1d10af20e8673f09db8">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dimensions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"config/dimensions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) </span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>dimensions <span class="sc">|&gt;</span> </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">factor =</span> <span class="fu">str_c</span>(<span class="st">"F"</span>, cluster), <span class="at">.keep =</span> <span class="st">"unused"</span>, <span class="at">.before =</span> 1L) <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>dimensions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"config/dimensions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>dimensions <span class="sc">|&gt;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">factor =</span> <span class="fu">str_c</span>(<span class="st">"F"</span>, cluster), <span class="at">.keep =</span> <span class="st">"unused"</span>, <span class="at">.before =</span> 1L) <span class="sc">|&gt;</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">gt</span>(<span class="at">rowname_col =</span> <span class="st">"factor"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div id="tbl-dimensions" class="anchored">
 
-<div id="ekojelzihz" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ekojelzihz table {
+<div id="prrkcrgqqj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#prrkcrgqqj table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ekojelzihz thead, #ekojelzihz tbody, #ekojelzihz tfoot, #ekojelzihz tr, #ekojelzihz td, #ekojelzihz th {
+#prrkcrgqqj thead, #prrkcrgqqj tbody, #prrkcrgqqj tfoot, #prrkcrgqqj tr, #prrkcrgqqj td, #prrkcrgqqj th {
   border-style: none;
 }
 
-#ekojelzihz p {
+#prrkcrgqqj p {
   margin: 0;
   padding: 0;
 }
 
-#ekojelzihz .gt_table {
+#prrkcrgqqj .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1536,12 +1537,12 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_caption {
+#prrkcrgqqj .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ekojelzihz .gt_title {
+#prrkcrgqqj .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1553,7 +1554,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#ekojelzihz .gt_subtitle {
+#prrkcrgqqj .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1565,7 +1566,7 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#ekojelzihz .gt_heading {
+#prrkcrgqqj .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1577,13 +1578,13 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_bottom_border {
+#prrkcrgqqj .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_col_headings {
+#prrkcrgqqj .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1598,7 +1599,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_col_heading {
+#prrkcrgqqj .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1618,7 +1619,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#ekojelzihz .gt_column_spanner_outer {
+#prrkcrgqqj .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1630,15 +1631,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#ekojelzihz .gt_column_spanner_outer:first-child {
+#prrkcrgqqj .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ekojelzihz .gt_column_spanner_outer:last-child {
+#prrkcrgqqj .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ekojelzihz .gt_column_spanner {
+#prrkcrgqqj .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1650,11 +1651,11 @@ div.csl-indent {
   width: 100%;
 }
 
-#ekojelzihz .gt_spanner_row {
+#prrkcrgqqj .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ekojelzihz .gt_group_heading {
+#prrkcrgqqj .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1680,7 +1681,7 @@ div.csl-indent {
   text-align: left;
 }
 
-#ekojelzihz .gt_empty_group_heading {
+#prrkcrgqqj .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1695,15 +1696,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#ekojelzihz .gt_from_md > :first-child {
+#prrkcrgqqj .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ekojelzihz .gt_from_md > :last-child {
+#prrkcrgqqj .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ekojelzihz .gt_row {
+#prrkcrgqqj .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1722,7 +1723,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#ekojelzihz .gt_stub {
+#prrkcrgqqj .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1735,7 +1736,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ekojelzihz .gt_stub_row_group {
+#prrkcrgqqj .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1749,15 +1750,15 @@ div.csl-indent {
   vertical-align: top;
 }
 
-#ekojelzihz .gt_row_group_first td {
+#prrkcrgqqj .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ekojelzihz .gt_row_group_first th {
+#prrkcrgqqj .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ekojelzihz .gt_summary_row {
+#prrkcrgqqj .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1767,16 +1768,16 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ekojelzihz .gt_first_summary_row {
+#prrkcrgqqj .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_first_summary_row.thick {
+#prrkcrgqqj .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ekojelzihz .gt_last_summary_row {
+#prrkcrgqqj .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1786,7 +1787,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_grand_summary_row {
+#prrkcrgqqj .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1796,7 +1797,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ekojelzihz .gt_first_grand_summary_row {
+#prrkcrgqqj .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1806,7 +1807,7 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_last_grand_summary_row_top {
+#prrkcrgqqj .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1816,11 +1817,11 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_striped {
+#prrkcrgqqj .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ekojelzihz .gt_table_body {
+#prrkcrgqqj .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1829,7 +1830,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_footnotes {
+#prrkcrgqqj .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1843,7 +1844,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_footnote {
+#prrkcrgqqj .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1852,7 +1853,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ekojelzihz .gt_sourcenotes {
+#prrkcrgqqj .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1866,7 +1867,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ekojelzihz .gt_sourcenote {
+#prrkcrgqqj .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1874,63 +1875,63 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ekojelzihz .gt_left {
+#prrkcrgqqj .gt_left {
   text-align: left;
 }
 
-#ekojelzihz .gt_center {
+#prrkcrgqqj .gt_center {
   text-align: center;
 }
 
-#ekojelzihz .gt_right {
+#prrkcrgqqj .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ekojelzihz .gt_font_normal {
+#prrkcrgqqj .gt_font_normal {
   font-weight: normal;
 }
 
-#ekojelzihz .gt_font_bold {
+#prrkcrgqqj .gt_font_bold {
   font-weight: bold;
 }
 
-#ekojelzihz .gt_font_italic {
+#prrkcrgqqj .gt_font_italic {
   font-style: italic;
 }
 
-#ekojelzihz .gt_super {
+#prrkcrgqqj .gt_super {
   font-size: 65%;
 }
 
-#ekojelzihz .gt_footnote_marks {
+#prrkcrgqqj .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ekojelzihz .gt_asterisk {
+#prrkcrgqqj .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ekojelzihz .gt_indent_1 {
+#prrkcrgqqj .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ekojelzihz .gt_indent_2 {
+#prrkcrgqqj .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ekojelzihz .gt_indent_3 {
+#prrkcrgqqj .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ekojelzihz .gt_indent_4 {
+#prrkcrgqqj .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ekojelzihz .gt_indent_5 {
+#prrkcrgqqj .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1977,19 +1978,26 @@ div.csl-indent {
 <h1>任务挑选</h1>
 <p>对于以上的因子聚类结果，采用以下几个方案以寻找优化拟合指标方案：</p>
 <ul>
-<li><code>full</code>：每个因子内部所有成员</li>
-<li><code>good_sil</code>：仅包含轮廓系数大于0.5的成员</li>
-<li><code>top_sil_3</code>：仅包含轮廓系数最大三个成员</li>
-<li><code>top_sil_4</code>：仅包含轮廓系数最大四个成员</li>
-<li><code>good_load</code>：仅包含因子载荷大于0.4的成员（载荷基于<code>good_sil</code>，下同）</li>
-<li><code>top_load_3</code>：仅包含因子载荷最大三个成员</li>
-<li><code>top_load_4</code>：仅包含因子载荷最大四个成员</li>
+<li><code>full</code>：每个因子内部所有任务指标</li>
+<li><code>parsimony</code>: 简化，基于轮廓系数大于0.5的任务指标
+<ul>
+<li><code>good_sil</code>：仅包含轮廓系数大于0.5的任务指标</li>
+<li><code>good_load</code>：仅包含因子载荷大于0.4的任务指标（载荷基于<code>good_sil</code>，下同）</li>
+<li><code>adjusted</code>：从<code>good_sil</code>结果中去掉<code>Inh</code>维度中几个明显不合理任务指标（含两个时间知觉任务、一个数感任务、一个错误记忆任务）</li>
+</ul></li>
+<li><code>superparsimony</code>：超简化，选用每个维度最好3-4个任务指标
+<ul>
+<li><code>top_sil_3</code>：仅包含每个维度轮廓系数最大三个任务指标</li>
+<li><code>top_sil_4</code>：仅包含每个维度轮廓系数最大四个任务指标</li>
+<li><code>top_load_3</code>：仅包含每个维度因子载荷最大三个任务指标</li>
+<li><code>top_load_4</code>：仅包含每个维度因子载荷最大四个任务指标</li>
+</ul></li>
 </ul>
-<p><a href="#fig-parsi-models">图&nbsp;5</a> 给出了各种方案不同模型的拟合优度。整体上看，基于载荷或者轮廓系数选出的任务都能得到相对较好的CFI拟合指标（&gt;0.9），我们进一步看看各种方案得到的各个潜变量得分的相关高低。</p>
-<div class="cell">
+<p><a href="#fig-parsi-models">图&nbsp;5</a> 给出了各种方案不同模型的拟合优度。整体上看，基于载荷或者轮廓系数选出的任务都能得到相对较好的CFI拟合指标（&gt;0.9）。</p>
+<div class="cell" data-hash="index_cache/html/fig-parsi-models_acf5ffdfbfd58ad49a836521b8d3e1fd">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_read</span>(gofs, <span class="at">store =</span> projects<span class="sc">$</span>confirm_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span> </span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_read</span>(gofs, <span class="at">store =</span> projects<span class="sc">$</span>confirm_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="fu">factor</span>(name, hypers_config_dims<span class="sc">$</span>name),</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">group =</span> <span class="fu">case_match</span>(</span>
@@ -2000,7 +2008,7 @@ div.csl-indent {
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">.default =</span> name</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    ),</span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">.after =</span> name</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(name, cfi, <span class="at">color =</span> theory)) <span class="sc">+</span></span>
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> theory)) <span class="sc">+</span></span>
@@ -2017,146 +2025,60 @@ div.csl-indent {
 </div>
 </div>
 </div>
-<div id="fig-cor-fact-scores" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
+<p>整体上看，包含最完整任务指标的模型为<code>adjusted</code>方案。 <a href="#tbl-loadings-adjusted">表&nbsp;3</a> 展示了该方案的各任务指标的因子载荷。</p>
+<div class="cell" data-hash="index_cache/html/tbl-loadings-adjusted_1af423952953a1a4b88fb43e8ed514e6">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_load</span>(scores_factor, <span class="at">store =</span> projects<span class="sc">$</span>confirm_factors<span class="sc">$</span>store)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>factors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"g"</span>, dimensions<span class="sc">$</span>dim_label)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (factor <span class="cf">in</span> factors) {</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> scores_factor <span class="sc">|&gt;</span> </span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(theory <span class="sc">==</span> <span class="st">"bf"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">id_cols =</span> user_id,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">names_from =</span> name,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">values_from =</span> <span class="fu">all_of</span>(factor)</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>user_id) <span class="sc">|&gt;</span> </span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    GGally<span class="sc">::</span><span class="fu">ggpairs</span>() <span class="sc">+</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(factor)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(p)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(fit_fo_adjusted, <span class="at">store =</span> projects<span class="sc">$</span>confirm_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  parameters<span class="sc">::</span><span class="fu">model_parameters</span>(<span class="at">component =</span> <span class="st">"loading"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    From, <span class="st">"."</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"game_name_abbr"</span>, <span class="st">"index_name"</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(data.iquizoo<span class="sc">::</span>game_info, <span class="at">by =</span> <span class="st">"game_name_abbr"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    targets<span class="sc">::</span><span class="fu">tar_read</span>(</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      test_retest,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">store =</span> projects<span class="sc">$</span>prepare_source_data_retest<span class="sc">$</span>store</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"rm_out"</span>),</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">join_by</span>(game_id, index_name)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Dimension =</span> <span class="fu">as_factor</span>(To)) <span class="sc">|&gt;</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    Dimension,</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Game Name</span><span class="st">`</span> <span class="ot">=</span> game_name,</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Index Name</span><span class="st">`</span> <span class="ot">=</span> index_name,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">Loading =</span> Coefficient,</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">ICC =</span> icc</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Dimension, <span class="fu">desc</span>(Loading)) <span class="sc">|&gt;</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">gt</span>(</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupname_col =</span> <span class="st">"Dimension"</span>,</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">row_group_as_column =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-cor-fact-scores-1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-1.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores" width="1152"></p>
-<figcaption class="figure-caption">(a)</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-cor-fact-scores-2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-2.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores" width="1152"></p>
-<figcaption class="figure-caption">(b)</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-cor-fact-scores-3" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-3.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores" width="1152"></p>
-<figcaption class="figure-caption">(c)</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-cor-fact-scores-4" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-4.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores" width="1152"></p>
-<figcaption class="figure-caption">(d)</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-cor-fact-scores-5" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-5.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores" width="1152"></p>
-<figcaption class="figure-caption">(e)</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-cor-fact-scores-6" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-6.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores" width="1152"></p>
-<figcaption class="figure-caption">(f)</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-cor-fact-scores-7" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-7.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores" width="1152"></p>
-<figcaption class="figure-caption">(g)</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-cor-fact-scores-8" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-8.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores" width="1152"></p>
-<figcaption class="figure-caption">(h)</figcaption>
-</figure>
-</div>
-</div>
-<figcaption class="figure-caption">图&nbsp;6: 各种方案的因子得分相关</figcaption>
-</figure>
-</div>
-<p>如下展示了基于<code>adjusted</code>方案的因子载荷：</p>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(fit_fo_adjusted, <span class="at">store =</span> projects<span class="sc">$</span>confirm_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  parameters<span class="sc">::</span><span class="fu">model_parameters</span>(<span class="at">component =</span> <span class="st">"loading"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    From, <span class="st">"."</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"game_name_abbr"</span>, <span class="st">"index_name"</span>)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(data.iquizoo<span class="sc">::</span>game_info, <span class="at">by =</span> <span class="st">"game_name_abbr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    targets<span class="sc">::</span><span class="fu">tar_read</span>(</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>      test_retest, </span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">store =</span> projects<span class="sc">$</span>prepare_source_data_retest<span class="sc">$</span>store</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span> </span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"rm_out"</span>),</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">join_by</span>(game_id, index_name)</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Dimension =</span> <span class="fu">as_factor</span>(To)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    Dimension,</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Game Name</span><span class="st">`</span> <span class="ot">=</span> game_name,</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Index Name</span><span class="st">`</span> <span class="ot">=</span> index_name,</span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">Loading =</span> Coefficient,</span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">ICC =</span> icc</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(Dimension, <span class="fu">desc</span>(Loading)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">gt</span>(</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">groupname_col =</span> <span class="st">"Dimension"</span>,</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">row_group_as_column =</span> <span class="cn">TRUE</span></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
+<div id="tbl-loadings-adjusted" class="anchored">
 
-<div id="ygetxdvcfa" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ygetxdvcfa table {
+<div id="velydlckai" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#velydlckai table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#ygetxdvcfa thead, #ygetxdvcfa tbody, #ygetxdvcfa tfoot, #ygetxdvcfa tr, #ygetxdvcfa td, #ygetxdvcfa th {
+#velydlckai thead, #velydlckai tbody, #velydlckai tfoot, #velydlckai tr, #velydlckai td, #velydlckai th {
   border-style: none;
 }
 
-#ygetxdvcfa p {
+#velydlckai p {
   margin: 0;
   padding: 0;
 }
 
-#ygetxdvcfa .gt_table {
+#velydlckai .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -2182,12 +2104,12 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_caption {
+#velydlckai .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#ygetxdvcfa .gt_title {
+#velydlckai .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -2199,7 +2121,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#ygetxdvcfa .gt_subtitle {
+#velydlckai .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -2211,7 +2133,7 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#ygetxdvcfa .gt_heading {
+#velydlckai .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -2223,13 +2145,13 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_bottom_border {
+#velydlckai .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_col_headings {
+#velydlckai .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2244,7 +2166,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_col_heading {
+#velydlckai .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2264,7 +2186,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#ygetxdvcfa .gt_column_spanner_outer {
+#velydlckai .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2276,15 +2198,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#ygetxdvcfa .gt_column_spanner_outer:first-child {
+#velydlckai .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#ygetxdvcfa .gt_column_spanner_outer:last-child {
+#velydlckai .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#ygetxdvcfa .gt_column_spanner {
+#velydlckai .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -2296,11 +2218,11 @@ div.csl-indent {
   width: 100%;
 }
 
-#ygetxdvcfa .gt_spanner_row {
+#velydlckai .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#ygetxdvcfa .gt_group_heading {
+#velydlckai .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2326,7 +2248,7 @@ div.csl-indent {
   text-align: left;
 }
 
-#ygetxdvcfa .gt_empty_group_heading {
+#velydlckai .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -2341,15 +2263,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#ygetxdvcfa .gt_from_md > :first-child {
+#velydlckai .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#ygetxdvcfa .gt_from_md > :last-child {
+#velydlckai .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#ygetxdvcfa .gt_row {
+#velydlckai .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2368,7 +2290,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#ygetxdvcfa .gt_stub {
+#velydlckai .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2381,7 +2303,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ygetxdvcfa .gt_stub_row_group {
+#velydlckai .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -2395,15 +2317,15 @@ div.csl-indent {
   vertical-align: top;
 }
 
-#ygetxdvcfa .gt_row_group_first td {
+#velydlckai .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#ygetxdvcfa .gt_row_group_first th {
+#velydlckai .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#ygetxdvcfa .gt_summary_row {
+#velydlckai .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2413,16 +2335,16 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ygetxdvcfa .gt_first_summary_row {
+#velydlckai .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_first_summary_row.thick {
+#velydlckai .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#ygetxdvcfa .gt_last_summary_row {
+#velydlckai .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2432,7 +2354,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_grand_summary_row {
+#velydlckai .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -2442,7 +2364,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ygetxdvcfa .gt_first_grand_summary_row {
+#velydlckai .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2452,7 +2374,7 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_last_grand_summary_row_top {
+#velydlckai .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -2462,11 +2384,11 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_striped {
+#velydlckai .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#ygetxdvcfa .gt_table_body {
+#velydlckai .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -2475,7 +2397,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_footnotes {
+#velydlckai .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2489,7 +2411,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_footnote {
+#velydlckai .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -2498,7 +2420,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ygetxdvcfa .gt_sourcenotes {
+#velydlckai .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -2512,7 +2434,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#ygetxdvcfa .gt_sourcenote {
+#velydlckai .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -2520,67 +2442,67 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#ygetxdvcfa .gt_left {
+#velydlckai .gt_left {
   text-align: left;
 }
 
-#ygetxdvcfa .gt_center {
+#velydlckai .gt_center {
   text-align: center;
 }
 
-#ygetxdvcfa .gt_right {
+#velydlckai .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#ygetxdvcfa .gt_font_normal {
+#velydlckai .gt_font_normal {
   font-weight: normal;
 }
 
-#ygetxdvcfa .gt_font_bold {
+#velydlckai .gt_font_bold {
   font-weight: bold;
 }
 
-#ygetxdvcfa .gt_font_italic {
+#velydlckai .gt_font_italic {
   font-style: italic;
 }
 
-#ygetxdvcfa .gt_super {
+#velydlckai .gt_super {
   font-size: 65%;
 }
 
-#ygetxdvcfa .gt_footnote_marks {
+#velydlckai .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#ygetxdvcfa .gt_asterisk {
+#velydlckai .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#ygetxdvcfa .gt_indent_1 {
+#velydlckai .gt_indent_1 {
   text-indent: 5px;
 }
 
-#ygetxdvcfa .gt_indent_2 {
+#velydlckai .gt_indent_2 {
   text-indent: 10px;
 }
 
-#ygetxdvcfa .gt_indent_3 {
+#velydlckai .gt_indent_3 {
   text-indent: 15px;
 }
 
-#ygetxdvcfa .gt_indent_4 {
+#velydlckai .gt_indent_4 {
   text-indent: 20px;
 }
 
-#ygetxdvcfa .gt_indent_5 {
+#velydlckai .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
-<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"><caption>表&nbsp;3:  <p><code>adjusted</code>方案因子载荷</p> </caption>
   <thead>
     <tr class="gt_col_headings">
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id=""></th>
@@ -2785,6 +2707,185 @@ div.csl-indent {
 </div>
 </div>
 </div>
+</div>
+</section>
+<section id="能力分估计因子得分" class="level1 page-columns page-full">
+<h1>能力分估计（因子得分）</h1>
+<div id="fig-cor-fact-scores-among-selection" class="quarto-figure quarto-figure-center anchored page-columns page-full">
+<figure class="figure page-columns page-full">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_load</span>(scores_factor, <span class="at">store =</span> projects<span class="sc">$</span>confirm_factors<span class="sc">$</span>store)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>factors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"g"</span>, dimensions<span class="sc">$</span>dim_label)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (factor <span class="cf">in</span> factors) {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> scores_factor <span class="sc">|&gt;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(theory <span class="sc">==</span> <span class="st">"bf"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">id_cols =</span> user_id,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">names_from =</span> name,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">values_from =</span> <span class="fu">all_of</span>(factor)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">!</span>user_id) <span class="sc">|&gt;</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    GGally<span class="sc">::</span><span class="fu">ggpairs</span>() <span class="sc">+</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(factor)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(p)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display column-page">
+<div id="fig-cor-fact-scores-among-selection-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-1.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
+<figcaption class="figure-caption">(a)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display column-page">
+<div id="fig-cor-fact-scores-among-selection-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-2.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
+<figcaption class="figure-caption">(b)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display column-page">
+<div id="fig-cor-fact-scores-among-selection-3" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-3.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
+<figcaption class="figure-caption">(c)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display column-page">
+<div id="fig-cor-fact-scores-among-selection-4" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-4.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
+<figcaption class="figure-caption">(d)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display column-page">
+<div id="fig-cor-fact-scores-among-selection-5" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-5.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
+<figcaption class="figure-caption">(e)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display column-page">
+<div id="fig-cor-fact-scores-among-selection-6" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-6.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
+<figcaption class="figure-caption">(f)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display column-page">
+<div id="fig-cor-fact-scores-among-selection-7" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-7.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
+<figcaption class="figure-caption">(g)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display column-page">
+<div id="fig-cor-fact-scores-among-selection-8" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-8.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
+<figcaption class="figure-caption">(h)</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="figure-caption">图&nbsp;6: 不同任务选择方案的因子得分相关</figcaption>
+</figure>
+</div>
+<p><a href="#fig-cor-fact-scores-among-theory">图&nbsp;7</a> 表明：bi-factor模型和另两个模型拟合出来的特殊能力分数相关仅为0.5上下，这是因为bi-factor模型从这些特殊能力中去掉了一般能力的影响，而另两个模型则一定程度上混入了一般能力<span class="citation" data-cites="murray2013">(<a href="#ref-murray2013" role="doc-biblioref">Murray and Johnson 2013</a>)</span>。而bi-factor模型的这一特性正是我们所需要的。</p>
+<div id="fig-cor-fact-scores-among-theory" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>factors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"g"</span>, dimensions<span class="sc">$</span>dim_label)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (factor <span class="cf">in</span> factors) {</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> scores_factor <span class="sc">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"adjusted"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">id_cols =</span> user_id,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">names_from =</span> theory,</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">values_from =</span> <span class="fu">all_of</span>(factor)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">!</span><span class="fu">where</span>(anyNA)) <span class="sc">|&gt;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">!</span>user_id) <span class="sc">|&gt;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    GGally<span class="sc">::</span><span class="fu">ggpairs</span>() <span class="sc">+</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(factor)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(p)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div id="fig-cor-fact-scores-among-theory-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-1.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
+<figcaption class="figure-caption">(a)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-cor-fact-scores-among-theory-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-2.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
+<figcaption class="figure-caption">(b)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-cor-fact-scores-among-theory-3" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-3.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
+<figcaption class="figure-caption">(c)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-cor-fact-scores-among-theory-4" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-4.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
+<figcaption class="figure-caption">(d)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-cor-fact-scores-among-theory-5" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-5.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
+<figcaption class="figure-caption">(e)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-cor-fact-scores-among-theory-6" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-6.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
+<figcaption class="figure-caption">(f)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-cor-fact-scores-among-theory-7" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-7.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
+<figcaption class="figure-caption">(g)</figcaption>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-cor-fact-scores-among-theory-8" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-8.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
+<figcaption class="figure-caption">(h)</figcaption>
+</figure>
+</div>
+</div>
+<figcaption class="figure-caption">图&nbsp;7: 不同理论的因子得分相关</figcaption>
+</figure>
+</div>
 </section>
 <section id="短版本" class="level1">
 <h1>短版本</h1>
@@ -2801,6 +2902,9 @@ div.csl-indent {
 
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-murray2013" class="csl-entry" role="listitem">
+Murray, Aja L., and Wendy Johnson. 2013. <span>“The Limitations of Model Fit in Comparing the Bi-Factor Versus Higher-Order Models of Human Cognitive Ability Structure.”</span> <em>Intelligence</em> 41 (5): 407–22. <a href="https://doi.org/10.1016/j.intell.2013.06.004">https://doi.org/10.1016/j.intell.2013.06.004</a>.
+</div>
 <div id="ref-vuong1989" class="csl-entry" role="listitem">
 Vuong, Quang H. 1989. <span>“Likelihood Ratio Tests for Model Selection and Non-Nested Hypotheses.”</span> <em>Econometrica</em> 57 (2): 307. <a href="https://doi.org/10.2307/1912557">https://doi.org/10.2307/1912557</a>.
 </div>
