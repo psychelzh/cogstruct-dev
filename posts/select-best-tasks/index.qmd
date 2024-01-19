@@ -203,11 +203,22 @@ dimensions |>
 #| fig-cap: 不同方案CFI拟合优度
 
 tar_read(gofs, store = projects$confirm_factors$store) |> 
-  mutate(name = factor(name, hypers_config_dims$name)) |> 
+  mutate(
+    name = factor(name, hypers_config_dims$name),
+    group = case_match(
+      name,
+      c("good_sil", "good_load", "adjusted") ~ "parsimony",
+      c("top_sil_3", "top_sil_4") ~ "top_sil",
+      c("top_load_3", "top_load_4") ~ "top_load",
+      .default = name
+    ),
+    .after = name
+  ) |> 
   ggplot(aes(name, cfi, color = theory)) +
   geom_point() +
   geom_line(aes(group = theory)) +
   ggpubr::theme_pubclean() +
+  facet_grid(cols = vars(group), space = "free", scales = "free_x") +
   scale_x_discrete(name = NULL)
 ```
 
@@ -235,11 +246,11 @@ for (factor in factors) {
 }
 ```
 
-因此，我们确定了所有测评的维度，以及每个维度最佳的3-4个测评任务。
+如下展示了基于`adjusted`方案的因子载荷：
 
 ```{r}
 
-targets::tar_read(fit_fo_good_sil, store = projects$confirm_factors$store) |> 
+targets::tar_read(fit_fo_adjusted, store = projects$confirm_factors$store) |> 
   parameters::model_parameters(component = "loading") |> 
   as_tibble() |> 
   separate_wider_delim(
