@@ -119,11 +119,9 @@ list(
   ),
   tarchetypes::tar_file_read(
     dim_silinfo,
-    path_obj_from_proj("silinfo_best", "explore_factors"),
-    read = qs::qread(!!.x) |>
-      filter(schema == "thin") |>
-      filter(crit == max(crit)) |>
-      pluck("sil", 1)
+    # the best model is schema: thin, n_fact: 7
+    path_obj_from_proj("config_thin_7", "explore_factors"),
+    read = qs::qread(!!.x)
   ),
   tar_target(
     file_dim_labels,
