@@ -58,7 +58,7 @@ hypers_model <- tibble::tibble(
     "bf" # bifactor
   )
 )
-tasks_biased <- c("NsymNCmp", "TOJ", "RP", "DRMA")
+tasks_biased <- c("NsymNCmp", "TOJ", "RP", "DRMA", "CardSortPro")
 
 # used in functional connectivity settings
 hypers_xcpd_config <- tibble::tibble(

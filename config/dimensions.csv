@@ -1,8 +1,8 @@
-﻿cluster,dim_name,dim_label
+cluster,dim_name,dim_label
 1,WM-Reasoning,WM_Rsn
-2,Inhibition,Inh
-3,Verbal STM,VSTM
-4,Spatial STM,SSTM
-5,Attention and Speed,Att_Spd
-6,Episodic Memory,EM
+2,Verbal STM,VSTM
+3,Spatial STM,SSTM
+4,Episodic Memory,EM
+5,Inhibition,Inh
+6,Attention and Speed,Att_Spd
 7,Shifting,Shift
