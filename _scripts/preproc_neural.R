@@ -2,10 +2,19 @@ library(targets)
 tar_option_set(
   packages = c("tidyverse", "bit64"),
   format = "qs",
-  controller = crew.cluster::crew_controller_sge(
-    name = "prep_neural",
-    workers = 40
-  )
+  controller = if (Sys.info()["nodename"] == "shadow") {
+    crew.cluster::crew_controller_sge(
+      name = "fc",
+      workers = 40,
+      seconds_idle = 30
+    )
+  } else {
+    crew::crew_controller_local(
+      name = "fc-local",
+      workers = 16,
+      seconds_idle = 10
+    )
+  }
 )
 tar_source()
 
