@@ -20,11 +20,7 @@ tar_source()
 
 list(
   tarchetypes::tar_map(
-    tidyr::expand_grid(
-      hypers_xcpd_config,
-      hypers_fmri_dataset,
-      hypers_atlas
-    ),
+    hypers_fc,
     tar_target(
       files_ts,
       prepare_files_ts(config, session, task, atlas)

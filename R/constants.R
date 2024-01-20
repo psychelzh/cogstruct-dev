@@ -79,3 +79,8 @@ hypers_fmri_dataset <- tibble::tribble(
 hypers_atlas <- tibble::tibble(
   atlas = sprintf("Schaefer%d17", 1:4)
 )
+hypers_fc <- tidyr::expand_grid(
+  hypers_xcpd_config,
+  hypers_fmri_dataset,
+  hypers_atlas
+)
