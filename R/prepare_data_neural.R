@@ -38,7 +38,7 @@ prepare_files_ts <- function(config, session, task, atlas) {
 prepare_data_confounds <- function(files) {
   files |>
     summarise(
-      data = list(merge_runs(path)),
+      data = list(merge_runs(path, fill = TRUE)),
       .by = subject
     ) |>
     mutate(
@@ -74,21 +74,10 @@ extract_bids_files <- function(path_bids, path_db, ...) {
     list_rbind()
 }
 
-merge_runs <- function(files) {
-  dat <- lapply(files, data.table::fread)
+merge_runs <- function(files, ...) {
+  dat <- lapply(files, data.table::fread, na.strings = "n/a")
   structure(
-    tryCatch(
-      data.table::rbindlist(dat),
-      error = function(e) {
-        msg <- conditionMessage(e)
-        if (grepl("fill=TRUE", msg)) {
-          warning(msg)
-          data.table::rbindlist(dat, fill = TRUE)
-        } else {
-          rlang::abort(parent = e)
-        }
-      }
-    ),
+    data.table::rbindlist(dat, ...),
     rows = map_int(dat, nrow)
   )
 }

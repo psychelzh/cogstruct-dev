@@ -35,6 +35,17 @@ list(
     tar_target(
       confounds,
       prepare_data_confounds(files_confounds)
+    ),
+    tar_target(
+      fd_mean,
+      confounds |>
+        mutate(
+          fd = map_dbl(
+            data,
+            \(x) mean(x$framewise_displacement, na.rm = TRUE)
+          ),
+          .keep = "unused"
+        )
     )
   )
 )
