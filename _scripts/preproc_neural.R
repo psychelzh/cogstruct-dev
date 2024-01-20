@@ -25,10 +25,7 @@ list(
       files_ts,
       prepare_files_ts(config, session, task, atlas)
     ),
-    tar_target(
-      ts_merged,
-      prepare_ts_merged(files_ts)
-    ),
+    tar_target(ts_merged, prepare_ts_merged(files_ts)),
     tar_target(fc_orig_full, prepare_data_fc(ts_merged))
   ),
   tarchetypes::tar_map(
@@ -42,15 +39,22 @@ list(
       prepare_data_confounds(files_confounds)
     ),
     tar_target(
-      fd_mean,
-      confounds |>
-        mutate(
-          fd = map_dbl(
-            data,
-            \(x) mean(x$framewise_displacement, na.rm = TRUE)
-          ),
-          .keep = "unused"
-        )
+      confounds_cpm,
+      prepare_data_confounds_cpm(confounds, users_demography)
     )
+  ),
+  tar_target(
+    file_users,
+    path_obj_from_proj("users", "prepare_source_data"),
+    format = "file"
+  ),
+  tar_target(
+    file_indices,
+    path_obj_from_proj("indices", "prepare_source_data"),
+    format = "file"
+  ),
+  tar_target(
+    users_demography,
+    prepare_users_demography(file_users, file_indices)
   )
 )
