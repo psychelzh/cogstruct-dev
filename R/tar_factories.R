@@ -298,7 +298,9 @@ tar_clean_indices <- function(tar_name_indices = "indices",
             id_cols = .(id_cols),
             names_from = game_index,
             values_from = score_adj
-          )
+          ) |>
+          # remove participants with more than 20% missing data
+          filter(rowMeans(is.na(pick(!all_of(.(id_cols))))) <= 0.2)
       )
     )
   )
