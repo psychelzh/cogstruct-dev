@@ -146,7 +146,7 @@ targets::tar_read(comparison, store = projects$explore_factors$store) |>
   gt::fmt_number(columns = !c(left, right))
 ```
 
-因此，最终采用`thin`里面最佳聚类结果的模型，其具体结果如 @fig-best-model 。基于此结果我们可以比较确定地指出我们的数据可以很好地拟合一个包含七个因子的模型，根据每一个因子里面包含任务之间的关系，我们给出这些因子的名字见。
+基于此结果我们可以比较确定地指出我们的数据可以很好地拟合一个包含七个或者八个因子的模型，同时，对比这两个模型发现的区别在于有没有***视觉搜索类任务***作为单独的成分。而根据简约原则，当两个模型没差异的时候，应选择更简单的模型，此处我们选择了七因子模型作为最终模型。此模型各个因子具体结果如 @fig-best-model 。根据每一个因子里面包含任务之间的关系，我们也给出这些因子的名字。
 
 ```{r}
 #| label: fig-best-model
@@ -155,12 +155,15 @@ targets::tar_read(comparison, store = projects$explore_factors$store) |>
 #| fig-height: 6
 #| fig-cap: 最佳模型各因子所含任务指标
 
+dimensions <- read_csv("config/dimensions.csv", show_col_types = FALSE)
 targets::tar_read(config_thin_7, store = projects$explore_factors$store) |>
+  left_join(dimensions, by = "cluster") |>
   separate_wider_delim(
     game_index, ".",
     names = c("game_name_abbr", "index_name")
   ) |>
   mutate(
+    dim_name = fct_reorder(dim_name, cluster),
     game_name = pull(
       data.iquizoo::game_info,
       game_name,
@@ -170,34 +173,24 @@ targets::tar_read(config_thin_7, store = projects$explore_factors$store) |>
   ggplot(aes(label = game_name, size = sil_width, color = sil_width < 0.5)) +
   ggwordcloud::geom_text_wordcloud() +
   scale_color_grey() +
-  facet_wrap(~latent) +
+  facet_wrap(~dim_name) +
   theme_minimal()
-```
-
-```{r}
-#| label: tbl-dimensions
-#| tbl-cap: 各维度命名
-
-dimensions <- read_csv("config/dimensions.csv", show_col_types = FALSE)
-dimensions |>
-  mutate(factor = str_c("F", cluster), .keep = "unused", .before = 1L) |>
-  gt::gt(rowname_col = "factor")
 ```
 
 # 任务挑选
 
 对于以上的因子聚类结果，采用以下几个方案以寻找优化拟合指标方案：
 
-* `full`：每个因子内部所有任务指标
-* `parsimony`: 简化，基于轮廓系数大于0.5的任务指标
-  * `good_sil`：仅包含轮廓系数大于0.5的任务指标
-  * `good_load`：仅包含因子载荷大于0.4的任务指标（载荷基于`good_sil`，下同）
-  * `adjusted`：从`good_sil`结果中去掉`Inh`维度中几个明显不合理任务指标（含两个时间知觉任务、一个数感任务、一个错误记忆任务）
-* `superparsimony`：超简化，选用每个维度最好3-4个任务指标
-  * `top_sil_3`：仅包含每个维度轮廓系数最大三个任务指标
-  * `top_sil_4`：仅包含每个维度轮廓系数最大四个任务指标
-  * `top_load_3`：仅包含每个维度因子载荷最大三个任务指标
-  * `top_load_4`：仅包含每个维度因子载荷最大四个任务指标
+-   `full`：每个因子内部所有任务指标
+-   `parsimony`: 简化，基于轮廓系数大于0.5的任务指标
+    -   `good_sil`：仅包含轮廓系数大于0.5的任务指标
+    -   `good_load`：仅包含因子载荷大于0.4的任务指标（载荷基于`good_sil`，下同）
+    -   `adjusted`：从`good_sil`结果中去掉`Inh`维度中几个不匹配的任务指标（含时间知觉任务、数感、错误记忆、卡片分类）
+-   `superparsimony`：超简化，选用每个维度最好3-4个任务指标
+    -   `top_sil_3`：仅包含每个维度轮廓系数最大三个任务指标
+    -   `top_sil_4`：仅包含每个维度轮廓系数最大四个任务指标
+    -   `top_load_3`：仅包含每个维度因子载荷最大三个任务指标
+    -   `top_load_4`：仅包含每个维度因子载荷最大四个任务指标
 
 @fig-parsi-models 给出了各种方案不同模型的拟合优度。整体上看，基于载荷或者轮廓系数选出的任务都能得到相对较好的CFI拟合指标（\>0.9）。
 
@@ -321,5 +314,5 @@ for (factor in factors) {
 
 重点比较：
 
-1. 单一较长版本任务
-2. 多个较短版本任务
+1.  单一较长版本任务
+2.  多个较短版本任务
