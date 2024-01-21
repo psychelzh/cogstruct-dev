@@ -180,19 +180,6 @@ targets::tar_read(config_thin_7, store = projects$explore_factors$store) |>
 
 # 任务挑选
 
-对于以上的因子聚类结果，采用以下几个方案以寻找优化拟合指标方案：
-
--   `full`：每个因子内部所有任务指标
--   `parsimony`: 简化，基于轮廓系数大于0.5的任务指标
-    -   `good_sil`：仅包含轮廓系数大于0.5的任务指标
-    -   `good_load`：仅包含因子载荷大于0.4的任务指标（载荷基于`good_sil`，下同）
-    -   `adjusted`：从`good_sil`结果中去掉`Inh`维度中几个不匹配的任务指标（含时间知觉任务、数感、错误记忆、卡片分类）
--   `superparsimony`：超简化，选用每个维度最好3-4个任务指标
-    -   `top_sil_3`：仅包含每个维度轮廓系数最大三个任务指标
-    -   `top_sil_4`：仅包含每个维度轮廓系数最大四个任务指标
-    -   `top_load_3`：仅包含每个维度因子载荷最大三个任务指标
-    -   `top_load_4`：仅包含每个维度因子载荷最大四个任务指标
-
 @fig-parsi-models 给出了各种方案不同模型的拟合优度。整体上看，基于载荷或者轮廓系数选出的任务都能得到相对较好的CFI拟合指标（\>0.9）。
 
 ```{r}
@@ -204,7 +191,8 @@ tar_read(gofs, store = projects$confirm_factors$store) |>
     name = factor(name, hypers_config_dims$name),
     group = case_match(
       name,
-      c("good_sil", "good_load", "adjusted") ~ "parsimony",
+      c("thresh_sil_050", "thresh_sil_070") ~ "thresh_sil",
+      c("thresh_load_030", "thresh_load_040") ~ "thresh_load",
       c("top_sil_3", "top_sil_4") ~ "top_sil",
       c("top_load_3", "top_load_4") ~ "top_load",
       .default = name
@@ -214,18 +202,19 @@ tar_read(gofs, store = projects$confirm_factors$store) |>
   ggplot(aes(name, cfi, color = theory)) +
   geom_point() +
   geom_line(aes(group = theory)) +
-  ggpubr::theme_pubclean() +
   facet_grid(cols = vars(group), space = "free", scales = "free_x") +
-  scale_x_discrete(name = NULL)
+  scale_x_discrete(name = NULL) +
+  ggpubr::theme_pubclean() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-整体上看，包含最完整任务指标的模型为`good_sil`方案。 @tbl-loadings-good_sil 展示了该方案的各任务指标的因子载荷。
+@tbl-loadings-full 展示了每个维度所有任务指标的载荷。
 
 ```{r}
-#| label: tbl-loadings-good_sil
-#| tbl-cap: "`good_sil`方案因子载荷"
+#| label: tbl-loadings-full
+#| tbl-cap: "因子载荷"
 
-targets::tar_read(fit_fo_good_sil, store = projects$confirm_factors$store) |>
+targets::tar_read(fit_fo_full, store = projects$confirm_factors$store) |>
   parameters::model_parameters(component = "loading") |>
   as_tibble() |>
   separate_wider_delim(
@@ -295,7 +284,7 @@ for (factor in factors) {
 factors <- c("g", dimensions$dim_label)
 for (factor in factors) {
   p <- scores_factor |>
-    filter(name == "adjusted") |>
+    filter(name == "full") |>
     pivot_wider(
       id_cols = user_id,
       names_from = theory,
