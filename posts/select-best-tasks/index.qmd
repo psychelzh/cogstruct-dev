@@ -155,6 +155,7 @@ targets::tar_read(comparison, store = projects$explore_factors$store) |>
 #| fig-height: 6
 #| fig-cap: 最佳模型各因子所含任务指标
 
+withr::local_seed(123) # ensure wordcloud reproducible
 dimensions <- read_csv("config/dimensions.csv", show_col_types = FALSE)
 targets::tar_read(config_thin_7, store = projects$explore_factors$store) |>
   left_join(dimensions, by = "cluster") |>
@@ -218,13 +219,13 @@ tar_read(gofs, store = projects$confirm_factors$store) |>
   scale_x_discrete(name = NULL)
 ```
 
-整体上看，包含最完整任务指标的模型为`adjusted`方案。 @tbl-loadings-adjusted 展示了该方案的各任务指标的因子载荷。
+整体上看，包含最完整任务指标的模型为`good_sil`方案。 @tbl-loadings-good_sil 展示了该方案的各任务指标的因子载荷。
 
 ```{r}
-#| label: tbl-loadings-adjusted
-#| tbl-cap: "`adjusted`方案因子载荷"
+#| label: tbl-loadings-good_sil
+#| tbl-cap: "`good_sil`方案因子载荷"
 
-targets::tar_read(fit_fo_adjusted, store = projects$confirm_factors$store) |>
+targets::tar_read(fit_fo_good_sil, store = projects$confirm_factors$store) |>
   parameters::model_parameters(component = "loading") |>
   as_tibble() |>
   separate_wider_delim(
