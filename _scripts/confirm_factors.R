@@ -27,55 +27,49 @@ prepare_config <- function(name, config, loadings = NULL) {
       select(
         dim_label = To,
         game_index = From,
-        load = Coefficient
+        load = Coefficient # match schema name
       ) |>
       left_join(
         config,
         by = c("dim_label", "game_index")
       )
   }
-  switch(name,
-    full = config,
-    good_sil = config |>
-      filter(sil_width > 0.5),
-    adjusted = config |>
+  # match schema name
+  config <- rename(config, sil = sil_width)
+  if (startsWith(name, "thresh")) {
+    parsed <- str_match(
+      name,
+      "thresh_(?<crit>.+)_(?<level>.+)"
+    )
+    level <- as.numeric(parsed[, "level"]) / 100
+    crit <- parsed[, "crit"]
+    config <- config |>
+      filter(.data[[crit]] > level)
+  }
+  if (startsWith(name, "top")) {
+    parsed <- str_match(
+      name,
+      "top_(?<crit>.+)_(?<n>.+)"
+    )
+    n <- as.integer(parsed[, "n"])
+    crit <- parsed[, "crit"]
+    config <- config |>
       filter(
-        sil_width > 0.5,
+        row_number(desc(.data[[crit]])) <= n,
+        .by = cluster
+      )
+  }
+  if (startsWith(name, "adjusted")) {
+    config <- config |>
+      filter(
+        sil > 0.5,
         !str_detect(
           game_index,
           str_c(tasks_biased, collapse = "|")
         )
-      ),
-    good_load = config |>
-      filter(load > 0.4),
-    if (startsWith(name, "top")) {
-      parsed <- str_match(
-        name,
-        "top_(?<crit>.+)_(?<n>.+)"
       )
-      n <- as.integer(parsed[, "n"])
-      config <- config |>
-        filter(
-          !str_detect(
-            game_index,
-            str_c(tasks_biased, collapse = "|")
-          )
-        )
-      switch(parsed[, "crit"],
-        sil = config |>
-          filter(
-            row_number(desc(sil_width)) <= n,
-            .by = cluster
-          ),
-        load = config |>
-          filter(
-            row_number(desc(load)) <= n,
-            .by = cluster
-          )
-      )
-    }
-  ) |>
-    select(dim_label, game_index)
+  }
+  select(config, dim_label, game_index)
 }
 
 targets_cfa <- tarchetypes::tar_map(
@@ -140,7 +134,7 @@ list(
   tar_target(
     loadings,
     parameters::model_parameters(
-      fit_fo_good_sil,
+      fit_fo_full,
       component = "loading"
     )
   ),

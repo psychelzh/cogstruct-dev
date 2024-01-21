@@ -41,13 +41,15 @@ game_data_names <- readr::read_csv(
 hypers_config_dims <- tibble::tibble(
   name = c(
     "full", # all kept items after thinning
-    "good_sil", # items with good silhouette (larger than 0.5)
+    "thresh_sil_050", # items with good silhouette (larger than 0.5)
+    "thresh_sil_070", # items with strong silhouette (larger than 0.7)
     "top_sil_3", # top 3 biggest silhouette items
     "top_sil_4", # top 4 biggest silhouette items
-    "good_load", # items with good loading (larger than 0.4)
+    "thresh_load_030", # items with good loading (larger than 0.3)
+    "thresh_load_040", # items with strong loading (larger than 0.4)
     "top_load_3", # top 3 biggest loading items
     "top_load_4", # top 4 biggest loading items
-    "adjusted" # adjusted by removing biased tasks based on `"good_sil"`
+    "adjusted" # adjusted by removing biased tasks based on `"thresh_sil_05"`
   )
 )
 hypers_model <- tibble::tibble(
