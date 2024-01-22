@@ -87,5 +87,12 @@ list(
         prefix = "test_retest_slices"
       ) |>
       mutate(game_id = bit64::as.integer64(game_id))
+  ),
+  tar_target(
+    test_retest_pool,
+    bind_rows(
+      test_retest_slices,
+      add_column(test_retest, part = 1)
+    )
   )
 )

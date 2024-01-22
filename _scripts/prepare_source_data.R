@@ -106,5 +106,12 @@ list(
   tar_clean_indices(
     tar_name_indices = "indices_slices",
     id_cols = c("user_id", "part")
+  ),
+  tar_target(
+    indices_pool,
+    bind_rows(
+      indices_slices_wider_clean,
+      add_column(indices_wider_clean, part = 1)
+    )
   )
 )
