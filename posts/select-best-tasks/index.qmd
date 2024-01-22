@@ -165,11 +165,7 @@ targets::tar_read(config_thin_7, store = projects$explore_factors$store) |>
   ) |>
   mutate(
     dim_name = fct_reorder(dim_name, cluster),
-    game_name = pull(
-      data.iquizoo::game_info,
-      game_name,
-      game_name_abbr
-    )[game_name_abbr]
+    game_name = data.iquizoo::match_info(game_name_abbr, to = "game_name"),
   ) |>
   ggplot(aes(label = game_name, size = sil_width, color = sil_width < 0.5)) +
   ggwordcloud::geom_text_wordcloud() +

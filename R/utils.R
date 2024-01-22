@@ -15,8 +15,8 @@ replace_as_name_cn <- function(game_index,
                                remove_suffix = FALSE,
                                delim = ".") {
   splitted <- str_split(game_index, fixed(delim), simplify = TRUE)
-  map_names <- pull(data.iquizoo::game_info, game_name, name = game_name_abbr)
-  splitted[, 1] <- map_names[splitted[, 1]]
+  splitted[, 1] <- splitted[, 1] |>
+    data.iquizoo::match_info(from = "game_name_abbr", to = "game_name")
   if (remove_suffix) splitted[, 1] <- str_remove(splitted[, 1], "[a-zA-Z]+$")
   str_c(splitted[, 1], splitted[, 2], sep = delim)
 }
@@ -31,4 +31,11 @@ match_cases <- function(data, subjs) {
     data[matched, ],
     id = attr(data, "id")[matched]
   )
+}
+
+match_info <- function(x, from = "game_name_abbr", to = "game_id") {
+  if (!requireNamespace("bit64", quietly = TRUE)) {
+    stop("`bit64` package must be installed to continue.")
+  }
+  data.iquizoo::game_info[[to]][match(x, data.iquizoo::game_info[[from]])]
 }

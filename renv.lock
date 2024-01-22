@@ -917,14 +917,14 @@
     },
     "data.iquizoo": {
       "Package": "data.iquizoo",
-      "Version": "2023.12.08",
+      "Version": "2024.01.22",
       "Source": "Repository",
       "Repository": "https://psychelzh.r-universe.dev",
       "Requirements": [
         "R",
         "utils"
       ],
-      "Hash": "b07af57bdaa3d72ae83bd01198be4bb6"
+      "Hash": "1896d5f4053883696a1883e8aed6afe0"
     },
     "data.table": {
       "Package": "data.table",
