@@ -20,3 +20,15 @@ replace_as_name_cn <- function(game_index,
   if (remove_suffix) splitted[, 1] <- str_remove(splitted[, 1], "[a-zA-Z]+$")
   str_c(splitted[, 1], splitted[, 2], sep = delim)
 }
+
+match_cases <- function(data, subjs) {
+  data_subjs <- attr(data, "id")
+  matched <- match(subjs, data_subjs)
+  if (anyNA(matched)) {
+    stop("Some subjects are not found in the data.")
+  }
+  structure(
+    data[matched, ],
+    id = attr(data, "id")[matched]
+  )
+}

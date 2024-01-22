@@ -86,3 +86,15 @@ hypers_fc <- tidyr::expand_grid(
   hypers_fmri_dataset,
   hypers_atlas
 )
+
+# used in CPM modeling building
+hypers_cpm <- dplyr::bind_rows(
+  tibble::tibble(
+    thresh_method = "alpha",
+    thresh_level = c(0.05, 0.01, 0.005, 0.001)
+  ),
+  tibble::tibble(
+    thresh_method = "sparsity",
+    thresh_level = c(0.01, 0.025, 0.05, 0.1)
+  )
+)
