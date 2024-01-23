@@ -96,7 +96,7 @@ list(
         !is_outlier_iqr & is_motivated,
         game_id == game_id_rapm
       ) |>
-      select(user_id, index_name, score = score_adj)
+      select(user_id, score = score_adj)
   ),
   targets_indices_partitioned,
   tarchetypes::tar_combine(
@@ -105,13 +105,14 @@ list(
   ),
   tar_clean_indices(
     tar_name_indices = "indices_slices",
-    id_cols = c("user_id", "part")
+    id_cols = c("user_id", "part"),
+    use_wider_format = FALSE
   ),
   tar_target(
     indices_pool,
     bind_rows(
-      indices_slices_wider_clean,
-      add_column(indices_wider_clean, part = 1)
+      indices_slices_of_interest,
+      add_column(indices_of_interest, part = 1)
     )
   )
 )

@@ -249,7 +249,8 @@ tar_partition_rawdata <- function(contents, config_format) {
 }
 
 tar_clean_indices <- function(tar_name_indices = "indices",
-                              id_cols = "user_id") {
+                              id_cols = "user_id",
+                              use_wider_format = TRUE) {
   tar_name_indices_clean <- paste0(tar_name_indices, "_clean")
   tar_name_indices_of_interest <- paste0(tar_name_indices, "_of_interest")
   tar_name_indices_wider_clean <- paste0(tar_name_indices, "_wider_clean")
@@ -257,52 +258,31 @@ tar_clean_indices <- function(tar_name_indices = "indices",
     tar_target_raw(
       tar_name_indices_clean,
       bquote(
-        .(as.symbol(tar_name_indices)) |>
-          semi_join(users_completed, by = "user_id") |>
-          # https://github.com/r-lib/vctrs/issues/1787
-          arrange(desc(game_time)) |>
-          distinct(pick(.(id_cols)), game_id, index_name, .keep_all = TRUE) |>
-          left_join(
-            res_motivated,
-            by = setdiff(colnames(res_motivated), "is_motivated")
-          )
+        clean_indices(
+          .(as.symbol(tar_name_indices)),
+          users_completed,
+          res_motivated,
+          .(id_cols)
+        )
       )
     ),
     tar_target_raw(
       tar_name_indices_of_interest,
       bquote(
-        .(as.symbol(tar_name_indices_clean)) |>
-          inner_join(
-            data.iquizoo::game_indices,
-            join_by(game_id, index_name == index_main)
-          ) |>
-          mutate(score_adj = if_else(index_reverse, -score, score)) |>
-          mutate(
-            is_outlier_iqr = score %in% boxplot.stats(score)$out,
-            .by = c(game_id, index_name)
-          )
+        data.iquizoo::screen_indices(.(as.symbol(tar_name_indices_clean)))
       )
     ),
-    tar_target_raw(
-      tar_name_indices_wider_clean,
-      bquote(
-        .(as.symbol(tar_name_indices_of_interest)) |>
-          filter(
-            !is_outlier_iqr & is_motivated,
-            # RAPM test is not included in the factor analysis
-            game_id != game_id_rapm
-          ) |>
-          left_join(data.iquizoo::game_info, by = "game_id") |>
-          mutate(game_index = str_c(game_name_abbr, index_name, sep = ".")) |>
-          pivot_wider(
-            id_cols = .(id_cols),
-            names_from = game_index,
-            values_from = score_adj
-          ) |>
-          # remove participants with more than 20% missing data
-          filter(rowMeans(is.na(pick(!all_of(.(id_cols))))) <= 0.2)
+    if (use_wider_format) {
+      tar_target_raw(
+        tar_name_indices_wider_clean,
+        bquote(
+          reshape_indices(
+            .(as.symbol(tar_name_indices_of_interest)),
+            .(id_cols)
+          )
+        )
       )
-    )
+    }
   )
 }
 
