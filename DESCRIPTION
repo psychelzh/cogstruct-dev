@@ -47,6 +47,7 @@ Imports:
     tarchetypes,
     tarflow.iquizoo,
     targets,
+    tidytable,
     zutils
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
