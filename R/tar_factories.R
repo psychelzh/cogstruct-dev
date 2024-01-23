@@ -204,7 +204,7 @@ tar_check_motivated <- function(config) {
         dplyr::mutate(
           tar_name_motivated_list = lapply(
             tar_name_motivated,
-            \(x) as.call(c(as.symbol("list"), x))
+            \(x) as.call(c(quote(list), x))
           ),
           tar_name_motivated_final = rlang::syms(
             sprintf("res_motivated_%s", game_id)
