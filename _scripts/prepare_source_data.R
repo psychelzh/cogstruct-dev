@@ -95,7 +95,21 @@ list(
       semi_join(users_completed, by = "user_id") |>
       prepare_users_demography(indices)
   ),
-  tar_clean_indices(),
+  tar_target(
+    indices_cogstruct_long,
+    censor_indices(
+      indices,
+      # RAMP is not included in structure exploration
+      game_id != game_id_rapm,
+      users_completed,
+      res_motivated
+    )
+  ),
+  tar_target(users_clean, screen_users(indices_cogstruct_long)),
+  tar_target(
+    indices_cogstruct,
+    reshape_indices(indices_cogstruct_long, users_clean)
+  ),
   tar_target(
     indices_rapm,
     indices |>
@@ -112,16 +126,21 @@ list(
     indices_slices,
     targets_indices_partitioned
   ),
-  tar_clean_indices(
-    tar_name_indices = "indices_slices",
-    id_cols = c("user_id", "part"),
-    use_wider_format = FALSE
+  tar_target(
+    indices_slices_cogstruct_long,
+    censor_indices(
+      indices_slices,
+      game_id != game_id_rapm,
+      users_completed,
+      res_motivated,
+      id_cols_extra = part
+    )
   ),
   tar_target(
-    indices_pool,
+    indices_cogstruct_pool,
     bind_rows(
-      indices_slices_clean,
-      add_column(indices_clean, part = 1)
+      indices_slices_cogstruct_long,
+      add_column(indices_cogstruct_long, part = 1)
     )
   )
 )

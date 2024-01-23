@@ -248,39 +248,6 @@ tar_partition_rawdata <- function(contents, config_format) {
     purrr::imap(tar_partition_rawdata_)
 }
 
-tar_clean_indices <- function(tar_name_indices = "indices",
-                              id_cols = "user_id",
-                              use_wider_format = TRUE) {
-  tar_name_indices_clean <- paste0(tar_name_indices, "_clean")
-  tar_name_indices_wider <- paste0(tar_name_indices, "_wider")
-  list(
-    tar_target_raw(
-      tar_name_indices_clean,
-      bquote(
-        censor_indices(
-          .(as.symbol(tar_name_indices)),
-          # RAPM test is not included in the structure exploration
-          game_id != game_id_rapm,
-          users_completed,
-          res_motivated,
-          .(id_cols)
-        )
-      )
-    ),
-    if (use_wider_format) {
-      tar_target_raw(
-        tar_name_indices_wider,
-        bquote(
-          reshape_indices(
-            .(as.symbol(tar_name_indices_clean)),
-            .(id_cols)
-          )
-        )
-      )
-    }
-  )
-}
-
 # item analysis related ----
 tar_test_retest <- function(contents, ...,
                             by = NULL,

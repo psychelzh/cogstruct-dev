@@ -1,6 +1,5 @@
-censor_indices <- function(indices, subset,
-                           users_completed, res_motivated,
-                           id_cols = "user_id") {
+censor_indices <- function(indices, subset, users_completed, res_motivated,
+                           id_cols_extra = NULL) {
   indices |>
     filter({{ subset }}) |>
     # remove users who did not complete the experiment
@@ -20,25 +19,30 @@ censor_indices <- function(indices, subset,
     ) |>
     mutate(
       is_outlier_iqr = score %in% boxplot.stats(score)$out,
-      .by = c(game_id, index_name)
-    ) |>
-    # add percent missing data
-    mutate(
-      count_invalid = sum(is_outlier_iqr | !is_motivated),
-      .by = user_id
-    ) |>
-    mutate(percent_invalid = count_invalid / n_distinct(game_index))
+      .by = c(game_id, index_name, {{ id_cols_extra }})
+    )
 }
 
-reshape_indices <- function(indices, id_cols) {
+reshape_indices <- function(indices, users_clean) {
   indices |>
     # fulfill screening before reshaping
-    filter(!is_outlier_iqr & is_motivated & percent_invalid <= 0.2) |>
+    semi_join(filter(users_clean, keep), by = "user_id") |>
+    filter(!is_outlier_iqr & is_motivated) |>
     pivot_wider(
-      id_cols = all_of(id_cols),
+      id_cols = user_id,
       names_from = game_index,
       values_from = score_adj
     )
+}
+
+screen_users <- function(indices) {
+  n_indices <- n_distinct(indices$game_index)
+  indices |>
+    summarise(
+      prop_invalid = sum(is_outlier_iqr | !is_motivated) / n_indices,
+      .by = user_id
+    ) |>
+    mutate(keep = prop_invalid <= 0.15)
 }
 
 prepare_users_demography <- function(users, indices) {
