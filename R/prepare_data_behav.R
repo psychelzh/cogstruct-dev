@@ -22,16 +22,6 @@ reshape_indices <- function(indices, id_cols, col_score = "score_adj") {
       # RAPM test is not included in the factor analysis
       game_id != game_id_rapm
     ) |>
-    mutate(
-      game_index = str_c(
-        data.iquizoo::match_info(
-          game_id,
-          from = "game_id",
-          to = "game_name_abbr"
-        ),
-        index_name, sep = "."
-      )
-    ) |>
     pivot_wider(
       id_cols = all_of(id_cols),
       names_from = game_index,

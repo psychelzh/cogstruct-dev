@@ -269,7 +269,16 @@ tar_clean_indices <- function(tar_name_indices = "indices",
     tar_target_raw(
       tar_name_indices_of_interest,
       bquote(
-        data.iquizoo::screen_indices(.(as.symbol(tar_name_indices_clean)))
+        data.iquizoo::screen_indices(.(as.symbol(tar_name_indices_clean))) |>
+          mutate(
+            game_name_abbr = data.iquizoo::match_info(
+              game_id,
+              from = "game_id",
+              to = "game_name_abbr"
+            ),
+            .before = index_name
+          ) |>
+          unite("game_index", game_name_abbr, index_name, sep = ".")
       )
     ),
     if (use_wider_format) {
