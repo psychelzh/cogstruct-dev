@@ -88,6 +88,12 @@ list(
       summarise(n = sum(project_progress) / 100, .by = user_id) |>
       filter(n >= 4)
   ),
+  tar_target(
+    users_demography,
+    users |>
+      semi_join(users_completed, by = "user_id") |>
+      prepare_users_demography(indices)
+  ),
   tar_clean_indices(),
   tar_target(
     indices_rapm,

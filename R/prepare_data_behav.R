@@ -30,3 +30,20 @@ reshape_indices <- function(indices, id_cols, col_score = "score_adj") {
     # remove participants with more than 20% missing data
     filter(rowMeans(is.na(pick(!all_of(id_cols)))) <= 0.2)
 }
+
+prepare_users_demography <- function(users, indices) {
+  users |>
+    left_join(
+      indices |>
+        summarise(
+          game_date = median(game_time),
+          .by = user_id
+        ),
+      by = "user_id"
+    ) |>
+    mutate(
+      user_age = (user_dob %--% game_date) / years(),
+      .keep = "unused",
+      .after = user_sex
+    )
+}

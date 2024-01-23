@@ -41,22 +41,13 @@ list(
     tar_target(fd_mean, prepare_fd_mean(confounds)),
     tar_target(
       confounds_cpm,
-      compose_confounds_cpm(fd_mean, users_demography)
+      compose_confounds_cpm(users_demography, fd_mean)
     )
   ),
-  tar_target(
-    file_users,
-    path_obj_from_proj("users", "prepare_source_data"),
-    format = "file"
-  ),
-  tar_target(
-    file_indices,
-    path_obj_from_proj("indices", "prepare_source_data"),
-    format = "file"
-  ),
-  tar_target(
+  tarchetypes::tar_file_read(
     users_demography,
-    prepare_users_demography(file_users, file_indices)
+    path_obj_from_proj("users_demography", "prepare_source_data"),
+    read = qs::qread(!!.x)
   ),
   tarchetypes::tar_eval(
     tar_target(

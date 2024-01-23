@@ -35,8 +35,10 @@ prepare_files_ts <- function(config, session, task, atlas) {
 }
 
 # confounds data preparation ----
-compose_confounds_cpm <- function(fd_mean, users_demography) {
-  data <- left_join(fd_mean, users_demography, by = join_by(user_id))
+compose_confounds_cpm <- function(users_demography, fd_mean) {
+  data <- users_demography |>
+    select(user_id, user_sex, user_age) |>
+    left_join(fd_mean, by = join_by(user_id))
   structure(
     as.matrix(select(data, !c(user_id, subject))),
     id = pull(data, user_id, name = subject)
@@ -52,20 +54,6 @@ prepare_fd_mean <- function(confounds) {
       ),
       .keep = "unused"
     )
-}
-
-prepare_users_demography <- function(file_users, file_indices) {
-  qs::qread(file_users) |>
-    inner_join(
-      qs::qread(file_indices) |>
-        summarise(
-          game_date = median(game_time),
-          .by = user_id
-        ),
-      by = "user_id"
-    ) |>
-    mutate(user_age = (user_dob %--% game_date) / years()) |>
-    select(user_id, user_sex, user_age)
 }
 
 prepare_data_confounds <- function(files) {
