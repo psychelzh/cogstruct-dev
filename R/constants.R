@@ -1,8 +1,10 @@
 # special column names
 col_raw_parsed <- "raw_parsed"
 
-# games require special correction
 game_id_rapm <- bit64::as.integer64(265520726213317) # 瑞文高级推理
+# data for this game should be removed because another version was used
+game_id_rata <- bit64::as.integer64(240052750955077) # 远距离联想A (obsolete)
+# games require special correction
 game_id_cor <- list(
   # 注意警觉, 注意指向: 1.0.0 records device for all right arrow resp as "mouse"
   dev_err = bit64::as.integer64(c(380173315257221, 380174783693701)),

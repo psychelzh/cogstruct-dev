@@ -11,7 +11,8 @@ tar_option_set(
 
 contents <- tarflow.iquizoo::fetch_iquizoo_mem()(
   readr::read_file("sql/contents_camp.sql")
-)
+) |>
+  dplyr::filter(game_id != game_id_rata)
 
 targets_preproc <- tarchetypes::tar_map(
   values = contents |>
