@@ -1,9 +1,10 @@
-censor_indices <- function(indices, users_completed, res_motivated, id_cols) {
+censor_indices <- function(indices, subset,
+                           users_completed, res_motivated,
+                           id_cols = "user_id") {
   indices |>
+    filter({{ subset }}) |>
     # remove users who did not complete the experiment
     semi_join(users_completed, by = "user_id") |>
-    # RAPM test is not included in the structure exploration
-    filter(game_id != game_id_rapm) |>
     data.iquizoo::screen_indices() |>
     mutate(
       game_index = game_id |>

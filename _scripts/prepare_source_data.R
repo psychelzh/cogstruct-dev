@@ -97,11 +97,13 @@ list(
   tar_clean_indices(),
   tar_target(
     indices_rapm,
-    indices_of_interest |>
-      filter(
-        !is_outlier_iqr & is_motivated,
-        game_id == game_id_rapm
+    indices |>
+      censor_indices(
+        game_id == game_id_rapm,
+        users_completed,
+        res_motivated
       ) |>
+      filter(!is_outlier_iqr & is_motivated) |>
       select(user_id, score = score_adj)
   ),
   targets_indices_partitioned,

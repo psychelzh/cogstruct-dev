@@ -259,6 +259,8 @@ tar_clean_indices <- function(tar_name_indices = "indices",
       bquote(
         censor_indices(
           .(as.symbol(tar_name_indices)),
+          # RAPM test is not included in the structure exploration
+          game_id != game_id_rapm,
           users_completed,
           res_motivated,
           .(id_cols)
