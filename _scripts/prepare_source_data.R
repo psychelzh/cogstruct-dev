@@ -1,7 +1,7 @@
 library(targets)
 tar_source()
 tar_option_set(
-  package = c("tidyverse", "bit64", "lavaan", "preproc.iquizoo"),
+  packages = c("tidyverse", "bit64", "lavaan", "preproc.iquizoo"),
   format = "qs",
   imports = "preproc.iquizoo",
   memory = "transient",

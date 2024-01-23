@@ -1,7 +1,7 @@
 library(targets)
 tar_source()
 tar_option_set(
-  package = c("tidyverse", "bit64", "lavaan"),
+  packages = c("tidyverse", "bit64", "lavaan"),
   format = "qs",
   memory = "transient",
   garbage_collection = TRUE,
