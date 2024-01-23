@@ -38,7 +38,13 @@ prepare_files_ts <- function(config, session, task, atlas) {
 compose_confounds_cpm <- function(users_demography, fd_mean) {
   data <- users_demography |>
     select(user_id, user_sex, user_age) |>
-    left_join(fd_mean, by = join_by(user_id))
+    inner_join(fd_mean, by = join_by(user_id)) |>
+    mutate(scanner = str_remove_all(subject, "\\d")) |>
+    fastDummies::dummy_columns(
+      "scanner",
+      remove_first_dummy = TRUE,
+      remove_selected_columns = TRUE
+    )
   structure(
     as.matrix(select(data, !c(user_id, subject))),
     id = pull(data, user_id, name = subject)
