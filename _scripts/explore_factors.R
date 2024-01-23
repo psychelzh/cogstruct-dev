@@ -50,7 +50,7 @@ targets_fact_resamples <- tarchetypes::tar_map(
   tarchetypes::tar_rep(
     fact_attribution,
     resample_fact_attribution(
-      select(indices_wider_clean, !user_id),
+      select(indices_cogstruct, !user_id),
       n_fact,
       exclude
     ),
@@ -83,7 +83,7 @@ targets_fact_resamples <- tarchetypes::tar_map(
   ),
   tar_fit_cfa(
     config,
-    indices_wider_clean,
+    indices_cogstruct,
     "fo",
     col_latent = latent,
     col_manifest = game_index,
@@ -116,8 +116,8 @@ model_comparison <- tarchetypes::tar_map(
 
 list(
   tarchetypes::tar_file_read(
-    indices_wider_clean,
-    path_obj_from_proj("indices_wider_clean", "prepare_source_data"),
+    indices_cogstruct,
+    path_obj_from_proj("indices_cogstruct", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
   tarchetypes::tar_map(
@@ -125,7 +125,7 @@ list(
     names = !exclude,
     tar_target(
       n_factors_test,
-      indices_wider_clean |>
+      indices_cogstruct |>
         select(!user_id, !contains(exclude)) |>
         parameters::n_factors(rotation = "oblimin")
     )

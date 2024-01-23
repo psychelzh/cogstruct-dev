@@ -97,7 +97,7 @@ targets_cfa <- tarchetypes::tar_map(
     hypers_model,
     tar_fit_cfa(
       config,
-      indices_wider_clean,
+      indices_cogstruct,
       col_manifest = game_index,
       col_latent = dim_label,
       theory = theory
@@ -107,8 +107,8 @@ targets_cfa <- tarchetypes::tar_map(
 
 list(
   tarchetypes::tar_file_read(
-    indices_wider_clean,
-    path_obj_from_proj("indices_wider_clean", "prepare_source_data"),
+    indices_cogstruct,
+    path_obj_from_proj("indices_cogstruct", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
   tarchetypes::tar_file_read(
