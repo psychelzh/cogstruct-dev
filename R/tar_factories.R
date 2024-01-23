@@ -252,13 +252,12 @@ tar_clean_indices <- function(tar_name_indices = "indices",
                               id_cols = "user_id",
                               use_wider_format = TRUE) {
   tar_name_indices_clean <- paste0(tar_name_indices, "_clean")
-  tar_name_indices_of_interest <- paste0(tar_name_indices, "_of_interest")
-  tar_name_indices_wider_clean <- paste0(tar_name_indices, "_wider_clean")
+  tar_name_indices_wider <- paste0(tar_name_indices, "_wider")
   list(
     tar_target_raw(
       tar_name_indices_clean,
       bquote(
-        clean_indices(
+        censor_indices(
           .(as.symbol(tar_name_indices)),
           users_completed,
           res_motivated,
@@ -266,29 +265,12 @@ tar_clean_indices <- function(tar_name_indices = "indices",
         )
       )
     ),
-    tar_target_raw(
-      tar_name_indices_of_interest,
-      bquote(
-        data.iquizoo::screen_indices(.(as.symbol(tar_name_indices_clean))) |>
-          mutate(
-            game_index = str_c(
-              data.iquizoo::match_info(
-                game_id,
-                from = "game_id",
-                to = "game_name_abbr"
-              ),
-              index_name,
-              sep = "."
-            )
-          )
-      )
-    ),
     if (use_wider_format) {
       tar_target_raw(
-        tar_name_indices_wider_clean,
+        tar_name_indices_wider,
         bquote(
           reshape_indices(
-            .(as.symbol(tar_name_indices_of_interest)),
+            .(as.symbol(tar_name_indices_clean)),
             .(id_cols)
           )
         )

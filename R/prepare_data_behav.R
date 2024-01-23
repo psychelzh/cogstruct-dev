@@ -1,10 +1,18 @@
-clean_indices <- function(indices, users_completed, res_motivated, id_cols) {
+censor_indices <- function(indices, users_completed, res_motivated, id_cols) {
   indices |>
+    # remove users who did not complete the experiment
     semi_join(users_completed, by = "user_id") |>
-    # keep the last result for each user and game index
-    # https://github.com/r-lib/vctrs/issues/1787
-    arrange(desc(game_time)) |>
-    distinct(pick(all_of(id_cols)), game_id, index_name, .keep_all = TRUE) |>
+    # RAPM test is not included in the structure exploration
+    filter(game_id != game_id_rapm) |>
+    data.iquizoo::screen_indices() |>
+    mutate(
+      game_index = game_id |>
+        data.iquizoo::match_info(
+          from = "game_id",
+          to = "game_name_abbr"
+        ) |>
+        str_c(index_name, sep = ".")
+    ) |>
     left_join(
       res_motivated,
       by = setdiff(colnames(res_motivated), "is_motivated")
@@ -12,23 +20,24 @@ clean_indices <- function(indices, users_completed, res_motivated, id_cols) {
     mutate(
       is_outlier_iqr = score %in% boxplot.stats(score)$out,
       .by = c(game_id, index_name)
-    )
+    ) |>
+    # add percent missing data
+    mutate(
+      count_invalid = sum(is_outlier_iqr | !is_motivated),
+      .by = user_id
+    ) |>
+    mutate(percent_invalid = count_invalid / n_distinct(game_index))
 }
 
-reshape_indices <- function(indices, id_cols, col_score = "score_adj") {
+reshape_indices <- function(indices, id_cols) {
   indices |>
-    filter(
-      !is_outlier_iqr & is_motivated,
-      # RAPM test is not included in the factor analysis
-      game_id != game_id_rapm
-    ) |>
+    # fulfill screening before reshaping
+    filter(!is_outlier_iqr & is_motivated & percent_invalid <= 0.2) |>
     pivot_wider(
       id_cols = all_of(id_cols),
       names_from = game_index,
-      values_from = {{ col_score }}
-    ) |>
-    # remove participants with more than 20% missing data
-    filter(rowMeans(is.na(pick(!all_of(id_cols)))) <= 0.2)
+      values_from = score_adj
+    )
 }
 
 prepare_users_demography <- function(users, indices) {

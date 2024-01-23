@@ -117,8 +117,8 @@ list(
   tar_target(
     indices_pool,
     bind_rows(
-      indices_slices_of_interest,
-      add_column(indices_of_interest, part = 1)
+      indices_slices_clean,
+      add_column(indices_clean, part = 1)
     )
   )
 )
