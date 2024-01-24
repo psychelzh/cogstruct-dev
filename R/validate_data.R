@@ -1,6 +1,7 @@
 #' Validate Raw Data
 #'
-#' @description
+#' This function will ensure only valid data is used for further analysis.
+#'
 #' The validation process contains the following steps:
 #'
 #' 1. Keep data with the largest major version only: e.g., remove 2.9.0 and

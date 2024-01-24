@@ -15,6 +15,11 @@ validate_data(data_parsed, require_keyboard, list_names)
 }
 \value{
 Validated data of class \code{\link[=data.frame]{data.frame()}}.
+}
+\description{
+This function will ensure only valid data is used for further analysis.
+}
+\details{
 The validation process contains the following steps:
 \enumerate{
 \item Keep data with the largest major version only: e.g., remove 2.9.0 and
@@ -23,8 +28,6 @@ keep 3.0.0 or 3.1.0.
 responses.
 \item Check if data names were valid, for some error data contains data from
 another game caused by the technical issues.
+\item Keep the latest data for each user.
 }
-}
-\description{
-Validate Raw Data
 }
