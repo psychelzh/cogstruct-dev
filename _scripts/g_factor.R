@@ -4,13 +4,13 @@ tar_option_set(
   format = "qs",
   controller = if (Sys.info()["nodename"] == "shadow") {
     crew.cluster::crew_controller_sge(
-      name = "efa",
+      name = "gf",
       workers = 40,
       seconds_idle = 30
     )
   } else {
     crew::crew_controller_local(
-      name = "efa-local",
+      name = "gf-local",
       workers = 16,
       seconds_idle = 10
     )
