@@ -33,9 +33,10 @@ match_cases <- function(data, subjs) {
   )
 }
 
-match_info <- function(x, from = "game_name_abbr", to = "game_id") {
-  if (!requireNamespace("bit64", quietly = TRUE)) {
-    stop("`bit64` package must be installed to continue.")
+match_dim_label <- function(latent) {
+  dimensions <- read_csv("config/dimensions.csv", show_col_types = FALSE)
+  if (latent == "g") {
+    return("g")
   }
-  data.iquizoo::game_info[[to]][match(x, data.iquizoo::game_info[[from]])]
+  dimensions$dim_label[as.integer(str_extract(latent, "\\d+"))]
 }
