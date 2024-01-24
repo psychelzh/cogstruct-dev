@@ -42,7 +42,7 @@ screen_users <- function(indices) {
       prop_invalid = sum(is_outlier_iqr | !is_motivated) / n_indices,
       .by = user_id
     ) |>
-    mutate(keep = prop_invalid <= 0.15)
+    mutate(keep = prop_invalid <= thresh_prop_invalid)
 }
 
 prepare_users_demography <- function(users, indices) {

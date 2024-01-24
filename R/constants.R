@@ -19,9 +19,10 @@ game_id_cor <- list(
   )
 )
 
-# used in users' motivation check
+# used in data quality check
 thresh_prop_miss <- 0.25
 thresh_prop_guess <- 0.25
+thresh_prop_invalid <- 0.2 # consistent with my CC paper
 
 # used in raw data validation
 games_keyboard <- readr::read_lines("config/games_keyboard")
