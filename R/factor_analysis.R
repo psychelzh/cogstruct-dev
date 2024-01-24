@@ -149,3 +149,52 @@ extract_latent_scores <- function(fit, data = NULL, id_cols_data = NULL) {
   }
   scores
 }
+
+# Special for g factor estimation ----
+prepare_config_vars <- function(num_vars_total, n_steps) {
+  num_vars_base <- num_vars_total %/% n_steps
+  tibble(
+    num_vars = seq(num_vars_base, num_vars_total, num_vars_base),
+    use_pairs = num_vars * 2 <= num_vars_total
+  )
+}
+
+resample_g_scores <- function(data, num_vars, use_pairs) {
+  tibble(
+    num_vars = num_vars,
+    use_pairs = use_pairs,
+    vars = resample_vars(names(data)[-1], num_vars, use_pairs),
+    g = map(vars, extract_g, data = data)
+  ) |>
+    mutate(id_pairs = seq_len(n()), .after = use_pairs)
+}
+
+resample_vars <- function(vars, n, use_pairs = FALSE) {
+  if (use_pairs) {
+    n <- n * 2
+  }
+  if (n > length(vars)) {
+    stop("Not enough variables.")
+  }
+  vars_shuffled <- sample(vars, n)
+  if (use_pairs) {
+    idx_base <- seq_len(n / 2)
+    list(
+      vars_shuffled[idx_base],
+      vars_shuffled[idx_base + n / 2]
+    )
+  } else {
+    list(vars_shuffled)
+  }
+}
+
+extract_g <- function(data, vars) {
+  efa(
+    data,
+    ov.names = vars,
+    std.ov = TRUE,
+    std.lv = TRUE,
+    missing = "ml"
+  ) |>
+    extract_latent_scores(data)
+}

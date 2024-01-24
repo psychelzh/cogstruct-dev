@@ -1,127 +1,62 @@
 library(targets)
 tar_option_set(
-  packages = c("tidyverse", "lavaan", "collapse"),
-  memory = "transient",
-  garbage_collection = TRUE,
-  storage = "worker",
-  retrieval = "worker",
-  error = "null",
+  packages = c("tidyverse", "lavaan"),
   format = "qs",
-  controller = crew::crew_controller_local(workers = 10)
+  controller = if (Sys.info()["nodename"] == "shadow") {
+    crew.cluster::crew_controller_sge(
+      name = "efa",
+      workers = 40,
+      seconds_idle = 30
+    )
+  } else {
+    crew::crew_controller_local(
+      name = "efa-local",
+      workers = 16,
+      seconds_idle = 10
+    )
+  }
 )
 tar_source()
-g_invariance <- tar_sample_tasks(77, data)
-g_invariance_random <- tar_sample_tasks(
-  77, data_random,
-  name_suffix = "_random"
-)
+
+# number of different sample sizes
+n_steps <- 20
+# used in batched runs
+n_batches <- 10
+n_reps <- 10
+
 list(
   tarchetypes::tar_file_read(
-    indices_of_interest,
-    "_targets/2023/objects/indices_of_interest",
+    indices_cogstruct,
+    path_obj_from_proj("indices_cogstruct", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
-  tar_target(
-    indices_clean_outliers_iqr,
-    indices_of_interest |>
-      filter(!is_outlier_iqr)
+  tarchetypes::tar_file_read(
+    indices_rapm,
+    path_obj_from_proj("indices_rapm", "prepare_source_data"),
+    read = qs::qread(!!.x)
   ),
-  # RAPM is the gold standard and should no be included in data sampling
-  tar_target(name_rapm, "RAPM"),
+  tar_target(vars_pool, names(indices_cogstruct)[-1]), # exclude "user_id"
+  tar_target(batches, seq_len(n_batches)),
   tar_target(
-    data_rapm,
-    indices_clean_outliers_iqr |>
-      filter(game_name_abbr == name_rapm) |>
-      pivot_wider(
-        id_cols = user_id,
-        names_from = game_name_abbr,
-        # `score_adj` ensure positive relation between ability and score
-        values_from = score_adj
-      )
+    config_vars,
+    prepare_config_vars(length(vars_pool), n_steps)
   ),
   tar_target(
-    data,
-    indices_clean_outliers_iqr |>
-      filter(game_name_abbr != name_rapm) |>
-      pivot_wider(
-        id_cols = user_id,
-        names_from = game_index,
-        # `score_adj` ensure positive relation between ability and score
-        values_from = score_adj
-      )
-  ),
-  g_invariance,
-  tarchetypes::tar_combine(
     scores_g,
-    g_invariance$scores_g,
-    command = bind_rows(!!!.x, .id = ".id") |>
-      zutils::separate_wider_dsv(
-        ".id", c("num_vars", "id_pairs"),
-        prefix = "scores_g"
-      )
-  ),
-  tar_target(
-    scores_g_cor_pairwise,
-    scores_g |>
-      pivot_wider(
-        id_cols = c(num_vars, idx_rsmp),
-        names_from = id_pairs,
-        values_from = scores
-      ) |>
-      mutate(
-        r = map2_dbl(
-          `1`, `2`,
-          ~ cor(.x$g, .y$g, use = "pairwise")
-        ),
-        .keep = "unused"
-      )
-  ),
-  tar_target(
-    scores_g_cor_rapm,
-    scores_g |>
-      mutate(
-        map(
-          scores,
-          ~ . |>
-            inner_join(data_rapm, by = "user_id") |>
-            summarise(r_rapm = cor(g, RAPM, use = "pairwise"))
-        ) |>
-          list_rbind(),
-        .keep = "unused"
-      )
-  ),
-  # random data checking
-  tar_target(
-    data_random,
-    rnorm(500 * 77) |>
-      matrix(nrow = 500) |>
-      as.data.frame() |>
-      mutate(user_id = seq_len(n()), .before = 1L)
-  ),
-  g_invariance_random,
-  tarchetypes::tar_combine(
-    scores_g_random,
-    g_invariance_random$scores_g_random,
-    command = bind_rows(!!!.x, .id = ".id") |>
-      zutils::separate_wider_dsv(
-        ".id", c("num_vars", "id_pairs"),
-        prefix = "scores_g_random"
-      )
-  ),
-  tar_target(
-    scores_g_cor_pairwise_random,
-    scores_g_random |>
-      pivot_wider(
-        id_cols = c(num_vars, idx_rsmp),
-        names_from = id_pairs,
-        values_from = scores
-      ) |>
-      mutate(
-        r = map2_dbl(
-          `1`, `2`,
-          ~ cor(.x$g, .y$g, use = "pairwise")
-        ),
-        .keep = "unused"
-      )
+    replicate(
+      n_reps,
+      with(
+        config_vars,
+        resample_g_scores(
+          indices_cogstruct,
+          num_vars,
+          use_pairs
+        )
+      ),
+      simplify = FALSE
+    ) |>
+      list_rbind(names_to = "rep") |>
+      mutate(batch = batches, .before = 1L),
+    pattern = cross(batches, config_vars)
   )
 )
