@@ -12,7 +12,7 @@ slice_data_trials(data, num_parts)
 
 slice_data_duration(data, num_parts)
 
-slice_data_items(data)
+slice_data_items(data, num_parts)
 
 slice_data_blocks(data)
 }

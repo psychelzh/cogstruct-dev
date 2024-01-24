@@ -1,6 +1,3 @@
-# special column names
-col_raw_parsed <- "raw_parsed"
-
 game_id_rapm <- bit64::as.integer64(265520726213317) # 瑞文高级推理
 # data for this game should be removed because another version was used
 game_id_rata <- bit64::as.integer64(240052750955077) # 远距离联想A (obsolete)
