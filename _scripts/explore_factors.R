@@ -73,7 +73,7 @@ targets_fact_resamples <- tarchetypes::tar_map(
     config,
     as_tibble(
       cluster_result$pamobject$silinfo$widths,
-      rownames = "game_index"
+      rownames = "observed"
     ) |>
       mutate(
         latent = sprintf("F%d", cluster),
@@ -85,8 +85,6 @@ targets_fact_resamples <- tarchetypes::tar_map(
     config,
     indices_cogstruct,
     "fo",
-    col_latent = latent,
-    col_manifest = game_index,
     col_fix = fix,
     add_scores = FALSE
   )

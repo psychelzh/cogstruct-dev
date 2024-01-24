@@ -25,13 +25,13 @@ prepare_config <- function(name, config, loadings = NULL) {
     config <- loadings |>
       as_tibble() |>
       select(
-        dim_label = To,
-        game_index = From,
+        observed = From,
+        latent = To,
         load = Coefficient # match schema name
       ) |>
       left_join(
         config,
-        by = c("dim_label", "game_index")
+        by = join_by(observed, latent)
       )
   }
   # match schema name
@@ -64,12 +64,12 @@ prepare_config <- function(name, config, loadings = NULL) {
       filter(
         sil > 0.5,
         !str_detect(
-          game_index,
+          observed,
           str_c(tasks_biased, collapse = "|")
         )
       )
   }
-  select(config, dim_label, game_index)
+  select(config, observed, latent)
 }
 
 targets_cfa <- tarchetypes::tar_map(
@@ -98,8 +98,6 @@ targets_cfa <- tarchetypes::tar_map(
     tar_fit_cfa(
       config,
       indices_cogstruct,
-      col_manifest = game_index,
-      col_latent = dim_label,
       theory = theory
     )
   )
@@ -112,23 +110,10 @@ list(
     read = qs::qread(!!.x)
   ),
   tarchetypes::tar_file_read(
-    dim_silinfo,
+    config_dims,
     # the best model is schema: thin, n_fact: 7
     path_obj_from_proj("config_thin_7", "explore_factors"),
     read = qs::qread(!!.x)
-  ),
-  tar_target(
-    file_dim_labels,
-    "config/dimensions.csv",
-    format = "file"
-  ),
-  tar_target(
-    config_dims,
-    left_join(
-      dim_silinfo,
-      read_csv(file_dim_labels, show_col_types = FALSE),
-      by = "cluster"
-    )
   ),
   targets_cfa,
   tar_target(

@@ -62,14 +62,14 @@ output_factcons <- function(schema, mat, ...,
 #'   specifies the model. The `latent` column specifies the latent variables and
 #'   the `manifest` column specifies the manifest variables. The `latent` column
 #'   can be omitted if the model is one-factor model.
-#' @param data A data frame with the manifest variables.
+#' @param data A data frame with the observed variables.
 #' @param theory The theory of the model. Should be one of `"fo"` (first-order),
 #'   `"ho"` (higher-order), `"bf"` (bi-factor) and `"of"` (one-factor). See
 #'   Brunner et al. (2012) for detailed discussion of the models and the naming
 #'   conventions used here.
 #' @param ... Other arguments passed to `cfa()`.
-#' @param col_manifest,col_latent The name of the column in `config` that
-#'   specifies the manifest and latent variables.
+#' @param col_ov,col_lv The name of the column in `config` that
+#'   specifies the observed and latent variables.
 #' @param col_fix The name of the column in `config` that specifies the fixed
 #'   parameters. Only used for loadings. If `NULL`, all parameters are free.
 #' @return The same as [lavaan::cfa()].
@@ -80,16 +80,16 @@ output_factcons <- function(schema, mat, ...,
 #' https://doi.org/10.1111/j.1467-6494.2011.00749.x
 #' @export
 fit_cfa <- function(config, data, theory, ...,
-                    col_manifest = manifest,
-                    col_latent = latent,
+                    col_ov = observed,
+                    col_lv = latent,
                     col_fix = NULL) {
   rlang::check_dots_used()
   theory <- match.arg(theory, c("fo", "ho", "bf", "of"))
   model <- prepare_model(
     config,
     theory,
-    {{ col_manifest }},
-    {{ col_latent }},
+    {{ col_ov }},
+    {{ col_lv }},
     {{ col_fix }}
   )
   zutils::cautiously(cfa)(
@@ -103,13 +103,13 @@ fit_cfa <- function(config, data, theory, ...,
   )
 }
 
-prepare_model <- function(config, theory, col_manifest, col_latent,
+prepare_model <- function(config, theory, col_ov, col_lv,
                           col_fix = NULL) {
   no_fix <- rlang::quo_is_null(rlang::enquo(col_fix))
   config <- config |>
     rename(
-      manifest = {{ col_manifest }},
-      latent = {{ col_latent }}
+      observed = {{ col_ov }},
+      latent = {{ col_lv }}
     )
   if (!no_fix) {
     config <- config |>
@@ -121,7 +121,7 @@ prepare_model <- function(config, theory, col_manifest, col_latent,
       config,
       switch(theory,
         of = ,
-        bf = "g =~ {manifest}",
+        bf = "g =~ {observed}",
         ho = "g =~ {latent}"
       )
     ) |>
@@ -132,9 +132,9 @@ prepare_model <- function(config, theory, col_manifest, col_latent,
     str_glue_data(
       config,
       if (no_fix) {
-        "{latent} =~ {manifest}"
+        "{latent} =~ {observed}"
       } else {
-        "{latent} =~ {fix} * {manifest}"
+        "{latent} =~ {fix} * {observed}"
       }
     )
   }

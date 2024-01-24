@@ -291,8 +291,9 @@ tar_test_retest <- function(contents, ...,
 }
 
 # modeling related ----
-tar_fit_cfa <- function(config, data, theory, col_latent, col_manifest,
-                        col_fix = NULL, add_gof = TRUE, add_scores = TRUE) {
+tar_fit_cfa <- function(config, data, theory,
+                        col_ov = observed, col_lv = latent, col_fix = NULL,
+                        add_gof = TRUE, add_scores = TRUE) {
   list(
     tar_target_raw(
       "fit",
@@ -301,8 +302,8 @@ tar_fit_cfa <- function(config, data, theory, col_latent, col_manifest,
           config,
           data,
           theory,
-          col_manifest = col_manifest,
-          col_latent = col_latent,
+          col_ov = col_ov,
+          col_lv = col_lv,
           col_fix = col_fix
         )
       )
