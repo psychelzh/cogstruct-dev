@@ -1,1 +1,1 @@
-Sitemap: https://github.com/psychelzh/cogstruct-dev/sitemap.xml
+Sitemap: https://psychelzh.github.io/cogstruct-dev/sitemap.xml

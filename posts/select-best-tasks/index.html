@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.549">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -24,7 +24,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -60,6 +60,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -102,7 +103,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -111,6 +118,7 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -122,6 +130,11 @@ div.csl-indent {
 }
 </script>
 <script async="" src="https://hypothes.is/embed.js"></script>
+<script>
+  window.document.addEventListener("DOMContentLoaded", function (_event) {
+    document.body.classList.add('hypothesis-enabled');
+  });
+</script>
 
 
 </head>
@@ -130,9 +143,9 @@ div.csl-indent {
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Cognitive Structure</span>
     </a>
@@ -144,19 +157,19 @@ div.csl-indent {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/psychelzh/cogstruct-dev" rel="" target=""><i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/psychelzh/cogstruct-dev"> <i class="bi bi-github" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools">
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
   <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -205,17 +218,19 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Modified</div>
     <div class="quarto-title-meta-contents">
-      <p class="date-modified">January 23, 2024</p>
+      <p class="date-modified">January 25, 2024</p>
     </div>
   </div>
     
   </div>
   
 
+
 </header>
 
+
 <div class="cell">
-<details>
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">load_all</span>()</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># the identifiers are large integers</span></span>
@@ -227,9 +242,9 @@ div.csl-indent {
 </div>
 <section id="最佳因子模型" class="level1 page-columns page-full">
 <h1>最佳因子模型</h1>
-<p>我们采用了基于自助法（bootstrap）的因子聚类方法探索任务的因子归类。不过在开始之前，一些特别类似范式的任务仅保留了一个，如 <a href="#tbl-schema-thin">表&nbsp;1</a>，其中<code>thin</code>一列为<code>TRUE</code>的是被去掉的任务。以下用<code>all</code>表示使用全部任务，用<code>thin</code>表示去掉类似范式任务的结果。</p>
+<p>我们采用了基于自助法（bootstrap）的因子聚类方法探索任务的因子归类。不过在开始之前，一些特别类似范式的任务仅保留了一个，如 <a href="#tbl-schema-thin" class="quarto-xref">表&nbsp;1</a>，其中<code>thin</code>一列为<code>TRUE</code>的是被去掉的任务。以下用<code>all</code>表示使用全部任务，用<code>thin</code>表示去掉类似范式任务的结果。</p>
 <div class="cell">
-<details>
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">read_tsv</span>(<span class="st">"config/games_thin.tsv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(same_id)) <span class="sc">|&gt;</span></span>
@@ -245,26 +260,30 @@ div.csl-indent {
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"gray"</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div id="tbl-schema-thin" class="cell quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-schema-thin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;1: 相似任务保留情况
+</figcaption>
+<div aria-describedby="tbl-schema-thin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="tbl-schema-thin" class="anchored">
-
-<div id="xgxwpwkgsr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#xgxwpwkgsr table {
+<div id="fsqcalneck" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#fsqcalneck table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#xgxwpwkgsr thead, #xgxwpwkgsr tbody, #xgxwpwkgsr tfoot, #xgxwpwkgsr tr, #xgxwpwkgsr td, #xgxwpwkgsr th {
+#fsqcalneck thead, #fsqcalneck tbody, #fsqcalneck tfoot, #fsqcalneck tr, #fsqcalneck td, #fsqcalneck th {
   border-style: none;
 }
 
-#xgxwpwkgsr p {
+#fsqcalneck p {
   margin: 0;
   padding: 0;
 }
 
-#xgxwpwkgsr .gt_table {
+#fsqcalneck .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -290,12 +309,12 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_caption {
+#fsqcalneck .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#xgxwpwkgsr .gt_title {
+#fsqcalneck .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -307,7 +326,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#xgxwpwkgsr .gt_subtitle {
+#fsqcalneck .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -319,7 +338,7 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#xgxwpwkgsr .gt_heading {
+#fsqcalneck .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -331,13 +350,13 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_bottom_border {
+#fsqcalneck .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_col_headings {
+#fsqcalneck .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -352,7 +371,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_col_heading {
+#fsqcalneck .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -372,7 +391,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#xgxwpwkgsr .gt_column_spanner_outer {
+#fsqcalneck .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -384,15 +403,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#xgxwpwkgsr .gt_column_spanner_outer:first-child {
+#fsqcalneck .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#xgxwpwkgsr .gt_column_spanner_outer:last-child {
+#fsqcalneck .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#xgxwpwkgsr .gt_column_spanner {
+#fsqcalneck .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -404,11 +423,11 @@ div.csl-indent {
   width: 100%;
 }
 
-#xgxwpwkgsr .gt_spanner_row {
+#fsqcalneck .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#xgxwpwkgsr .gt_group_heading {
+#fsqcalneck .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -434,7 +453,7 @@ div.csl-indent {
   text-align: left;
 }
 
-#xgxwpwkgsr .gt_empty_group_heading {
+#fsqcalneck .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -449,15 +468,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#xgxwpwkgsr .gt_from_md > :first-child {
+#fsqcalneck .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#xgxwpwkgsr .gt_from_md > :last-child {
+#fsqcalneck .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#xgxwpwkgsr .gt_row {
+#fsqcalneck .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -476,7 +495,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#xgxwpwkgsr .gt_stub {
+#fsqcalneck .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -489,7 +508,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#xgxwpwkgsr .gt_stub_row_group {
+#fsqcalneck .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -503,15 +522,15 @@ div.csl-indent {
   vertical-align: top;
 }
 
-#xgxwpwkgsr .gt_row_group_first td {
+#fsqcalneck .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#xgxwpwkgsr .gt_row_group_first th {
+#fsqcalneck .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#xgxwpwkgsr .gt_summary_row {
+#fsqcalneck .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -521,16 +540,16 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#xgxwpwkgsr .gt_first_summary_row {
+#fsqcalneck .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_first_summary_row.thick {
+#fsqcalneck .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#xgxwpwkgsr .gt_last_summary_row {
+#fsqcalneck .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -540,7 +559,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_grand_summary_row {
+#fsqcalneck .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -550,7 +569,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#xgxwpwkgsr .gt_first_grand_summary_row {
+#fsqcalneck .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -560,7 +579,7 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_last_grand_summary_row_top {
+#fsqcalneck .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -570,11 +589,11 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_striped {
+#fsqcalneck .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#xgxwpwkgsr .gt_table_body {
+#fsqcalneck .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -583,7 +602,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_footnotes {
+#fsqcalneck .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -597,7 +616,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_footnote {
+#fsqcalneck .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -606,7 +625,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#xgxwpwkgsr .gt_sourcenotes {
+#fsqcalneck .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -620,7 +639,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#xgxwpwkgsr .gt_sourcenote {
+#fsqcalneck .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -628,137 +647,180 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#xgxwpwkgsr .gt_left {
+#fsqcalneck .gt_left {
   text-align: left;
 }
 
-#xgxwpwkgsr .gt_center {
+#fsqcalneck .gt_center {
   text-align: center;
 }
 
-#xgxwpwkgsr .gt_right {
+#fsqcalneck .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#xgxwpwkgsr .gt_font_normal {
+#fsqcalneck .gt_font_normal {
   font-weight: normal;
 }
 
-#xgxwpwkgsr .gt_font_bold {
+#fsqcalneck .gt_font_bold {
   font-weight: bold;
 }
 
-#xgxwpwkgsr .gt_font_italic {
+#fsqcalneck .gt_font_italic {
   font-style: italic;
 }
 
-#xgxwpwkgsr .gt_super {
+#fsqcalneck .gt_super {
   font-size: 65%;
 }
 
-#xgxwpwkgsr .gt_footnote_marks {
+#fsqcalneck .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#xgxwpwkgsr .gt_asterisk {
+#fsqcalneck .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#xgxwpwkgsr .gt_indent_1 {
+#fsqcalneck .gt_indent_1 {
   text-indent: 5px;
 }
 
-#xgxwpwkgsr .gt_indent_2 {
+#fsqcalneck .gt_indent_2 {
   text-indent: 10px;
 }
 
-#xgxwpwkgsr .gt_indent_3 {
+#fsqcalneck .gt_indent_3 {
   text-indent: 15px;
 }
 
-#xgxwpwkgsr .gt_indent_4 {
+#fsqcalneck .gt_indent_4 {
   text-indent: 20px;
 }
 
-#xgxwpwkgsr .gt_indent_5 {
+#fsqcalneck .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
-<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"><caption>表&nbsp;1:  <p>相似任务保留情况</p> </caption>
-  <thead>
-    <tr class="gt_col_headings">
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id=""></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="名称">名称</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="是否去掉">是否去掉</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr class="gt_row_group_first"><td headers="1 stub_1_1 stub_1" rowspan="5" class="gt_row gt_left gt_stub_row_group">1</td>
-<td headers="1 stub_1_1 名称" class="gt_row gt_left">格子卡片</td>
-<td headers="1 stub_1_1 是否去掉" class="gt_row gt_left">否</td></tr>
-    <tr><td headers="1 名称_2 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">美术卡片</td>
-<td headers="1 名称_2 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr><td headers="1 名称_3 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">魔术师终极</td>
-<td headers="1 名称_3 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr><td headers="1 名称_4 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">数字卡片PRO</td>
-<td headers="1 名称_4 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr><td headers="1 名称_5 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">文字卡片</td>
-<td headers="1 名称_5 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr class="gt_row_group_first"><td headers="2 stub_1_6 stub_1" rowspan="2" class="gt_row gt_left gt_stub_row_group">2</td>
-<td headers="2 stub_1_6 名称" class="gt_row gt_left">方向检测</td>
-<td headers="2 stub_1_6 是否去掉" class="gt_row gt_left">否</td></tr>
-    <tr><td headers="2 名称_7 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">色彩检测</td>
-<td headers="2 名称_7 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr class="gt_row_group_first"><td headers="3 stub_1_8 stub_1" rowspan="3" class="gt_row gt_left gt_stub_row_group">3</td>
-<td headers="3 stub_1_8 名称" class="gt_row gt_left">注意指向</td>
-<td headers="3 stub_1_8 是否去掉" class="gt_row gt_left">否</td></tr>
-    <tr><td headers="3 名称_9 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">太空飞船PRO</td>
-<td headers="3 名称_9 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr><td headers="3 名称_10 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">注意警觉</td>
-<td headers="3 名称_10 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr class="gt_row_group_first"><td headers="4 stub_1_11 stub_1" rowspan="2" class="gt_row gt_left gt_stub_row_group">4</td>
-<td headers="4 stub_1_11 名称" class="gt_row gt_left">速算师（中级）</td>
-<td headers="4 stub_1_11 是否去掉" class="gt_row gt_left">否</td></tr>
-    <tr><td headers="4 名称_12 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">专注大师_中级</td>
-<td headers="4 名称_12 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr class="gt_row_group_first"><td headers="5 stub_1_13 stub_1" rowspan="2" class="gt_row gt_left gt_stub_row_group">5</td>
-<td headers="5 stub_1_13 名称" class="gt_row gt_left">宇宙黑洞A</td>
-<td headers="5 stub_1_13 是否去掉" class="gt_row gt_left">否</td></tr>
-    <tr><td headers="5 名称_14 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">城市导航</td>
-<td headers="5 名称_14 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr class="gt_row_group_first"><td headers="6 stub_1_15 stub_1" rowspan="2" class="gt_row gt_left gt_stub_row_group">6</td>
-<td headers="6 stub_1_15 名称" class="gt_row gt_left">图形折叠</td>
-<td headers="6 stub_1_15 是否去掉" class="gt_row gt_left">否</td></tr>
-    <tr><td headers="6 名称_16 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">平面展开</td>
-<td headers="6 名称_16 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr class="gt_row_group_first"><td headers="7 stub_1_17 stub_1" rowspan="2" class="gt_row gt_left gt_stub_row_group">7</td>
-<td headers="7 stub_1_17 名称" class="gt_row gt_left">三维心理旋转测试A</td>
-<td headers="7 stub_1_17 是否去掉" class="gt_row gt_left">否</td></tr>
-    <tr><td headers="7 名称_18 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">物体旋转</td>
-<td headers="7 名称_18 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr class="gt_row_group_first"><td headers="8 stub_1_19 stub_1" rowspan="3" class="gt_row gt_left gt_stub_row_group">8</td>
-<td headers="8 stub_1_19 名称" class="gt_row gt_left">语义判断</td>
-<td headers="8 stub_1_19 是否去掉" class="gt_row gt_left">否</td></tr>
-    <tr><td headers="8 名称_20 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">词语判断</td>
-<td headers="8 名称_20 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-    <tr><td headers="8 名称_21 名称" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">声调判断</td>
-<td headers="8 名称_21 是否去掉" class="gt_row gt_left" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold;">是</td></tr>
-  </tbody>
-  
-  
+
+<table class="gt_table do-not-create-environment cell table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="名称" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">名称</th>
+<th id="是否去掉" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">是否去掉</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd gt_row_group_first">
+<td rowspan="5" class="gt_row gt_left gt_stub_row_group" headers="1 stub_1_1 stub_1">1</td>
+<td class="gt_row gt_left" headers="1 stub_1_1 名称">格子卡片</td>
+<td class="gt_row gt_left" headers="1 stub_1_1 是否去掉">否</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="1 名称_2 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">美术卡片</td>
+<td class="gt_row gt_left" headers="1 名称_2 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="1 名称_3 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">魔术师终极</td>
+<td class="gt_row gt_left" headers="1 名称_3 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="1 名称_4 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">数字卡片PRO</td>
+<td class="gt_row gt_left" headers="1 名称_4 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="1 名称_5 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">文字卡片</td>
+<td class="gt_row gt_left" headers="1 名称_5 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td rowspan="2" class="gt_row gt_left gt_stub_row_group" headers="2 stub_1_6 stub_1">2</td>
+<td class="gt_row gt_left" headers="2 stub_1_6 名称">方向检测</td>
+<td class="gt_row gt_left" headers="2 stub_1_6 是否去掉">否</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="2 名称_7 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">色彩检测</td>
+<td class="gt_row gt_left" headers="2 名称_7 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td rowspan="3" class="gt_row gt_left gt_stub_row_group" headers="3 stub_1_8 stub_1">3</td>
+<td class="gt_row gt_left" headers="3 stub_1_8 名称">注意指向</td>
+<td class="gt_row gt_left" headers="3 stub_1_8 是否去掉">否</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="3 名称_9 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">太空飞船PRO</td>
+<td class="gt_row gt_left" headers="3 名称_9 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="3 名称_10 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">注意警觉</td>
+<td class="gt_row gt_left" headers="3 名称_10 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="odd gt_row_group_first">
+<td rowspan="2" class="gt_row gt_left gt_stub_row_group" headers="4 stub_1_11 stub_1">4</td>
+<td class="gt_row gt_left" headers="4 stub_1_11 名称">速算师（中级）</td>
+<td class="gt_row gt_left" headers="4 stub_1_11 是否去掉">否</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="4 名称_12 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">专注大师_中级</td>
+<td class="gt_row gt_left" headers="4 名称_12 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="odd gt_row_group_first">
+<td rowspan="2" class="gt_row gt_left gt_stub_row_group" headers="5 stub_1_13 stub_1">5</td>
+<td class="gt_row gt_left" headers="5 stub_1_13 名称">宇宙黑洞A</td>
+<td class="gt_row gt_left" headers="5 stub_1_13 是否去掉">否</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="5 名称_14 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">城市导航</td>
+<td class="gt_row gt_left" headers="5 名称_14 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="odd gt_row_group_first">
+<td rowspan="2" class="gt_row gt_left gt_stub_row_group" headers="6 stub_1_15 stub_1">6</td>
+<td class="gt_row gt_left" headers="6 stub_1_15 名称">图形折叠</td>
+<td class="gt_row gt_left" headers="6 stub_1_15 是否去掉">否</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="6 名称_16 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">平面展开</td>
+<td class="gt_row gt_left" headers="6 名称_16 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="odd gt_row_group_first">
+<td rowspan="2" class="gt_row gt_left gt_stub_row_group" headers="7 stub_1_17 stub_1">7</td>
+<td class="gt_row gt_left" headers="7 stub_1_17 名称">三维心理旋转测试A</td>
+<td class="gt_row gt_left" headers="7 stub_1_17 是否去掉">否</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="7 名称_18 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">物体旋转</td>
+<td class="gt_row gt_left" headers="7 名称_18 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="odd gt_row_group_first">
+<td rowspan="3" class="gt_row gt_left gt_stub_row_group" headers="8 stub_1_19 stub_1">8</td>
+<td class="gt_row gt_left" headers="8 stub_1_19 名称">语义判断</td>
+<td class="gt_row gt_left" headers="8 stub_1_19 是否去掉">否</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="8 名称_20 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">词语判断</td>
+<td class="gt_row gt_left" headers="8 名称_20 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="8 名称_21 名称" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">声调判断</td>
+<td class="gt_row gt_left" headers="8 名称_21 是否去掉" style="background-color: rgba(190,190,190,0.8); color: #000000; font-weight: bold">是</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
+</div>
+</figure>
 </div>
 </div>
 <p>由于因子个数对于我们的研究很重要，我们尝试了很多传统办法，结果很不稳定：</p>
-<div id="fig-nfactors" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<details>
+<div class="cell">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  n_factors_test_all,</span>
@@ -772,28 +834,43 @@ div.csl-indent {
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div id="fig-nfactors" class="cell quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-nfactors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="fig-nfactors-1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-nfactors-1.png" class="img-fluid figure-img" data-ref-parent="fig-nfactors" width="672"></p>
-<figcaption class="figure-caption">(a) 包含全部任务</figcaption>
+<div id="fig-nfactors-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-nfactors-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-nfactors-1.png" class="img-fluid figure-img" data-ref-parent="fig-nfactors" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-nfactors-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) 包含全部任务
+</figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
-<div id="fig-nfactors-2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-nfactors-2.png" class="img-fluid figure-img" data-ref-parent="fig-nfactors" width="672"></p>
-<figcaption class="figure-caption">(b) 去除同范式任务</figcaption>
+<div id="fig-nfactors-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-nfactors-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-nfactors-2.png" class="img-fluid figure-img" data-ref-parent="fig-nfactors" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-nfactors-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) 去除同范式任务
+</figcaption>
 </figure>
 </div>
 </div>
-<figcaption class="figure-caption">图&nbsp;1: 传统方法的因子个数结果</figcaption>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nfactors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;1: 传统方法的因子个数结果
+</figcaption>
 </figure>
 </div>
-<p>采用基于自助法的因子聚类方法，结果如 <a href="#fig-compare-cluster-factors">图&nbsp;2</a>。</p>
+</div>
+<p>采用基于自助法的因子聚类方法，结果如 <a href="#fig-compare-cluster-factors" class="quarto-xref">图&nbsp;2</a>。</p>
 <div class="cell">
-<details>
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(cluster_stats, <span class="at">store =</span> projects<span class="sc">$</span>explore_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(n_fact, k, <span class="at">fill =</span> crit)) <span class="sc">+</span></span>
@@ -811,18 +888,21 @@ div.csl-indent {
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-compare-cluster-factors" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-compare-cluster-factors-1.png" class="img-fluid figure-img" width="960"></p>
-<figcaption class="figure-caption">图&nbsp;2: Evaluation of clustering results</figcaption>
+<div id="fig-compare-cluster-factors" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-compare-cluster-factors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-compare-cluster-factors-1.png" class="img-fluid figure-img" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-compare-cluster-factors-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;2: Evaluation of clustering results
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
 <p>我们将每种因子个数条件的最佳聚类结果进一步用验证性因子分析确定哪个模型最佳。注意，我们可以得到每个任务指标的轮廓系数（silhouette score），并且可以用此系数来确定该任务归入对应类别的可信度。一般而言，轮廓系数大于0.5<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>时才可靠。同时，为了保证因子分析结果的可比性，我们将轮廓系数不达标的的任务指标的载荷固定为0后做验证性因素分析。注意这样也会导致一些聚类结果中部分因子的所有成分指标载荷为0，从而导致模型不能成功拟合，也说明这种聚类结果的不可靠。</p>
-<div id="fig-fitmeas-models" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<details>
+<div class="cell">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_load</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">c</span>(gofs, cluster_stats),</span>
@@ -848,44 +928,67 @@ div.csl-indent {
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(p)</span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div id="fig-fitmeas-models" class="cell quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-fitmeas-models-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="fig-fitmeas-models-1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-fitmeas-models-1.png" class="img-fluid figure-img" data-ref-parent="fig-fitmeas-models" width="672"></p>
-<figcaption class="figure-caption">(a) Mean Silhouette Score</figcaption>
-</figure>
+<div id="fig-fitmeas-models-1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-fitmeas-models-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-fitmeas-models-1.png" class="img-fluid figure-img" data-ref-parent="fig-fitmeas-models" width="672">
 </div>
-</div>
-<div class="cell-output-display">
-<div id="fig-fitmeas-models-2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-fitmeas-models-2.png" class="img-fluid figure-img" data-ref-parent="fig-fitmeas-models" width="672"></p>
-<figcaption class="figure-caption">(b) BIC</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-fitmeas-models-3" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-fitmeas-models-3.png" class="img-fluid figure-img" data-ref-parent="fig-fitmeas-models" width="672"></p>
-<figcaption class="figure-caption">(c) CFI</figcaption>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-fitmeas-models-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Mean Silhouette Score
+</figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
-<div id="fig-fitmeas-models-4" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-fitmeas-models-4.png" class="img-fluid figure-img" data-ref-parent="fig-fitmeas-models" width="672"></p>
-<figcaption class="figure-caption">(d) RMSEA</figcaption>
+<div id="fig-fitmeas-models-2" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-fitmeas-models-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-fitmeas-models-2.png" class="img-fluid figure-img" data-ref-parent="fig-fitmeas-models" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-fitmeas-models-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) BIC
+</figcaption>
 </figure>
 </div>
 </div>
-<figcaption class="figure-caption">图&nbsp;3: 所有聚类模型拟合情况（仅展示成功拟合的模型）</figcaption>
+<div class="cell-output-display">
+<div id="fig-fitmeas-models-3" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-fitmeas-models-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-fitmeas-models-3.png" class="img-fluid figure-img" data-ref-parent="fig-fitmeas-models" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-fitmeas-models-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c) CFI
+</figcaption>
 </figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-fitmeas-models-4" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-fitmeas-models-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-fitmeas-models-4.png" class="img-fluid figure-img" data-ref-parent="fig-fitmeas-models" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-fitmeas-models-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(d) RMSEA
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-fitmeas-models-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;3: 所有聚类模型拟合情况（仅展示成功拟合的模型）
+</figcaption>
+</figure>
+</div>
 </div>
 <p>进一步，根据Vuong <span class="citation" data-cites="vuong1989">(<a href="#ref-vuong1989" role="doc-biblioref">1989</a>)</span>提出的比较非嵌套模型的检验，我们也对拟合成功的模型做了两两比较。</p>
 <div class="cell">
-<details>
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(comparison, <span class="at">store =</span> projects<span class="sc">$</span>explore_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(left, right, <span class="fu">everything</span>()) <span class="sc">|&gt;</span></span>
@@ -894,24 +997,23 @@ div.csl-indent {
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  gt<span class="sc">::</span><span class="fu">fmt_number</span>(<span class="at">columns =</span> <span class="sc">!</span><span class="fu">c</span>(left, right))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-
-<div id="mvzwifxryn" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#mvzwifxryn table {
+<div id="axlbgpzzxb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#axlbgpzzxb table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#mvzwifxryn thead, #mvzwifxryn tbody, #mvzwifxryn tfoot, #mvzwifxryn tr, #mvzwifxryn td, #mvzwifxryn th {
+#axlbgpzzxb thead, #axlbgpzzxb tbody, #axlbgpzzxb tfoot, #axlbgpzzxb tr, #axlbgpzzxb td, #axlbgpzzxb th {
   border-style: none;
 }
 
-#mvzwifxryn p {
+#axlbgpzzxb p {
   margin: 0;
   padding: 0;
 }
 
-#mvzwifxryn .gt_table {
+#axlbgpzzxb .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -937,12 +1039,12 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_caption {
+#axlbgpzzxb .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#mvzwifxryn .gt_title {
+#axlbgpzzxb .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -954,7 +1056,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#mvzwifxryn .gt_subtitle {
+#axlbgpzzxb .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -966,7 +1068,7 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#mvzwifxryn .gt_heading {
+#axlbgpzzxb .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -978,13 +1080,13 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_bottom_border {
+#axlbgpzzxb .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_col_headings {
+#axlbgpzzxb .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -999,7 +1101,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_col_heading {
+#axlbgpzzxb .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1019,7 +1121,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#mvzwifxryn .gt_column_spanner_outer {
+#axlbgpzzxb .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1031,15 +1133,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#mvzwifxryn .gt_column_spanner_outer:first-child {
+#axlbgpzzxb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#mvzwifxryn .gt_column_spanner_outer:last-child {
+#axlbgpzzxb .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#mvzwifxryn .gt_column_spanner {
+#axlbgpzzxb .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1051,11 +1153,11 @@ div.csl-indent {
   width: 100%;
 }
 
-#mvzwifxryn .gt_spanner_row {
+#axlbgpzzxb .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#mvzwifxryn .gt_group_heading {
+#axlbgpzzxb .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1081,7 +1183,7 @@ div.csl-indent {
   text-align: left;
 }
 
-#mvzwifxryn .gt_empty_group_heading {
+#axlbgpzzxb .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1096,15 +1198,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#mvzwifxryn .gt_from_md > :first-child {
+#axlbgpzzxb .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#mvzwifxryn .gt_from_md > :last-child {
+#axlbgpzzxb .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#mvzwifxryn .gt_row {
+#axlbgpzzxb .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1123,7 +1225,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#mvzwifxryn .gt_stub {
+#axlbgpzzxb .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1136,7 +1238,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#mvzwifxryn .gt_stub_row_group {
+#axlbgpzzxb .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1150,15 +1252,15 @@ div.csl-indent {
   vertical-align: top;
 }
 
-#mvzwifxryn .gt_row_group_first td {
+#axlbgpzzxb .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#mvzwifxryn .gt_row_group_first th {
+#axlbgpzzxb .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#mvzwifxryn .gt_summary_row {
+#axlbgpzzxb .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1168,16 +1270,16 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#mvzwifxryn .gt_first_summary_row {
+#axlbgpzzxb .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_first_summary_row.thick {
+#axlbgpzzxb .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#mvzwifxryn .gt_last_summary_row {
+#axlbgpzzxb .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1187,7 +1289,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_grand_summary_row {
+#axlbgpzzxb .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1197,7 +1299,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#mvzwifxryn .gt_first_grand_summary_row {
+#axlbgpzzxb .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1207,7 +1309,7 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_last_grand_summary_row_top {
+#axlbgpzzxb .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1217,11 +1319,11 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_striped {
+#axlbgpzzxb .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#mvzwifxryn .gt_table_body {
+#axlbgpzzxb .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1230,7 +1332,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_footnotes {
+#axlbgpzzxb .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1244,7 +1346,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_footnote {
+#axlbgpzzxb .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1253,7 +1355,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#mvzwifxryn .gt_sourcenotes {
+#axlbgpzzxb .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1267,7 +1369,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#mvzwifxryn .gt_sourcenote {
+#axlbgpzzxb .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1275,164 +1377,194 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#mvzwifxryn .gt_left {
+#axlbgpzzxb .gt_left {
   text-align: left;
 }
 
-#mvzwifxryn .gt_center {
+#axlbgpzzxb .gt_center {
   text-align: center;
 }
 
-#mvzwifxryn .gt_right {
+#axlbgpzzxb .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#mvzwifxryn .gt_font_normal {
+#axlbgpzzxb .gt_font_normal {
   font-weight: normal;
 }
 
-#mvzwifxryn .gt_font_bold {
+#axlbgpzzxb .gt_font_bold {
   font-weight: bold;
 }
 
-#mvzwifxryn .gt_font_italic {
+#axlbgpzzxb .gt_font_italic {
   font-style: italic;
 }
 
-#mvzwifxryn .gt_super {
+#axlbgpzzxb .gt_super {
   font-size: 65%;
 }
 
-#mvzwifxryn .gt_footnote_marks {
+#axlbgpzzxb .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#mvzwifxryn .gt_asterisk {
+#axlbgpzzxb .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#mvzwifxryn .gt_indent_1 {
+#axlbgpzzxb .gt_indent_1 {
   text-indent: 5px;
 }
 
-#mvzwifxryn .gt_indent_2 {
+#axlbgpzzxb .gt_indent_2 {
   text-indent: 10px;
 }
 
-#mvzwifxryn .gt_indent_3 {
+#axlbgpzzxb .gt_indent_3 {
   text-indent: 15px;
 }
 
-#mvzwifxryn .gt_indent_4 {
+#axlbgpzzxb .gt_indent_4 {
   text-indent: 20px;
 }
 
-#mvzwifxryn .gt_indent_5 {
+#axlbgpzzxb .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
-<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
-  <thead>
-    <tr class="gt_col_headings">
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id=""></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="left">left</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="right">right</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="omega">omega</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p_omega">p_omega</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p_left_better">p_left_better</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="p_right_better">p_right_better</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr class="gt_row_group_first"><td headers="all stub_1_1 stub_1" rowspan="1" class="gt_row gt_left gt_stub_row_group">all</td>
-<td headers="all stub_1_1 left" class="gt_row gt_right">5</td>
-<td headers="all stub_1_1 right" class="gt_row gt_right">4</td>
-<td headers="all stub_1_1 omega" class="gt_row gt_right">5.57</td>
-<td headers="all stub_1_1 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="all stub_1_1 p_left_better" class="gt_row gt_right">0.97</td>
-<td headers="all stub_1_1 p_right_better" class="gt_row gt_right">0.03</td></tr>
-    <tr class="gt_row_group_first"><td headers="thin stub_1_2 stub_1" rowspan="10" class="gt_row gt_left gt_stub_row_group">thin</td>
-<td headers="thin stub_1_2 left" class="gt_row gt_right">5</td>
-<td headers="thin stub_1_2 right" class="gt_row gt_right">4</td>
-<td headers="thin stub_1_2 omega" class="gt_row gt_right">6.02</td>
-<td headers="thin stub_1_2 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="thin stub_1_2 p_left_better" class="gt_row gt_right">0.00</td>
-<td headers="thin stub_1_2 p_right_better" class="gt_row gt_right">1.00</td></tr>
-    <tr><td headers="thin left_3 left" class="gt_row gt_right">6</td>
-<td headers="thin left_3 right" class="gt_row gt_right">4</td>
-<td headers="thin left_3 omega" class="gt_row gt_right">6.70</td>
-<td headers="thin left_3 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="thin left_3 p_left_better" class="gt_row gt_right">0.00</td>
-<td headers="thin left_3 p_right_better" class="gt_row gt_right">1.00</td></tr>
-    <tr><td headers="thin left_4 left" class="gt_row gt_right">7</td>
-<td headers="thin left_4 right" class="gt_row gt_right">4</td>
-<td headers="thin left_4 omega" class="gt_row gt_right">9.99</td>
-<td headers="thin left_4 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="thin left_4 p_left_better" class="gt_row gt_right">0.00</td>
-<td headers="thin left_4 p_right_better" class="gt_row gt_right">1.00</td></tr>
-    <tr><td headers="thin left_5 left" class="gt_row gt_right">8</td>
-<td headers="thin left_5 right" class="gt_row gt_right">4</td>
-<td headers="thin left_5 omega" class="gt_row gt_right">11.08</td>
-<td headers="thin left_5 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="thin left_5 p_left_better" class="gt_row gt_right">0.00</td>
-<td headers="thin left_5 p_right_better" class="gt_row gt_right">1.00</td></tr>
-    <tr><td headers="thin left_6 left" class="gt_row gt_right">6</td>
-<td headers="thin left_6 right" class="gt_row gt_right">5</td>
-<td headers="thin left_6 omega" class="gt_row gt_right">1.27</td>
-<td headers="thin left_6 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="thin left_6 p_left_better" class="gt_row gt_right">0.00</td>
-<td headers="thin left_6 p_right_better" class="gt_row gt_right">1.00</td></tr>
-    <tr><td headers="thin left_7 left" class="gt_row gt_right">7</td>
-<td headers="thin left_7 right" class="gt_row gt_right">5</td>
-<td headers="thin left_7 omega" class="gt_row gt_right">3.88</td>
-<td headers="thin left_7 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="thin left_7 p_left_better" class="gt_row gt_right">0.00</td>
-<td headers="thin left_7 p_right_better" class="gt_row gt_right">1.00</td></tr>
-    <tr><td headers="thin left_8 left" class="gt_row gt_right">8</td>
-<td headers="thin left_8 right" class="gt_row gt_right">5</td>
-<td headers="thin left_8 omega" class="gt_row gt_right">4.58</td>
-<td headers="thin left_8 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="thin left_8 p_left_better" class="gt_row gt_right">0.00</td>
-<td headers="thin left_8 p_right_better" class="gt_row gt_right">1.00</td></tr>
-    <tr><td headers="thin left_9 left" class="gt_row gt_right">7</td>
-<td headers="thin left_9 right" class="gt_row gt_right">6</td>
-<td headers="thin left_9 omega" class="gt_row gt_right">2.46</td>
-<td headers="thin left_9 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="thin left_9 p_left_better" class="gt_row gt_right">0.00</td>
-<td headers="thin left_9 p_right_better" class="gt_row gt_right">1.00</td></tr>
-    <tr><td headers="thin left_10 left" class="gt_row gt_right">8</td>
-<td headers="thin left_10 right" class="gt_row gt_right">6</td>
-<td headers="thin left_10 omega" class="gt_row gt_right">3.55</td>
-<td headers="thin left_10 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="thin left_10 p_left_better" class="gt_row gt_right">0.00</td>
-<td headers="thin left_10 p_right_better" class="gt_row gt_right">1.00</td></tr>
-    <tr><td headers="thin left_11 left" class="gt_row gt_right">8</td>
-<td headers="thin left_11 right" class="gt_row gt_right">7</td>
-<td headers="thin left_11 omega" class="gt_row gt_right">1.64</td>
-<td headers="thin left_11 p_omega" class="gt_row gt_right">0.00</td>
-<td headers="thin left_11 p_left_better" class="gt_row gt_right">0.39</td>
-<td headers="thin left_11 p_right_better" class="gt_row gt_right">0.61</td></tr>
-  </tbody>
-  
-  
+
+<table class="gt_table table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="left" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">left</th>
+<th id="right" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">right</th>
+<th id="omega" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">omega</th>
+<th id="p_omega" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">p_omega</th>
+<th id="p_left_better" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">p_left_better</th>
+<th id="p_right_better" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">p_right_better</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd gt_row_group_first">
+<td rowspan="6" class="gt_row gt_left gt_stub_row_group" headers="all stub_1_1 stub_1">all</td>
+<td class="gt_row gt_right" headers="all stub_1_1 left">5</td>
+<td class="gt_row gt_right" headers="all stub_1_1 right">4</td>
+<td class="gt_row gt_right" headers="all stub_1_1 omega">5.37</td>
+<td class="gt_row gt_right" headers="all stub_1_1 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="all stub_1_1 p_left_better">0.20</td>
+<td class="gt_row gt_right" headers="all stub_1_1 p_right_better">0.80</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="all left_2 left">6</td>
+<td class="gt_row gt_right" headers="all left_2 right">4</td>
+<td class="gt_row gt_right" headers="all left_2 omega">8.82</td>
+<td class="gt_row gt_right" headers="all left_2 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="all left_2 p_left_better">1.00</td>
+<td class="gt_row gt_right" headers="all left_2 p_right_better">0.00</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="all left_3 left">10</td>
+<td class="gt_row gt_right" headers="all left_3 right">4</td>
+<td class="gt_row gt_right" headers="all left_3 omega">6.92</td>
+<td class="gt_row gt_right" headers="all left_3 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="all left_3 p_left_better">0.00</td>
+<td class="gt_row gt_right" headers="all left_3 p_right_better">1.00</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="all left_4 left">6</td>
+<td class="gt_row gt_right" headers="all left_4 right">5</td>
+<td class="gt_row gt_right" headers="all left_4 omega">5.75</td>
+<td class="gt_row gt_right" headers="all left_4 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="all left_4 p_left_better">1.00</td>
+<td class="gt_row gt_right" headers="all left_4 p_right_better">0.00</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="all left_5 left">10</td>
+<td class="gt_row gt_right" headers="all left_5 right">5</td>
+<td class="gt_row gt_right" headers="all left_5 omega">7.43</td>
+<td class="gt_row gt_right" headers="all left_5 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="all left_5 p_left_better">0.00</td>
+<td class="gt_row gt_right" headers="all left_5 p_right_better">1.00</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="all left_6 left">10</td>
+<td class="gt_row gt_right" headers="all left_6 right">6</td>
+<td class="gt_row gt_right" headers="all left_6 omega">9.71</td>
+<td class="gt_row gt_right" headers="all left_6 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="all left_6 p_left_better">0.00</td>
+<td class="gt_row gt_right" headers="all left_6 p_right_better">1.00</td>
+</tr>
+<tr class="odd gt_row_group_first">
+<td rowspan="6" class="gt_row gt_left gt_stub_row_group" headers="thin stub_1_7 stub_1">thin</td>
+<td class="gt_row gt_right" headers="thin stub_1_7 left">6</td>
+<td class="gt_row gt_right" headers="thin stub_1_7 right">5</td>
+<td class="gt_row gt_right" headers="thin stub_1_7 omega">1.47</td>
+<td class="gt_row gt_right" headers="thin stub_1_7 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="thin stub_1_7 p_left_better">0.00</td>
+<td class="gt_row gt_right" headers="thin stub_1_7 p_right_better">1.00</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="thin left_8 left">7</td>
+<td class="gt_row gt_right" headers="thin left_8 right">5</td>
+<td class="gt_row gt_right" headers="thin left_8 omega">3.88</td>
+<td class="gt_row gt_right" headers="thin left_8 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="thin left_8 p_left_better">0.00</td>
+<td class="gt_row gt_right" headers="thin left_8 p_right_better">1.00</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="thin left_9 left">8</td>
+<td class="gt_row gt_right" headers="thin left_9 right">5</td>
+<td class="gt_row gt_right" headers="thin left_9 omega">4.30</td>
+<td class="gt_row gt_right" headers="thin left_9 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="thin left_9 p_left_better">0.00</td>
+<td class="gt_row gt_right" headers="thin left_9 p_right_better">1.00</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="thin left_10 left">7</td>
+<td class="gt_row gt_right" headers="thin left_10 right">6</td>
+<td class="gt_row gt_right" headers="thin left_10 omega">2.31</td>
+<td class="gt_row gt_right" headers="thin left_10 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="thin left_10 p_left_better">0.00</td>
+<td class="gt_row gt_right" headers="thin left_10 p_right_better">1.00</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="thin left_11 left">8</td>
+<td class="gt_row gt_right" headers="thin left_11 right">6</td>
+<td class="gt_row gt_right" headers="thin left_11 omega">2.85</td>
+<td class="gt_row gt_right" headers="thin left_11 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="thin left_11 p_left_better">0.00</td>
+<td class="gt_row gt_right" headers="thin left_11 p_right_better">1.00</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="thin left_12 left">8</td>
+<td class="gt_row gt_right" headers="thin left_12 right">7</td>
+<td class="gt_row gt_right" headers="thin left_12 omega">0.99</td>
+<td class="gt_row gt_right" headers="thin left_12 p_omega">0.00</td>
+<td class="gt_row gt_right" headers="thin left_12 p_left_better">1.00</td>
+<td class="gt_row gt_right" headers="thin left_12 p_right_better">0.00</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
 </div>
-<p>基于此结果我们可以比较确定地指出我们的数据可以很好地拟合一个包含七个或者八个因子的模型，同时，对比这两个模型发现的区别在于有没有<strong><em>视觉搜索类任务</em></strong>作为单独的成分。而根据简约原则，当两个模型没差异的时候，应选择更简单的模型，此处我们选择了七因子模型作为最终模型。此模型各个因子具体结果如 <a href="#fig-best-model">图&nbsp;4</a> 。根据每一个因子里面包含任务之间的关系，我们也给出这些因子的名字。</p>
+<p>基于此结果我们可以比较确定地指出我们的数据可以很好地拟合一个包含七个或者八个因子的模型，同时，对比这两个模型发现的区别在于有没有<strong><em>视觉搜索类任务</em></strong>作为单独的成分。而根据简约原则，当两个模型没差异的时候，应选择更简单的模型，此处我们选择了七因子模型作为最终模型。此模型各个因子具体结果如 <a href="#fig-best-model" class="quarto-xref">图&nbsp;4</a> 。根据每一个因子里面包含任务之间的关系，我们也给出这些因子的名字。</p>
 <div class="cell page-columns page-full">
-<details>
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>withr<span class="sc">::</span><span class="fu">local_seed</span>(<span class="dv">123</span>) <span class="co"># ensure wordcloud reproducible</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>dimensions <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"config/dimensions.csv"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(config_thin_7, <span class="at">store =</span> projects<span class="sc">$</span>explore_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(dimensions, <span class="at">by =</span> <span class="st">"cluster"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    game_index, <span class="st">"."</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    observed, <span class="st">"."</span>,</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">c</span>(<span class="st">"game_name_abbr"</span>, <span class="st">"index_name"</span>)</span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
@@ -1445,11 +1577,15 @@ div.csl-indent {
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>dim_name) <span class="sc">+</span></span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display column-page">
-<div id="fig-best-model" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-best-model-1.png" class="img-fluid figure-img" width="960"></p>
-<figcaption class="figure-caption">图&nbsp;4: 最佳模型各因子所含任务指标</figcaption>
+<div class="cell-output-display page-columns page-full">
+<div id="fig-best-model" class="quarto-figure quarto-figure-center quarto-float anchored page-columns page-full">
+<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div aria-describedby="fig-best-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
+<img src="index_files/figure-html/fig-best-model-1.png" class="img-fluid figure-img column-page" width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-best-model-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;4: 最佳模型各因子所含任务指标
+</figcaption>
 </figure>
 </div>
 </div>
@@ -1457,9 +1593,9 @@ div.csl-indent {
 </section>
 <section id="任务挑选" class="level1">
 <h1>任务挑选</h1>
-<p><a href="#fig-parsi-models">图&nbsp;5</a> 给出了各种方案不同模型的拟合优度。整体上看，基于载荷或者轮廓系数选出的任务都能得到相对较好的CFI拟合指标（&gt;0.9）。</p>
+<p><a href="#fig-parsi-models" class="quarto-xref">图&nbsp;5</a> 给出了各种方案不同模型的拟合优度。整体上看，基于载荷或者轮廓系数选出的任务都能得到相对较好的CFI拟合指标（&gt;0.9）。</p>
 <div class="cell">
-<details>
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_read</span>(gofs, <span class="at">store =</span> projects<span class="sc">$</span>confirm_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
@@ -1483,17 +1619,21 @@ div.csl-indent {
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
-<div id="fig-parsi-models" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-parsi-models-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">图&nbsp;5: 不同方案CFI拟合优度</figcaption>
+<div id="fig-parsi-models" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-parsi-models-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-parsi-models-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-parsi-models-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;5: 不同方案CFI拟合优度
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><a href="#tbl-loadings-full">表&nbsp;2</a> 展示了每个维度所有任务指标的载荷。</p>
+<p><a href="#tbl-loadings-full" class="quarto-xref">表&nbsp;2</a> 展示了每个维度所有任务指标的载荷。</p>
 <div class="cell">
-<details>
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>targets<span class="sc">::</span><span class="fu">tar_read</span>(fit_fo_full, <span class="at">store =</span> projects<span class="sc">$</span>confirm_factors<span class="sc">$</span>store) <span class="sc">|&gt;</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  parameters<span class="sc">::</span><span class="fu">model_parameters</span>(<span class="at">component =</span> <span class="st">"loading"</span>) <span class="sc">|&gt;</span></span>
@@ -1511,7 +1651,7 @@ div.csl-indent {
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">filter</span>(origin <span class="sc">==</span> <span class="st">"rm_out"</span>),</span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">join_by</span>(game_id, index_name)</span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Dimension =</span> <span class="fu">as_factor</span>(To)) <span class="sc">|&gt;</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Dimension =</span> <span class="fu">as_factor</span>(<span class="fu">match_dim_label</span>(To))) <span class="sc">|&gt;</span></span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    Dimension,</span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Game Name</span><span class="st">`</span> <span class="ot">=</span> game_name,</span>
@@ -1525,26 +1665,30 @@ div.csl-indent {
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">row_group_as_column =</span> <span class="cn">TRUE</span></span>
 <span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div id="tbl-loadings-full" class="cell quarto-float anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-loadings-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+表&nbsp;2: 因子载荷
+</figcaption>
+<div aria-describedby="tbl-loadings-full-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="tbl-loadings-full" class="anchored">
-
-<div id="wqhsrzsenl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#wqhsrzsenl table {
+<div id="qwqhsrzsen" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qwqhsrzsen table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#wqhsrzsenl thead, #wqhsrzsenl tbody, #wqhsrzsenl tfoot, #wqhsrzsenl tr, #wqhsrzsenl td, #wqhsrzsenl th {
+#qwqhsrzsen thead, #qwqhsrzsen tbody, #qwqhsrzsen tfoot, #qwqhsrzsen tr, #qwqhsrzsen td, #qwqhsrzsen th {
   border-style: none;
 }
 
-#wqhsrzsenl p {
+#qwqhsrzsen p {
   margin: 0;
   padding: 0;
 }
 
-#wqhsrzsenl .gt_table {
+#qwqhsrzsen .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -1570,12 +1714,12 @@ div.csl-indent {
   border-left-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_caption {
+#qwqhsrzsen .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#wqhsrzsenl .gt_title {
+#qwqhsrzsen .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -1587,7 +1731,7 @@ div.csl-indent {
   border-bottom-width: 0;
 }
 
-#wqhsrzsenl .gt_subtitle {
+#qwqhsrzsen .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -1599,7 +1743,7 @@ div.csl-indent {
   border-top-width: 0;
 }
 
-#wqhsrzsenl .gt_heading {
+#qwqhsrzsen .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -1611,13 +1755,13 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_bottom_border {
+#qwqhsrzsen .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_col_headings {
+#qwqhsrzsen .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1632,7 +1776,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_col_heading {
+#qwqhsrzsen .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1652,7 +1796,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#wqhsrzsenl .gt_column_spanner_outer {
+#qwqhsrzsen .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1664,15 +1808,15 @@ div.csl-indent {
   padding-right: 4px;
 }
 
-#wqhsrzsenl .gt_column_spanner_outer:first-child {
+#qwqhsrzsen .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#wqhsrzsenl .gt_column_spanner_outer:last-child {
+#qwqhsrzsen .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#wqhsrzsenl .gt_column_spanner {
+#qwqhsrzsen .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -1684,11 +1828,11 @@ div.csl-indent {
   width: 100%;
 }
 
-#wqhsrzsenl .gt_spanner_row {
+#qwqhsrzsen .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#wqhsrzsenl .gt_group_heading {
+#qwqhsrzsen .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1714,7 +1858,7 @@ div.csl-indent {
   text-align: left;
 }
 
-#wqhsrzsenl .gt_empty_group_heading {
+#qwqhsrzsen .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -1729,15 +1873,15 @@ div.csl-indent {
   vertical-align: middle;
 }
 
-#wqhsrzsenl .gt_from_md > :first-child {
+#qwqhsrzsen .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#wqhsrzsenl .gt_from_md > :last-child {
+#qwqhsrzsen .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#wqhsrzsenl .gt_row {
+#qwqhsrzsen .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1756,7 +1900,7 @@ div.csl-indent {
   overflow-x: hidden;
 }
 
-#wqhsrzsenl .gt_stub {
+#qwqhsrzsen .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1769,7 +1913,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#wqhsrzsenl .gt_stub_row_group {
+#qwqhsrzsen .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -1783,15 +1927,15 @@ div.csl-indent {
   vertical-align: top;
 }
 
-#wqhsrzsenl .gt_row_group_first td {
+#qwqhsrzsen .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#wqhsrzsenl .gt_row_group_first th {
+#qwqhsrzsen .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#wqhsrzsenl .gt_summary_row {
+#qwqhsrzsen .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1801,16 +1945,16 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#wqhsrzsenl .gt_first_summary_row {
+#qwqhsrzsen .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_first_summary_row.thick {
+#qwqhsrzsen .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#wqhsrzsenl .gt_last_summary_row {
+#qwqhsrzsen .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1820,7 +1964,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_grand_summary_row {
+#qwqhsrzsen .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -1830,7 +1974,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#wqhsrzsenl .gt_first_grand_summary_row {
+#qwqhsrzsen .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1840,7 +1984,7 @@ div.csl-indent {
   border-top-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_last_grand_summary_row_top {
+#qwqhsrzsen .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -1850,11 +1994,11 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_striped {
+#qwqhsrzsen .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#wqhsrzsenl .gt_table_body {
+#qwqhsrzsen .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -1863,7 +2007,7 @@ div.csl-indent {
   border-bottom-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_footnotes {
+#qwqhsrzsen .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1877,7 +2021,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_footnote {
+#qwqhsrzsen .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -1886,7 +2030,7 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#wqhsrzsenl .gt_sourcenotes {
+#qwqhsrzsen .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -1900,7 +2044,7 @@ div.csl-indent {
   border-right-color: #D3D3D3;
 }
 
-#wqhsrzsenl .gt_sourcenote {
+#qwqhsrzsen .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -1908,521 +2052,724 @@ div.csl-indent {
   padding-right: 5px;
 }
 
-#wqhsrzsenl .gt_left {
+#qwqhsrzsen .gt_left {
   text-align: left;
 }
 
-#wqhsrzsenl .gt_center {
+#qwqhsrzsen .gt_center {
   text-align: center;
 }
 
-#wqhsrzsenl .gt_right {
+#qwqhsrzsen .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#wqhsrzsenl .gt_font_normal {
+#qwqhsrzsen .gt_font_normal {
   font-weight: normal;
 }
 
-#wqhsrzsenl .gt_font_bold {
+#qwqhsrzsen .gt_font_bold {
   font-weight: bold;
 }
 
-#wqhsrzsenl .gt_font_italic {
+#qwqhsrzsen .gt_font_italic {
   font-style: italic;
 }
 
-#wqhsrzsenl .gt_super {
+#qwqhsrzsen .gt_super {
   font-size: 65%;
 }
 
-#wqhsrzsenl .gt_footnote_marks {
+#qwqhsrzsen .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#wqhsrzsenl .gt_asterisk {
+#qwqhsrzsen .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#wqhsrzsenl .gt_indent_1 {
+#qwqhsrzsen .gt_indent_1 {
   text-indent: 5px;
 }
 
-#wqhsrzsenl .gt_indent_2 {
+#qwqhsrzsen .gt_indent_2 {
   text-indent: 10px;
 }
 
-#wqhsrzsenl .gt_indent_3 {
+#qwqhsrzsen .gt_indent_3 {
   text-indent: 15px;
 }
 
-#wqhsrzsenl .gt_indent_4 {
+#qwqhsrzsen .gt_indent_4 {
   text-indent: 20px;
 }
 
-#wqhsrzsenl .gt_indent_5 {
+#qwqhsrzsen .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
-<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"><caption>表&nbsp;2:  <p>因子载荷</p> </caption>
-  <thead>
-    <tr class="gt_col_headings">
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id=""></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Game Name">Game Name</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Index Name">Index Name</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="Loading">Loading</th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="ICC">ICC</th>
-    </tr>
-  </thead>
-  <tbody class="gt_table_body">
-    <tr class="gt_row_group_first"><td headers="WM_Rsn stub_1_1 stub_1" rowspan="12" class="gt_row gt_left gt_stub_row_group">WM_Rsn</td>
-<td headers="WM_Rsn stub_1_1 Game Name" class="gt_row gt_left">三维心理旋转测试A</td>
-<td headers="WM_Rsn stub_1_1 Index Name" class="gt_row gt_left">nc</td>
-<td headers="WM_Rsn stub_1_1 Loading" class="gt_row gt_right">0.6959115</td>
-<td headers="WM_Rsn stub_1_1 ICC" class="gt_row gt_right">0.7091315</td></tr>
-    <tr><td headers="WM_Rsn Game Name_2 Game Name" class="gt_row gt_left">图形折叠</td>
-<td headers="WM_Rsn Game Name_2 Index Name" class="gt_row gt_left">nc</td>
-<td headers="WM_Rsn Game Name_2 Loading" class="gt_row gt_right">0.6786850</td>
-<td headers="WM_Rsn Game Name_2 ICC" class="gt_row gt_right">0.6860115</td></tr>
-    <tr><td headers="WM_Rsn Game Name_3 Game Name" class="gt_row gt_left">图形推理</td>
-<td headers="WM_Rsn Game Name_3 Index Name" class="gt_row gt_left">nc</td>
-<td headers="WM_Rsn Game Name_3 Loading" class="gt_row gt_right">0.6314155</td>
-<td headers="WM_Rsn Game Name_3 ICC" class="gt_row gt_right">0.4941794</td></tr>
-    <tr><td headers="WM_Rsn Game Name_4 Game Name" class="gt_row gt_left">格子卡片</td>
-<td headers="WM_Rsn Game Name_4 Index Name" class="gt_row gt_left">dprime</td>
-<td headers="WM_Rsn Game Name_4 Loading" class="gt_row gt_right">0.6197436</td>
-<td headers="WM_Rsn Game Name_4 ICC" class="gt_row gt_right">0.6359423</td></tr>
-    <tr><td headers="WM_Rsn Game Name_5 Game Name" class="gt_row gt_left">视角判断</td>
-<td headers="WM_Rsn Game Name_5 Index Name" class="gt_row gt_left">nc</td>
-<td headers="WM_Rsn Game Name_5 Loading" class="gt_row gt_right">0.5836467</td>
-<td headers="WM_Rsn Game Name_5 ICC" class="gt_row gt_right">0.5800200</td></tr>
-    <tr><td headers="WM_Rsn Game Name_6 Game Name" class="gt_row gt_left">登陆月球（中级）</td>
-<td headers="WM_Rsn Game Name_6 Index Name" class="gt_row gt_left">mean_log_err</td>
-<td headers="WM_Rsn Game Name_6 Loading" class="gt_row gt_right">0.5419112</td>
-<td headers="WM_Rsn Game Name_6 ICC" class="gt_row gt_right">0.6128001</td></tr>
-    <tr><td headers="WM_Rsn Game Name_7 Game Name" class="gt_row gt_left">数字推理</td>
-<td headers="WM_Rsn Game Name_7 Index Name" class="gt_row gt_left">nc</td>
-<td headers="WM_Rsn Game Name_7 Loading" class="gt_row gt_right">0.5405352</td>
-<td headers="WM_Rsn Game Name_7 ICC" class="gt_row gt_right">0.5674540</td></tr>
-    <tr><td headers="WM_Rsn Game Name_8 Game Name" class="gt_row gt_left">按图索骥</td>
-<td headers="WM_Rsn Game Name_8 Index Name" class="gt_row gt_left">mean_log_err_both</td>
-<td headers="WM_Rsn Game Name_8 Loading" class="gt_row gt_right">0.5275315</td>
-<td headers="WM_Rsn Game Name_8 ICC" class="gt_row gt_right">0.4900597</td></tr>
-    <tr><td headers="WM_Rsn Game Name_9 Game Name" class="gt_row gt_left">文字推理</td>
-<td headers="WM_Rsn Game Name_9 Index Name" class="gt_row gt_left">nc</td>
-<td headers="WM_Rsn Game Name_9 Loading" class="gt_row gt_right">0.4430884</td>
-<td headers="WM_Rsn Game Name_9 ICC" class="gt_row gt_right">0.6123835</td></tr>
-    <tr><td headers="WM_Rsn Game Name_10 Game Name" class="gt_row gt_left">阅读判断</td>
-<td headers="WM_Rsn Game Name_10 Index Name" class="gt_row gt_left">nc</td>
-<td headers="WM_Rsn Game Name_10 Loading" class="gt_row gt_right">0.3679575</td>
-<td headers="WM_Rsn Game Name_10 ICC" class="gt_row gt_right">0.5144023</td></tr>
-    <tr><td headers="WM_Rsn Game Name_11 Game Name" class="gt_row gt_left">各得其所</td>
-<td headers="WM_Rsn Game Name_11 Index Name" class="gt_row gt_left">prop_perfect</td>
-<td headers="WM_Rsn Game Name_11 Loading" class="gt_row gt_right">0.2976213</td>
-<td headers="WM_Rsn Game Name_11 ICC" class="gt_row gt_right">0.3253265</td></tr>
-    <tr><td headers="WM_Rsn Game Name_12 Game Name" class="gt_row gt_left">强化学习</td>
-<td headers="WM_Rsn Game Name_12 Index Name" class="gt_row gt_left">pc_test</td>
-<td headers="WM_Rsn Game Name_12 Loading" class="gt_row gt_right">0.2744369</td>
-<td headers="WM_Rsn Game Name_12 ICC" class="gt_row gt_right">0.2940566</td></tr>
-    <tr class="gt_row_group_first"><td headers="VSTM stub_1_13 stub_1" rowspan="7" class="gt_row gt_left gt_stub_row_group">VSTM</td>
-<td headers="VSTM stub_1_13 Game Name" class="gt_row gt_left">幸运小球PRO</td>
-<td headers="VSTM stub_1_13 Index Name" class="gt_row gt_left">nc</td>
-<td headers="VSTM stub_1_13 Loading" class="gt_row gt_right">0.6736157</td>
-<td headers="VSTM stub_1_13 ICC" class="gt_row gt_right">0.5658720</td></tr>
-    <tr><td headers="VSTM Game Name_14 Game Name" class="gt_row gt_left">密码箱</td>
-<td headers="VSTM Game Name_14 Index Name" class="gt_row gt_left">nc</td>
-<td headers="VSTM Game Name_14 Loading" class="gt_row gt_right">0.6350510</td>
-<td headers="VSTM Game Name_14 ICC" class="gt_row gt_right">0.4504140</td></tr>
-    <tr><td headers="VSTM Game Name_15 Game Name" class="gt_row gt_left">井然有序</td>
-<td headers="VSTM Game Name_15 Index Name" class="gt_row gt_left">nc</td>
-<td headers="VSTM Game Name_15 Loading" class="gt_row gt_right">0.6213768</td>
-<td headers="VSTM Game Name_15 ICC" class="gt_row gt_right">0.4969166</td></tr>
-    <tr><td headers="VSTM Game Name_16 Game Name" class="gt_row gt_left">顺背数PRO</td>
-<td headers="VSTM Game Name_16 Index Name" class="gt_row gt_left">nc</td>
-<td headers="VSTM Game Name_16 Loading" class="gt_row gt_right">0.5990877</td>
-<td headers="VSTM Game Name_16 ICC" class="gt_row gt_right">0.6340612</td></tr>
-    <tr><td headers="VSTM Game Name_17 Game Name" class="gt_row gt_left">速算师（中级）</td>
-<td headers="VSTM Game Name_17 Index Name" class="gt_row gt_left">nc</td>
-<td headers="VSTM Game Name_17 Loading" class="gt_row gt_right">0.5139314</td>
-<td headers="VSTM Game Name_17 ICC" class="gt_row gt_right">0.7844297</td></tr>
-    <tr><td headers="VSTM Game Name_18 Game Name" class="gt_row gt_left">远距离联想</td>
-<td headers="VSTM Game Name_18 Index Name" class="gt_row gt_left">nc</td>
-<td headers="VSTM Game Name_18 Loading" class="gt_row gt_right">0.3785166</td>
-<td headers="VSTM Game Name_18 ICC" class="gt_row gt_right">0.5176199</td></tr>
-    <tr><td headers="VSTM Game Name_19 Game Name" class="gt_row gt_left">时长分辨</td>
-<td headers="VSTM Game Name_19 Index Name" class="gt_row gt_left">thresh_last_block</td>
-<td headers="VSTM Game Name_19 Loading" class="gt_row gt_right">0.2946264</td>
-<td headers="VSTM Game Name_19 ICC" class="gt_row gt_right">0.5601665</td></tr>
-    <tr class="gt_row_group_first"><td headers="SSTM stub_1_20 stub_1" rowspan="5" class="gt_row gt_left gt_stub_row_group">SSTM</td>
-<td headers="SSTM stub_1_20 Game Name" class="gt_row gt_left">蝴蝶照相机</td>
-<td headers="SSTM stub_1_20 Index Name" class="gt_row gt_left">nc</td>
-<td headers="SSTM stub_1_20 Loading" class="gt_row gt_right">0.7551247</td>
-<td headers="SSTM stub_1_20 ICC" class="gt_row gt_right">0.6622464</td></tr>
-    <tr><td headers="SSTM Game Name_21 Game Name" class="gt_row gt_left">位置记忆PRO</td>
-<td headers="SSTM Game Name_21 Index Name" class="gt_row gt_left">nc</td>
-<td headers="SSTM Game Name_21 Loading" class="gt_row gt_right">0.7008793</td>
-<td headers="SSTM Game Name_21 ICC" class="gt_row gt_right">0.6388553</td></tr>
-    <tr><td headers="SSTM Game Name_22 Game Name" class="gt_row gt_left">打靶场</td>
-<td headers="SSTM Game Name_22 Index Name" class="gt_row gt_left">nc</td>
-<td headers="SSTM Game Name_22 Loading" class="gt_row gt_right">0.6411335</td>
-<td headers="SSTM Game Name_22 ICC" class="gt_row gt_right">0.4946694</td></tr>
-    <tr><td headers="SSTM Game Name_23 Game Name" class="gt_row gt_left">路径学习</td>
-<td headers="SSTM Game Name_23 Index Name" class="gt_row gt_left">nc</td>
-<td headers="SSTM Game Name_23 Loading" class="gt_row gt_right">0.5383135</td>
-<td headers="SSTM Game Name_23 ICC" class="gt_row gt_right">0.3010715</td></tr>
-    <tr><td headers="SSTM Game Name_24 Game Name" class="gt_row gt_left">萤火虫PRO</td>
-<td headers="SSTM Game Name_24 Index Name" class="gt_row gt_left">nc</td>
-<td headers="SSTM Game Name_24 Loading" class="gt_row gt_right">0.4953872</td>
-<td headers="SSTM Game Name_24 ICC" class="gt_row gt_right">0.5986120</td></tr>
-    <tr class="gt_row_group_first"><td headers="EM stub_1_25 stub_1" rowspan="11" class="gt_row gt_left gt_stub_row_group">EM</td>
-<td headers="EM stub_1_25 Game Name" class="gt_row gt_left">万花筒</td>
-<td headers="EM stub_1_25 Index Name" class="gt_row gt_left">nc</td>
-<td headers="EM stub_1_25 Loading" class="gt_row gt_right">0.6291643</td>
-<td headers="EM stub_1_25 ICC" class="gt_row gt_right">0.6092568</td></tr>
-    <tr><td headers="EM Game Name_26 Game Name" class="gt_row gt_left">词汇学习</td>
-<td headers="EM Game Name_26 Index Name" class="gt_row gt_left">nc</td>
-<td headers="EM Game Name_26 Loading" class="gt_row gt_right">0.6147561</td>
-<td headers="EM Game Name_26 ICC" class="gt_row gt_right">0.3723588</td></tr>
-    <tr><td headers="EM Game Name_27 Game Name" class="gt_row gt_left">过目不忘PRO</td>
-<td headers="EM Game Name_27 Index Name" class="gt_row gt_left">nc</td>
-<td headers="EM Game Name_27 Loading" class="gt_row gt_right">0.6071437</td>
-<td headers="EM Game Name_27 ICC" class="gt_row gt_right">0.6004452</td></tr>
-    <tr><td headers="EM Game Name_28 Game Name" class="gt_row gt_left">欢乐餐厅PRO</td>
-<td headers="EM Game Name_28 Index Name" class="gt_row gt_left">nc</td>
-<td headers="EM Game Name_28 Loading" class="gt_row gt_right">0.6062000</td>
-<td headers="EM Game Name_28 ICC" class="gt_row gt_right">0.5162227</td></tr>
-    <tr><td headers="EM Game Name_29 Game Name" class="gt_row gt_left">社交达人</td>
-<td headers="EM Game Name_29 Index Name" class="gt_row gt_left">fntotal</td>
-<td headers="EM Game Name_29 Loading" class="gt_row gt_right">0.5729277</td>
-<td headers="EM Game Name_29 ICC" class="gt_row gt_right">0.4827007</td></tr>
-    <tr><td headers="EM Game Name_30 Game Name" class="gt_row gt_left">宇宙黑洞A</td>
-<td headers="EM Game Name_30 Index Name" class="gt_row gt_left">nc</td>
-<td headers="EM Game Name_30 Loading" class="gt_row gt_right">0.5512377</td>
-<td headers="EM Game Name_30 ICC" class="gt_row gt_right">0.6075916</td></tr>
-    <tr><td headers="EM Game Name_31 Game Name" class="gt_row gt_left">人工语言-高级</td>
-<td headers="EM Game Name_31 Index Name" class="gt_row gt_left">nc</td>
-<td headers="EM Game Name_31 Loading" class="gt_row gt_right">0.5349124</td>
-<td headers="EM Game Name_31 ICC" class="gt_row gt_right">0.2651027</td></tr>
-    <tr><td headers="EM Game Name_32 Game Name" class="gt_row gt_left">事件记忆</td>
-<td headers="EM Game Name_32 Index Name" class="gt_row gt_left">nc</td>
-<td headers="EM Game Name_32 Loading" class="gt_row gt_right">0.5308827</td>
-<td headers="EM Game Name_32 ICC" class="gt_row gt_right">0.5468560</td></tr>
-    <tr><td headers="EM Game Name_33 Game Name" class="gt_row gt_left">图片记忆A</td>
-<td headers="EM Game Name_33 Index Name" class="gt_row gt_left">bps_score</td>
-<td headers="EM Game Name_33 Loading" class="gt_row gt_right">0.4885675</td>
-<td headers="EM Game Name_33 ICC" class="gt_row gt_right">0.4905354</td></tr>
-    <tr><td headers="EM Game Name_34 Game Name" class="gt_row gt_left">连续再认PRO</td>
-<td headers="EM Game Name_34 Index Name" class="gt_row gt_left">dprime</td>
-<td headers="EM Game Name_34 Loading" class="gt_row gt_right">0.4813114</td>
-<td headers="EM Game Name_34 ICC" class="gt_row gt_right">0.6425060</td></tr>
-    <tr><td headers="EM Game Name_35 Game Name" class="gt_row gt_left">视觉记忆测试</td>
-<td headers="EM Game Name_35 Index Name" class="gt_row gt_left">nc</td>
-<td headers="EM Game Name_35 Loading" class="gt_row gt_right">0.4723081</td>
-<td headers="EM Game Name_35 ICC" class="gt_row gt_right">0.6060116</td></tr>
-    <tr class="gt_row_group_first"><td headers="Inh stub_1_36 stub_1" rowspan="13" class="gt_row gt_left gt_stub_row_group">Inh</td>
-<td headers="Inh stub_1_36 Game Name" class="gt_row gt_left">候鸟迁徙PRO</td>
-<td headers="Inh stub_1_36 Index Name" class="gt_row gt_left">cong_eff_ies</td>
-<td headers="Inh stub_1_36 Loading" class="gt_row gt_right">0.5849323</td>
-<td headers="Inh stub_1_36 ICC" class="gt_row gt_right">0.6953626</td></tr>
-    <tr><td headers="Inh Game Name_37 Game Name" class="gt_row gt_left">数感</td>
-<td headers="Inh Game Name_37 Index Name" class="gt_row gt_left">w</td>
-<td headers="Inh Game Name_37 Loading" class="gt_row gt_right">0.5148118</td>
-<td headers="Inh Game Name_37 ICC" class="gt_row gt_right">0.7042378</td></tr>
-    <tr><td headers="Inh Game Name_38 Game Name" class="gt_row gt_left">捉虫高级简版</td>
-<td headers="Inh Game Name_38 Index Name" class="gt_row gt_left">dprime</td>
-<td headers="Inh Game Name_38 Loading" class="gt_row gt_right">0.5019255</td>
-<td headers="Inh Game Name_38 ICC" class="gt_row gt_right">0.3996592</td></tr>
-    <tr><td headers="Inh Game Name_39 Game Name" class="gt_row gt_left">方向检测</td>
-<td headers="Inh Game Name_39 Index Name" class="gt_row gt_left">k</td>
-<td headers="Inh Game Name_39 Loading" class="gt_row gt_right">0.4969277</td>
-<td headers="Inh Game Name_39 ICC" class="gt_row gt_right">0.3174755</td></tr>
-    <tr><td headers="Inh Game Name_40 Game Name" class="gt_row gt_left">时间顺序判断</td>
-<td headers="Inh Game Name_40 Index Name" class="gt_row gt_left">thresh_last_block</td>
-<td headers="Inh Game Name_40 Loading" class="gt_row gt_right">0.4697426</td>
-<td headers="Inh Game Name_40 ICC" class="gt_row gt_right">0.5801377</td></tr>
-    <tr><td headers="Inh Game Name_41 Game Name" class="gt_row gt_left">超级秒表PRO</td>
-<td headers="Inh Game Name_41 Index Name" class="gt_row gt_left">mrt</td>
-<td headers="Inh Game Name_41 Loading" class="gt_row gt_right">0.4677253</td>
-<td headers="Inh Game Name_41 ICC" class="gt_row gt_right">0.4749019</td></tr>
-    <tr><td headers="Inh Game Name_42 Game Name" class="gt_row gt_left">节奏感知</td>
-<td headers="Inh Game Name_42 Index Name" class="gt_row gt_left">thresh_last_block</td>
-<td headers="Inh Game Name_42 Loading" class="gt_row gt_right">0.4509104</td>
-<td headers="Inh Game Name_42 ICC" class="gt_row gt_right">0.4337349</td></tr>
-    <tr><td headers="Inh Game Name_43 Game Name" class="gt_row gt_left">塔罗牌</td>
-<td headers="Inh Game Name_43 Index Name" class="gt_row gt_left">nc</td>
-<td headers="Inh Game Name_43 Loading" class="gt_row gt_right">0.4414990</td>
-<td headers="Inh Game Name_43 ICC" class="gt_row gt_right">0.4520436</td></tr>
-    <tr><td headers="Inh Game Name_44 Game Name" class="gt_row gt_left">变色魔块PRO</td>
-<td headers="Inh Game Name_44 Index Name" class="gt_row gt_left">ssrt</td>
-<td headers="Inh Game Name_44 Loading" class="gt_row gt_right">0.3822301</td>
-<td headers="Inh Game Name_44 ICC" class="gt_row gt_right">0.5516098</td></tr>
-    <tr><td headers="Inh Game Name_45 Game Name" class="gt_row gt_left">多彩文字PRO</td>
-<td headers="Inh Game Name_45 Index Name" class="gt_row gt_left">cong_eff_ies</td>
-<td headers="Inh Game Name_45 Loading" class="gt_row gt_right">0.3808710</td>
-<td headers="Inh Game Name_45 ICC" class="gt_row gt_right">0.5645885</td></tr>
-    <tr><td headers="Inh Game Name_46 Game Name" class="gt_row gt_left">卡片分类PRO</td>
-<td headers="Inh Game Name_46 Index Name" class="gt_row gt_left">switch_cost_ies</td>
-<td headers="Inh Game Name_46 Loading" class="gt_row gt_right">0.3043276</td>
-<td headers="Inh Game Name_46 ICC" class="gt_row gt_right">0.4687936</td></tr>
-    <tr><td headers="Inh Game Name_47 Game Name" class="gt_row gt_left">言语记忆A</td>
-<td headers="Inh Game Name_47 Index Name" class="gt_row gt_left">fm_dprime</td>
-<td headers="Inh Game Name_47 Loading" class="gt_row gt_right">0.2226075</td>
-<td headers="Inh Game Name_47 ICC" class="gt_row gt_right">0.0000000</td></tr>
-    <tr><td headers="Inh Game Name_48 Game Name" class="gt_row gt_left">注意指向</td>
-<td headers="Inh Game Name_48 Index Name" class="gt_row gt_left">cong_eff_ies</td>
-<td headers="Inh Game Name_48 Loading" class="gt_row gt_right">0.2018808</td>
-<td headers="Inh Game Name_48 ICC" class="gt_row gt_right">0.6606258</td></tr>
-    <tr class="gt_row_group_first"><td headers="Att_Spd stub_1_49 stub_1" rowspan="11" class="gt_row gt_left gt_stub_row_group">Att_Spd</td>
-<td headers="Att_Spd stub_1_49 Game Name" class="gt_row gt_left">快速归类PRO</td>
-<td headers="Att_Spd stub_1_49 Index Name" class="gt_row gt_left">ies</td>
-<td headers="Att_Spd stub_1_49 Loading" class="gt_row gt_right">0.6792569</td>
-<td headers="Att_Spd stub_1_49 ICC" class="gt_row gt_right">0.5946463</td></tr>
-    <tr><td headers="Att_Spd Game Name_50 Game Name" class="gt_row gt_left">一心二用PRO</td>
-<td headers="Att_Spd Game Name_50 Index Name" class="gt_row gt_left">nc</td>
-<td headers="Att_Spd Game Name_50 Loading" class="gt_row gt_right">0.6353895</td>
-<td headers="Att_Spd Game Name_50 ICC" class="gt_row gt_right">0.5032728</td></tr>
-    <tr><td headers="Att_Spd Game Name_51 Game Name" class="gt_row gt_left">变戏法</td>
-<td headers="Att_Spd Game Name_51 Index Name" class="gt_row gt_left">ies</td>
-<td headers="Att_Spd Game Name_51 Loading" class="gt_row gt_right">0.6021817</td>
-<td headers="Att_Spd Game Name_51 ICC" class="gt_row gt_right">0.5200595</td></tr>
-    <tr><td headers="Att_Spd Game Name_52 Game Name" class="gt_row gt_left">语义判断</td>
-<td headers="Att_Spd Game Name_52 Index Name" class="gt_row gt_left">nc</td>
-<td headers="Att_Spd Game Name_52 Loading" class="gt_row gt_right">0.5898437</td>
-<td headers="Att_Spd Game Name_52 ICC" class="gt_row gt_right">0.5044480</td></tr>
-    <tr><td headers="Att_Spd Game Name_53 Game Name" class="gt_row gt_left">火眼金睛</td>
-<td headers="Att_Spd Game Name_53 Index Name" class="gt_row gt_left">nc</td>
-<td headers="Att_Spd Game Name_53 Loading" class="gt_row gt_right">0.5438051</td>
-<td headers="Att_Spd Game Name_53 ICC" class="gt_row gt_right">0.6036382</td></tr>
-    <tr><td headers="Att_Spd Game Name_54 Game Name" class="gt_row gt_left">小狗回家</td>
-<td headers="Att_Spd Game Name_54 Index Name" class="gt_row gt_left">mean_score</td>
-<td headers="Att_Spd Game Name_54 Loading" class="gt_row gt_right">0.5379911</td>
-<td headers="Att_Spd Game Name_54 ICC" class="gt_row gt_right">0.6061863</td></tr>
-    <tr><td headers="Att_Spd Game Name_55 Game Name" class="gt_row gt_left">我是大厨</td>
-<td headers="Att_Spd Game Name_55 Index Name" class="gt_row gt_left">score_total</td>
-<td headers="Att_Spd Game Name_55 Loading" class="gt_row gt_right">0.5237810</td>
-<td headers="Att_Spd Game Name_55 ICC" class="gt_row gt_right">0.2392425</td></tr>
-    <tr><td headers="Att_Spd Game Name_56 Game Name" class="gt_row gt_left">雪花收藏家</td>
-<td headers="Att_Spd Game Name_56 Index Name" class="gt_row gt_left">nc_cor</td>
-<td headers="Att_Spd Game Name_56 Loading" class="gt_row gt_right">0.4551425</td>
-<td headers="Att_Spd Game Name_56 ICC" class="gt_row gt_right">0.4938276</td></tr>
-    <tr><td headers="Att_Spd Game Name_57 Game Name" class="gt_row gt_left">连点成画PRO</td>
-<td headers="Att_Spd Game Name_57 Index Name" class="gt_row gt_left">nc</td>
-<td headers="Att_Spd Game Name_57 Loading" class="gt_row gt_right">0.4126965</td>
-<td headers="Att_Spd Game Name_57 ICC" class="gt_row gt_right">0.5265635</td></tr>
-    <tr><td headers="Att_Spd Game Name_58 Game Name" class="gt_row gt_left">舒尔特方格（中级）</td>
-<td headers="Att_Spd Game Name_58 Index Name" class="gt_row gt_left">nc_cor</td>
-<td headers="Att_Spd Game Name_58 Loading" class="gt_row gt_right">0.4079971</td>
-<td headers="Att_Spd Game Name_58 ICC" class="gt_row gt_right">0.5584472</td></tr>
-    <tr><td headers="Att_Spd Game Name_59 Game Name" class="gt_row gt_left">方向临摹</td>
-<td headers="Att_Spd Game Name_59 Index Name" class="gt_row gt_left">mean_log_err</td>
-<td headers="Att_Spd Game Name_59 Loading" class="gt_row gt_right">0.2709806</td>
-<td headers="Att_Spd Game Name_59 ICC" class="gt_row gt_right">0.5898830</td></tr>
-    <tr class="gt_row_group_first"><td headers="Shift stub_1_60 stub_1" rowspan="4" class="gt_row gt_left gt_stub_row_group">Shift</td>
-<td headers="Shift stub_1_60 Game Name" class="gt_row gt_left">察颜观色PRO</td>
-<td headers="Shift stub_1_60 Index Name" class="gt_row gt_left">switch_cost_ies</td>
-<td headers="Shift stub_1_60 Loading" class="gt_row gt_right">0.5435026</td>
-<td headers="Shift stub_1_60 ICC" class="gt_row gt_right">0.5667099</td></tr>
-    <tr><td headers="Shift Game Name_61 Game Name" class="gt_row gt_left">多变计数师</td>
-<td headers="Shift Game Name_61 Index Name" class="gt_row gt_left">switch_cost_ies</td>
-<td headers="Shift Game Name_61 Loading" class="gt_row gt_right">0.5417888</td>
-<td headers="Shift Game Name_61 ICC" class="gt_row gt_right">0.4726218</td></tr>
-    <tr><td headers="Shift Game Name_62 Game Name" class="gt_row gt_left">随机应变</td>
-<td headers="Shift Game Name_62 Index Name" class="gt_row gt_left">switch_cost_ies</td>
-<td headers="Shift Game Name_62 Loading" class="gt_row gt_right">0.5332601</td>
-<td headers="Shift Game Name_62 ICC" class="gt_row gt_right">0.5841394</td></tr>
-    <tr><td headers="Shift Game Name_63 Game Name" class="gt_row gt_left">候鸟迁徙PRO</td>
-<td headers="Shift Game Name_63 Index Name" class="gt_row gt_left">switch_cost_ies</td>
-<td headers="Shift Game Name_63 Loading" class="gt_row gt_right">0.3771677</td>
-<td headers="Shift Game Name_63 ICC" class="gt_row gt_right">0.4911534</td></tr>
-  </tbody>
-  
-  
+
+<table class="gt_table do-not-create-environment cell table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="Game Name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Game Name</th>
+<th id="Index Name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Index Name</th>
+<th id="Loading" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Loading</th>
+<th id="ICC" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">ICC</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd gt_row_group_first">
+<td rowspan="11" class="gt_row gt_left gt_stub_row_group" headers="Att_Spd stub_1_1 stub_1">Att_Spd</td>
+<td class="gt_row gt_left" headers="Att_Spd stub_1_1 Game Name">快速归类PRO</td>
+<td class="gt_row gt_left" headers="Att_Spd stub_1_1 Index Name">ies</td>
+<td class="gt_row gt_right" headers="Att_Spd stub_1_1 Loading">0.6787400</td>
+<td class="gt_row gt_right" headers="Att_Spd stub_1_1 ICC">0.5946463</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Att_Spd Game Name_2 Game Name">一心二用PRO</td>
+<td class="gt_row gt_left" headers="Att_Spd Game Name_2 Index Name">nc</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_2 Loading">0.6365838</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_2 ICC">0.5032728</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Att_Spd Game Name_3 Game Name">变戏法</td>
+<td class="gt_row gt_left" headers="Att_Spd Game Name_3 Index Name">ies</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_3 Loading">0.6026617</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_3 ICC">0.5200595</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Att_Spd Game Name_4 Game Name">语义判断</td>
+<td class="gt_row gt_left" headers="Att_Spd Game Name_4 Index Name">nc</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_4 Loading">0.5896901</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_4 ICC">0.5044480</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Att_Spd Game Name_5 Game Name">火眼金睛</td>
+<td class="gt_row gt_left" headers="Att_Spd Game Name_5 Index Name">nc</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_5 Loading">0.5428395</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_5 ICC">0.6036382</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Att_Spd Game Name_6 Game Name">小狗回家</td>
+<td class="gt_row gt_left" headers="Att_Spd Game Name_6 Index Name">mean_score</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_6 Loading">0.5370434</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_6 ICC">0.6061863</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Att_Spd Game Name_7 Game Name">我是大厨</td>
+<td class="gt_row gt_left" headers="Att_Spd Game Name_7 Index Name">score_total</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_7 Loading">0.5258004</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_7 ICC">0.2392425</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Att_Spd Game Name_8 Game Name">雪花收藏家</td>
+<td class="gt_row gt_left" headers="Att_Spd Game Name_8 Index Name">nc_cor</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_8 Loading">0.4570217</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_8 ICC">0.4938276</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Att_Spd Game Name_9 Game Name">连点成画PRO</td>
+<td class="gt_row gt_left" headers="Att_Spd Game Name_9 Index Name">nc</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_9 Loading">0.4137019</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_9 ICC">0.5265635</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Att_Spd Game Name_10 Game Name">舒尔特方格（中级）</td>
+<td class="gt_row gt_left" headers="Att_Spd Game Name_10 Index Name">nc_cor</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_10 Loading">0.4071475</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_10 ICC">0.5584472</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Att_Spd Game Name_11 Game Name">方向临摹</td>
+<td class="gt_row gt_left" headers="Att_Spd Game Name_11 Index Name">mean_log_err</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_11 Loading">0.2732702</td>
+<td class="gt_row gt_right" headers="Att_Spd Game Name_11 ICC">0.5898830</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td rowspan="12" class="gt_row gt_left gt_stub_row_group" headers="WM_Rsn stub_1_12 stub_1">WM_Rsn</td>
+<td class="gt_row gt_left" headers="WM_Rsn stub_1_12 Game Name">三维心理旋转测试A</td>
+<td class="gt_row gt_left" headers="WM_Rsn stub_1_12 Index Name">nc</td>
+<td class="gt_row gt_right" headers="WM_Rsn stub_1_12 Loading">0.6967490</td>
+<td class="gt_row gt_right" headers="WM_Rsn stub_1_12 ICC">0.7091315</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_13 Game Name">图形折叠</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_13 Index Name">nc</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_13 Loading">0.6756488</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_13 ICC">0.6860115</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_14 Game Name">图形推理</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_14 Index Name">nc</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_14 Loading">0.6338678</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_14 ICC">0.4941794</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_15 Game Name">格子卡片</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_15 Index Name">dprime</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_15 Loading">0.6229752</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_15 ICC">0.6359423</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_16 Game Name">视角判断</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_16 Index Name">nc</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_16 Loading">0.5820512</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_16 ICC">0.5800200</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_17 Game Name">数字推理</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_17 Index Name">nc</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_17 Loading">0.5419078</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_17 ICC">0.5674540</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_18 Game Name">登陆月球（中级）</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_18 Index Name">mean_log_err</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_18 Loading">0.5412515</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_18 ICC">0.6128001</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_19 Game Name">按图索骥</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_19 Index Name">mean_log_err_both</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_19 Loading">0.5230278</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_19 ICC">0.4900597</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_20 Game Name">文字推理</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_20 Index Name">nc</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_20 Loading">0.4440368</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_20 ICC">0.6123835</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_21 Game Name">阅读判断</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_21 Index Name">nc</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_21 Loading">0.3738147</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_21 ICC">0.5144023</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_22 Game Name">各得其所</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_22 Index Name">prop_perfect</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_22 Loading">0.2984172</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_22 ICC">0.3253265</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_23 Game Name">强化学习</td>
+<td class="gt_row gt_left" headers="WM_Rsn Game Name_23 Index Name">pc_test</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_23 Loading">0.2794045</td>
+<td class="gt_row gt_right" headers="WM_Rsn Game Name_23 ICC">0.2940566</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td rowspan="13" class="gt_row gt_left gt_stub_row_group" headers="Inh stub_1_24 stub_1">Inh</td>
+<td class="gt_row gt_left" headers="Inh stub_1_24 Game Name">候鸟迁徙PRO</td>
+<td class="gt_row gt_left" headers="Inh stub_1_24 Index Name">cong_eff_ies</td>
+<td class="gt_row gt_right" headers="Inh stub_1_24 Loading">0.5860210</td>
+<td class="gt_row gt_right" headers="Inh stub_1_24 ICC">0.6953626</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Inh Game Name_25 Game Name">数感</td>
+<td class="gt_row gt_left" headers="Inh Game Name_25 Index Name">w</td>
+<td class="gt_row gt_right" headers="Inh Game Name_25 Loading">0.5171687</td>
+<td class="gt_row gt_right" headers="Inh Game Name_25 ICC">0.7042378</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Inh Game Name_26 Game Name">捉虫高级简版</td>
+<td class="gt_row gt_left" headers="Inh Game Name_26 Index Name">dprime</td>
+<td class="gt_row gt_right" headers="Inh Game Name_26 Loading">0.5022757</td>
+<td class="gt_row gt_right" headers="Inh Game Name_26 ICC">0.3996592</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Inh Game Name_27 Game Name">方向检测</td>
+<td class="gt_row gt_left" headers="Inh Game Name_27 Index Name">k</td>
+<td class="gt_row gt_right" headers="Inh Game Name_27 Loading">0.4988380</td>
+<td class="gt_row gt_right" headers="Inh Game Name_27 ICC">0.3174755</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Inh Game Name_28 Game Name">超级秒表PRO</td>
+<td class="gt_row gt_left" headers="Inh Game Name_28 Index Name">mrt</td>
+<td class="gt_row gt_right" headers="Inh Game Name_28 Loading">0.4702009</td>
+<td class="gt_row gt_right" headers="Inh Game Name_28 ICC">0.4749019</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Inh Game Name_29 Game Name">时间顺序判断</td>
+<td class="gt_row gt_left" headers="Inh Game Name_29 Index Name">thresh_last_block</td>
+<td class="gt_row gt_right" headers="Inh Game Name_29 Loading">0.4696923</td>
+<td class="gt_row gt_right" headers="Inh Game Name_29 ICC">0.5801377</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Inh Game Name_30 Game Name">节奏感知</td>
+<td class="gt_row gt_left" headers="Inh Game Name_30 Index Name">thresh_last_block</td>
+<td class="gt_row gt_right" headers="Inh Game Name_30 Loading">0.4524709</td>
+<td class="gt_row gt_right" headers="Inh Game Name_30 ICC">0.4337349</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Inh Game Name_31 Game Name">塔罗牌</td>
+<td class="gt_row gt_left" headers="Inh Game Name_31 Index Name">nc</td>
+<td class="gt_row gt_right" headers="Inh Game Name_31 Loading">0.4454639</td>
+<td class="gt_row gt_right" headers="Inh Game Name_31 ICC">0.4520436</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Inh Game Name_32 Game Name">变色魔块PRO</td>
+<td class="gt_row gt_left" headers="Inh Game Name_32 Index Name">ssrt</td>
+<td class="gt_row gt_right" headers="Inh Game Name_32 Loading">0.3837396</td>
+<td class="gt_row gt_right" headers="Inh Game Name_32 ICC">0.5516098</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Inh Game Name_33 Game Name">多彩文字PRO</td>
+<td class="gt_row gt_left" headers="Inh Game Name_33 Index Name">cong_eff_ies</td>
+<td class="gt_row gt_right" headers="Inh Game Name_33 Loading">0.3765596</td>
+<td class="gt_row gt_right" headers="Inh Game Name_33 ICC">0.5645885</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Inh Game Name_34 Game Name">卡片分类PRO</td>
+<td class="gt_row gt_left" headers="Inh Game Name_34 Index Name">switch_cost_ies</td>
+<td class="gt_row gt_right" headers="Inh Game Name_34 Loading">0.3056030</td>
+<td class="gt_row gt_right" headers="Inh Game Name_34 ICC">0.4687936</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Inh Game Name_35 Game Name">言语记忆A</td>
+<td class="gt_row gt_left" headers="Inh Game Name_35 Index Name">fm_dprime</td>
+<td class="gt_row gt_right" headers="Inh Game Name_35 Loading">0.2257133</td>
+<td class="gt_row gt_right" headers="Inh Game Name_35 ICC">0.0000000</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Inh Game Name_36 Game Name">注意指向</td>
+<td class="gt_row gt_left" headers="Inh Game Name_36 Index Name">cong_eff_ies</td>
+<td class="gt_row gt_right" headers="Inh Game Name_36 Loading">0.2063205</td>
+<td class="gt_row gt_right" headers="Inh Game Name_36 ICC">0.6606258</td>
+</tr>
+<tr class="odd gt_row_group_first">
+<td rowspan="7" class="gt_row gt_left gt_stub_row_group" headers="VSTM stub_1_37 stub_1">VSTM</td>
+<td class="gt_row gt_left" headers="VSTM stub_1_37 Game Name">幸运小球PRO</td>
+<td class="gt_row gt_left" headers="VSTM stub_1_37 Index Name">nc</td>
+<td class="gt_row gt_right" headers="VSTM stub_1_37 Loading">0.6706127</td>
+<td class="gt_row gt_right" headers="VSTM stub_1_37 ICC">0.5658720</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="VSTM Game Name_38 Game Name">密码箱</td>
+<td class="gt_row gt_left" headers="VSTM Game Name_38 Index Name">nc</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_38 Loading">0.6367052</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_38 ICC">0.4504140</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="VSTM Game Name_39 Game Name">井然有序</td>
+<td class="gt_row gt_left" headers="VSTM Game Name_39 Index Name">nc</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_39 Loading">0.6244655</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_39 ICC">0.4969166</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="VSTM Game Name_40 Game Name">顺背数PRO</td>
+<td class="gt_row gt_left" headers="VSTM Game Name_40 Index Name">nc</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_40 Loading">0.6010638</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_40 ICC">0.6340612</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="VSTM Game Name_41 Game Name">速算师（中级）</td>
+<td class="gt_row gt_left" headers="VSTM Game Name_41 Index Name">nc</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_41 Loading">0.5152828</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_41 ICC">0.7844297</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="VSTM Game Name_42 Game Name">远距离联想</td>
+<td class="gt_row gt_left" headers="VSTM Game Name_42 Index Name">nc</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_42 Loading">0.3806711</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_42 ICC">0.5176199</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="VSTM Game Name_43 Game Name">时长分辨</td>
+<td class="gt_row gt_left" headers="VSTM Game Name_43 Index Name">thresh_last_block</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_43 Loading">0.3017391</td>
+<td class="gt_row gt_right" headers="VSTM Game Name_43 ICC">0.5601665</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td rowspan="5" class="gt_row gt_left gt_stub_row_group" headers="SSTM stub_1_44 stub_1">SSTM</td>
+<td class="gt_row gt_left" headers="SSTM stub_1_44 Game Name">蝴蝶照相机</td>
+<td class="gt_row gt_left" headers="SSTM stub_1_44 Index Name">nc</td>
+<td class="gt_row gt_right" headers="SSTM stub_1_44 Loading">0.7549573</td>
+<td class="gt_row gt_right" headers="SSTM stub_1_44 ICC">0.6622464</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="SSTM Game Name_45 Game Name">位置记忆PRO</td>
+<td class="gt_row gt_left" headers="SSTM Game Name_45 Index Name">nc</td>
+<td class="gt_row gt_right" headers="SSTM Game Name_45 Loading">0.7000238</td>
+<td class="gt_row gt_right" headers="SSTM Game Name_45 ICC">0.6388553</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="SSTM Game Name_46 Game Name">打靶场</td>
+<td class="gt_row gt_left" headers="SSTM Game Name_46 Index Name">nc</td>
+<td class="gt_row gt_right" headers="SSTM Game Name_46 Loading">0.6434684</td>
+<td class="gt_row gt_right" headers="SSTM Game Name_46 ICC">0.4946694</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="SSTM Game Name_47 Game Name">路径学习</td>
+<td class="gt_row gt_left" headers="SSTM Game Name_47 Index Name">nc</td>
+<td class="gt_row gt_right" headers="SSTM Game Name_47 Loading">0.5407346</td>
+<td class="gt_row gt_right" headers="SSTM Game Name_47 ICC">0.3010715</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="SSTM Game Name_48 Game Name">萤火虫PRO</td>
+<td class="gt_row gt_left" headers="SSTM Game Name_48 Index Name">nc</td>
+<td class="gt_row gt_right" headers="SSTM Game Name_48 Loading">0.4980568</td>
+<td class="gt_row gt_right" headers="SSTM Game Name_48 ICC">0.5986120</td>
+</tr>
+<tr class="odd gt_row_group_first">
+<td rowspan="11" class="gt_row gt_left gt_stub_row_group" headers="EM stub_1_49 stub_1">EM</td>
+<td class="gt_row gt_left" headers="EM stub_1_49 Game Name">万花筒</td>
+<td class="gt_row gt_left" headers="EM stub_1_49 Index Name">nc</td>
+<td class="gt_row gt_right" headers="EM stub_1_49 Loading">0.6299532</td>
+<td class="gt_row gt_right" headers="EM stub_1_49 ICC">0.6092568</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="EM Game Name_50 Game Name">词汇学习</td>
+<td class="gt_row gt_left" headers="EM Game Name_50 Index Name">nc</td>
+<td class="gt_row gt_right" headers="EM Game Name_50 Loading">0.6148498</td>
+<td class="gt_row gt_right" headers="EM Game Name_50 ICC">0.3723588</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="EM Game Name_51 Game Name">过目不忘PRO</td>
+<td class="gt_row gt_left" headers="EM Game Name_51 Index Name">nc</td>
+<td class="gt_row gt_right" headers="EM Game Name_51 Loading">0.6075529</td>
+<td class="gt_row gt_right" headers="EM Game Name_51 ICC">0.6004452</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="EM Game Name_52 Game Name">欢乐餐厅PRO</td>
+<td class="gt_row gt_left" headers="EM Game Name_52 Index Name">nc</td>
+<td class="gt_row gt_right" headers="EM Game Name_52 Loading">0.6051290</td>
+<td class="gt_row gt_right" headers="EM Game Name_52 ICC">0.5162227</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="EM Game Name_53 Game Name">社交达人</td>
+<td class="gt_row gt_left" headers="EM Game Name_53 Index Name">fntotal</td>
+<td class="gt_row gt_right" headers="EM Game Name_53 Loading">0.5727646</td>
+<td class="gt_row gt_right" headers="EM Game Name_53 ICC">0.4827007</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="EM Game Name_54 Game Name">宇宙黑洞A</td>
+<td class="gt_row gt_left" headers="EM Game Name_54 Index Name">nc</td>
+<td class="gt_row gt_right" headers="EM Game Name_54 Loading">0.5516628</td>
+<td class="gt_row gt_right" headers="EM Game Name_54 ICC">0.6075916</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="EM Game Name_55 Game Name">人工语言-高级</td>
+<td class="gt_row gt_left" headers="EM Game Name_55 Index Name">nc</td>
+<td class="gt_row gt_right" headers="EM Game Name_55 Loading">0.5336025</td>
+<td class="gt_row gt_right" headers="EM Game Name_55 ICC">0.2651027</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="EM Game Name_56 Game Name">事件记忆</td>
+<td class="gt_row gt_left" headers="EM Game Name_56 Index Name">nc</td>
+<td class="gt_row gt_right" headers="EM Game Name_56 Loading">0.5304998</td>
+<td class="gt_row gt_right" headers="EM Game Name_56 ICC">0.5468560</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="EM Game Name_57 Game Name">图片记忆A</td>
+<td class="gt_row gt_left" headers="EM Game Name_57 Index Name">bps_score</td>
+<td class="gt_row gt_right" headers="EM Game Name_57 Loading">0.4923994</td>
+<td class="gt_row gt_right" headers="EM Game Name_57 ICC">0.4905354</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="EM Game Name_58 Game Name">连续再认PRO</td>
+<td class="gt_row gt_left" headers="EM Game Name_58 Index Name">dprime</td>
+<td class="gt_row gt_right" headers="EM Game Name_58 Loading">0.4866025</td>
+<td class="gt_row gt_right" headers="EM Game Name_58 ICC">0.6425060</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="EM Game Name_59 Game Name">视觉记忆测试</td>
+<td class="gt_row gt_left" headers="EM Game Name_59 Index Name">nc</td>
+<td class="gt_row gt_right" headers="EM Game Name_59 Loading">0.4761503</td>
+<td class="gt_row gt_right" headers="EM Game Name_59 ICC">0.6060116</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td rowspan="4" class="gt_row gt_left gt_stub_row_group" headers="Shift stub_1_60 stub_1">Shift</td>
+<td class="gt_row gt_left" headers="Shift stub_1_60 Game Name">察颜观色PRO</td>
+<td class="gt_row gt_left" headers="Shift stub_1_60 Index Name">switch_cost_ies</td>
+<td class="gt_row gt_right" headers="Shift stub_1_60 Loading">0.5450219</td>
+<td class="gt_row gt_right" headers="Shift stub_1_60 ICC">0.5667099</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Shift Game Name_61 Game Name">多变计数师</td>
+<td class="gt_row gt_left" headers="Shift Game Name_61 Index Name">switch_cost_ies</td>
+<td class="gt_row gt_right" headers="Shift Game Name_61 Loading">0.5435840</td>
+<td class="gt_row gt_right" headers="Shift Game Name_61 ICC">0.4726218</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Shift Game Name_62 Game Name">随机应变</td>
+<td class="gt_row gt_left" headers="Shift Game Name_62 Index Name">switch_cost_ies</td>
+<td class="gt_row gt_right" headers="Shift Game Name_62 Loading">0.5356438</td>
+<td class="gt_row gt_right" headers="Shift Game Name_62 ICC">0.5841394</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Shift Game Name_63 Game Name">候鸟迁徙PRO</td>
+<td class="gt_row gt_left" headers="Shift Game Name_63 Index Name">switch_cost_ies</td>
+<td class="gt_row gt_right" headers="Shift Game Name_63 Loading">0.3728003</td>
+<td class="gt_row gt_right" headers="Shift Game Name_63 ICC">0.4911534</td>
+</tr>
+</tbody>
 </table>
+
 </div>
 </div>
+</div>
+</figure>
 </div>
 </div>
 </section>
 <section id="能力分估计因子得分" class="level1 page-columns page-full">
 <h1>能力分估计（因子得分）</h1>
-<div id="fig-cor-fact-scores-among-selection" class="quarto-figure quarto-figure-center anchored page-columns page-full">
-<figure class="figure page-columns page-full">
-<details>
+<div class="cell page-columns page-full">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar_load</span>(scores_factor, <span class="at">store =</span> projects<span class="sc">$</span>confirm_factors<span class="sc">$</span>store)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>factors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"g"</span>, dimensions<span class="sc">$</span>dim_label)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (factor <span class="cf">in</span> factors) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>latents <span class="ot">&lt;-</span> <span class="fu">names</span>(scores_factor)[<span class="sc">-</span><span class="fu">c</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)]</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (latent <span class="cf">in</span> latents) {</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> scores_factor <span class="sc">|&gt;</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(theory <span class="sc">==</span> <span class="st">"bf"</span>) <span class="sc">|&gt;</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">id_cols =</span> user_id,</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">names_from =</span> name,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">values_from =</span> <span class="fu">all_of</span>(factor)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">values_from =</span> <span class="fu">all_of</span>(latent)</span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">!</span>user_id) <span class="sc">|&gt;</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    GGally<span class="sc">::</span><span class="fu">ggpairs</span>() <span class="sc">+</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(factor)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="fu">match_dim_label</span>(latent))</span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(p)</span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output-display column-page">
-<div id="fig-cor-fact-scores-among-selection-1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-1.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
-<figcaption class="figure-caption">(a)</figcaption>
+<div id="fig-cor-fact-scores-among-selection" class="cell quarto-figure quarto-figure-center quarto-float anchored page-columns page-full">
+<figure class="quarto-float quarto-float-fig figure page-columns page-full">
+<div aria-describedby="fig-cor-fact-scores-among-selection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
+<div class="cell-output-display page-columns page-full">
+<div id="fig-cor-fact-scores-among-selection-1" class="quarto-figure quarto-figure-center quarto-float anchored page-columns page-full" width="1152">
+<figure class="quarto-float quarto-subfloat-fig figure page-columns page-full">
+<div aria-describedby="fig-cor-fact-scores-among-selection-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-selection-1.png" id="fig-cor-fact-scores-among-selection-1" class="img-fluid figure-img column-page" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-selection-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a)
+</figcaption>
 </figure>
 </div>
 </div>
-<div class="cell-output-display column-page">
-<div id="fig-cor-fact-scores-among-selection-2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-2.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
-<figcaption class="figure-caption">(b)</figcaption>
+<div class="cell-output-display page-columns page-full">
+<div id="fig-cor-fact-scores-among-selection-2" class="quarto-figure quarto-figure-center quarto-float anchored page-columns page-full" width="1152">
+<figure class="quarto-float quarto-subfloat-fig figure page-columns page-full">
+<div aria-describedby="fig-cor-fact-scores-among-selection-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-selection-2.png" id="fig-cor-fact-scores-among-selection-2" class="img-fluid figure-img column-page" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-selection-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b)
+</figcaption>
 </figure>
 </div>
 </div>
-<div class="cell-output-display column-page">
-<div id="fig-cor-fact-scores-among-selection-3" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-3.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
-<figcaption class="figure-caption">(c)</figcaption>
+<div class="cell-output-display page-columns page-full">
+<div id="fig-cor-fact-scores-among-selection-3" class="quarto-figure quarto-figure-center quarto-float anchored page-columns page-full" width="1152">
+<figure class="quarto-float quarto-subfloat-fig figure page-columns page-full">
+<div aria-describedby="fig-cor-fact-scores-among-selection-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-selection-3.png" id="fig-cor-fact-scores-among-selection-3" class="img-fluid figure-img column-page" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-selection-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c)
+</figcaption>
 </figure>
 </div>
 </div>
-<div class="cell-output-display column-page">
-<div id="fig-cor-fact-scores-among-selection-4" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-4.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
-<figcaption class="figure-caption">(d)</figcaption>
+<div class="cell-output-display page-columns page-full">
+<div id="fig-cor-fact-scores-among-selection-4" class="quarto-figure quarto-figure-center quarto-float anchored page-columns page-full" width="1152">
+<figure class="quarto-float quarto-subfloat-fig figure page-columns page-full">
+<div aria-describedby="fig-cor-fact-scores-among-selection-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-selection-4.png" id="fig-cor-fact-scores-among-selection-4" class="img-fluid figure-img column-page" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-selection-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(d)
+</figcaption>
 </figure>
 </div>
 </div>
-<div class="cell-output-display column-page">
-<div id="fig-cor-fact-scores-among-selection-5" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-5.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
-<figcaption class="figure-caption">(e)</figcaption>
+<div class="cell-output-display page-columns page-full">
+<div id="fig-cor-fact-scores-among-selection-5" class="quarto-figure quarto-figure-center quarto-float anchored page-columns page-full" width="1152">
+<figure class="quarto-float quarto-subfloat-fig figure page-columns page-full">
+<div aria-describedby="fig-cor-fact-scores-among-selection-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-selection-5.png" id="fig-cor-fact-scores-among-selection-5" class="img-fluid figure-img column-page" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-selection-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(e)
+</figcaption>
 </figure>
 </div>
 </div>
-<div class="cell-output-display column-page">
-<div id="fig-cor-fact-scores-among-selection-6" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-6.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
-<figcaption class="figure-caption">(f)</figcaption>
+<div class="cell-output-display page-columns page-full">
+<div id="fig-cor-fact-scores-among-selection-6" class="quarto-figure quarto-figure-center quarto-float anchored page-columns page-full" width="1152">
+<figure class="quarto-float quarto-subfloat-fig figure page-columns page-full">
+<div aria-describedby="fig-cor-fact-scores-among-selection-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-selection-6.png" id="fig-cor-fact-scores-among-selection-6" class="img-fluid figure-img column-page" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-selection-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(f)
+</figcaption>
 </figure>
 </div>
 </div>
-<div class="cell-output-display column-page">
-<div id="fig-cor-fact-scores-among-selection-7" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-7.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
-<figcaption class="figure-caption">(g)</figcaption>
+<div class="cell-output-display page-columns page-full">
+<div id="fig-cor-fact-scores-among-selection-7" class="quarto-figure quarto-figure-center quarto-float anchored page-columns page-full" width="1152">
+<figure class="quarto-float quarto-subfloat-fig figure page-columns page-full">
+<div aria-describedby="fig-cor-fact-scores-among-selection-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-selection-7.png" id="fig-cor-fact-scores-among-selection-7" class="img-fluid figure-img column-page" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-selection-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(g)
+</figcaption>
 </figure>
 </div>
 </div>
-<div class="cell-output-display column-page">
-<div id="fig-cor-fact-scores-among-selection-8" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-selection-8.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152"></p>
-<figcaption class="figure-caption">(h)</figcaption>
+<div class="cell-output-display page-columns page-full">
+<div id="fig-cor-fact-scores-among-selection-8" class="quarto-figure quarto-figure-center quarto-float anchored page-columns page-full" width="1152">
+<figure class="quarto-float quarto-subfloat-fig figure page-columns page-full">
+<div aria-describedby="fig-cor-fact-scores-among-selection-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca" class="page-columns page-full">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-selection-8.png" id="fig-cor-fact-scores-among-selection-8" class="img-fluid figure-img column-page" data-ref-parent="fig-cor-fact-scores-among-selection" width="1152">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-selection-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(h)
+</figcaption>
 </figure>
 </div>
 </div>
-<figcaption class="figure-caption">图&nbsp;6: 不同任务选择方案的因子得分相关</figcaption>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cor-fact-scores-among-selection-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;6: 不同任务选择方案的因子得分相关
+</figcaption>
 </figure>
 </div>
-<p><a href="#fig-cor-fact-scores-among-theory">图&nbsp;7</a> 表明：bi-factor模型和另两个模型拟合出来的特殊能力分数相关仅为0.5上下，这是因为bi-factor模型从这些特殊能力中去掉了一般能力的影响，而另两个模型则一定程度上混入了一般能力<span class="citation" data-cites="murray2013">(<a href="#ref-murray2013" role="doc-biblioref">Murray and Johnson 2013</a>)</span>。而bi-factor模型的这一特性正是我们所需要的。</p>
-<div id="fig-cor-fact-scores-among-theory" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<details>
+</div>
+<p><a href="#fig-cor-fact-scores-among-theory" class="quarto-xref">图&nbsp;7</a> 表明：bi-factor模型和另两个模型拟合出来的特殊能力分数相关仅为0.5上下，这是因为bi-factor模型从这些特殊能力中去掉了一般能力的影响，而另两个模型则一定程度上混入了一般能力<span class="citation" data-cites="murray2013">(<a href="#ref-murray2013" role="doc-biblioref">Murray and Johnson 2013</a>)</span>。而bi-factor模型的这一特性正是我们所需要的。</p>
+<div class="cell">
+<details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>factors <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"g"</span>, dimensions<span class="sc">$</span>dim_label)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (factor <span class="cf">in</span> factors) {</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> scores_factor <span class="sc">|&gt;</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"full"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">id_cols =</span> user_id,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">names_from =</span> theory,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">values_from =</span> <span class="fu">all_of</span>(factor)</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">!</span><span class="fu">where</span>(anyNA)) <span class="sc">|&gt;</span></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">!</span>user_id) <span class="sc">|&gt;</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    GGally<span class="sc">::</span><span class="fu">ggpairs</span>() <span class="sc">+</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(factor)</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(p)</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (latent <span class="cf">in</span> latents) {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> scores_factor <span class="sc">|&gt;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(name <span class="sc">==</span> <span class="st">"full"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_wider</span>(</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">id_cols =</span> user_id,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">names_from =</span> theory,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">values_from =</span> <span class="fu">all_of</span>(latent)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">|&gt;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">!</span><span class="fu">where</span>(anyNA)) <span class="sc">|&gt;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">!</span>user_id) <span class="sc">|&gt;</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    GGally<span class="sc">::</span><span class="fu">ggpairs</span>() <span class="sc">+</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ggtitle</span>(<span class="fu">match_dim_label</span>(latent))</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(p)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div id="fig-cor-fact-scores-among-theory" class="cell quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-cor-fact-scores-among-theory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="fig-cor-fact-scores-among-theory-1" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-1.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
-<figcaption class="figure-caption">(a)</figcaption>
-</figure>
+<div id="fig-cor-fact-scores-among-theory-1" class="quarto-figure quarto-figure-center quarto-float anchored" width="576">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-cor-fact-scores-among-theory-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-theory-1.png" id="fig-cor-fact-scores-among-theory-1" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576">
 </div>
-</div>
-<div class="cell-output-display">
-<div id="fig-cor-fact-scores-among-theory-2" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-2.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
-<figcaption class="figure-caption">(b)</figcaption>
-</figure>
-</div>
-</div>
-<div class="cell-output-display">
-<div id="fig-cor-fact-scores-among-theory-3" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-3.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
-<figcaption class="figure-caption">(c)</figcaption>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-theory-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a)
+</figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
-<div id="fig-cor-fact-scores-among-theory-4" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-4.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
-<figcaption class="figure-caption">(d)</figcaption>
+<div id="fig-cor-fact-scores-among-theory-2" class="quarto-figure quarto-figure-center quarto-float anchored" width="576">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-cor-fact-scores-among-theory-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-theory-2.png" id="fig-cor-fact-scores-among-theory-2" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-theory-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b)
+</figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
-<div id="fig-cor-fact-scores-among-theory-5" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-5.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
-<figcaption class="figure-caption">(e)</figcaption>
+<div id="fig-cor-fact-scores-among-theory-3" class="quarto-figure quarto-figure-center quarto-float anchored" width="576">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-cor-fact-scores-among-theory-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-theory-3.png" id="fig-cor-fact-scores-among-theory-3" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-theory-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c)
+</figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
-<div id="fig-cor-fact-scores-among-theory-6" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-6.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
-<figcaption class="figure-caption">(f)</figcaption>
+<div id="fig-cor-fact-scores-among-theory-4" class="quarto-figure quarto-figure-center quarto-float anchored" width="576">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-cor-fact-scores-among-theory-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-theory-4.png" id="fig-cor-fact-scores-among-theory-4" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-theory-4-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(d)
+</figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
-<div id="fig-cor-fact-scores-among-theory-7" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-7.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
-<figcaption class="figure-caption">(g)</figcaption>
+<div id="fig-cor-fact-scores-among-theory-5" class="quarto-figure quarto-figure-center quarto-float anchored" width="576">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-cor-fact-scores-among-theory-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-theory-5.png" id="fig-cor-fact-scores-among-theory-5" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-theory-5-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(e)
+</figcaption>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
-<div id="fig-cor-fact-scores-among-theory-8" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="index_files/figure-html/fig-cor-fact-scores-among-theory-8.png" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576"></p>
-<figcaption class="figure-caption">(h)</figcaption>
+<div id="fig-cor-fact-scores-among-theory-6" class="quarto-figure quarto-figure-center quarto-float anchored" width="576">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-cor-fact-scores-among-theory-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-theory-6.png" id="fig-cor-fact-scores-among-theory-6" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-theory-6-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(f)
+</figcaption>
 </figure>
 </div>
 </div>
-<figcaption class="figure-caption">图&nbsp;7: 不同理论的因子得分相关</figcaption>
+<div class="cell-output-display">
+<div id="fig-cor-fact-scores-among-theory-7" class="quarto-figure quarto-figure-center quarto-float anchored" width="576">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-cor-fact-scores-among-theory-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-theory-7.png" id="fig-cor-fact-scores-among-theory-7" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-theory-7-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(g)
+</figcaption>
 </figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div id="fig-cor-fact-scores-among-theory-8" class="quarto-figure quarto-figure-center quarto-float anchored" width="576">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-cor-fact-scores-among-theory-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="index_files/figure-html/fig-cor-fact-scores-among-theory-8.png" id="fig-cor-fact-scores-among-theory-8" class="img-fluid figure-img" data-ref-parent="fig-cor-fact-scores-among-theory" width="576">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-cor-fact-scores-among-theory-8-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(h)
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-cor-fact-scores-among-theory-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+图&nbsp;7: 不同理论的因子得分相关
+</figcaption>
+</figure>
+</div>
 </div>
 </section>
 <section id="短版本" class="level1">
@@ -2439,7 +2786,7 @@ div.csl-indent {
 </section>
 
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-murray2013" class="csl-entry" role="listitem">
 Murray, Aja L., and Wendy Johnson. 2013. <span>“The Limitations of Model Fit in Comparing the Bi-Factor Versus Higher-Order Models of Human Cognitive Ability Structure.”</span> <em>Intelligence</em> 41 (5): 407–22. <a href="https://doi.org/10.1016/j.intell.2013.06.004">https://doi.org/10.1016/j.intell.2013.06.004</a>.
 </div>
@@ -2493,6 +2840,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -2561,13 +2935,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'alternate';
+  const darkModeDefault = true;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -2646,10 +3022,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -2659,8 +3034,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -2673,6 +3057,125 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -2716,6 +3219,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -2741,6 +3245,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -2801,6 +3331,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+
 
 
 
