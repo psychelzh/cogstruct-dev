@@ -4,6 +4,11 @@ censor_indices <- function(indices, subset, users_completed, res_motivated,
     filter({{ subset }}) |>
     # remove users who did not complete the experiment
     semi_join(users_completed, by = "user_id") |>
+    # Keep the latest data for each user.
+    filter(
+      row_number(desc(game_time)) == 1,
+      .by = c(user_id, game_id, index_name, {{ id_cols_extra }})
+    ) |>
     data.iquizoo::screen_indices() |>
     mutate(
       game_index = game_id |>
@@ -15,7 +20,7 @@ censor_indices <- function(indices, subset, users_completed, res_motivated,
     ) |>
     left_join(
       res_motivated,
-      by = setdiff(colnames(res_motivated), "is_motivated")
+      by = intersect(names(indices), names(res_motivated))
     ) |>
     mutate(
       is_outlier_iqr = score %in% boxplot.stats(score)$out,

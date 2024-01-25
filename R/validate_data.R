@@ -1,6 +1,7 @@
 #' Validate Raw Data
 #'
 #' This function will ensure only valid data is used for further analysis.
+#' However, no data quality check is performed here.
 #'
 #' The validation process contains the following steps:
 #'
@@ -10,7 +11,6 @@
 #' responses.
 #' 1. Check if data names were valid, for some error data contains data from
 #' another game caused by the technical issues.
-#' 1. Keep the latest data for each user.
 #'
 #' @param data_parsed Data with parsed raw data.
 #' @param require_keyboard Logical indicating if keyboard response is required.
@@ -21,8 +21,7 @@ validate_data <- function(data_parsed, require_keyboard, list_names) {
   data_parsed |>
     filter(check_ver(game_version)) |>
     filter(map_lgl(raw_parsed, check_device, require_keyboard)) |>
-    filter(map_lgl(raw_parsed, check_names, list_names)) |>
-    filter(row_number(desc(game_time)) == 1, .by = user_id)
+    filter(map_lgl(raw_parsed, check_names, list_names))
 }
 
 # helper functions

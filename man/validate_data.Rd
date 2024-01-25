@@ -18,6 +18,7 @@ Validated data of class \code{\link[=data.frame]{data.frame()}}.
 }
 \description{
 This function will ensure only valid data is used for further analysis.
+However, no data quality check is performed here.
 }
 \details{
 The validation process contains the following steps:
@@ -28,6 +29,5 @@ keep 3.0.0 or 3.1.0.
 responses.
 \item Check if data names were valid, for some error data contains data from
 another game caused by the technical issues.
-\item Keep the latest data for each user.
 }
 }
