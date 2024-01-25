@@ -34,9 +34,9 @@ match_cases <- function(data, subjs) {
 }
 
 match_dim_label <- function(latent) {
-  dimensions <- read_csv("config/dimensions.csv", show_col_types = FALSE)
-  if (latent == "g") {
-    return("g")
-  }
-  dimensions$dim_label[as.integer(str_extract(latent, "\\d+"))]
+  dimensions <- read_csv("config/dimensions.csv", show_col_types = FALSE) |>
+    mutate(latent = str_c("F", cluster)) |>
+    add_row(latent = "g", dim_label = "g") |>
+    pull(dim_label, name = latent)
+  dimensions[latent]
 }

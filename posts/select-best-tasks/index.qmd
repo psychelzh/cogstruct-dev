@@ -160,7 +160,7 @@ dimensions <- read_csv("config/dimensions.csv", show_col_types = FALSE)
 targets::tar_read(config_thin_7, store = projects$explore_factors$store) |>
   left_join(dimensions, by = "cluster") |>
   separate_wider_delim(
-    game_index, ".",
+    observed, ".",
     names = c("game_name_abbr", "index_name")
   ) |>
   mutate(
@@ -226,7 +226,7 @@ targets::tar_read(fit_fo_full, store = projects$confirm_factors$store) |>
       filter(origin == "rm_out"),
     by = join_by(game_id, index_name)
   ) |>
-  mutate(Dimension = as_factor(To)) |>
+  mutate(Dimension = as_factor(match_dim_label(To))) |>
   select(
     Dimension,
     `Game Name` = game_name,
@@ -252,18 +252,18 @@ targets::tar_read(fit_fo_full, store = projects$confirm_factors$store) |>
 #| fig-subcap: true
 
 tar_load(scores_factor, store = projects$confirm_factors$store)
-factors <- c("g", dimensions$dim_label)
-for (factor in factors) {
+latents <- names(scores_factor)[-c(1:3)]
+for (latent in latents) {
   p <- scores_factor |>
     filter(theory == "bf") |>
     pivot_wider(
       id_cols = user_id,
       names_from = name,
-      values_from = all_of(factor)
+      values_from = all_of(latent)
     ) |>
     select(!user_id) |>
     GGally::ggpairs() +
-    ggtitle(factor)
+    ggtitle(match_dim_label(latent))
   print(p)
 }
 ```
@@ -277,19 +277,18 @@ for (factor in factors) {
 #| fig-cap: 不同理论的因子得分相关
 #| fig-subcap: true
 
-factors <- c("g", dimensions$dim_label)
-for (factor in factors) {
+for (latent in latents) {
   p <- scores_factor |>
     filter(name == "full") |>
     pivot_wider(
       id_cols = user_id,
       names_from = theory,
-      values_from = all_of(factor)
+      values_from = all_of(latent)
     ) |>
     select(!where(anyNA)) |>
     select(!user_id) |>
     GGally::ggpairs() +
-    ggtitle(factor)
+    ggtitle(match_dim_label(latent))
   print(p)
 }
 ```
