@@ -18,7 +18,7 @@ prepare_ts_merged <- function(files) {
     )
 }
 
-prepare_files_ts <- function(config, session, task, atlas) {
+prepare_files_ts <- function(session, task, config, atlas) {
   path_config <- fs::path(
     Sys.getenv("ROOT_BIDS_DERIV"),
     sprintf("xcpd_%s", config)

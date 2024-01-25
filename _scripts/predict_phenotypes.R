@@ -19,7 +19,7 @@ tar_option_set(
 tar_source()
 
 targets_cpm <- tarchetypes::tar_map(
-  hypers_fmri_dataset,
+  params_fmri_tasks,
   tar_target(
     file_confounds,
     path_obj_from_proj(
@@ -33,10 +33,7 @@ targets_cpm <- tarchetypes::tar_map(
     format = "file_fast"
   ),
   tarchetypes::tar_map(
-    tidyr::expand_grid(
-      hypers_xcpd_config,
-      hypers_atlas
-    ),
+    params_xcpd,
     tar_target(
       file_fc,
       path_obj_from_proj(
@@ -110,10 +107,7 @@ list(
     command = bind_rows(!!!.x, .id = ".id") |>
       zutils::separate_wider_dsv(
         ".id",
-        c(
-          names(hypers_cpm), names(hypers_xcpd_config),
-          names(hypers_atlas), names(hypers_fmri_dataset)
-        ),
+        c(names(hypers_cpm), names(params_xcpd), names(params_fmri_tasks)),
         patterns = c(rep(".+?", 2), ".+_?.+", rep(".+?", 3)),
         prefix = "cpm_performance"
       )

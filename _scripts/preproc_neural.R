@@ -20,16 +20,19 @@ tar_source()
 
 list(
   tarchetypes::tar_map(
-    hypers_fc,
+    tidyr::expand_grid(
+      params_fmri_tasks,
+      params_xcpd
+    ),
     tar_target(
       files_ts,
-      prepare_files_ts(config, session, task, atlas)
+      prepare_files_ts(session, task, config, atlas)
     ),
     tar_target(ts_merged, prepare_ts_merged(files_ts)),
     tar_target(fc_orig_full, prepare_data_fc(ts_merged))
   ),
   tarchetypes::tar_map(
-    hypers_fmri_dataset,
+    params_fmri_tasks,
     tar_target(
       files_confounds,
       prepare_files_confounds(session, task)
@@ -57,7 +60,7 @@ list(
         distinct(user_id, subject) |>
         pull(user_id, name = subject)
     ),
-    hypers_fmri_dataset |>
+    params_fmri_tasks |>
       dplyr::summarise(
         expr_join_fd = c(
           quote(list),

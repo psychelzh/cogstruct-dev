@@ -63,13 +63,7 @@ hypers_model <- tibble::tibble(
 tasks_biased <- c("NsymNCmp", "TOJ", "RP", "DRMA", "CardSortPro")
 
 # used in functional connectivity settings
-hypers_xcpd_config <- tibble::tibble(
-  config = c(
-    "default", # with global signal regression
-    "no_gsr" # no global signal regression
-  )
-)
-hypers_fmri_dataset <- tibble::tribble(
+params_fmri_tasks <- tibble::tribble(
   ~session, ~task,
   "1", "rest",
   "1", "am",
@@ -78,13 +72,12 @@ hypers_fmri_dataset <- tibble::tribble(
   "2", "wm",
   "2", "movie"
 )
-hypers_atlas <- tibble::tibble(
+params_xcpd <- tidyr::expand_grid(
+  config = c(
+    "default", # with global signal regression
+    "no_gsr" # no global signal regression
+  ),
   atlas = sprintf("Schaefer%d17", 1:4)
-)
-hypers_fc <- tidyr::expand_grid(
-  hypers_xcpd_config,
-  hypers_fmri_dataset,
-  hypers_atlas
 )
 
 # used in CPM modeling building
