@@ -72,14 +72,15 @@ slice_data_items <- function(data, num_parts) {
       n_distinct(map_int(data$raw_parsed, nrow)) == 1
   )
   item_order <- data |>
-    tidytable::unnest() |>
+    mutate(id = row_number()) |>
+    tidytable::unnest(raw_parsed) |>
     filter(acc != -1) |>
     pivot_wider(
-      id_cols = user_id,
+      id_cols = id,
       names_from = itemid,
       values_from = acc
     ) |>
-    column_to_rownames("user_id") |>
+    column_to_rownames("id") |>
     psych::alpha() |>
     pluck("item.stats") |>
     arrange(desc(r.drop)) |> # this is item discrimination
