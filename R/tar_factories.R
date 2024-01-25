@@ -330,3 +330,129 @@ tar_fit_cfa <- function(config, data, theory,
     }
   )
 }
+
+tar_prep_files_cpm <- function(params_subset = NULL) {
+  values <- config_files({{ params_subset }})
+  c(
+    tarchetypes::tar_eval(
+      tar_target(
+        file_confounds,
+        path_obj_from_proj(
+          paste(
+            "confounds_cpm",
+            session, task,
+            sep = "_"
+          ),
+          "preproc_neural"
+        ),
+        format = "file_fast"
+      ),
+      dplyr::distinct(values, session, task, file_confounds)
+    ),
+    tarchetypes::tar_eval(
+      tar_target(
+        file_fc,
+        path_obj_from_proj(
+          paste(
+            "fc_orig_full",
+            session, task, config, atlas,
+            sep = "_"
+          ),
+          "preproc_neural"
+        ),
+        format = "file_fast"
+      ),
+      dplyr::distinct(values, session, task, config, atlas, file_fc)
+    )
+  )
+}
+
+tar_cpm_main <- function(scores_factor, subjs_to_keep, ...,
+                         params_subset = NULL,
+                         batches = 4,
+                         reps = 5,
+                         combine = NULL) {
+  cpm_branches <- tarchetypes::tar_map(
+    config_files({{ params_subset }}),
+    names = !starts_with("file"),
+    tarchetypes::tar_rep_raw(
+      "cpm_result",
+      substitute(
+        apply(
+          match_cases(scores_factor, subjs_to_keep), 2,
+          \(scores) {
+            cpmr::cpm(
+              match_cases(qs::qread(file_fc), subjs_to_keep),
+              scores,
+              confounds = match_cases(
+                qs::qread(file_confounds),
+                subjs_to_keep
+              ),
+              thresh_method = thresh_method,
+              thresh_level = thresh_level,
+              kfolds = 10
+            )
+          }
+        )
+      ),
+      batches = batches,
+      reps = reps,
+      iteration = "list"
+    ),
+    tarchetypes::tar_rep2(
+      cpm_performance,
+      aggregate_performance(cpm_result),
+      cpm_result
+    )
+  )
+  c(
+    cpm_branches,
+    lapply(
+      intersect(names(cpm_branches), combine),
+      \(name) {
+        tarchetypes::tar_combine_raw(
+          name,
+          cpm_branches[[name]],
+          command = substitute(
+            bind_rows(!!!.x, .id = ".id") |>
+              zutils::separate_wider_dsv(
+                ".id",
+                c(
+                  names(params_fmri_tasks),
+                  names(params_xcpd),
+                  names(hypers_cpm)
+                ),
+                patterns = c(rep(".+?", 2), ".+", rep(".+?", 3)),
+                prefix = "cpm_performance"
+              )
+          )
+        )
+      }
+    )
+  )
+}
+
+# helper functions ----
+config_files <- function(params_subset = NULL) {
+  if (rlang::quo_is_null(rlang::enquo(params_subset))) params_subset <- TRUE
+  tidyr::expand_grid(
+    params_fmri_tasks,
+    params_xcpd,
+    hypers_cpm
+  ) |>
+    dplyr::filter({{ params_subset }}) |>
+    dplyr::mutate(
+      file_fc = rlang::syms(
+        sprintf(
+          "file_fc_%s_%s_%s_%s",
+          session, task, config, atlas
+        )
+      ),
+      file_confounds = rlang::syms(
+        sprintf(
+          "file_confounds_%s_%s",
+          session, task
+        )
+      )
+    )
+}

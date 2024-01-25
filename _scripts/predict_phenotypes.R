@@ -18,57 +18,6 @@ tar_option_set(
 )
 tar_source()
 
-targets_cpm <- tarchetypes::tar_map(
-  params_fmri_tasks,
-  tar_target(
-    file_confounds,
-    path_obj_from_proj(
-      paste(
-        "confounds_cpm",
-        session, task,
-        sep = "_"
-      ),
-      "preproc_neural"
-    ),
-    format = "file_fast"
-  ),
-  tarchetypes::tar_map(
-    params_xcpd,
-    tar_target(
-      file_fc,
-      path_obj_from_proj(
-        paste(
-          "fc_orig_full",
-          config, session, task, atlas,
-          sep = "_"
-        ),
-        "preproc_neural"
-      ),
-      format = "file_fast"
-    ),
-    tarchetypes::tar_map(
-      hypers_cpm,
-      tar_target(
-        cpm_result,
-        cpmr::cpm(
-          match_cases(qs::qread(file_fc), subjs_to_keep),
-          match_cases(scores_factor, subjs_to_keep)[, dim_labels],
-          confounds = match_cases(qs::qread(file_confounds), subjs_to_keep),
-          thresh_method = thresh_method,
-          thresh_level = thresh_level,
-          kfolds = 10
-        ),
-        pattern = map(dim_labels),
-        iteration = "list"
-      ),
-      tar_target(
-        cpm_performance,
-        aggregate_performance(cpm_result, dim_labels)
-      )
-    )
-  )
-)
-
 list(
   tar_target(
     file_scores_factor,
@@ -100,16 +49,10 @@ list(
       subjs_behav[matched[!is.na(matched)]]
     }
   ),
-  targets_cpm,
-  tarchetypes::tar_combine(
-    cpm_performance,
-    zutils::select_list(targets_cpm, starts_with("cpm_performance")),
-    command = bind_rows(!!!.x, .id = ".id") |>
-      zutils::separate_wider_dsv(
-        ".id",
-        c(names(hypers_cpm), names(params_xcpd), names(params_fmri_tasks)),
-        patterns = c(rep(".+?", 2), ".+_?.+", rep(".+?", 3)),
-        prefix = "cpm_performance"
-      )
+  tar_prep_files_cpm(),
+  tar_cpm_main(
+    scores_factor,
+    subjs_to_keep,
+    combine = "cpm_performance"
   )
 )

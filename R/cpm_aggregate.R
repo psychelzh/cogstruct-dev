@@ -1,12 +1,12 @@
-aggregate_performance <- function(cpm_result, dim_labels) {
+aggregate_performance <- function(cpm_result, names_to = "latent") {
   lapply(
-    cpm_result,
+    # targets will append batching information to the list
+    zutils::select_list(cpm_result, !starts_with("tar")),
     \(result) {
       apply(result$pred, 2, cor.test, result$real) |>
         lapply(broom::tidy) |>
-        list_rbind(names_to = "network")
+        list_rbind(names_to = "include")
     }
   ) |>
-    set_names(dim_labels) |>
-    list_rbind(names_to = "dim_label")
+    list_rbind(names_to = names_to)
 }
