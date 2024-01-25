@@ -13,6 +13,25 @@
     ]
   },
   "Packages": {
+    "Amelia": {
+      "Package": "Amelia",
+      "Version": "1.8.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "RcppArmadillo",
+        "foreign",
+        "grDevices",
+        "graphics",
+        "methods",
+        "rlang",
+        "stats",
+        "utils"
+      ],
+      "Hash": "98cd82092b5bd523cb58b3e39fcb2636"
+    },
     "CompQuadForm": {
       "Package": "CompQuadForm",
       "Version": "1.4.3",

@@ -170,21 +170,19 @@ resample_g_scores <- function(data, num_vars, use_pairs) {
 }
 
 resample_vars <- function(vars, n, use_pairs = FALSE) {
-  if (use_pairs) {
-    n <- n * 2
-  }
+  if (use_pairs) n <- n * 2
   if (n > length(vars)) {
     stop("Not enough variables.")
   }
-  vars_shuffled <- sample(vars, n)
+  vars_sampled <- sample(vars, n)
   if (use_pairs) {
     idx_base <- seq_len(n / 2)
     list(
-      vars_shuffled[idx_base],
-      vars_shuffled[idx_base + n / 2]
+      vars_sampled[idx_base],
+      vars_sampled[idx_base + n / 2]
     )
   } else {
-    list(vars_shuffled)
+    list(vars_sampled)
   }
 }
 
@@ -193,8 +191,7 @@ extract_g <- function(data, vars) {
     data,
     ov.names = vars,
     std.ov = TRUE,
-    std.lv = TRUE,
-    missing = "ml"
+    std.lv = TRUE
   ) |>
     extract_latent_scores(data)
 }

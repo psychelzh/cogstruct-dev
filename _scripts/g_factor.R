@@ -30,16 +30,24 @@ list(
     path_obj_from_proj("indices_cogstruct", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
+  tar_target(
+    indices_cogstruct_imp,
+    # https://github.com/IQSS/Amelia/issues/47
+    # use default, i.e., 5 times of imputations
+    Amelia::amelia(as.data.frame(indices_cogstruct), idvars = "user_id")
+  ),
   tarchetypes::tar_file_read(
     indices_rapm,
     path_obj_from_proj("indices_rapm", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
-  tar_target(vars_pool, names(indices_cogstruct)[-1]), # exclude "user_id"
   tar_target(batches, seq_len(n_batches)),
   tar_target(
     config_vars,
-    prepare_config_vars(length(vars_pool), n_steps)
+    prepare_config_vars(
+      ncol(indices_cogstruct) - 1,
+      n_steps
+    )
   ),
   tar_target(
     scores_g,
@@ -47,11 +55,13 @@ list(
       n_reps,
       with(
         config_vars,
-        resample_g_scores(
-          indices_cogstruct,
+        lapply(
+          indices_cogstruct_imp$imputations,
+          resample_g_scores,
           num_vars,
           use_pairs
-        )
+        ) |>
+          list_rbind(names_to = "impute")
       ),
       simplify = FALSE
     ) |>
