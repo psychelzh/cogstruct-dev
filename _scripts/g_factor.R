@@ -1,6 +1,6 @@
 library(targets)
 tar_option_set(
-  packages = c("tidyverse", "lavaan"),
+  packages = c("tidyverse", "bit64", "lavaan"),
   format = "qs",
   controller = if (Sys.info()["nodename"] == "shadow") {
     crew.cluster::crew_controller_sge(
@@ -18,11 +18,8 @@ tar_option_set(
 )
 tar_source()
 
-# number of different sample sizes
+n_vars_total <- 76
 n_steps <- 20
-# used in batched runs
-n_batches <- 10
-n_reps <- 10
 
 list(
   tarchetypes::tar_file_read(
@@ -41,32 +38,28 @@ list(
     path_obj_from_proj("indices_rapm", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
-  tar_target(batches, seq_len(n_batches)),
-  tar_target(
-    config_vars,
-    prepare_config_vars(
-      ncol(indices_cogstruct) - 1,
-      n_steps
+  tarchetypes::tar_map(
+    prepare_config_vars(n_vars_total, n_steps),
+    tarchetypes::tar_rep(
+      scores_g_imp,
+      lapply(
+        indices_cogstruct_imp$imputations,
+        resample_g_scores,
+        num_vars,
+        use_pairs
+      ) |>
+        list_rbind(names_to = "impute"),
+      batches = 10,
+      reps = 10
+    ),
+    tarchetypes::tar_rep2(
+      scores_g,
+      scores_g_imp |>
+        summarise(
+          g = matsbyname::mean_byname(g),
+          .by = !c(impute, g)
+        ),
+      scores_g_imp
     )
-  ),
-  tar_target(
-    scores_g,
-    replicate(
-      n_reps,
-      with(
-        config_vars,
-        lapply(
-          indices_cogstruct_imp$imputations,
-          resample_g_scores,
-          num_vars,
-          use_pairs
-        ) |>
-          list_rbind(names_to = "impute")
-      ),
-      simplify = FALSE
-    ) |>
-      list_rbind(names_to = "rep") |>
-      mutate(batch = batches, .before = 1L),
-    pattern = cross(batches, config_vars)
   )
 )
