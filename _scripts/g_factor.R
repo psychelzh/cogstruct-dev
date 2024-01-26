@@ -42,13 +42,11 @@ list(
     prepare_config_vars(n_vars_total, n_steps),
     tarchetypes::tar_rep(
       scores_g_imp,
-      lapply(
-        indices_cogstruct_imp$imputations,
-        resample_g_scores,
+      resample_g_scores_imp(
+        indices_cogstruct_imp,
         num_vars,
         use_pairs
-      ) |>
-        list_rbind(names_to = "impute"),
+      ),
       batches = 10,
       reps = 10
     ),
@@ -56,7 +54,7 @@ list(
       scores_g,
       scores_g_imp |>
         summarise(
-          g = matsbyname::mean_byname(g),
+          g = list(do.call(matsbyname::mean_byname, g)),
           .by = !c(impute, g)
         ),
       scores_g_imp

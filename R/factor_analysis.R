@@ -159,14 +159,23 @@ prepare_config_vars <- function(num_vars_total, n_steps) {
   )
 }
 
-resample_g_scores <- function(data, num_vars, use_pairs) {
-  tibble(
-    num_vars = num_vars,
-    use_pairs = use_pairs,
-    vars = resample_vars(names(data)[-1], num_vars, use_pairs),
-    g = map(vars, extract_g, data = data)
+resample_g_scores_imp <- function(data_imp, num_vars, use_pairs) {
+  vars <- resample_vars(data_imp$orig.vars[-1], num_vars, use_pairs)
+  expand_grid(
+    enframe(
+      data_imp$imputations,
+      name = "impute",
+      value = "data"
+    ),
+    enframe(vars, name = "id_pairs", value = "vars")
   ) |>
-    mutate(id_pairs = seq_len(n()), .after = use_pairs)
+    mutate(g = map2(data, vars, extract_g)) |>
+    select(-data) |>
+    add_column(
+      num_vars = num_vars,
+      use_pairs = use_pairs,
+      .before = 1L
+    )
 }
 
 resample_vars <- function(vars, n, use_pairs = FALSE) {
