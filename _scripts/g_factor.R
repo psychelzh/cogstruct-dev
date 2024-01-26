@@ -16,6 +16,10 @@ tar_option_set(
     )
   }
 )
+# tar_make_clustermq() is an older (pre-{crew}) way to do distributed computing
+# in {targets}, and its configuration for your machine is below.
+options(clustermq.scheduler = "sge")
+options(clustermq.template = "clustermq.tmpl")
 tar_source()
 
 n_vars_total <- 76

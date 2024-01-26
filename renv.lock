@@ -741,6 +741,23 @@
       ],
       "Hash": "0aaa05204035dc43ea0004b9c76611dd"
     },
+    "clustermq": {
+      "Package": "clustermq",
+      "Version": "0.9.3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "R6",
+        "Rcpp",
+        "globals",
+        "methods",
+        "narray",
+        "progress",
+        "utils"
+      ],
+      "Hash": "f8c8b35d1fb94a13327d689b05d5f791"
+    },
     "codetools": {
       "Package": "codetools",
       "Version": "0.2-19",
@@ -1578,6 +1595,17 @@
       ],
       "Hash": "ab08ac61f3e1be454ae21911eb8bc2fe"
     },
+    "globals": {
+      "Package": "globals",
+      "Version": "0.16.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "codetools"
+      ],
+      "Hash": "baa9585ab4ce47a9f4618e671778cc6f"
+    },
     "glue": {
       "Package": "glue",
       "Version": "1.7.0",
@@ -2402,6 +2430,21 @@
         "R"
       ],
       "Hash": "c25d11b44b63ef24f3955aad82aef60c"
+    },
+    "narray": {
+      "Package": "narray",
+      "Version": "0.5.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "progress",
+        "stats",
+        "stringr",
+        "utils"
+      ],
+      "Hash": "7ec5a2396d3c9ad4374495283dfcdc83"
     },
     "nlme": {
       "Package": "nlme",
