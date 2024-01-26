@@ -139,7 +139,15 @@ list(
   tarchetypes::tar_combine(
     scores_factor,
     zutils::select_list(targets_cfa, starts_with("scores")),
-    command = bind_rows(!!!.x, .id = ".id") |>
+    command = list(!!!.x) |>
+      map(
+        \(x) {
+          unclass(x) |>
+            as_tibble(rownames = "user_id") |>
+            mutate(user_id = bit64::as.integer64(user_id))
+        }
+      ) |>
+      bind_rows(.id = ".id") |>
       zutils::separate_wider_dsv(
         ".id",
         c(names(hypers_model), names(hypers_config_dims)),

@@ -1,9 +1,8 @@
 # functional connectivity data preparation ----
 prepare_data_fc <- function(ts) {
-  structure(
-    do.call(rbind, lapply(ts$data, calc_fc)),
-    id = pull(ts, user_id, name = subject)
-  )
+  fc <- do.call(rbind, lapply(ts$data, calc_fc))
+  rownames(fc) <- as.character(ts$user_id)
+  fc
 }
 
 prepare_ts_merged <- function(files) {
@@ -14,6 +13,7 @@ prepare_ts_merged <- function(files) {
     ) |>
     mutate(
       user_id = data.camp::users_id_mapping[subject],
+      .keep = "unused",
       .before = 1L
     )
 }
@@ -36,19 +36,24 @@ prepare_files_ts <- function(session, task, config, atlas) {
 
 # confounds data preparation ----
 compose_confounds_cpm <- function(users_demography, fd_mean) {
-  data <- users_demography |>
+  users_demography |>
     select(user_id, user_sex, user_age) |>
     inner_join(fd_mean, by = join_by(user_id)) |>
-    mutate(scanner = str_remove_all(subject, "\\d")) |>
+    mutate(
+      scanner = str_remove_all(
+        names(data.camp::users_id_mapping)[
+          match(user_id, data.camp::users_id_mapping)
+        ],
+        "\\d"
+      )
+    ) |>
     fastDummies::dummy_columns(
       "scanner",
       remove_first_dummy = TRUE,
       remove_selected_columns = TRUE
-    )
-  structure(
-    as.matrix(select(data, !c(user_id, subject))),
-    id = pull(data, user_id, name = subject)
-  )
+    ) |>
+    column_to_rownames("user_id") |>
+    as.matrix()
 }
 
 prepare_fd_mean <- function(confounds) {
@@ -70,6 +75,7 @@ prepare_data_confounds <- function(files) {
     ) |>
     mutate(
       user_id = data.camp::users_id_mapping[subject],
+      .keep = "unused",
       .before = 1L
     )
 }

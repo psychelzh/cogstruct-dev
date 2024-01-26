@@ -142,10 +142,10 @@ prepare_model <- function(config, theory, col_ov, col_lv,
 }
 
 extract_latent_scores <- function(fit, data = NULL, id_cols_data = NULL) {
-  scores <- as_tibble(unclass(lavPredict(fit, data)))
+  scores <- lavPredict(fit, data)
   if (!is.null(data)) {
     id_cols_data <- substitute(id_cols_data) %||% quote(user_id)
-    scores <- bind_cols(select(data, {{ id_cols_data }}), scores)
+    rownames(scores) <- as.character(pull(data, {{ id_cols_data }}))
   }
   scores
 }
@@ -153,7 +153,7 @@ extract_latent_scores <- function(fit, data = NULL, id_cols_data = NULL) {
 # Special for g factor estimation ----
 prepare_config_vars <- function(num_vars_total, n_steps) {
   num_vars_base <- num_vars_total %/% n_steps
-  tibble(
+  tibble::tibble(
     num_vars = seq(num_vars_base, num_vars_total, num_vars_base),
     use_pairs = num_vars * 2 <= num_vars_total
   )

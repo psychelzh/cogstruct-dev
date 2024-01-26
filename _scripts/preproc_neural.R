@@ -5,7 +5,7 @@ tar_option_set(
   controller = if (Sys.info()["nodename"] == "shadow") {
     crew.cluster::crew_controller_sge(
       name = "fc",
-      workers = 40,
+      workers = 10,
       seconds_idle = 30
     )
   } else {
@@ -56,9 +56,9 @@ list(
     tar_target(
       subjs_keep_neural,
       bind_rows(expr_join_fd) |>
-        filter(all(fd <= 0.3), .by = c(user_id, subject)) |>
-        distinct(user_id, subject) |>
-        pull(user_id, name = subject)
+        filter(all(fd <= 0.3), .by = user_id) |>
+        pull(user_id) |>
+        unique()
     ),
     params_fmri_tasks |>
       dplyr::summarise(
