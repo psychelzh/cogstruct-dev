@@ -19,7 +19,7 @@ tar_option_set(
 tar_source()
 
 cpm_branches <- tarchetypes::tar_map(
-  config_files(),
+  set_config_cpm(),
   names = !starts_with("file"),
   tarchetypes::tar_rep(
     cpm_result,

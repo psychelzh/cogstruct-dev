@@ -22,6 +22,12 @@ options(clustermq.scheduler = "sge")
 options(clustermq.template = "clustermq.tmpl")
 tar_source()
 
+config_cpm <- set_config_cpm(
+  atlas == "Schaefer217",
+  thresh_method == "alpha",
+  thresh_level == 0.01
+)
+
 n_vars_total <- 76
 n_steps <- 20
 
@@ -70,7 +76,7 @@ list(
       scores_g_imp
     ),
     tarchetypes::tar_map(
-      config_files(),
+      config_cpm,
       names = !starts_with("file"),
       tarchetypes::tar_rep(
         cpm_result,
@@ -83,7 +89,9 @@ list(
               thresh_method, thresh_level
             ),
             .keep = "unused"
-          )
+          ),
+        batches = 4,
+        reps = 5
       )
     )
   )

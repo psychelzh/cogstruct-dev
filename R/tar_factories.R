@@ -331,8 +331,8 @@ tar_fit_cfa <- function(config, data, theory,
   )
 }
 
-tar_prep_files_cpm <- function(params_subset = NULL) {
-  values <- config_files({{ params_subset }})
+tar_prep_files_cpm <- function(...) {
+  values <- set_config_cpm(...)
   c(
     tarchetypes::tar_eval(
       tar_target(
@@ -368,14 +368,13 @@ tar_prep_files_cpm <- function(params_subset = NULL) {
 }
 
 # helper functions ----
-config_files <- function(params_subset = NULL) {
-  if (rlang::quo_is_null(rlang::enquo(params_subset))) params_subset <- TRUE
+set_config_cpm <- function(...) {
   tidyr::expand_grid(
     params_fmri_tasks,
     params_xcpd,
     hypers_cpm
   ) |>
-    dplyr::filter({{ params_subset }}) |>
+    dplyr::filter(...) |>
     dplyr::mutate(
       file_fc = rlang::syms(
         sprintf(
