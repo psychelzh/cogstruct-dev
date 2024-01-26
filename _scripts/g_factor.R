@@ -38,6 +38,12 @@ list(
     path_obj_from_proj("indices_rapm", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
+  tar_target(
+    file_subjs_keep_neural,
+    path_obj_from_proj("subjs_keep_neural", "preproc_neural"),
+    format = "file_fast"
+  ),
+  tar_prep_files_cpm(),
   tarchetypes::tar_map(
     prepare_config_vars(n_vars_total, n_steps),
     tarchetypes::tar_rep(
@@ -58,6 +64,23 @@ list(
           .by = !c(impute, g)
         ),
       scores_g_imp
+    ),
+    tarchetypes::tar_map(
+      config_files(),
+      names = !starts_with("file"),
+      tarchetypes::tar_rep(
+        cpm_result,
+        scores_g |>
+          mutate(
+            cpm_result = map(
+              g,
+              perform_cpm_g_factor,
+              file_fc, file_confounds, file_subjs_keep_neural,
+              thresh_method, thresh_level
+            ),
+            .keep = "unused"
+          )
+      )
     )
   )
 )
