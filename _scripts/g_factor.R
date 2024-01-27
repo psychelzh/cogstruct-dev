@@ -1,25 +1,10 @@
 library(targets)
-tar_option_set(
+setup_targets_options(
+  "gf",
   packages = c("tidyverse", "bit64", "lavaan"),
-  format = "qs",
-  controller = if (Sys.info()["nodename"] == "shadow") {
-    crew.cluster::crew_controller_sge(
-      name = "gf",
-      workers = 40,
-      seconds_idle = 30
-    )
-  } else {
-    crew::crew_controller_local(
-      name = "gf-local",
-      workers = 16,
-      seconds_idle = 10
-    )
-  }
+  format = "qs"
 )
-# tar_make_clustermq() is an older (pre-{crew}) way to do distributed computing
-# in {targets}, and its configuration for your machine is below.
-options(clustermq.scheduler = "sge")
-options(clustermq.template = "clustermq.tmpl")
+setup_targets_hpc()
 tar_source()
 
 config_cpm <- set_config_cpm(
@@ -91,7 +76,9 @@ list(
             .keep = "unused"
           ),
         batches = 4,
-        reps = 5
+        reps = 5,
+        storage = "worker",
+        retrieval = "worker"
       )
     )
   )

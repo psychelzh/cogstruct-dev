@@ -8,9 +8,9 @@ Description: This project provides analysis pipelines for cognitive
     structural models. Note it is not a real package, but only mimicks a
     package for development purpose.
 License: CC BY 4.0
-Depends: 
+Depends:
     tidyverse
-Imports: 
+Imports:
     Amelia,
     arrow,
     clustermq,
@@ -24,6 +24,8 @@ Imports:
     easystats,
     fastDummies,
     fpc,
+    future.batchtools,
+    future.callr,
     GGally,
     ggpubr,
     ggrepel,
