@@ -1,22 +1,11 @@
 library(targets)
-tar_option_set(
-  packages = c("tidyverse", "bit64"),
-  format = "qs",
-  controller = if (Sys.info()["nodename"] == "shadow") {
-    crew.cluster::crew_controller_sge(
-      name = "cpm",
-      workers = 40,
-      seconds_idle = 30
-    )
-  } else {
-    crew::crew_controller_local(
-      name = "cpm-local",
-      workers = 16,
-      seconds_idle = 10
-    )
-  }
-)
 tar_source()
+setup_targets_options(
+  "pred_pheno",
+  packages = c("tidyverse", "bit64"),
+  format = "qs"
+)
+setup_targets_parallel()
 
 cpm_branches <- tarchetypes::tar_map(
   set_config_cpm(),

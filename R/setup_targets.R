@@ -17,7 +17,7 @@ setup_targets_options <- function(name, ...) {
   )
 }
 
-setup_targets_hpc <- function() {
+setup_targets_parallel <- function() {
   options(clustermq.scheduler = "sge")
   options(clustermq.template = "clustermq.tmpl")
   if (Sys.info()["nodename"] == "shadow") {

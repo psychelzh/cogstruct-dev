@@ -1,24 +1,11 @@
 library(targets)
 tar_source()
-tar_option_set(
+setup_targets_options(
+  "efa",
   packages = c("tidyverse", "bit64", "lavaan"),
-  format = "qs",
-  memory = "transient",
-  garbage_collection = TRUE,
-  controller = if (Sys.info()["nodename"] == "shadow") {
-    crew.cluster::crew_controller_sge(
-      name = "efa",
-      workers = 40,
-      seconds_idle = 30
-    )
-  } else {
-    crew::crew_controller_local(
-      name = "efa-local",
-      workers = 16,
-      seconds_idle = 10
-    )
-  }
+  format = "qs"
 )
+setup_targets_parallel()
 
 games_thin <- with(
   readr::read_tsv(

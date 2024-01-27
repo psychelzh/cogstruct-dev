@@ -1,11 +1,11 @@
 library(targets)
+tar_source()
 setup_targets_options(
   "gf",
   packages = c("tidyverse", "bit64", "lavaan"),
   format = "qs"
 )
-setup_targets_hpc()
-tar_source()
+setup_targets_parallel()
 
 config_cpm <- set_config_cpm(
   atlas == "Schaefer217",

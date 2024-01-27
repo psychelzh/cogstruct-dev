@@ -1,22 +1,11 @@
 library(targets)
-tar_option_set(
-  packages = c("tidyverse", "bit64"),
-  format = "qs",
-  controller = if (Sys.info()["nodename"] == "shadow") {
-    crew.cluster::crew_controller_sge(
-      name = "fc",
-      workers = 10,
-      seconds_idle = 30
-    )
-  } else {
-    crew::crew_controller_local(
-      name = "fc-local",
-      workers = 16,
-      seconds_idle = 10
-    )
-  }
-)
 tar_source()
+setup_targets_options(
+  "fc",
+  packages = c("tidyverse", "bit64"),
+  format = "qs"
+)
+setup_targets_parallel()
 
 list(
   tarchetypes::tar_map(
