@@ -28,3 +28,13 @@ match_dim_label <- function(latent) {
     pull(dim_label, name = latent)
   dimensions[latent]
 }
+
+lapply_tar_batches <- function(.l, ..., .append = FALSE) {
+  out <- .l |>
+    zutils::select_list(!starts_with("tar")) |>
+    lapply(...)
+  if (.append) {
+    out <- c(out, zutils::select_list(.l, starts_with("tar")) )
+  }
+  out
+}

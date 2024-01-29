@@ -40,20 +40,38 @@ list(
       resample_vars(names(indices_cogstruct)[-1], num_vars, use_pairs),
       batches = 10,
       reps = 10,
-      iteration = "list"
+      iteration = "list",
+      deployment = "main"
     ),
     tarchetypes::tar_rep2(
       fit_g,
-      lapply(vars_sample, fit_efa_g, data = indices_cogstruct),
-      vars_sample
+      lapply_tar_batches(
+        vars_sample,
+        fit_efa_g,
+        data = indices_cogstruct,
+        missing = "ml"
+      ),
+      vars_sample,
+      iteration = "list"
     ),
-    tar_target(
+    tarchetypes::tar_rep2(
       comp_rel_g,
-      lapply(fit_g, \(x) semTools::compRelSEM(x))
+      lapply_tar_batches(
+        fit_g,
+        \(x) semTools::compRelSEM(x$nf1)
+      ),
+      fit_g,
+      iteration = "list"
     ),
-    tar_target(
+    tarchetypes::tar_rep2(
       scores_g,
-      lapply(fit_g, extract_g_scores, data = indices_cogstruct)
+      lapply_tar_batches(
+        fit_g,
+        extract_g_scores,
+        data = indices_cogstruct
+      ),
+      fit_g,
+      iteration = "list"
     ),
     tarchetypes::tar_map(
       config_cpm,
@@ -61,10 +79,16 @@ list(
       tarchetypes::tar_rep(
         cpm_result,
         lapply(
-          scores_g,
-          perform_cpm_g_factor,
-          file_fc, file_confounds, file_subjs_keep_neural,
-          thresh_method, thresh_level
+          list_flatten(scores_g),
+          \(scores_list) {
+            lapply_tar_batches(
+              scores_list,
+              perform_cpm_g_factor,
+              file_fc, file_confounds, file_subjs_keep_neural,
+              thresh_method, thresh_level,
+              .append = TRUE
+            )
+          }
         ),
         batches = 4,
         reps = 5,
