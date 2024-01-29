@@ -30,11 +30,16 @@ match_dim_label <- function(latent) {
 }
 
 lapply_tar_batches <- function(.l, ..., .append = FALSE) {
-  out <- .l |>
-    zutils::select_list(!starts_with("tar")) |>
-    lapply(...)
+  out <- lapply(zutils::select_list(.l, !starts_with("tar")), ...)
   if (.append) {
     out <- c(out, zutils::select_list(.l, starts_with("tar")) )
   }
   out
+}
+
+list_rbind_tar_batches <- function(l, names_to = rlang::zap()) {
+  zutils::select_list(l, !starts_with("tar")) |>
+    unname() |>
+    list_rbind(names_to = names_to) |>
+    add_column(!!!zutils::select_list(l, starts_with("tar")))
 }

@@ -68,22 +68,49 @@ list(
       fit_g,
       iteration = "list"
     ),
-    tar_cpm_main(
-      lapply(
-        list_flatten(scores_g),
-        \(scores_list) {
-          lapply_tar_batches(
-            scores_list,
-            perform_cpm_g_factor,
-            file_fc, file_confounds, subjs_keep_neural,
-            thresh_method, thresh_level,
-            .append = TRUE
-          )
-        }
+    tarchetypes::tar_map(
+      prepare_config_cpm(
+        atlas == "Schaefer217",
+        thresh_method == "alpha",
+        thresh_level == 0.01
       ),
-      atlas == "Schaefer217",
-      thresh_method == "alpha",
-      thresh_level == 0.01
+      names = !starts_with("file"),
+      tarchetypes::tar_rep(
+        cpm_result,
+        lapply(
+          list_flatten(scores_g),
+          \(scores_list) {
+            lapply_tar_batches(
+              scores_list,
+              perform_cpm_g_factor,
+              file_fc, file_confounds, subjs_keep_neural,
+              thresh_method, thresh_level,
+              .append = TRUE
+            )
+          }
+        ),
+        batches = 4,
+        reps = 5,
+        iteration = "list",
+        retrieval = "worker",
+        storage = "worker"
+      ),
+      tarchetypes::tar_rep2(
+        cpm_performance,
+        lapply_tar_batches(
+          cpm_result,
+          \(result) {
+            lapply_tar_batches(
+              result,
+              extract_cpm_performance,
+              .append = TRUE
+            ) |>
+              list_rbind_tar_batches(names_to = "id_pairs")
+          }
+        ) |>
+          list_rbind(),
+        cpm_result
+      )
     )
   )
 )

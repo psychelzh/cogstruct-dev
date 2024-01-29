@@ -332,7 +332,7 @@ tar_fit_cfa <- function(config, data, theory,
 }
 
 tar_prep_files_cpm <- function(...) {
-  values <- set_config_cpm(...)
+  values <- prepare_config_cpm(...)
   c(
     tarchetypes::tar_eval(
       tar_target(
@@ -368,7 +368,7 @@ tar_prep_files_cpm <- function(...) {
 }
 
 tar_cpm_main <- function(command, ..., batches = 4, reps = 5, combine = TRUE) {
-  config_cpm <- set_config_cpm(...)
+  config_cpm <- prepare_config_cpm(...)
   cpm_branches <- tarchetypes::tar_map(
     config_cpm,
     names = !starts_with("file"),
@@ -414,8 +414,7 @@ tar_cpm_main <- function(command, ..., batches = 4, reps = 5, combine = TRUE) {
   )
 }
 
-# helper functions ----
-set_config_cpm <- function(...) {
+prepare_config_cpm <- function(...) {
   tidyr::expand_grid(
     params_fmri_tasks,
     params_xcpd,

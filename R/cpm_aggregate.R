@@ -2,11 +2,7 @@ aggregate_performance <- function(cpm_result, names_to = "latent") {
   lapply(
     # targets will append batching information to the list
     zutils::select_list(cpm_result, !starts_with("tar")),
-    \(result) {
-      apply(result$pred, 2, cor.test, result$real) |>
-        lapply(broom::tidy) |>
-        list_rbind(names_to = "include")
-    }
+    extract_cpm_performance
   ) |>
     list_rbind(names_to = names_to)
 }
@@ -30,4 +26,10 @@ perform_cpm_g_factor <- function(g, file_fc, file_confounds, subjs_keep_neural,
     thresh_level = thresh_level,
     kfolds = 10
   )
+}
+
+extract_cpm_performance <- function(result) {
+  apply(result$pred, 2, cor.test, result$real) |>
+    lapply(broom::tidy) |>
+    list_rbind(names_to = "include")
 }
