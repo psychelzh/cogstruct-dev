@@ -151,6 +151,27 @@ extract_latent_scores <- function(fit, data = NULL, id_cols_data = NULL) {
 }
 
 # Special for g factor estimation ----
+fit_efa_g <- function(data, vars, ...) {
+  efa(
+    data,
+    ov.names = vars,
+    std.ov = TRUE,
+    std.lv = TRUE,
+    ...
+  )
+}
+
+extract_g_scores <- function(fit, data) {
+  scores <- extract_latent_scores(fit, data)
+  # inverse g if anti-correlated with the largest loading variable
+  loadings <- loadings(fit)
+  name_max_loading <- rownames(loadings)[which.max(abs(loadings))]
+  if (cor(scores, data[[name_max_loading]], use = "pairwise") < 0) {
+    scores <- -scores
+  }
+  scores
+}
+
 prepare_config_vars <- function(num_vars_total, n_steps) {
   num_vars_base <- num_vars_total %/% n_steps
   tibble::tibble(
@@ -159,48 +180,19 @@ prepare_config_vars <- function(num_vars_total, n_steps) {
   )
 }
 
-resample_g_scores_imp <- function(data_imp, num_vars, use_pairs) {
-  vars <- resample_vars(data_imp$orig.vars[-1], num_vars, use_pairs)
-  expand_grid(
-    enframe(
-      data_imp$imputations,
-      name = "impute",
-      value = "data"
-    ),
-    enframe(vars, name = "id_pairs", value = "vars")
-  ) |>
-    mutate(g = map2(data, vars, extract_g)) |>
-    select(-data) |>
-    add_column(
-      num_vars = num_vars,
-      use_pairs = use_pairs,
-      .before = 1L
-    )
-}
-
-resample_vars <- function(vars, n, use_pairs = FALSE) {
-  if (use_pairs) n <- n * 2
-  if (n > length(vars)) {
+resample_vars <- function(vars, num_vars, use_pairs = FALSE) {
+  if (use_pairs) num_vars <- num_vars * 2
+  if (num_vars > length(vars)) {
     stop("Not enough variables.")
   }
-  vars_sampled <- sample(vars, n)
+  vars_sampled <- sample(vars, num_vars)
   if (use_pairs) {
-    idx_base <- seq_len(n / 2)
+    idx_base <- seq_len(num_vars / 2)
     list(
       vars_sampled[idx_base],
-      vars_sampled[idx_base + n / 2]
+      vars_sampled[idx_base + num_vars / 2]
     )
   } else {
     list(vars_sampled)
   }
-}
-
-extract_g <- function(data, vars) {
-  efa(
-    data,
-    ov.names = vars,
-    std.ov = TRUE,
-    std.lv = TRUE
-  ) |>
-    extract_latent_scores(data)
 }

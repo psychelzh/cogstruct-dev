@@ -13,6 +13,11 @@ aggregate_performance <- function(cpm_result, names_to = "latent") {
 
 perform_cpm_g_factor <- function(g, file_fc, file_confounds, file_subjs_neural,
                                  thresh_method, thresh_level) {
+  # remove possible missing values in g with a warning
+  if (anyNA(g)) {
+    warning("Found missing g factor scores, will remove them.")
+    g <- g[!is.na(g), 1, drop = FALSE]
+  }
   subjs_to_keep <- intersect(
     rownames(g),
     as.character(qs::qread(file_subjs_neural))
