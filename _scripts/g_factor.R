@@ -94,7 +94,8 @@ list(
         batches = 4,
         reps = 5,
         storage = "worker",
-        retrieval = "worker"
+        retrieval = "worker",
+        iteration = "list"
       )
     )
   )
