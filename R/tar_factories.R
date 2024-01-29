@@ -367,6 +367,53 @@ tar_prep_files_cpm <- function(...) {
   )
 }
 
+tar_cpm_main <- function(command, ..., batches = 4, reps = 5, combine = TRUE) {
+  config_cpm <- set_config_cpm(...)
+  cpm_branches <- tarchetypes::tar_map(
+    config_cpm,
+    names = !starts_with("file"),
+    tarchetypes::tar_rep_raw(
+      "cpm_result",
+      substitute(command),
+      batches = batches,
+      reps = reps,
+      iteration = "list",
+      retrieval = "worker",
+      storage = "worker"
+    ),
+    tarchetypes::tar_rep2(
+      cpm_performance,
+      aggregate_performance(cpm_result),
+      cpm_result
+    )
+  )
+  if (isTRUE(combine)) {
+    combine <- names(cpm_branches[-c(1:2)])
+  }
+  c(
+    cpm_branches,
+    lapply(
+      intersect(names(cpm_branches), combine),
+      \(x) {
+        tarchetypes::tar_combine_raw(
+          x,
+          cpm_branches[[x]],
+          command = bquote(
+            bind_rows(!!!.x, .id = ".id") |>
+              zutils::separate_wider_dsv(
+                ".id",
+                .(names(dplyr::select(config_cpm, !starts_with("file")))),
+                # xcpd used "_" in its config names
+                patterns = c(rep(".+?", 2), ".+", rep(".+?", 3)),
+                prefix = .(x)
+              )
+          )
+        )
+      }
+    )
+  )
+}
+
 # helper functions ----
 set_config_cpm <- function(...) {
   tidyr::expand_grid(

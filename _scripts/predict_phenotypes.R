@@ -7,11 +7,28 @@ tar_option_set(
 )
 setup_parallel_plan()
 
-cpm_branches <- tarchetypes::tar_map(
-  set_config_cpm(),
-  names = !starts_with("file"),
-  tarchetypes::tar_rep(
-    cpm_result,
+list(
+  tar_target(
+    file_scores_factor,
+    path_obj_from_proj("scores_bf_full", "confirm_factors"),
+    format = "file_fast"
+  ),
+  tarchetypes::tar_file_read(
+    subjs_keep_neural,
+    path_obj_from_proj("subjs_keep_neural", "preproc_neural"),
+    read = qs::qread(!!.x)
+  ),
+  tar_target(
+    subjs_to_keep,
+    # intersect() does not work for integer64
+    # https://github.com/truecluster/bit64/issues/29
+    intersect(
+      as.character(subjs_keep_neural),
+      rownames(qs::qread(file_scores_factor))
+    )
+  ),
+  tar_prep_files_cpm(),
+  tar_cpm_main(
     apply(
       qs::qread(file_scores_factor)[subjs_to_keep, ], 2,
       \(scores) {
@@ -24,49 +41,6 @@ cpm_branches <- tarchetypes::tar_map(
           kfolds = 10
         )
       }
-    ),
-    batches = 4,
-    reps = 5,
-    iteration = "list"
-  ),
-  tarchetypes::tar_rep2(
-    cpm_performance,
-    aggregate_performance(cpm_result),
-    cpm_result
-  )
-)
-
-list(
-  tar_target(
-    file_scores_factor,
-    path_obj_from_proj("scores_bf_full", "confirm_factors"),
-    format = "file_fast"
-  ),
-  tar_target(
-    file_subjs_keep_neural,
-    path_obj_from_proj("subjs_keep_neural", "preproc_neural"),
-    format = "file_fast"
-  ),
-  tar_target(
-    subjs_to_keep,
-    # intersect() does not work for integer64
-    # https://github.com/truecluster/bit64/issues/29
-    intersect(
-      as.character(qs::qread(file_subjs_keep_neural)),
-      rownames(qs::qread(file_scores_factor))
     )
-  ),
-  tar_prep_files_cpm(),
-  cpm_branches,
-  tarchetypes::tar_combine(
-    cpm_performance,
-    cpm_branches$cpm_performance,
-    command = bind_rows(!!!.x, .id = ".id") |>
-      zutils::separate_wider_dsv(
-        ".id",
-        c(names(params_fmri_tasks), names(params_xcpd), names(hypers_cpm)),
-        patterns = c(rep(".+?", 2), ".+", rep(".+?", 3)),
-        prefix = "cpm_performance"
-      )
   )
 )

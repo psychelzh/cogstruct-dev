@@ -7,12 +7,6 @@ tar_option_set(
 )
 setup_parallel_plan()
 
-config_cpm <- set_config_cpm(
-  atlas == "Schaefer217",
-  thresh_method == "alpha",
-  thresh_level == 0.01
-)
-
 n_vars_total <- 76
 n_steps <- 20
 
@@ -27,10 +21,10 @@ list(
     path_obj_from_proj("indices_rapm", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
-  tar_target(
-    file_subjs_keep_neural,
+  tarchetypes::tar_file_read(
+    subjs_keep_neural,
     path_obj_from_proj("subjs_keep_neural", "preproc_neural"),
-    format = "file_fast"
+    read = qs::qread(!!.x)
   ),
   tar_prep_files_cpm(),
   tarchetypes::tar_map(
@@ -74,29 +68,22 @@ list(
       fit_g,
       iteration = "list"
     ),
-    tarchetypes::tar_map(
-      config_cpm,
-      names = !starts_with("file"),
-      tarchetypes::tar_rep(
-        cpm_result,
-        lapply(
-          list_flatten(scores_g),
-          \(scores_list) {
-            lapply_tar_batches(
-              scores_list,
-              perform_cpm_g_factor,
-              file_fc, file_confounds, file_subjs_keep_neural,
-              thresh_method, thresh_level,
-              .append = TRUE
-            )
-          }
-        ),
-        batches = 4,
-        reps = 5,
-        storage = "worker",
-        retrieval = "worker",
-        iteration = "list"
-      )
+    tar_cpm_main(
+      lapply(
+        list_flatten(scores_g),
+        \(scores_list) {
+          lapply_tar_batches(
+            scores_list,
+            perform_cpm_g_factor,
+            file_fc, file_confounds, subjs_keep_neural,
+            thresh_method, thresh_level,
+            .append = TRUE
+          )
+        }
+      ),
+      atlas == "Schaefer217",
+      thresh_method == "alpha",
+      thresh_level == 0.01
     )
   )
 )
