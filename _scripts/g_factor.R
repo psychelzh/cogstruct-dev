@@ -61,7 +61,8 @@ list(
         \(x) semTools::compRelSEM(x$nf1)
       ),
       fit_g,
-      iteration = "list"
+      iteration = "list",
+      deployment = "main"
     ),
     tarchetypes::tar_rep2(
       scores_g,
