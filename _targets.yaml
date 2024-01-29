@@ -19,3 +19,6 @@ preproc_neural:
 predict_phenotypes:
   script: _scripts/predict_phenotypes.R
   store: _targets/predict_phenotypes
+bench_cpm:
+  script: _scripts/bench_cpm.R
+  store: _targets/bench_cpm
