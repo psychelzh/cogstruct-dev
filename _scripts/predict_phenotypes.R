@@ -1,11 +1,11 @@
 library(targets)
 tar_source()
-setup_targets_options(
-  "pred_pheno",
+tar_option_set(
   packages = c("tidyverse", "bit64"),
-  format = "qs"
+  format = "qs",
+  controller = setup_crew_controller("pred_pheno")
 )
-setup_targets_parallel()
+setup_parallel_plan()
 
 cpm_branches <- tarchetypes::tar_map(
   set_config_cpm(),

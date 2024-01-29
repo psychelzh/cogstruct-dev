@@ -1,11 +1,11 @@
 library(targets)
 tar_source()
-setup_targets_options(
-  "fc",
-  packages = c("tidyverse", "bit64"),
-  format = "qs"
+tar_option_set(
+  packages = c("tidyverse", "bit64", "lavaan"),
+  format = "qs",
+  controller = setup_crew_controller("fc")
 )
-setup_targets_parallel()
+setup_parallel_plan()
 
 list(
   tarchetypes::tar_map(

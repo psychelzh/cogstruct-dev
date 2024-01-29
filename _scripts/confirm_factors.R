@@ -1,11 +1,11 @@
 library(targets)
 tar_source()
-setup_targets_options(
-  "cfa",
+tar_option_set(
   packages = c("tidyverse", "bit64", "lavaan"),
-  format = "qs"
+  format = "qs",
+  controller = setup_crew_controller("cfa")
 )
-setup_targets_parallel()
+setup_parallel_plan()
 
 prepare_config <- function(name, config, loadings = NULL) {
   if (!is.null(loadings)) {

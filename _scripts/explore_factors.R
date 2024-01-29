@@ -1,11 +1,11 @@
 library(targets)
 tar_source()
-setup_targets_options(
-  "efa",
+tar_option_set(
   packages = c("tidyverse", "bit64", "lavaan"),
-  format = "qs"
+  format = "qs",
+  controller = setup_crew_controller("efa")
 )
-setup_targets_parallel()
+setup_parallel_plan()
 
 games_thin <- with(
   readr::read_tsv(

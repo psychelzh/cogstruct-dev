@@ -1,11 +1,11 @@
 library(targets)
 tar_source()
-setup_targets_options(
-  "gf",
+tar_option_set(
   packages = c("tidyverse", "bit64", "lavaan"),
-  format = "qs"
+  format = "qs",
+  controller = setup_crew_controller("gf")
 )
-setup_targets_parallel()
+setup_parallel_plan()
 
 config_cpm <- set_config_cpm(
   atlas == "Schaefer217",
