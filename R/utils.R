@@ -10,7 +10,7 @@ path_obj_from_proj <- function(object, project) {
   )
 }
 
-# misc ----
+# names mappings ----
 replace_as_name_cn <- function(game_index,
                                remove_suffix = FALSE,
                                delim = ".") {
@@ -29,10 +29,11 @@ match_dim_label <- function(latent) {
   dimensions[latent]
 }
 
+# functional programming ----
 lapply_tar_batches <- function(.l, ..., .append = FALSE) {
   out <- lapply(zutils::select_list(.l, !starts_with("tar")), ...)
   if (.append) {
-    out <- c(out, zutils::select_list(.l, starts_with("tar")) )
+    out <- c(out, zutils::select_list(.l, starts_with("tar")))
   }
   out
 }
@@ -42,4 +43,25 @@ list_rbind_tar_batches <- function(l, names_to = rlang::zap()) {
     unname() |>
     list_rbind(names_to = names_to) |>
     add_column(!!!zutils::select_list(l, starts_with("tar")))
+}
+
+# cpm related ----
+separate_wider_dsv_cpm <- function(data, col, prefix, names = NULL) {
+  if (is.null(names)) {
+    names <- c(
+      names(params_fmri_tasks),
+      names(params_xcpd),
+      names(hypers_cpm)
+    )
+  }
+  patterns <- rep(".+?", length(names))
+  # should be greedy because there are "_" in `config` field
+  patterns[names == "config"] <- ".+"
+  zutils::separate_wider_dsv(
+    data,
+    all_of(col),
+    names,
+    patterns = patterns,
+    prefix = prefix
+  )
 }

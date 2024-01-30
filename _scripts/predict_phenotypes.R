@@ -7,6 +7,42 @@ tar_option_set(
 )
 setup_parallel_plan()
 
+cpm_branches <- tarchetypes::tar_map(
+  config_cpm,
+  names = !starts_with("file"),
+  tarchetypes::tar_rep(
+    cpm_result,
+    apply(
+      qs::qread(file_scores_factor)[subjs_to_keep, ], 2,
+      \(scores) {
+        cpmr::cpm(
+          qs::qread(file_fc)[subjs_to_keep, ],
+          scores,
+          confounds = qs::qread(file_confounds)[subjs_to_keep, ],
+          thresh_method = thresh_method,
+          thresh_level = thresh_level,
+          kfolds = 10
+        )
+      }
+    ),
+    batches = 4,
+    reps = 5,
+    iteration = "list",
+    retrieval = "worker",
+    storage = "worker"
+  ),
+  tarchetypes::tar_rep2(
+    cpm_performance,
+    lapply_tar_batches(
+      cpm_result,
+      extract_cpm_performance
+    ) |>
+      list_rbind(names_to = "latent"),
+    cpm_result,
+    retrieval = "worker",
+    storage = "worker"
+  )
+)
 list(
   tar_target(
     file_scores_factor,
@@ -28,19 +64,14 @@ list(
     )
   ),
   tar_prep_files_cpm(),
-  tar_cpm_main(
-    apply(
-      qs::qread(file_scores_factor)[subjs_to_keep, ], 2,
-      \(scores) {
-        cpmr::cpm(
-          qs::qread(file_fc)[subjs_to_keep, ],
-          scores,
-          confounds = qs::qread(file_confounds)[subjs_to_keep, ],
-          thresh_method = thresh_method,
-          thresh_level = thresh_level,
-          kfolds = 10
-        )
-      }
-    )
+  cpm_branches,
+  tarchetypes::tar_combine(
+    cpm_performance,
+    cpm_branches$cpm_performance,
+    command = bind_rows(!!!.x, .id = ".id") |>
+      separate_wider_dsv_cpm(
+        ".id",
+        prefix = "cpm_performance"
+      )
   )
 )

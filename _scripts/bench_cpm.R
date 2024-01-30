@@ -6,7 +6,34 @@ tar_option_set(
   controller = setup_crew_controller("bench_cpm")
 )
 setup_parallel_plan()
-
+config_cpm <- prepare_config_cpm()
+cpm_branches <- tarchetypes::tar_map(
+  config_cpm,
+  names = !starts_with("file"),
+  tarchetypes::tar_rep(
+    cpm_result,
+    cpmr::cpm(
+      qs::qread(file_fc)[subjs_to_keep, ],
+      scores_rapm[subjs_to_keep, ],
+      confounds = qs::qread(file_confounds)[subjs_to_keep, ],
+      thresh_method = thresh_method,
+      thresh_level = thresh_level,
+      kfolds = 10
+    ),
+    batches = 4,
+    reps = 5,
+    iteration = "list",
+    retrieval = "worker",
+    storage = "worker"
+  ),
+  tarchetypes::tar_rep2(
+    cpm_performance,
+    extract_cpm_performance(cpm_result),
+    cpm_result,
+    retrieval = "worker",
+    storage = "worker"
+  )
+)
 list(
   tarchetypes::tar_file_read(
     scores_rapm,
@@ -28,16 +55,14 @@ list(
     )
   ),
   tar_prep_files_cpm(),
-  tar_cpm_main(
-    list(
-      rapm = cpmr::cpm(
-        qs::qread(file_fc)[subjs_to_keep, ],
-        scores_rapm[subjs_to_keep, ],
-        confounds = qs::qread(file_confounds)[subjs_to_keep, ],
-        thresh_method = thresh_method,
-        thresh_level = thresh_level,
-        kfolds = 10
+  cpm_branches,
+  tarchetypes::tar_combine(
+    cpm_performance,
+    cpm_branches$cpm_performance,
+    command = bind_rows(!!!.x, .id = ".id") |>
+      separate_wider_dsv_cpm(
+        ".id",
+        prefix = "cpm_performance"
       )
-    )
   )
 )
