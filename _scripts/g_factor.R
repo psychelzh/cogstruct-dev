@@ -114,7 +114,9 @@ list(
             \(x) sprintf("%s_resample", x),
             starts_with("tar")
           ),
-        cpm_result
+        cpm_result,
+        retrieval = "worker",
+        storage = "worker"
       )
     )
   )

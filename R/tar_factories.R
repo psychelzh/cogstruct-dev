@@ -384,7 +384,9 @@ tar_cpm_main <- function(command, ..., batches = 4, reps = 5, combine = TRUE) {
     tarchetypes::tar_rep2(
       cpm_performance,
       aggregate_performance(cpm_result),
-      cpm_result
+      cpm_result,
+      retrieval = "worker",
+      storage = "worker"
     )
   )
   if (isTRUE(combine)) {
