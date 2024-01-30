@@ -108,7 +108,12 @@ list(
               list_rbind_tar_batches(names_to = "id_pairs")
           }
         ) |>
-          list_rbind(),
+          list_rbind() |>
+          # rename batch info from resample step to avoid conflict
+          rename_with(
+            \(x) sprintf("%s_resample", x),
+            starts_with("tar")
+          ),
         cpm_result
       )
     )
