@@ -869,14 +869,14 @@
     },
     "cpmr": {
       "Package": "cpmr",
-      "Version": "0.0.3",
+      "Version": "0.0.4",
       "Source": "Repository",
       "Repository": "https://psychelzh.r-universe.dev",
       "Requirements": [
         "Rfast",
         "stats"
       ],
-      "Hash": "0f1e38cb8ccb6957c06fa07e32edbba7"
+      "Hash": "b6273c5ac7ed8720ff6ddd69b4a3859d"
     },
     "cpp11": {
       "Package": "cpp11",
