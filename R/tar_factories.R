@@ -293,7 +293,8 @@ tar_test_retest <- function(contents, ...,
 # modeling related ----
 tar_fit_cfa <- function(config, data, theory,
                         col_ov = observed, col_lv = latent, col_fix = NULL,
-                        add_gof = TRUE, add_scores = TRUE) {
+                        tar_post_fit = c("gof", "comp_rel", "scores")) {
+  tar_post_fit <- match.arg(tar_post_fit, several.ok = TRUE)
   list(
     tar_target_raw(
       "fit",
@@ -308,7 +309,7 @@ tar_fit_cfa <- function(config, data, theory,
         )
       )
     ),
-    if (add_gof) {
+    if ("gof" %in% tar_post_fit) {
       tar_target_raw(
         "gof",
         quote(
@@ -318,7 +319,17 @@ tar_fit_cfa <- function(config, data, theory,
         )
       )
     },
-    if (add_scores) {
+    if ("comp_rel" %in% tar_post_fit) {
+      tar_target_raw(
+        "comp_rel",
+        quote(
+          if (inherits(fit, "lavaan")) {
+            semTools::compRelSEM(fit)
+          }
+        )
+      )
+    },
+    if ("scores" %in% tar_post_fit) {
       tar_target_raw(
         "scores",
         substitute(

@@ -3576,6 +3576,22 @@
       ],
       "Hash": "3838071b66e0c566d55cc26bd6e27bf4"
     },
+    "semTools": {
+      "Package": "semTools",
+      "Version": "0.5-6",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "graphics",
+        "lavaan",
+        "methods",
+        "pbivnorm",
+        "stats",
+        "utils"
+      ],
+      "Hash": "9374d79226103541b8293009f81da90f"
+    },
     "sessioninfo": {
       "Package": "sessioninfo",
       "Version": "1.2.2",

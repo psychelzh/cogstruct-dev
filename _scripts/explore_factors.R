@@ -73,7 +73,7 @@ targets_fact_resamples <- tarchetypes::tar_map(
     indices_cogstruct,
     "fo",
     col_fix = fix,
-    add_scores = FALSE
+    tar_post_fit = "gof"
   )
 )
 
