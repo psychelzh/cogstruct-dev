@@ -59,10 +59,10 @@ list(
   tarchetypes::tar_combine(
     cpm_performance,
     cpm_branches$cpm_performance,
-    command = bind_rows(!!!.x, .id = ".id") |>
-      separate_wider_dsv_cpm(
-        ".id",
-        prefix = "cpm_performance"
-      )
+    command = bind_rows_meta(
+      !!!.x,
+      .prefix = "cpm_performance",
+      .type = "cpm"
+    )
   )
 )

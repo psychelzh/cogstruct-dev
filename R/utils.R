@@ -46,22 +46,28 @@ list_rbind_tar_batches <- function(l, names_to = rlang::zap()) {
 }
 
 # cpm related ----
-separate_wider_dsv_cpm <- function(data, col, prefix, names = NULL) {
-  if (is.null(names)) {
-    names <- c(
-      names(params_fmri_tasks),
-      names(params_xcpd),
-      names(hypers_cpm)
+bind_rows_meta <- function(..., .prefix, .type = c("samples", "cpm")) {
+  .type <- match.arg(.type, several.ok = TRUE)
+  match_names <- function(.type) {
+    switch(
+      .type,
+      samples = c("num_vars", "use_pairs"),
+      cpm = c(
+        names(params_fmri_tasks),
+        names(params_xcpd),
+        names(hypers_cpm)
+      )
     )
   }
+  names <- Reduce(c, lapply(.type, match_names))
   patterns <- rep(".+?", length(names))
   # should be greedy because there are "_" in `config` field
   patterns[names == "config"] <- ".+"
-  zutils::separate_wider_dsv(
-    data,
-    all_of(col),
-    names,
-    patterns = patterns,
-    prefix = prefix
-  )
+  bind_rows(..., .id = ".id") |>
+    zutils::separate_wider_dsv(
+      ".id",
+      names,
+      patterns = patterns,
+      prefix = .prefix
+    )
 }
