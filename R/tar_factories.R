@@ -155,24 +155,6 @@ tar_validate_rawdata <- function(contents) {
 }
 
 tar_check_motivated <- function(config) {
-  tar_check_motivated_ <- function(config, rule) {
-    tarchetypes::tar_eval_raw(
-      bquote(
-        tar_target(
-          tar_name_motivated,
-          tar_name_data_valid |>
-            mutate(
-              is_motivated = map_lgl(
-                raw_parsed,
-                \(data) .(zutils::call_full(sprintf("check_%s", rule)))
-              ),
-              .keep = "unused"
-            )
-        )
-      ),
-      config
-    )
-  }
   config_branches <- config |>
     dplyr::filter(!is.na(rule)) |>
     tidyr::separate_longer_delim(rule, ";") |>
@@ -187,7 +169,24 @@ tar_check_motivated <- function(config) {
   list(
     purrr::imap(
       split(config_branches, ~rule),
-      tar_check_motivated_
+      function(config, rule) {
+        tarchetypes::tar_eval_raw(
+          bquote(
+            tar_target(
+              tar_name_motivated,
+              tar_name_data_valid |>
+                mutate(
+                  is_motivated = map_lgl(
+                    raw_parsed,
+                    \(data) .(zutils::call_full(sprintf("check_%s", rule)))
+                  ),
+                  .keep = "unused"
+                )
+            )
+          ),
+          config
+        )
+      }
     ),
     res_motivated = tarchetypes::tar_eval(
       tar_target(
@@ -215,18 +214,6 @@ tar_check_motivated <- function(config) {
 }
 
 tar_partition_rawdata <- function(contents, config_format) {
-  tar_partition_rawdata_ <- function(config, format) {
-    tarchetypes::tar_eval_raw(
-      bquote(
-        tar_target(
-          tar_name_indices,
-          .(zutils::call_full(sprintf("slice_data_%s", format))) |>
-            preproc_data(prep_fun, .input = input, .extra = extra)
-        )
-      ),
-      config
-    )
-  }
   contents |>
     dplyr::distinct(game_id) |>
     data.iquizoo::match_preproc(type = "inner") |>
@@ -245,7 +232,20 @@ tar_partition_rawdata <- function(contents, config_format) {
       )
     ) |>
     split(~format) |>
-    purrr::imap(tar_partition_rawdata_)
+    purrr::imap(
+      function(config, format) {
+        tarchetypes::tar_eval_raw(
+          bquote(
+            tar_target(
+              tar_name_indices,
+              .(zutils::call_full(sprintf("slice_data_%s", format))) |>
+                preproc_data(prep_fun, .input = input, .extra = extra)
+            )
+          ),
+          config
+        )
+      }
+    )
 }
 
 # item analysis related ----
