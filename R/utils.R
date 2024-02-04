@@ -38,11 +38,15 @@ lapply_tar_batches <- function(.l, ..., .append = FALSE) {
   out
 }
 
-list_rbind_tar_batches <- function(l, names_to = rlang::zap()) {
-  zutils::select_list(l, !starts_with("tar")) |>
-    unname() |>
-    list_rbind(names_to = names_to) |>
-    add_column(!!!zutils::select_list(l, starts_with("tar")))
+list_rbind_tar_batches <- function(l, names_to = rlang::zap(), append = FALSE) {
+  main <- zutils::select_list(l, !starts_with("tar"))
+  # remove names if names are all empty strings
+  if (all(names(main) == "")) names(main) <- NULL
+  out <- list_rbind(main, names_to = names_to)
+  if (append) {
+    out <- add_column(out, !!!zutils::select_list(l, starts_with("tar")))
+  }
+  out
 }
 
 # cpm related ----
