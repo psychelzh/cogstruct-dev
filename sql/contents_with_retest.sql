@@ -18,8 +18,8 @@ FROM
     INNER JOIN iquizoo_user_db.base_organization bo ON bo.Id = pcc.OrganizationId AND bo.Deleted <> 1
 WHERE
     bo.Name IN ('北京师范大学', '清华大学认知实验', '四川师范大学', '天津师范大学')
-    AND c.CourseSeriesId <> (
+    AND c.CourseSeriesId NOT IN (
         SELECT Id
         FROM iquizoo_content_db.course_series
-        WHERE Name = 'CAMP'
+        WHERE Name IN ('CAMP', '一般')
     );
