@@ -46,9 +46,8 @@ targets_test_retest_slices <- tar_test_retest(
       dplyr::filter(config_format, !is.na(format)),
       by = "game_id"
     ),
-  by = "part",
-  name_indices = "indices_slices",
-  name_test_retest = "test_retest_slices"
+  name_suffix = "slices",
+  extra_by = "part"
 )
 
 # Replace the target list below with your own:

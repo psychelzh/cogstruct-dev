@@ -1,34 +1,51 @@
-calc_test_retest <- function(indices) {
-  indices_retest <- indices |>
-    inner_join(
+clean_retest <- function(indices, extra_by = NULL) {
+  indices_clean <- indices |>
+    semi_join(
       data.iquizoo::game_indices,
       by = join_by(game_id, index_name == index_main)
     ) |>
     filter(is.finite(score)) |>
     mutate(ver_major = str_extract(game_version, "\\d")) |>
-    group_by(user_id, ver_major, index_name) |>
+    group_by(
+      user_id, ver_major, index_name,
+      dplyr::pick(dplyr::all_of(extra_by))
+    ) |>
     filter(row_number(desc(game_time)) <= 2) |>
-    mutate(is_retest = row_number(game_time) > 1) |>
-    ungroup() |>
-    filter(sum(is_retest) > 30, .by = c(ver_major, index_name)) |>
-    mutate(
-      occasion = case_match(
-        row_number(game_time),
-        1 ~ "test",
-        2 ~ "retest"
-      ),
-      .by = c(user_id, ver_major, index_name)
+    filter(n() == 2) |>
+    mutate(occasion = c("test", "retest")[row_number(game_time)]) |>
+    ungroup()
+  if (nrow(indices_clean) == 0) {
+    return()
+  }
+  users_clean <- indices_clean |>
+    distinct(
+      user_id, ver_major, index_name, game_time, occasion,
+      dplyr::pick(dplyr::all_of(extra_by))
     ) |>
     pivot_wider(
-      id_cols = c(ver_major, user_id, index_name),
+      id_cols = c(ver_major, user_id, index_name, dplyr::all_of(extra_by)),
+      names_from = occasion,
+      values_from = game_time
+    ) |>
+    mutate(days_retest = (test %--% retest) / days(), .keep = "unused") |>
+    # interval should be 5-14 days
+    filter(between(round(days_retest), 5, 14))
+  if (nrow(users_clean) <= 30) {
+    return()
+  }
+  indices_clean |>
+    pivot_wider(
+      id_cols = c(ver_major, user_id, index_name, dplyr::all_of(extra_by)),
       names_from = occasion,
       values_from = score
     ) |>
-    drop_na() |>
-    select(-user_id)
-  if (nrow(indices_retest) == 0 || !has_name(indices_retest, "retest")) {
-    return(tibble())
-  }
+    inner_join(
+      users_clean,
+      by = c("ver_major", "user_id", "index_name", extra_by)
+    )
+}
+
+calc_test_retest <- function(indices_retest, extra_by = NULL) {
   bind_rows(
     raw = indices_retest,
     rm_out = indices_retest |>
@@ -41,7 +58,7 @@ calc_test_retest <- function(indices) {
           # treat all as normal if failed
           otherwise = FALSE
         )(pick(test, retest)),
-        .by = c(ver_major, index_name)
+        .by = c(ver_major, index_name, {{ extra_by }})
       ),
     .id = "origin"
   ) |>
@@ -52,6 +69,6 @@ calc_test_retest <- function(indices) {
         # use ICC(2, 1)
         icc = psych::ICC(pick(test, retest))$results$ICC[[2]]
       ),
-      .by = c(ver_major, origin, index_name)
+      .by = c(origin, ver_major, index_name, {{ extra_by }})
     )
 }

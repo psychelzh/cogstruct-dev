@@ -250,43 +250,35 @@ tar_partition_rawdata <- function(contents, config_format) {
 
 # item analysis related ----
 tar_test_retest <- function(contents, ...,
-                            by = NULL,
-                            name_indices = "indices",
-                            name_test_retest = "test_retest") {
+                            name_suffix = NULL,
+                            extra_by = NULL) {
   rlang::check_dots_empty()
+  tar_name_indices_retest <- paste(
+    c("indices_retest", name_suffix),
+    collapse = "_"
+  )
+  tar_name_test_retest <- paste(
+    c("test_retest", name_suffix),
+    collapse = "_"
+  )
   tarchetypes::tar_map(
-    values = contents |>
-      dplyr::distinct(game_id) |>
-      data.iquizoo::match_preproc(type = "semi", rm_tagged = TRUE) |>
-      dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
-      dplyr::mutate(
-        game_id_rel = dplyr::coalesce(game_id_parallel, game_id)
-      ) |>
-      dplyr::summarise(
-        tar_indices = rlang::syms(
-          stringr::str_glue("{name_indices}_{game_id}")
-        ) |>
-          list(),
-        .by = game_id_rel
-      ) |>
-      dplyr::mutate(game_id_rel = as.character(game_id_rel)),
-    names = game_id_rel,
-    if (is.null(by)) {
-      tar_target_raw(
-        name_test_retest,
-        quote(calc_test_retest(list_rbind(tar_indices)))
+    prepare_config_retest(contents, name_suffix),
+    names = game_id,
+    tar_target_raw(
+      tar_name_indices_retest,
+      substitute(clean_retest(bind_rows(tar_indices), extra_by))
+    ),
+    tar_target_raw(
+      tar_name_test_retest,
+      bquote(
+        if (!is.null(.(as.symbol(tar_name_indices_retest)))) {
+          calc_test_retest(
+            .(as.symbol(tar_name_indices_retest)),
+            .(substitute(extra_by))
+          )
+        }
       )
-    } else {
-      tar_target_raw(
-        name_test_retest,
-        bquote(
-          list_rbind(tar_indices) |>
-            group_by(pick(.(by))) |>
-            group_modify(~ calc_test_retest(.x)) |>
-            ungroup()
-        )
-      )
-    }
+    )
   )
 }
 
@@ -376,27 +368,4 @@ tar_prep_files_cpm <- function(...) {
       dplyr::distinct(values, session, task, config, atlas, file_fc)
     )
   )
-}
-
-prepare_config_cpm <- function(...) {
-  tidyr::expand_grid(
-    params_fmri_tasks,
-    params_xcpd,
-    hypers_cpm
-  ) |>
-    dplyr::filter(...) |>
-    dplyr::mutate(
-      file_fc = rlang::syms(
-        sprintf(
-          "file_fc_%s_%s_%s_%s",
-          session, task, config, atlas
-        )
-      ),
-      file_confounds = rlang::syms(
-        sprintf(
-          "file_confounds_%s_%s",
-          session, task
-        )
-      )
-    )
 }
