@@ -12,7 +12,6 @@ tar_collect_camp <- function(contents) {
   config_contents <- contents |>
     dplyr::distinct(game_id) |>
     dplyr::inner_join(data.iquizoo::game_info, by = "game_id") |>
-    dplyr::left_join(game_data_names, by = "game_id") |>
     dplyr::mutate(
       tar_name_current = rlang::syms(sprintf("raw_data_%s", game_id)),
       tar_name_restore = rlang::syms(sprintf("data_%s", game_name_abbr)),
