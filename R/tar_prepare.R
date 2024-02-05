@@ -28,20 +28,18 @@ prepare_config_retest <- function(contents, name_suffix = NULL) {
     dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
     dplyr::mutate(
       dplyr::across(dplyr::contains("game_id"), as.character),
-      game_id_rel = dplyr::coalesce(game_id_parallel, game_id)
+      game_id_real = dplyr::coalesce(game_id_parallel, game_id)
     ) |>
-    dplyr::summarise(
-      tar_indices = list(
-        lapply(
-          game_id,
-          \(game_id) {
-            as.symbol(
-              paste(c("indices", name_suffix, game_id), collapse = "_")
-            )
-          }
-        )
-      ),
-      .by = game_id_rel
+    dplyr::mutate(
+      tar_indices = lapply(
+        game_id,
+        \(game_id) {
+          as.symbol(
+            paste(c("indices", name_suffix, game_id), collapse = "_")
+          )
+        }
+      )
     ) |>
-    dplyr::rename(game_id = game_id_rel)
+    dplyr::select(game_id = game_id_real, tar_indices) |>
+    tidyr::chop(tar_indices)
 }
