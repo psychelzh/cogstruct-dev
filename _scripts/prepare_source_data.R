@@ -48,13 +48,7 @@ targets_check_motivated <- tar_check_motivated(
   )
 )
 
-targets_indices_partitioned <- tar_partition_rawdata(
-  contents,
-  config_format = readr::read_csv(
-    "config/game_format.csv",
-    col_types = readr::cols(game_id = "I")
-  )
-)
+targets_indices_partitioned <- tar_partition_rawdata(contents)
 
 list(
   tarflow.iquizoo::tar_prep_iquizoo(

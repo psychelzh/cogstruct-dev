@@ -4,23 +4,17 @@
 \alias{correct_data}
 \alias{correct_device}
 \alias{correct_game_dur}
-\alias{correct_cr}
 \alias{correct_mst}
 \alias{correct_rt}
-\alias{correct_vr}
 \title{Correct some specific issues in the data}
 \usage{
 correct_device(data)
 
 correct_game_dur(data)
 
-correct_cr(data, correction)
-
 correct_mst(data)
 
 correct_rt(data, adjust)
-
-correct_vr(data)
 }
 \description{
 Correct some specific issues in the data

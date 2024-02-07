@@ -1,0 +1,8 @@
+﻿game_id,correction,adjust,note
+380173315257221,device,,注意警觉: 1.0.0 records device for all right arrow resp as mouse
+380174783693701,device,,注意指向: 1.0.0 records device for all right arrow resp as mouse
+224378628399301,game_dur,,多彩文字PRO: correct game duration data
+268008982671439,mst,,图片记忆: keep test phase data only
+268008982671433,mst,,图片记忆: keep test phase data only
+224379118576069,rt,100,太空飞船PRO：reaction time should be added 100 ms
+268008982667347,rt,300,捉虫高级简版：reaction time should be added 300 ms

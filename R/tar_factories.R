@@ -46,111 +46,43 @@ tar_collect_camp <- function(contents) {
 }
 
 tar_validate_rawdata <- function(contents) {
-  config_contents <- contents |>
+  prepare_command_correction <- function(correction, game_id) {
+    expr <- as.symbol(sprintf("raw_data_parsed_%s", game_id))
+    if (!is.na(correction)) {
+      expr <- zutils::call_full(
+        sprintf("correct_%s", correction),
+        data = !!expr
+      )
+    }
+    expr
+  }
+  contents |>
     dplyr::distinct(game_id) |>
     dplyr::inner_join(data.iquizoo::game_info, by = "game_id") |>
     dplyr::left_join(game_data_names, by = "game_id") |>
+    dplyr::left_join(config_data_correction, by = "game_id") |>
     dplyr::mutate(
-      game_id = as.character(game_id),
       require_keyboard = game_name %in% games_keyboard,
-      tar_parsed = rlang::syms(sprintf("raw_data_parsed_%s", game_id))
-    )
-  c(
-    tarchetypes::tar_map(
-      values = config_contents |>
-        dplyr::filter(!game_id %in% do.call(c, game_id_cor)),
-      names = game_id,
-      tar_target(
-        data_valid,
-        validate_data(
-          tar_parsed,
-          require_keyboard = require_keyboard,
-          list_names = list_names
+      tar_name_data_valid = rlang::syms(sprintf("data_valid_%s", game_id))
+    ) |>
+    tidyr::nest(.by = c(game_id, correction)) |>
+    purrr::pmap(
+      \(correction, game_id, data) {
+        tarchetypes::tar_eval_raw(
+          bquote(
+            tar_target(
+              tar_name_data_valid,
+              .(prepare_command_correction(correction, game_id)) |>
+                validate_data(
+                  require_keyboard = require_keyboard,
+                  list_names = list_names
+                )
+            )
+          ),
+          data
         )
-      )
-    ),
-    # correct device error
-    tarchetypes::tar_map(
-      values = config_contents |>
-        dplyr::filter(game_id %in% game_id_cor$dev_err),
-      names = game_id,
-      tar_target(
-        data_valid,
-        correct_device(tar_parsed) |>
-          validate_data(
-            require_keyboard = require_keyboard,
-            list_names = list_names
-          )
-      )
-    ),
-    tarchetypes::tar_map(
-      values = config_contents |>
-        dplyr::filter(game_id %in% game_id_cor$dur_err),
-      names = game_id,
-      tar_target(
-        data_valid,
-        validate_data(
-          tar_parsed,
-          require_keyboard = require_keyboard,
-          list_names = list_names
-        ) |>
-          correct_game_dur()
-      )
-    ),
-    # correct accuracy scores for Category Retrieval (CR)
-    if (FALSE) { # disabled because it requires more additional work
-      tarchetypes::tar_map(
-        values = config_contents |>
-          dplyr::filter(game_id == game_id_cor$cr),
-        names = game_id,
-        tar_target(
-          data_valid,
-          validate_data(
-            tar_parsed,
-            require_keyboard = require_keyboard,
-            list_names = list_names
-          ) |>
-            correct_cr(cr_correction)
-        )
-      )
-    },
-    # keep test phase only for Mnemonic Similarity Task (MST)
-    tarchetypes::tar_map(
-      values = config_contents |>
-        dplyr::filter(game_id %in% game_id_cor$mst),
-      names = game_id,
-      tar_target(
-        data_valid,
-        validate_data(
-          tar_parsed,
-          require_keyboard = require_keyboard,
-          list_names = list_names
-        ) |>
-          correct_mst()
-      )
-    ),
-    # correct reaction time error for flanker test
-    tarchetypes::tar_map(
-      values = config_contents |>
-        dplyr::filter(game_id %in% game_id_cor$rt) |>
-        dplyr::mutate(
-          adjust = dplyr::case_when(
-            game_id == "224379118576069" ~ 100,
-            game_id == "268008982667347" ~ 300
-          )
-        ),
-      names = game_id,
-      tar_target(
-        data_valid,
-        validate_data(
-          tar_parsed,
-          require_keyboard = require_keyboard,
-          list_names = list_names
-        ) |>
-          correct_rt(adjust = adjust)
-      )
+      }
     )
-  )
 }
 
 tar_check_motivated <- function(config) {
@@ -212,7 +144,7 @@ tar_check_motivated <- function(config) {
   )
 }
 
-tar_partition_rawdata <- function(contents, config_format) {
+tar_partition_rawdata <- function(contents) {
   contents |>
     dplyr::distinct(game_id) |>
     data.iquizoo::match_preproc(type = "inner") |>

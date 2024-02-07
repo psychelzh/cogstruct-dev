@@ -4249,7 +4249,7 @@
     },
     "zutils": {
       "Package": "zutils",
-      "Version": "0.0.8",
+      "Version": "0.0.10",
       "Source": "Repository",
       "Repository": "https://psychelzh.r-universe.dev",
       "Requirements": [
@@ -4257,9 +4257,10 @@
         "rlang",
         "stringr",
         "tidyr",
-        "tidyselect"
+        "tidyselect",
+        "utils"
       ],
-      "Hash": "e2c1bbbc12095f80b2fee8930d2fc32c"
+      "Hash": "a0244d6980705424e39a3d60e69584d2"
     }
   }
 }

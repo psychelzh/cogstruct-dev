@@ -26,10 +26,6 @@ tar_source()
 contents <- tarflow.iquizoo::fetch_iquizoo_mem()(
   readr::read_file("sql/contents_with_retest.sql")
 )
-config_format <- readr::read_csv(
-  "config/game_format.csv",
-  col_types = readr::cols(game_id = "I")
-)
 
 targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
   contents |>
@@ -75,7 +71,7 @@ list(
       mutate(game_id = bit64::as.integer64(game_id))
   ),
   # test retest after partitioning
-  tar_partition_rawdata(contents, config_format),
+  tar_partition_rawdata(contents),
   targets_test_retest_slices,
   tarchetypes::tar_combine(
     test_retest_slices,
