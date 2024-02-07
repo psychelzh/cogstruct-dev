@@ -61,6 +61,16 @@ list(
   tarchetypes::tar_combine(indices, targets_preproc$indices),
   targets_test_retest,
   tarchetypes::tar_combine(
+    indices_retest,
+    targets_test_retest$indices_retest,
+    command = bind_rows(!!!.x, .id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id", "game_id",
+        prefix = "indices_retest"
+      ) |>
+      mutate(game_id = bit64::as.integer64(game_id))
+  ),
+  tarchetypes::tar_combine(
     test_retest,
     targets_test_retest$test_retest,
     command = bind_rows(!!!.x, .id = ".id") |>

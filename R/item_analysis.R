@@ -6,10 +6,7 @@ clean_retest <- function(indices, extra_by = NULL) {
     ) |>
     filter(is.finite(score)) |>
     mutate(ver_major = str_extract(game_version, "\\d")) |>
-    group_by(
-      user_id, ver_major, index_name,
-      dplyr::pick(dplyr::all_of(extra_by))
-    ) |>
+    group_by(user_id, ver_major, index_name, pick(all_of(extra_by))) |>
     filter(row_number(desc(game_time)) <= 2) |>
     filter(n() == 2) |>
     mutate(occasion = c("test", "retest")[row_number(game_time)]) |>
@@ -19,15 +16,16 @@ clean_retest <- function(indices, extra_by = NULL) {
   }
   users_clean <- indices_clean |>
     distinct(
-      user_id, ver_major, index_name, game_time, occasion,
-      dplyr::pick(dplyr::all_of(extra_by))
+      project_id, user_id, ver_major, index_name, game_time, occasion,
+      pick(all_of(extra_by))
     ) |>
     pivot_wider(
-      id_cols = c(ver_major, user_id, index_name, dplyr::all_of(extra_by)),
+      id_cols = c(ver_major, user_id, index_name, all_of(extra_by)),
       names_from = occasion,
-      values_from = game_time
+      # keep all useful information
+      values_from = c(project_id, game_time)
     ) |>
-    mutate(days_retest = (test %--% retest) / days(), .keep = "unused") |>
+    mutate(days_retest = (game_time_test %--% game_time_retest) / days()) |>
     # interval should be 5-14 days
     filter(between(round(days_retest), 5, 14))
   if (nrow(users_clean) <= 30) {
@@ -35,7 +33,7 @@ clean_retest <- function(indices, extra_by = NULL) {
   }
   indices_clean |>
     pivot_wider(
-      id_cols = c(ver_major, user_id, index_name, dplyr::all_of(extra_by)),
+      id_cols = c(ver_major, user_id, index_name, all_of(extra_by)),
       names_from = occasion,
       values_from = score
     ) |>
@@ -58,7 +56,7 @@ calc_test_retest <- function(indices_retest, extra_by = NULL) {
           # treat all as normal if failed
           otherwise = FALSE
         )(pick(test, retest)),
-        .by = c(ver_major, index_name, {{ extra_by }})
+        .by = c(ver_major, index_name, all_of(extra_by))
       ),
     .id = "origin"
   ) |>
@@ -69,6 +67,6 @@ calc_test_retest <- function(indices_retest, extra_by = NULL) {
         # use ICC(2, 1)
         icc = psych::ICC(pick(test, retest))$results$ICC[[2]]
       ),
-      .by = c(origin, ver_major, index_name, {{ extra_by }})
+      .by = c(origin, ver_major, index_name, all_of(extra_by))
     )
 }
