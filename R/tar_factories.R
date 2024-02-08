@@ -215,7 +215,10 @@ tar_test_retest <- function(contents, ...,
 
 # modeling related ----
 tar_fit_cfa <- function(config, data, theory,
-                        col_ov = observed, col_lv = latent, col_fix = NULL,
+                        col_ov = observed,
+                        col_lv = latent,
+                        col_fix = NULL,
+                        missing = "ml",
                         tar_post_fit = c("gof", "comp_rel", "scores")) {
   tar_post_fit <- match.arg(tar_post_fit, several.ok = TRUE)
   list(
@@ -226,6 +229,7 @@ tar_fit_cfa <- function(config, data, theory,
           config,
           data,
           theory,
+          missing = missing,
           col_ov = col_ov,
           col_lv = col_lv,
           col_fix = col_fix
@@ -236,7 +240,7 @@ tar_fit_cfa <- function(config, data, theory,
       tar_target_raw(
         "gof",
         quote(
-          if (inherits(fit, "lavaan")) {
+          if (inherits(fit, "lavaan") && lavInspect(fit, "converged")) {
             as_tibble_row(unclass(fitmeasures(fit)))
           }
         )
@@ -246,7 +250,7 @@ tar_fit_cfa <- function(config, data, theory,
       tar_target_raw(
         "comp_rel",
         quote(
-          if (inherits(fit, "lavaan")) {
+          if (inherits(fit, "lavaan") && lavInspect(fit, "converged")) {
             semTools::compRelSEM(fit)
           }
         )
@@ -256,7 +260,7 @@ tar_fit_cfa <- function(config, data, theory,
       tar_target_raw(
         "scores",
         substitute(
-          if (inherits(fit, "lavaan")) {
+          if (inherits(fit, "lavaan") && lavInspect(fit, "converged")) {
             extract_latent_scores(fit, data)
           }
         )

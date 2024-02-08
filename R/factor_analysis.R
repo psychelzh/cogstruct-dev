@@ -67,11 +67,12 @@ output_factcons <- function(schema, mat, ...,
 #'   `"ho"` (higher-order), `"bf"` (bi-factor) and `"of"` (one-factor). See
 #'   Brunner et al. (2012) for detailed discussion of the models and the naming
 #'   conventions used here.
-#' @param ... Other arguments passed to `cfa()`.
-#' @param col_ov,col_lv The name of the column in `config` that
-#'   specifies the observed and latent variables.
+#' @param col_ov,col_lv The name of the column in `config` that specifies the
+#'   observed and latent variables.
 #' @param col_fix The name of the column in `config` that specifies the fixed
 #'   parameters. Only used for loadings. If `NULL`, all parameters are free.
+#' @param missing The method for handling missing data. See
+#'   [lavaan::lavOptions()] for details.
 #' @return The same as [lavaan::cfa()].
 #' @references
 #'
@@ -79,11 +80,11 @@ output_factcons <- function(schema, mat, ...,
 #' Structured Constructs. Journal of Personality, 80(4), 796–846.
 #' https://doi.org/10.1111/j.1467-6494.2011.00749.x
 #' @export
-fit_cfa <- function(config, data, theory, ...,
+fit_cfa <- function(config, data, theory,
                     col_ov = observed,
                     col_lv = latent,
-                    col_fix = NULL) {
-  rlang::check_dots_used()
+                    col_fix = NULL,
+                    missing = "ml") {
   theory <- match.arg(theory, c("fo", "ho", "bf", "of"))
   model <- prepare_model(
     config,
@@ -97,9 +98,8 @@ fit_cfa <- function(config, data, theory, ...,
     data,
     std.ov = TRUE,
     std.lv = TRUE,
-    missing = "ml",
-    orthogonal = theory == "bf",
-    ...
+    missing = missing,
+    orthogonal = theory == "bf"
   )
 }
 

@@ -73,6 +73,7 @@ targets_fact_resamples <- tarchetypes::tar_map(
     indices_cogstruct,
     "fo",
     col_fix = fix,
+    missing = "pairwise",
     tar_post_fit = "gof"
   )
 )

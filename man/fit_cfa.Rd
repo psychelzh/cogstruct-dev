@@ -8,10 +8,10 @@ fit_cfa(
   config,
   data,
   theory,
-  ...,
   col_ov = observed,
   col_lv = latent,
-  col_fix = NULL
+  col_fix = NULL,
+  missing = "ml"
 )
 }
 \arguments{
@@ -27,13 +27,14 @@ can be omitted if the model is one-factor model.}
 Brunner et al. (2012) for detailed discussion of the models and the naming
 conventions used here.}
 
-\item{...}{Other arguments passed to \code{cfa()}.}
-
-\item{col_ov, col_lv}{The name of the column in \code{config} that
-specifies the observed and latent variables.}
+\item{col_ov, col_lv}{The name of the column in \code{config} that specifies the
+observed and latent variables.}
 
 \item{col_fix}{The name of the column in \code{config} that specifies the fixed
 parameters. Only used for loadings. If \code{NULL}, all parameters are free.}
+
+\item{missing}{The method for handling missing data. See
+\code{\link[lavaan:lavOptions]{lavaan::lavOptions()}} for details.}
 }
 \value{
 The same as \code{\link[lavaan:cfa]{lavaan::cfa()}}.
