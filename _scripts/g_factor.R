@@ -14,7 +14,7 @@ branches_g <- tarchetypes::tar_map(
   prepare_config_vars(n_vars_total, n_steps),
   tarchetypes::tar_rep(
     vars_sample,
-    resample_vars(names(indices_cogstruct)[-1], num_vars, use_pairs),
+    resample_vars(names(indices_cogstruct), num_vars, use_pairs),
     batches = 10,
     reps = 10,
     iteration = "list",
