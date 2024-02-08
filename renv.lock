@@ -98,14 +98,14 @@
     },
     "GPArotation": {
       "Package": "GPArotation",
-      "Version": "2023.11-1",
+      "Version": "2024.2-1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "R",
         "stats"
       ],
-      "Hash": "1d02634300677b1732a5b0ae66196214"
+      "Hash": "fc68466ed6fdf4bcf6acd6f4862784a9"
     },
     "Hmisc": {
       "Package": "Hmisc",
@@ -2007,7 +2007,7 @@
     },
     "igraph": {
       "Package": "igraph",
-      "Version": "1.6.0",
+      "Version": "2.0.1.1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -2025,7 +2025,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "eef74fe28b747e52288ea9e1d3600034"
+      "Hash": "fb2999614d40fe7fd61cf569b66a2dbc"
     },
     "ini": {
       "Package": "ini",
@@ -2997,7 +2997,7 @@
     },
     "psych": {
       "Package": "psych",
-      "Version": "2.3.12",
+      "Version": "2.4.1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -3010,7 +3010,7 @@
         "parallel",
         "stats"
       ],
-      "Hash": "3be0b93e14bede70d41d3d8f9dce13d6"
+      "Hash": "e445e87c69650952cc58bb4cec6dd89c"
     },
     "purrr": {
       "Package": "purrr",
