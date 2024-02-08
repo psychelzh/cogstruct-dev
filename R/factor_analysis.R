@@ -141,11 +141,11 @@ prepare_model <- function(config, theory, col_ov, col_lv,
   c(model_g, model_facts)
 }
 
-extract_latent_scores <- function(fit, data = NULL, id_cols_data = NULL) {
+extract_latent_scores <- function(fit, data = NULL) {
   scores <- lavPredict(fit, data)
   if (!is.null(data)) {
-    id_cols_data <- substitute(id_cols_data) %||% quote(user_id)
-    rownames(scores) <- as.character(pull(data, {{ id_cols_data }}))
+    # lavaan do not keep the rownames of the data
+    rownames(scores) <- rownames(data)
   }
   scores
 }

@@ -28,7 +28,7 @@ censor_indices <- function(indices, subset, users_completed, res_motivated,
     )
 }
 
-reshape_indices <- function(indices, users_clean) {
+reshape_indices <- function(indices, users_clean, col_values = score_adj) {
   indices |>
     # fulfill screening before reshaping
     semi_join(filter(users_clean, keep), by = "user_id") |>
@@ -36,8 +36,9 @@ reshape_indices <- function(indices, users_clean) {
     pivot_wider(
       id_cols = user_id,
       names_from = game_index,
-      values_from = score_adj
-    )
+      values_from = {{ col_values }}
+    ) |>
+    column_to_rownames("user_id")
 }
 
 screen_users <- function(indices) {
