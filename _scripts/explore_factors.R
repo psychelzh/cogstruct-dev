@@ -7,14 +7,6 @@ tar_option_set(
 )
 setup_parallel_plan()
 
-games_thin <- with(
-  readr::read_tsv(
-    "config/games_thin.tsv",
-    show_col_types = FALSE
-  ),
-  sort(game_name_abbr[thin])
-)
-
 # parameters for resampling
 n_resamples <- 1000
 n_batches <- 10
@@ -60,7 +52,7 @@ targets_fact_resamples <- tarchetypes::tar_map(
     config,
     as_tibble(
       cluster_result$pamobject$silinfo$widths,
-      rownames = "observed"
+      rownames = "manifest"
     ) |>
       mutate(
         latent = sprintf("F%d", cluster),

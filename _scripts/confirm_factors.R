@@ -12,13 +12,13 @@ prepare_config <- function(name, config, loadings = NULL) {
     config <- loadings |>
       as_tibble() |>
       select(
-        observed = From,
+        manifest = From,
         latent = To,
         load = Coefficient # match schema name
       ) |>
       left_join(
         config,
-        by = join_by(observed, latent)
+        by = join_by(manifest, latent)
       )
   }
   # match schema name
@@ -51,12 +51,12 @@ prepare_config <- function(name, config, loadings = NULL) {
       filter(
         sil > 0.5,
         !str_detect(
-          observed,
+          manifest,
           str_c(tasks_biased, collapse = "|")
         )
       )
   }
-  select(config, observed, latent)
+  select(config, manifest, latent)
 }
 
 targets_cfa <- tarchetypes::tar_map(

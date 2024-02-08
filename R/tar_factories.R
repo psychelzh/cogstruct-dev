@@ -215,7 +215,7 @@ tar_test_retest <- function(contents, ...,
 
 # modeling related ----
 tar_fit_cfa <- function(config, data, theory,
-                        col_ov = observed,
+                        col_ov = manifest,
                         col_lv = latent,
                         col_fix = NULL,
                         missing = "ml",
