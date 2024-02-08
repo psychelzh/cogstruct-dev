@@ -28,6 +28,15 @@ config_data_correction <- readr::read_csv(
   col_types = readr::cols(game_id = "I")
 )
 
+# used in factor analysis
+games_thin <- with(
+  readr::read_tsv(
+    "config/games_thin.tsv",
+    show_col_types = FALSE
+  ),
+  sort(game_name_abbr[thin])
+)
+
 # used in cfa modeling building
 hypers_config_dims <- tibble::tibble(
   name = c(

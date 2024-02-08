@@ -22,3 +22,6 @@ predict_phenotypes:
 bench_cpm:
   script: _scripts/bench_cpm.R
   store: _targets/bench_cpm
+cognition_structure:
+  script: _scripts/cognition_structure.R
+  store: _targets/cognition_structure
