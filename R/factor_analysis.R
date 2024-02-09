@@ -143,6 +143,7 @@ fit_cfa <- function(config, data, theory,
 
 prepare_model <- function(config, theory, col_ov, col_lv,
                           col_fix = NULL) {
+  # ensure supporting quosure
   no_fix <- rlang::quo_is_null(rlang::enquo(col_fix))
   config <- config |>
     rename(
