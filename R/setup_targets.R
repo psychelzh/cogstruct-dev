@@ -1,5 +1,5 @@
 setup_crew_controller <- function(name) {
-  if (Sys.info()["nodename"] == "shadow") {
+  if (Sys.info()["nodename"] %in% c("shadow", "hippocampus")) {
     crew.cluster::crew_controller_sge(
       name = sprintf("%s-sge", name),
       workers = 40,
