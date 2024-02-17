@@ -25,3 +25,6 @@ bench_cpm:
 cognition_structure:
   script: _scripts/cognition_structure.R
   store: _targets/cognition_structure
+g_factor_bench_sample_sizes:
+  script: _scripts/g_factor_bench_sample_sizes.R
+  store: _targets/g_factor_bench_sample_sizes
