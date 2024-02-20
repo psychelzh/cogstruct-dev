@@ -3,6 +3,9 @@
 .RData
 .Ruserdata
 
+# do not track environmental variables
+.Renviron
+
 /.quarto/
 /_site/
 /_targets/
