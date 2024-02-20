@@ -44,7 +44,7 @@ list(
   ),
   tarchetypes::tar_file_read(
     subjs_keep_neural,
-    path_obj_from_proj("subjs_keep_neural", "preproc_neural"),
+    path_obj_from_proj("subjs_keep_neural", "prepare_neural"),
     read = qs::qread(!!.x)
   ),
   tar_target(

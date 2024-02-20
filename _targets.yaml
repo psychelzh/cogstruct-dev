@@ -4,6 +4,9 @@ prepare_source_data:
 prepare_source_data_retest:
   script: _scripts/prepare_source_data_retest.R
   store: _targets/prepare_source_data_retest
+prepare_neural:
+  script: _scripts/prepare_neural.R
+  store: _targets/prepare_neural
 g_factor:
   script: _scripts/g_factor.R
   store: _targets/g_factor
@@ -13,9 +16,6 @@ explore_factors:
 confirm_factors:
   script: _scripts/confirm_factors.R
   store: _targets/confirm_factors
-preproc_neural:
-  script: _scripts/preproc_neural.R
-  store: _targets/preproc_neural
 predict_phenotypes:
   script: _scripts/predict_phenotypes.R
   store: _targets/predict_phenotypes

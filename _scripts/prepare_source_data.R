@@ -90,6 +90,25 @@ list(
       prepare_users_demography(indices)
   ),
   tar_target(
+    users_confounds,
+    users_demography |>
+      select(user_id, user_sex, user_age) |>
+      mutate(
+        scanner = names(data.camp::users_id_mapping)[
+          match(user_id, data.camp::users_id_mapping)
+        ] |>
+          str_remove_all("\\d")
+      ) |>
+      drop_na() |>
+      fastDummies::dummy_columns(
+        "scanner",
+        remove_first_dummy = TRUE,
+        remove_selected_columns = TRUE
+      ) |>
+      column_to_rownames("user_id") |>
+      as.matrix()
+  ),
+  tar_target(
     indices_cogstruct_long,
     censor_indices(
       indices,

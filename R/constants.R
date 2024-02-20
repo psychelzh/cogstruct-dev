@@ -72,12 +72,14 @@ params_fmri_tasks <- tibble::tribble(
   "2", "wm",
   "2", "movie"
 )
-params_xcpd <- tidyr::expand_grid(
+params_xcpd <- tibble::tibble(
   config = c(
     "default", # with global signal regression
     "no_gsr" # no global signal regression
-  ),
-  atlas = sprintf("Schaefer%d17", 1:4)
+  )
+)
+params_atlas <- tibble::tibble(
+  atlas = sprintf("Schaefer%d17", 2)
 )
 
 # used in CPM modeling building
