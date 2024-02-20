@@ -3,8 +3,7 @@ setup_crew_controller <- function(name) {
     crew.cluster::crew_controller_sge(
       name = sprintf("%s-sge", name),
       workers = 40,
-      seconds_idle = 30,
-      tasks_max = 1 # workaround memory issue
+      seconds_idle = 30
     )
   } else {
     crew::crew_controller_local(
