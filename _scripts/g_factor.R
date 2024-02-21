@@ -204,7 +204,10 @@ list(
     command = list(!!!.x) |>
       lapply(bind_rows) |>
       bind_rows_meta(
-        .names = c(names(config_cpm), names(config_vars)),
+        .names = c(
+          names(select(config_cpm, !starts_with("file"))),
+          names(config_vars)
+        ),
         .prefix = "cpm_performance"
       )
   )

@@ -64,7 +64,7 @@ list(
     cpm_branches$cpm_performance,
     command = bind_rows_meta(
       !!!.x,
-      .names = names(config_cpm),
+      .names = names(select(config_cpm, !starts_with("file"))),
       .prefix = "cpm_performance"
     )
   )
