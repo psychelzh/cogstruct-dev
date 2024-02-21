@@ -17,7 +17,7 @@ setup_crew_controller <- function(name) {
 setup_parallel_plan <- function() {
   options(clustermq.scheduler = "sge")
   options(clustermq.template = "clustermq.tmpl")
-  if (Sys.info()["nodename"] == "shadow") {
+  if (Sys.info()["nodename"] %in% c("shadow", "hippocampus")) {
     future::plan(future.batchtools::batchtools_sge, template = "future.tmpl")
   } else if (Sys.info()["sysname"] == "Linux") {
     future::plan(future::multicore)
