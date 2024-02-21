@@ -15,7 +15,10 @@ cpm_branches <- tarchetypes::tar_map(
     cpmr::cpm(
       qs::qread(file_fc)[subjs_to_keep, ],
       scores_rapm[subjs_to_keep, ],
-      confounds = qs::qread(file_confounds)[subjs_to_keep, ],
+      confounds = match_confounds(
+        users_confounds,
+        qs::qread(file_fd)[, 1, drop = FALSE]
+      ),
       thresh_method = thresh_method,
       thresh_level = thresh_level,
       kfolds = 10
@@ -54,15 +57,15 @@ list(
       rownames(scores_rapm)
     )
   ),
-  tar_prep_files_cpm(),
+  tar_prep_files_cpm(which_fc = "fc_run1"),
   cpm_branches,
   tarchetypes::tar_combine(
     cpm_performance,
     cpm_branches$cpm_performance,
     command = bind_rows_meta(
       !!!.x,
-      .prefix = "cpm_performance",
-      .type = "cpm"
+      .names = names(config_cpm),
+      .prefix = "cpm_performance"
     )
   )
 )
