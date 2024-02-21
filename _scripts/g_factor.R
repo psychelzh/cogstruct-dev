@@ -96,8 +96,14 @@ branches_g <- tarchetypes::tar_map(
           lapply_tar_batches(
             scores_list,
             perform_cpm_g_factor,
-            file_fc, file_confounds, subjs_keep_neural,
-            thresh_method, thresh_level,
+            fc = qs::qread(file_fc),
+            confounds = match_confounds(
+              users_confounds,
+              as.matrix(rowMeans(qs::qread(file_fd)))
+            ),
+            subjs_keep_neural = subjs_keep_neural,
+            thresh_method = thresh_method,
+            thresh_level = thresh_level,
             .append = TRUE
           )
         }
@@ -151,6 +157,11 @@ list(
   tarchetypes::tar_file_read(
     subjs_keep_neural,
     path_obj_from_proj("subjs_keep_neural", "prepare_neural"),
+    read = qs::qread(!!.x)
+  ),
+  tarchetypes::tar_file_read(
+    users_confounds,
+    path_obj_from_proj("users_confounds", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
   tar_prep_files_cpm(),

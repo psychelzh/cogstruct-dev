@@ -1,7 +1,8 @@
 prepare_config_cpm <- function(...) {
   tidyr::expand_grid(
-    params_fmri_tasks,
     params_xcpd,
+    params_fmri_tasks,
+    params_atlas,
     hypers_cpm
   ) |>
     dplyr::filter(...) |>
@@ -9,12 +10,12 @@ prepare_config_cpm <- function(...) {
       file_fc = rlang::syms(
         sprintf(
           "file_fc_%s_%s_%s_%s",
-          session, task, config, atlas
+          config, session, task, atlas
         )
       ),
-      file_confounds = rlang::syms(
+      file_fd = rlang::syms(
         sprintf(
-          "file_confounds_%s_%s",
+          "file_fd_%s_%s",
           session, task
         )
       )

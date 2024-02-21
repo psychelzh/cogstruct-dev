@@ -1,5 +1,4 @@
-perform_cpm_g_factor <- function(g, file_fc, file_confounds, subjs_keep_neural,
-                                 thresh_method, thresh_level) {
+perform_cpm_g_factor <- function(fc, g, confounds, subjs_keep_neural, ...) {
   # remove possible missing values in g with a warning
   if (anyNA(g)) {
     warning("Found missing g factor scores, will remove them.")
@@ -10,12 +9,11 @@ perform_cpm_g_factor <- function(g, file_fc, file_confounds, subjs_keep_neural,
     as.character(subjs_keep_neural)
   )
   cpmr::cpm(
-    qs::qread(file_fc)[subjs_to_keep, ],
+    fc[subjs_to_keep, ],
     g[subjs_to_keep, ],
-    confounds = qs::qread(file_confounds)[subjs_to_keep, ],
-    thresh_method = thresh_method,
-    thresh_level = thresh_level,
-    kfolds = 10
+    confounds = confounds[subjs_to_keep, ],
+    kfolds = 10,
+    ...
   )
 }
 
@@ -23,4 +21,9 @@ extract_cpm_performance <- function(result) {
   apply(result$pred, 2, cor.test, result$real) |>
     lapply(broom::tidy) |>
     list_rbind(names_to = "include")
+}
+
+match_confounds <- function(users_confounds, fd_mean) {
+  subjs <- intersect(rownames(users_confounds), rownames(fd_mean))
+  cbind(users_confounds[subjs, ], fd_mean[subjs, ])
 }
