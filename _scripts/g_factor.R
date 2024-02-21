@@ -10,8 +10,15 @@ setup_parallel_plan()
 n_vars_total <- 76
 n_steps <- 20
 
+config_vars <- prepare_config_vars(n_vars_total, n_steps)
+config_cpm <- prepare_config_cpm(
+  config == "default",
+  atlas == "Schaefer217",
+  thresh_method == "alpha",
+  thresh_level == 0.01
+)
 branches_g <- tarchetypes::tar_map(
-  prepare_config_vars(n_vars_total, n_steps),
+  config_vars,
   tarchetypes::tar_rep(
     vars_sample,
     resample_vars(names(indices_cogstruct), num_vars, use_pairs),
@@ -81,12 +88,7 @@ branches_g <- tarchetypes::tar_map(
     iteration = "list"
   ),
   tarchetypes::tar_map(
-    prepare_config_cpm(
-      config == "default",
-      atlas == "Schaefer217",
-      thresh_method == "alpha",
-      thresh_level == 0.01
-    ),
+    config_cpm,
     names = !starts_with("file"),
     tarchetypes::tar_rep(
       cpm_result,
@@ -172,8 +174,8 @@ list(
     command = list(!!!.x) |>
       lapply(bind_rows) |>
       bind_rows_meta(
-        .prefix = "rel_pairs_g",
-        .type = "samples"
+        .names = names(config_vars),
+        .prefix = "rel_pairs_g"
       )
   ),
   tarchetypes::tar_combine(
@@ -182,8 +184,8 @@ list(
     command = list(!!!.x) |>
       lapply(bind_rows) |>
       bind_rows_meta(
-        .prefix = "comp_rel_g",
-        .type = "samples"
+        .names = names(config_vars),
+        .prefix = "comp_rel_g"
       )
   ),
   tarchetypes::tar_combine(
@@ -192,8 +194,18 @@ list(
     command = list(!!!.x) |>
       lapply(bind_rows) |>
       bind_rows_meta(
-        .prefix = "cor_rapm",
-        .type = "samples"
+        .names = names(config_vars),
+        .prefix = "cor_rapm"
+      )
+  ),
+  tarchetypes::tar_combine(
+    cpm_performance,
+    zutils::select_list(branches_g, starts_with("cpm_performance")),
+    command = list(!!!.x) |>
+      lapply(bind_rows) |>
+      bind_rows_meta(
+        .names = c(names(config_cpm), names(config_vars)),
+        .prefix = "cpm_performance"
       )
   )
 )
