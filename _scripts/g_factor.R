@@ -145,6 +145,37 @@ branches_g <- tarchetypes::tar_map(
   )
 )
 
+targets_cpm_full <- tarchetypes::tar_map(
+  config_cpm,
+  names = !starts_with("file"),
+  tarchetypes::tar_rep(
+    cpm_result_full,
+    perform_cpm_g_factor(
+      qs::qread(file_fc),
+      scores_g_full,
+      match_confounds(
+        users_confounds,
+        as.matrix(rowMeans(qs::qread(file_fd)))
+      ),
+      subjs_keep_neural,
+      thresh_method = thresh_method,
+      thresh_level = thresh_level
+    ),
+    batches = 4,
+    reps = 5,
+    iteration = "list",
+    retrieval = "worker",
+    storage = "worker"
+  ),
+  tarchetypes::tar_rep2(
+    cpm_performance_full,
+    extract_cpm_performance(cpm_result_full),
+    cpm_result_full,
+    retrieval = "worker",
+    storage = "worker"
+  )
+)
+
 list(
   tarchetypes::tar_file_read(
     indices_cogstruct,
@@ -210,5 +241,31 @@ list(
         ),
         .prefix = "cpm_performance"
       )
+  ),
+  tar_target(
+    fit_g_full,
+    fit_efa_g(
+      indices_cogstruct,
+      vars = names(indices_cogstruct),
+      missing = "ml"
+    )
+  ),
+  tar_target(
+    comp_rel_g_full,
+    tibble(comp_rel = unclass(semTools::compRelSEM(fit_g_full$nf1)))
+  ),
+  tar_target(
+    scores_g_full,
+    extract_g_scores(fit_g_full, data = indices_cogstruct)
+  ),
+  targets_cpm_full,
+  tarchetypes::tar_combine(
+    cpm_performance_full,
+    targets_cpm_full$cpm_performance_full,
+    command = bind_rows_meta(
+      !!!.x,
+      .names = names(select(config_cpm, !starts_with("file"))),
+      .prefix = "cpm_performance_full"
+    )
   )
 )
