@@ -12,10 +12,7 @@ censor_indices <- function(indices, subset, users_completed, res_motivated,
     data.iquizoo::screen_indices() |>
     mutate(
       game_index = game_id |>
-        data.iquizoo::match_info(
-          from = "game_id",
-          to = "game_name_abbr"
-        ) |>
+        data.iquizoo::match_info(to = "game_name_abbr") |>
         str_c(index_name, sep = ".")
     ) |>
     left_join(

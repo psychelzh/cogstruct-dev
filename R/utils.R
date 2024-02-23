@@ -16,7 +16,7 @@ replace_as_name_cn <- function(game_index,
                                delim = ".") {
   splitted <- str_split(game_index, fixed(delim), simplify = TRUE)
   splitted[, 1] <- splitted[, 1] |>
-    data.iquizoo::match_info(from = "game_name_abbr", to = "game_name")
+    data.iquizoo::match_info(to = "game_name", from = "game_name_abbr")
   if (remove_suffix) splitted[, 1] <- str_remove(splitted[, 1], "[a-zA-Z]+$")
   str_c(splitted[, 1], splitted[, 2], sep = delim)
 }
