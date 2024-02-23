@@ -980,7 +980,7 @@
     },
     "data.iquizoo": {
       "Package": "data.iquizoo",
-      "Version": "2024.02.03-1",
+      "Version": "2024.02.23",
       "Source": "Repository",
       "Repository": "https://psychelzh.r-universe.dev",
       "Requirements": [
@@ -989,7 +989,7 @@
         "dplyr",
         "utils"
       ],
-      "Hash": "67c783cc5318d96d058cd20db48a30a3"
+      "Hash": "4bd768d28c06ae102f4abc89869ae732"
     },
     "data.table": {
       "Package": "data.table",
