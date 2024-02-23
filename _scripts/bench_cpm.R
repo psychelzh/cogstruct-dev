@@ -18,7 +18,7 @@ cpm_branches <- tarchetypes::tar_map(
       confounds = match_confounds(
         users_confounds,
         qs::qread(file_fd)[, 1, drop = FALSE]
-      ),
+      )[subjs_to_keep, ],
       thresh_method = thresh_method,
       thresh_level = thresh_level,
       kfolds = 10
@@ -44,6 +44,11 @@ list(
     read = qs::qread(!!.x) |>
       column_to_rownames("user_id") |>
       as.matrix()
+  ),
+  tarchetypes::tar_file_read(
+    users_confounds,
+    path_obj_from_proj("users_confounds", "prepare_source_data"),
+    read = qs::qread(!!.x)
   ),
   tarchetypes::tar_file_read(
     subjs_keep_neural,
