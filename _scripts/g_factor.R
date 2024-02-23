@@ -117,7 +117,7 @@ branches_g <- tarchetypes::tar_map(
       storage = "worker"
     ),
     tarchetypes::tar_rep2(
-      cpm_performance,
+      cpm_performance_cv,
       lapply_tar_batches(
         cpm_result,
         \(result) {
@@ -141,6 +141,14 @@ branches_g <- tarchetypes::tar_map(
       cpm_result,
       retrieval = "worker",
       storage = "worker"
+    ),
+    tar_target(
+      cpm_performance,
+      summarise(
+        cpm_performance_cv,
+        r = mean(r),
+        .by = c(include, starts_with("tar"))
+      )
     )
   )
 )
@@ -168,11 +176,15 @@ targets_cpm_full <- tarchetypes::tar_map(
     storage = "worker"
   ),
   tarchetypes::tar_rep2(
-    cpm_performance_full,
+    cpm_performance_cv_full,
     extract_cpm_performance(cpm_result_full),
     cpm_result_full,
     retrieval = "worker",
     storage = "worker"
+  ),
+  tar_target(
+    cpm_performance_full,
+    summarise(cpm_performance_cv_full, r = mean(r), .by = include)
   )
 )
 

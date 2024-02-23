@@ -33,11 +33,15 @@ targets_rsmp <- tarchetypes::tar_map(
     storage = "worker"
   ),
   tarchetypes::tar_rep2(
-    cpm_performance,
+    cpm_performance_cv,
     extract_cpm_performance(cpm_result),
     cpm_result,
     retrieval = "worker",
     storage = "worker"
+  ),
+  tar_target(
+    cpm_performance,
+    summarise(cpm_performance_cv, r = mean(r), .by = include)
   )
 )
 
@@ -110,10 +114,14 @@ list(
     storage = "worker"
   ),
   tarchetypes::tar_rep2(
-    cpm_performance,
+    cpm_performance_cv,
     extract_cpm_performance(cpm_result),
     cpm_result,
     retrieval = "worker",
     storage = "worker"
+  ),
+  tar_target(
+    cpm_performance,
+    summarise(cpm_performance_cv, r = mean(r), .by = include)
   )
 )
