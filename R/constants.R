@@ -31,7 +31,7 @@ config_data_correction <- readr::read_csv(
 # used in factor analysis
 games_thin <- with(
   readr::read_tsv(
-    "config/games_thin.tsv",
+    "config/games_thin.txt",
     show_col_types = FALSE
   ),
   sort(game_name_abbr[thin])
