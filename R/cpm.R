@@ -18,9 +18,11 @@ perform_cpm_g_factor <- function(fc, g, confounds, subjs_keep_neural, ...) {
 }
 
 extract_cpm_performance <- function(result) {
-  apply(result$pred, 2, cor.test, result$real) |>
-    lapply(broom::tidy) |>
-    list_rbind(names_to = "include")
+  as_tibble(
+    cor(result$pred, result$real),
+    rownames = "include",
+    .name_repair = ~ "r"
+  )
 }
 
 match_confounds <- function(users_confounds, fd_mean) {
