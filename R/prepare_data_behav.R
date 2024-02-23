@@ -68,13 +68,13 @@ prepare_users_demography <- function(users, indices) {
     )
 }
 
-split_data_solomon <- function(data) {
+split_data_solomon <- function(data, n = 2) {
   pca_result <- psych::principal(
     data,
     nfactors = ncol(data),
     rotate = "none",
     missing = TRUE
   )
-  groups <- with(pca_result, rank(scores %*% colMeans(loadings^2)) %% 2)
+  groups <- with(pca_result, rank(scores %*% colMeans(loadings^2)) %% n)
   split(data, groups)
 }
