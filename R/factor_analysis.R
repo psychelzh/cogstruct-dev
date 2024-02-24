@@ -1,20 +1,12 @@
 # exploratory factor analysis section ----
 # https://www.open-access.bcu.ac.uk/6076/
-iterate_efa <- function(data) { # nolint: cyclocomp_linter.
-  check_cross_loading <- function(x) {
-    # also check negative cross-loading
-    x <- abs(x)
-    x_cross <- x[x > 0.3]
-    if (length(x_cross) < 2) {
-      return(FALSE)
-    }
-    if (all(x_cross < 0.4) || min(x_cross) > 0.75 * max(x_cross)) {
-      return(TRUE)
-    }
-    return(FALSE)
+iterate_efa <- function(r, n_obs = 100) { # nolint: cyclocomp_linter.
+  if (!psych::isCorrelation(r)) {
+    n_obs <- nrow(r)
+    r <- cor(r, use = "pairwise.complete.obs")
   }
-  nfact <- psych::fa.parallel(data, plot = FALSE)$nfact
-  efa <- psych::fa(data, nfact)
+  nfact <- psych::fa.parallel(r, n_obs, plot = FALSE)$nfact
+  efa <- psych::fa(r, nfact, n_obs)
   removed <- list(
     communality_too_small = character(),
     loading_too_small = character(),
@@ -33,8 +25,8 @@ iterate_efa <- function(data) { # nolint: cyclocomp_linter.
         removed$communality_too_small,
         names(which(communality_too_small))
       )
-      data <- data[, !communality_too_small]
-      efa <- psych::fa(data, nfact)
+      r <- r[!communality_too_small, !communality_too_small]
+      efa <- psych::fa(r, nfact, n_obs)
     }
     # ensure all factors have at least 3 loadings above 0.4
     repeat {
@@ -44,7 +36,7 @@ iterate_efa <- function(data) { # nolint: cyclocomp_linter.
       }
       stable <- FALSE
       nfact <- nfact - 1
-      efa <- psych::fa(data, nfact)
+      efa <- psych::fa(r, nfact, n_obs)
     }
     # ensure items with no loading above 0.3 are removed
     repeat {
@@ -58,8 +50,8 @@ iterate_efa <- function(data) { # nolint: cyclocomp_linter.
         removed$loading_too_small,
         names(which(loading_too_small))
       )
-      data <- data[, !loading_too_small]
-      efa <- psych::fa(data, nfact)
+      r <- r[!loading_too_small, !loading_too_small]
+      efa <- psych::fa(r, nfact, n_obs)
     }
     # ensure no cross-loading
     repeat {
@@ -73,17 +65,17 @@ iterate_efa <- function(data) { # nolint: cyclocomp_linter.
         removed$loading_cross,
         names(which(loading_cross))
       )
-      data <- data[, !loading_cross]
-      efa <- psych::fa(data, nfact)
+      r <- r[!loading_cross, !loading_cross]
+      efa <- psych::fa(r, nfact, n_obs)
     }
     if (stable) {
       break
     }
   }
   list(
-    data = data,
     n_fact = nfact,
     efa = efa,
+    vars = colnames(r),
     removed = removed
   )
 }
@@ -209,4 +201,18 @@ extract_g_scores <- function(fit, data) {
     scores <- -scores
   }
   scores
+}
+
+# helper functions ----
+check_cross_loading <- function(x) {
+  # also check negative cross-loading
+  x <- abs(x)
+  x_cross <- x[x > 0.3]
+  if (length(x_cross) < 2) {
+    return(FALSE)
+  }
+  if (all(x_cross < 0.4) || min(x_cross) > 0.75 * max(x_cross)) {
+    return(TRUE)
+  }
+  return(FALSE)
 }
