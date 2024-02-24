@@ -1,3 +1,11 @@
+prepare_config_vars <- function(num_vars_total, n_steps) {
+  num_vars_base <- num_vars_total %/% n_steps
+  tibble::tibble(
+    num_vars = seq(num_vars_base, num_vars_total, num_vars_base),
+    use_pairs = num_vars * 2 <= num_vars_total
+  )
+}
+
 prepare_config_cpm <- function(...) {
   tidyr::expand_grid(
     params_xcpd,
