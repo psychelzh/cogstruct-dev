@@ -34,7 +34,16 @@ targets_preproc <- tarchetypes::tar_map(
   tar_target(
     durations,
     tar_parsed |>
-      mutate(game_dur_mins = game_duration / 60000) |>
+      mutate(
+        game_dur_mins = game_duration / 60000 +
+          case_match(
+            .data[["game_id"]],
+            bit64::as.integer64(c(268008982671439, 268008982671433)) ~ 4.7,
+            bit64::as.integer64(c(268008982655069, 268008982667346)) ~ 2.7,
+            bit64::as.integer64(324182449562501) ~ 8,
+            .default = 0
+          )
+      ) |>
       group_by(.data[["game_id"]]) |>
       skimr::skim(game_dur_mins) |>
       ungroup()
