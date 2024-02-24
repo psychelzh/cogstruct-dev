@@ -72,6 +72,10 @@ split_data_solomon <- function(data, n = 2) {
     rotate = "none",
     missing = TRUE
   )
-  groups <- with(pca_result, rank(scores %*% colMeans(loadings^2)) %% n)
+  groups_source <- rep(c(1:n, seq(n, 1, -1)), length.out = nrow(data))
+  groups <- with(
+    pca_result,
+    groups_source[rank(scores %*% colMeans(loadings^2))]
+  )
   split(data, groups)
 }
