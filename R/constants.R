@@ -65,13 +65,25 @@ params_fmri_tasks <- tibble::tribble(
 )
 params_xcpd <- tibble::tibble(
   config = c(
-    "default", # with global signal regression
+    "gsr", # with global signal regression
     "no_gsr" # no global signal regression
   )
 )
 params_atlas <- tibble::tibble(
-  atlas = sprintf("Schaefer%d17", 2)
+  atlas = c(
+    "Schaefer217",
+    "4S256Parcels"
+  )
 )
+config_fc <- tidyr::expand_grid(
+  params_xcpd,
+  params_fmri_tasks,
+  params_atlas
+) |>
+  dplyr::filter(
+    (config == "no_gsr" & atlas == "Schaefer217") |
+      (config == "gsr" & atlas == "4S256Parcels")
+  )
 
 # used in CPM modeling building
 hypers_cpm <- dplyr::bind_rows(

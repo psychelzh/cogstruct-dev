@@ -9,11 +9,7 @@ setup_parallel_plan()
 
 # prepare functional connectivity (FC) data ----
 targets_fc <- tarchetypes::tar_map(
-  tidyr::expand_grid(
-    params_xcpd,
-    params_fmri_tasks,
-    params_atlas
-  ),
+  config_fc,
   tar_target(
     meta_time_series,
     prepare_meta_time_series(config, session, task, atlas)

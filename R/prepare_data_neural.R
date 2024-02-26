@@ -30,7 +30,7 @@ prepare_data_fc <- function(meta, ...) {
 prepare_meta_data_motion <- function(session, task) {
   extract_bids_meta(
     # different xcp_d results used the same motion parameters
-    params_xcpd$config[1],
+    "gsr",
     session = session,
     task = task,
     suffix = "motion",

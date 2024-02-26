@@ -8,9 +8,7 @@ prepare_config_vars <- function(num_vars_total, n_steps) {
 
 prepare_config_cpm <- function(...) {
   tidyr::expand_grid(
-    params_xcpd,
-    params_fmri_tasks,
-    params_atlas,
+    config_fc,
     hypers_cpm
   ) |>
     dplyr::filter(...) |>
