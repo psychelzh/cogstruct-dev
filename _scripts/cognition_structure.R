@@ -18,7 +18,7 @@ targets_cfa <- tarchetypes::tar_map(
     hypers_model,
     tar_fit_cfa(
       config_dims,
-      indices_splitted[[2]],
+      indices_cogstruct_thin,
       theory = theory,
       missing = "pairwise",
       tar_post_fit = "gof"
@@ -27,18 +27,46 @@ targets_cfa <- tarchetypes::tar_map(
 )
 
 list(
-  tarchetypes::tar_file_read(
-    indices_cogstruct,
+  tar_target(
+    file_games_thin,
+    "config/games_thin.txt",
+    format = "file"
+  ),
+  tar_target(
+    file_indices_cogstruct,
     path_obj_from_proj("indices_cogstruct", "prepare_source_data"),
-    read = qs::qread(!!.x)
+    format = "file"
+  ),
+  tar_target(
+    config_games_thin,
+    read_tsv(file_games_thin, col_types = cols(game_id = "I")) |>
+      unite("game_index", game_name_abbr, index_name, sep = ".") |>
+      left_join(
+        qs::qread(file_indices_cogstruct) |>
+          psych::smc() |>
+          enframe("game_index", "smc"),
+        by = "game_index"
+      ) |>
+      arrange(paradigm_thin, desc(smc)) |>
+      filter(!is.na(paradigm_thin)) |>
+      mutate(thin = row_number() > 1, .by = paradigm_thin)
+  ),
+  tar_target(
+    indices_cogstruct_thin,
+    qs::qread(file_indices_cogstruct) |>
+      select(!contains(with(config_games_thin, game_index[thin]))),
   ),
   tar_target(
     indices_splitted,
-    split_data_solomon(select(indices_cogstruct, !contains(games_thin)))
+    split_data_solomon(indices_cogstruct_thin)
   ),
   tar_target(
-    efa_result,
-    iterate_efa(indices_splitted[[1]])
+    efa_results,
+    lapply(indices_splitted, iterate_efa)
+  ),
+  tar_target(
+    efa_result_final,
+    iterate_efa(indices_cogstruct_thin)
   ),
   tarchetypes::tar_file_read(
     config_dims_theory,
@@ -50,7 +78,7 @@ list(
     config_dims_theory |>
       unite(manifest, game_name_abbr, index_name, sep = ".") |>
       inner_join(
-        efa_result$efa |>
+        efa_result_final$efa |>
           parameters::model_parameters(threshold = "max") |>
           pivot_longer(
             starts_with("MR"),
@@ -85,7 +113,7 @@ list(
   ),
   tar_fit_cfa(
     config_dims_efa,
-    indices_cogstruct,
+    indices_cogstruct_thin,
     theory = "bf"
   )
 )
