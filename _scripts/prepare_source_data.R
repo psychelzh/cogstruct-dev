@@ -141,7 +141,9 @@ list(
         res_motivated
       ) |>
       filter(!is_outlier_iqr & is_motivated) |>
-      select(user_id, score = score_adj)
+      select(user_id, score = score_adj) |>
+      column_to_rownames("user_id") |>
+      as.matrix()
   ),
   targets_indices_partitioned,
   tarchetypes::tar_combine(

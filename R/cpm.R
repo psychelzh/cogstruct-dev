@@ -1,18 +1,18 @@
-perform_cpm_g_factor <- function(fc, g, confounds, subjs_keep_neural, ...) {
-  # remove possible missing values in g with a warning
-  if (anyNA(g)) {
-    warning("Found missing g factor scores, will remove them.")
-    g <- g[!is.na(g), 1, drop = FALSE]
+perform_cpm <- function(fc, behav, confounds, ...) {
+  # ensure behav is a vector
+  if (is.matrix(behav)) {
+    stopifnot(ncol(behav) == 1)
+    behav <- behav[, 1]
   }
-  subjs_to_keep <- intersect(
-    rownames(g),
-    as.character(subjs_keep_neural)
-  )
+  if (anyNA(behav)) {
+    warning("Found missing behavioral scores, will remove them.")
+    behav <- behav[!is.na(behav)]
+  }
+  subjs_to_keep <- intersect(names(behav), rownames(fc))
   cpmr::cpm(
     fc[subjs_to_keep, ],
-    g[subjs_to_keep, ],
+    behav[subjs_to_keep],
     confounds = confounds[subjs_to_keep, ],
-    kfolds = 10,
     ...
   )
 }
@@ -21,8 +21,23 @@ extract_cpm_performance <- function(result) {
   as_tibble(
     cor(result$pred, result$real),
     rownames = "include",
-    .name_repair = ~ "r"
+    .name_repair = ~"r"
   )
+}
+
+calc_dice_pairs <- function(result, level) {
+  edges_sel <- lapply(
+    result[1:2],
+    \(x) x$edges > level * length(unique(x$folds))
+  )
+  proxy::simil(
+    edges_sel[[1]],
+    edges_sel[[2]],
+    method = "Dice",
+    by_rows = FALSE
+  ) |>
+    diag() |>
+    enframe(name = "network", value = "dice")
 }
 
 match_confounds <- function(users_confounds, fd_mean) {

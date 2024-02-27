@@ -12,8 +12,8 @@ n_steps <- 20
 
 config_vars <- prepare_config_vars(n_vars_total, n_steps)
 config_cpm <- prepare_config_cpm(
-  config == "default",
-  atlas == "Schaefer217",
+  config == "gsr",
+  task == "wm",
   thresh_method == "alpha",
   thresh_level == 0.01
 )
@@ -78,7 +78,6 @@ branches_g <- tarchetypes::tar_map(
       scores_g,
       \(x) {
         indices_rapm |>
-          column_to_rownames("user_id") |>
           merge(x, by = "row.names") |>
           summarise(r = cor(score, f1, use = "pairwise"))
       }
@@ -90,101 +89,49 @@ branches_g <- tarchetypes::tar_map(
   tarchetypes::tar_map(
     config_cpm,
     names = !starts_with("file"),
-    tarchetypes::tar_rep(
+    tarchetypes::tar_rep2(
       cpm_result,
-      lapply(
-        list_flatten(scores_g),
-        \(scores_list) {
-          lapply_tar_batches(
-            scores_list,
-            perform_cpm_g_factor,
-            fc = qs::qread(file_fc),
-            confounds = match_confounds(
-              users_confounds,
-              as.matrix(rowMeans(qs::qread(file_fd)))
-            ),
-            subjs_keep_neural = subjs_keep_neural,
-            thresh_method = thresh_method,
-            thresh_level = thresh_level,
-            .append = TRUE
-          )
-        }
+      lapply_tar_batches(
+        scores_g,
+        perform_cpm,
+        fc = qs::qread(file_fc),
+        confounds = match_confounds(
+          users_confounds,
+          as.matrix(rowMeans(qs::qread(file_fd)))
+        ),
+        subjs_keep_neural = subjs_keep_neural,
+        bias_correct = FALSE,
+        thresh_method = thresh_method,
+        thresh_level = thresh_level,
+        return_edges = "sum"
       ),
-      batches = 4,
-      reps = 5,
+      scores_g,
       iteration = "list",
       retrieval = "worker",
       storage = "worker"
     ),
     tarchetypes::tar_rep2(
-      cpm_performance_cv,
-      lapply_tar_batches(
-        cpm_result,
-        \(result) {
-          lapply_tar_batches(
-            result,
-            extract_cpm_performance,
-            .append = TRUE
-          ) |>
-            list_rbind_tar_batches(
-              names_to = "id_pairs",
-              append = TRUE
-            )
-        }
-      ) |>
-        list_rbind() |>
-        # rename batch info from resample step to avoid conflict
-        rename_with(
-          \(x) sprintf("%s_resample", x),
-          starts_with("tar")
-        ),
+      dice_pairs,
+      if (use_pairs) {
+        calc_dice_pairs(cpm_result, 0.5)
+      } else {
+        tibble()
+      },
       cpm_result,
       retrieval = "worker",
       storage = "worker"
     ),
-    tar_target(
+    tarchetypes::tar_rep2(
       cpm_performance,
-      summarise(
-        cpm_performance_cv,
-        r = mean(r),
-        .by = c(include, starts_with("tar"))
-      )
+      lapply_tar_batches(
+        cpm_result,
+        extract_cpm_performance
+      ) |>
+        list_rbind_tar_batches(names_to = "id_pairs"),
+      cpm_result,
+      retrieval = "worker",
+      storage = "worker"
     )
-  )
-)
-
-targets_cpm_full <- tarchetypes::tar_map(
-  config_cpm,
-  names = !starts_with("file"),
-  tarchetypes::tar_rep(
-    cpm_result_full,
-    perform_cpm_g_factor(
-      qs::qread(file_fc),
-      scores_g_full,
-      match_confounds(
-        users_confounds,
-        as.matrix(rowMeans(qs::qread(file_fd)))
-      ),
-      subjs_keep_neural,
-      thresh_method = thresh_method,
-      thresh_level = thresh_level
-    ),
-    batches = 4,
-    reps = 5,
-    iteration = "list",
-    retrieval = "worker",
-    storage = "worker"
-  ),
-  tarchetypes::tar_rep2(
-    cpm_performance_cv_full,
-    extract_cpm_performance(cpm_result_full),
-    cpm_result_full,
-    retrieval = "worker",
-    storage = "worker"
-  ),
-  tar_target(
-    cpm_performance_full,
-    summarise(cpm_performance_cv_full, r = mean(r), .by = include)
   )
 )
 
@@ -244,40 +191,25 @@ list(
   tarchetypes::tar_combine(
     cpm_performance,
     zutils::select_list(branches_g, starts_with("cpm_performance")),
-    command = list(!!!.x) |>
-      lapply(bind_rows) |>
-      bind_rows_meta(
-        .names = c(
-          names(select(config_cpm, !starts_with("file"))),
-          names(config_vars)
-        ),
-        .prefix = "cpm_performance"
-      )
-  ),
-  tar_target(
-    fit_g_full,
-    fit_efa_g(
-      indices_cogstruct,
-      vars = names(indices_cogstruct),
-      missing = "ml"
-    )
-  ),
-  tar_target(
-    comp_rel_g_full,
-    tibble(comp_rel = unclass(semTools::compRelSEM(fit_g_full$nf1)))
-  ),
-  tar_target(
-    scores_g_full,
-    extract_g_scores(fit_g_full, data = indices_cogstruct)
-  ),
-  targets_cpm_full,
-  tarchetypes::tar_combine(
-    cpm_performance_full,
-    targets_cpm_full$cpm_performance_full,
     command = bind_rows_meta(
       !!!.x,
-      .names = names(select(config_cpm, !starts_with("file"))),
-      .prefix = "cpm_performance_full"
+      .names = c(
+        names(select(config_cpm, !starts_with("file"))),
+        names(config_vars)
+      ),
+      .prefix = "cpm_performance"
+    )
+  ),
+  tarchetypes::tar_combine(
+    dice_pairs,
+    zutils::select_list(branches_g, starts_with("dice_pairs")),
+    command = bind_rows_meta(
+      !!!.x,
+      .names = c(
+        names(select(config_cpm, !starts_with("file"))),
+        names(config_vars)
+      ),
+      .prefix = "dice_pairs"
     )
   )
 )
