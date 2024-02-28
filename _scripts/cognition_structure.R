@@ -54,7 +54,7 @@ list(
   tar_target(
     indices_cogstruct_thin,
     qs::qread(file_indices_cogstruct) |>
-      select(!contains(with(config_games_thin, game_index[thin]))),
+      select(!with(config_games_thin, game_index[thin])),
   ),
   tar_target(
     indices_splitted,
