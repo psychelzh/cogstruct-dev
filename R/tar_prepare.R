@@ -3,7 +3,8 @@ prepare_config_vars <- function(num_vars_total, n_steps) {
   tibble::tibble(
     num_vars = seq(num_vars_base, num_vars_total, num_vars_base),
     use_pairs = num_vars * 2 <= num_vars_total
-  )
+  ) |>
+    dplyr::filter(choose(num_vars_total, num_vars) > 1e4)
 }
 
 prepare_config_cpm <- function(...) {
