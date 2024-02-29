@@ -25,7 +25,8 @@ cpm_branches <- tarchetypes::tar_map(
       confounds = match_confounds(users_confounds, fd),
       bias_correct = FALSE,
       thresh_method = thresh_method,
-      thresh_level = thresh_level
+      thresh_level = thresh_level,
+      return_edges = "sum"
     ),
     retrieval = "worker",
     storage = "worker"
