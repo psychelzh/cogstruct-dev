@@ -1,0 +1,77 @@
+﻿game_id,game_name,game_name_clean,game_name_abbr,index_name,cognition,chc,name_chc,label_chc
+268008982667388,按图索骥,按图索骥,HOP,mean_log_err_both,感知觉,视觉加工,Visual processing,Gv
+268008982642792,方向临摹,方向临摹,JLO,mean_log_err,感知觉,视觉加工,Visual processing,Gv
+239263721484357,节奏感知,节奏感知,RP,thresh_last_block,感知觉,听觉加工,Auditory processing,Ga
+239263162577477,时间顺序判断,时间顺序判断,TOJ,thresh_last_block,感知觉,听觉加工,Auditory processing,Ga
+239264243732549,时长分辨,时长分辨,DD,thresh_last_block,感知觉,听觉加工,Auditory processing,Ga
+268008982646874,超级秒表PRO,超级秒表,SRTPro,mrt,加工速度,决策速度,Decision speed/Reaction time,Gt
+224374703641029,快速归类PRO,快速归类,CRTPro,ies,加工速度,决策速度,Decision speed/Reaction time,Gt
+375917961736965,方向检测,方向检测,FiltOrient,k,注意,视觉加工,Visual processing,Gv
+375934626087813,色彩检测,色彩检测,FiltColor,k,注意,视觉加工,Visual processing,Gv
+268008982667350,火眼金睛,火眼金睛,AttSrc,nc,注意,视觉加工,Visual processing,Gv
+238267995484229,雪花收藏家,雪花收藏家,DirectSrc,nc_cor,注意,加工速度,Processing speed,Gs
+268008982667380,舒尔特方格（中级）,舒尔特方格,SchulteMed,nc_cor,注意,加工速度,Processing speed,Gs
+240406295777861,我是大厨,我是大厨,MSynWin,score_total,注意,加工速度,Processing speed,Gs
+265086851706949,小狗回家,小狗回家,Racer,mean_score,注意,加工速度,Processing speed,Gs
+268008982659192,一心二用PRO,一心二用,DualTaskPro,nc,注意,加工速度,Processing speed,Gs
+268008982663260,萤火虫PRO,萤火虫,MOTPro,nc,注意,短时记忆,Short-term memory,Gsm
+380173315257221,注意警觉,注意警觉,AttenAlert,cong_eff_ies,注意,加工速度,Processing speed,Gs
+380174783693701,注意指向,注意指向,AttenOrient,cong_eff_ies,注意,加工速度,Processing speed,Gs
+268008982642772,专注大师_中级,专注大师,CalcSpdMed,nc,注意,数量知识,Quantitative knowledge,Gq
+268008982667347,捉虫高级简版,捉虫,TOVAS,dprime,注意,加工速度,Processing speed,Gs
+324182449562501,视觉记忆测试,视觉记忆测试,VMT,nc,学习与记忆,视觉加工,Visual processing,Gv
+268008982642811,城市导航,城市导航,LocMemAdv,nc,学习与记忆,长时记忆,Long-term storage and retrieval,Glr
+268008982667358,宇宙黑洞A,宇宙黑洞,LocMemStd,nc,学习与记忆,长时记忆,Long-term storage and retrieval,Glr
+268008982655090,顺背数PRO,顺背数,FDSPro,nc,学习与记忆,短时记忆,Short-term memory,Gsm
+268008982642798,位置记忆PRO,位置记忆,SSTMPro,nc,学习与记忆,短时记忆,Short-term memory,Gsm
+224383397556421,过目不忘PRO,过目不忘,FWSPro,nc,学习与记忆,短时记忆,Short-term memory,Gsm
+375916542735109,万花筒,万花筒,ObjSpan,nc,学习与记忆,短时记忆,Short-term memory,Gsm
+279330041741381,欢乐餐厅PRO,欢乐餐厅,AscMemPro,nc,学习与记忆,长时记忆,Long-term storage and retrieval,Glr
+281039429226565,连续再认PRO,连续再认,ConRecPro,dprime,学习与记忆,视觉加工,Visual processing,Gv
+386185817178885,词汇学习,词汇学习,VL,nc,学习与记忆,长时记忆,Long-term storage and retrieval,Glr
+375917432341381,路径学习,路径学习,PL,nc,学习与记忆,长时记忆,Long-term storage and retrieval,Glr
+384311706735365,人工语言-高级,人工语言,AscLanAdv,nc,学习与记忆,长时记忆,Long-term storage and retrieval,Glr
+381576542159749,社交达人,社交达人,FName,fntotal,学习与记忆,长时记忆,Long-term storage and retrieval,Glr
+380173961339781,事件记忆,事件记忆,EOT,nc,学习与记忆,长时记忆,Long-term storage and retrieval,Glr
+268008982655053,塔罗牌,塔罗牌,WxPred,nc,学习与记忆,,,
+268008982642793,强化学习,强化学习,ProbRL,pc_test,学习与记忆,,,
+268008982671439,图片记忆,图片记忆,BPSA,bps_score,学习与记忆,视觉加工,Visual processing,Gv
+268008982655069,言语记忆,言语记忆,DRMA,fm_dprime,学习与记忆,长时记忆,Long-term storage and retrieval,Glr
+268008982667368,各得其所,各得其所,LdnTwr,prop_perfect,思维与推理,流体智力,Fluid intelligence,Gf
+268008982663267,连点成画PRO,连点成画,FPTPro,nc,思维与推理,长时记忆,Long-term storage and retrieval,Glr
+355740871500677,数字推理,数字推理,DR,nc,思维与推理,流体智力,Fluid intelligence,Gf
+355740333933445,图形推理,图形推理,NVR,nc,思维与推理,流体智力,Fluid intelligence,Gf
+356101783560965,文字推理,文字推理,VR,nc,思维与推理,流体智力,Fluid intelligence,Gf
+411281158706373,远距离联想,远距离联想,RAT,nc,思维与推理,流体智力,Fluid intelligence,
+324179001000709,平面展开,平面展开,Unfolding,nc,思维与推理,视觉加工,Visual processing,Gv
+268008982659144,三维心理旋转测试,三维心理旋转测试,MR3DA,nc,思维与推理,视觉加工,Visual processing,Gv
+324179964613381,视角判断,视角判断,VAT,nc,思维与推理,视觉加工,Visual processing,Gv
+361750352892805,图形折叠,图形折叠,FR,nc,思维与推理,视觉加工,Visual processing,Gv
+324177880433541,物体旋转,物体旋转,ObjRot,nc,思维与推理,视觉加工,Visual processing,Gv
+224375977935045,变色魔块PRO,变色魔块,StopSigPro,ssrt,抑制,加工速度,Processing speed,Gs
+238239294447813,变戏法,变戏法,AntiSac,ies,抑制,视觉加工,Visual processing,Gv
+224378628399301,多彩文字PRO,多彩文字,ColStrpPro,cong_eff_ies,抑制,加工速度,Processing speed,Gs
+224379118576069,太空飞船PRO,太空飞船,FlkrPro,cong_eff_ies,抑制,决策速度,Decision speed/Reaction time,Gt
+224377200398533,候鸟迁徙PRO,候鸟迁徙,BirdsPro,cong_eff_ies,抑制,加工速度,Processing speed,Gs
+224377200398533,候鸟迁徙PRO,候鸟迁徙,BirdsPro,switch_cost_ies,切换,加工速度,Processing speed,Gs
+380176247862021,多变计数师,多变计数师,ReflectCount,switch_cost_ies,切换,加工速度,Processing speed,Gs
+224377872388293,卡片分类PRO,卡片分类,CardSortPro,switch_cost_ies,切换,决策速度,Decision speed/Reaction time,Gt
+375903641948933,随机应变,随机应变,NumLet,switch_cost_ies,切换,加工速度,Processing speed,Gs
+224376556507589,察颜观色PRO,察颜观色,FacesPro,switch_cost_ies,切换,加工速度,Processing speed,Gs
+225191769534981,格子卡片,格子卡片,Grid2back,dprime,工作记忆,短时记忆,Short-term memory,Gsm
+225525822632453,美术卡片,美术卡片,Paint2back,dprime,工作记忆,短时记忆,Short-term memory,Gsm
+225191359021253,数字卡片PRO,数字卡片,Digit3back,dprime,工作记忆,短时记忆,Short-term memory,Gsm
+225525419221509,文字卡片,文字卡片,Verbal3back,dprime,工作记忆,短时记忆,Short-term memory,Gsm
+268008982663269,魔术师终极,魔术师,Nback4,dprime,工作记忆,短时记忆,Short-term memory,Gsm
+268008982663278,蝴蝶照相机,蝴蝶照相机,SCSpan,nc,工作记忆,短时记忆,Short-term memory,Gsm
+225528186135045,打靶场,打靶场,RSpan,nc,工作记忆,短时记忆,Short-term memory,Gsm
+238279920537669,幸运小球PRO,幸运小球,OCSpanPro,nc,工作记忆,短时记忆,Short-term memory,Gsm
+386196539900677,井然有序,井然有序,ManipSpan,nc,工作记忆,短时记忆,Short-term memory,Gsm
+268008982667381,密码箱,密码箱,KeepTrack,nc,工作记忆,短时记忆,Short-term memory,Gsm
+268008982663290,词语判断,词语判断,Lexic,nc,语言,读写能力,Reading/Writing,Grw
+268008982667391,声调判断,声调判断,Tone,nc,语言,读写能力,Reading/Writing,Grw
+268008982650988,语义判断,语义判断,Seman,nc,语言,读写能力,Reading/Writing,Grw
+322148361573125,阅读判断,阅读判断,Reading,nc,语言,晶体智力,Crystallized intelligence,Gc
+268008982650985,登陆月球（中级）,登陆月球,NLEMed,mean_log_err,数学,数量知识,Quantitative knowledge,Gq
+268008982655059,数感,数感,NsymNCmp,w,数学,数量知识,Quantitative knowledge,Gq
+268008982659166,速算师（中级）,速算师,CalcMed,nc,数学,数量知识,Quantitative knowledge,Gq
