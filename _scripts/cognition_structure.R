@@ -28,33 +28,30 @@ targets_cfa <- tarchetypes::tar_map(
 
 list(
   tar_target(
-    file_games_thin,
-    "config/games_thin.txt",
+    file_games_censor,
+    "config/games_censor.txt",
     format = "file"
   ),
-  tar_target(
-    file_indices_cogstruct,
+  tarchetypes::tar_file_read(
+    indices_cogstruct,
     path_obj_from_proj("indices_cogstruct", "prepare_source_data"),
-    format = "file"
+    read = qs::qread(!!.x)
   ),
   tar_target(
-    config_games_thin,
-    read_tsv(file_games_thin, col_types = cols(game_id = "I")) |>
+    config_games_censor,
+    read_tsv(file_games_censor, col_types = cols(game_id = "I")) |>
       unite("game_index", game_name_abbr, index_name, sep = ".") |>
       left_join(
-        qs::qread(file_indices_cogstruct) |>
-          psych::smc() |>
-          enframe("game_index", "smc"),
+        enframe(psych::smc(indices_cogstruct), "game_index", "smc"),
         by = "game_index"
       ) |>
-      arrange(paradigm_thin, desc(smc)) |>
-      filter(!is.na(paradigm_thin)) |>
-      mutate(thin = row_number() > 1, .by = paradigm_thin)
+      arrange(paradigm_censor, desc(smc)) |>
+      filter(!is.na(paradigm_censor)) |>
+      mutate(censor = row_number() > 1, .by = paradigm_censor)
   ),
   tar_target(
     indices_cogstruct_thin,
-    qs::qread(file_indices_cogstruct) |>
-      select(!with(config_games_thin, game_index[thin])),
+    select(indices_cogstruct, !with(config_games_censor, game_index[censor]))
   ),
   tar_target(
     indices_splitted,
