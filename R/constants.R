@@ -75,7 +75,13 @@ params_atlas <- tibble::tibble(
     "4S256Parcels"
   )
 )
-config_fc <- tidyr::expand_grid(
+params_run <- tibble::tibble(
+  run = c(
+    "full", # merge all runs
+    "run1" # the first run only
+  )
+)
+config_fmri <- tidyr::expand_grid(
   params_xcpd,
   params_fmri_tasks,
   params_atlas
@@ -84,6 +90,7 @@ config_fc <- tidyr::expand_grid(
     (config == "no_gsr" & atlas == "Schaefer217") |
       (config == "gsr" & atlas == "4S256Parcels")
   )
+config_fc <- tidyr::expand_grid(config_fmri, params_run)
 
 # used in CPM modeling building
 hypers_cpm <- dplyr::bind_rows(

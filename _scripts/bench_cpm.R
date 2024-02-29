@@ -9,17 +9,14 @@ setup_parallel_plan()
 config_cpm <- prepare_config_cpm()
 cpm_branches <- tarchetypes::tar_map(
   config_cpm,
-  names = !starts_with("file"),
+  names = !c(file_fc, fd),
   tar_target(
     cpm_result,
     apply(
       scores, 2,
       perform_cpm,
       fc = qs::qread(file_fc)[subjs_keep_neural, ],
-      confounds = match_confounds(
-        users_confounds,
-        qs::qread(file_fd)[, 1, drop = FALSE]
-      ),
+      confounds = match_confounds(users_confounds, fd),
       bias_correct = FALSE,
       thresh_method = thresh_method,
       thresh_level = thresh_level
@@ -31,7 +28,6 @@ cpm_branches <- tarchetypes::tar_map(
     cpm_performance,
     lapply(cpm_result, extract_cpm_performance) |>
       list_rbind(names_to = "index"),
-    cpm_result,
     retrieval = "worker",
     storage = "worker"
   )
@@ -40,20 +36,18 @@ cpm_branches <- tarchetypes::tar_map(
 cpm_branches_perms <- tarchetypes::tar_map(
   dplyr::filter(
     config_cpm,
+    config == "gsr",
     thresh_method == "alpha",
     thresh_level == 0.01
   ),
-  names = !starts_with("file"),
+  names = !c(file_fc, fd),
   tarchetypes::tar_rep(
     cpm_result_perm,
     apply(
       scores, 2,
       perform_cpm_perm,
       fc = qs::qread(file_fc)[subjs_keep_neural, ],
-      confounds = match_confounds(
-        users_confounds,
-        qs::qread(file_fd)[, 1, drop = FALSE]
-      ),
+      confounds = match_confounds(users_confounds, fd),
       bias_correct = FALSE,
       thresh_method = thresh_method,
       thresh_level = thresh_level
@@ -119,14 +113,14 @@ list(
     path_obj_from_proj("subjs_keep_neural", "prepare_neural"),
     read = qs::qread(!!.x)
   ),
-  tar_prep_files_cpm(which_fc = "fc_run1"),
+  tar_prepare_cpm(),
   cpm_branches,
   tarchetypes::tar_combine(
     cpm_performance,
     cpm_branches$cpm_performance,
     command = bind_rows_meta(
       !!!.x,
-      .names = names(select(config_cpm, !starts_with("file"))),
+      .names = c(names(config_fc), names(hypers_cpm)),
       .prefix = "cpm_performance"
     )
   ),
@@ -136,8 +130,8 @@ list(
     cpm_branches_perms$cpm_performance_perm,
     command = bind_rows_meta(
       !!!.x,
-      .names = names(select(config_cpm, !starts_with("file"))),
-      .prefix = "cpm_performance"
+      .names = c(names(config_fc), names(hypers_cpm)),
+      .prefix = "cpm_performance_perm"
     )
   )
 )

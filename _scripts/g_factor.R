@@ -14,6 +14,7 @@ config_vars <- prepare_config_vars(n_vars_total, n_steps)
 config_cpm <- prepare_config_cpm(
   config == "gsr",
   task == "wm",
+  run == "full",
   thresh_method == "alpha",
   thresh_level == 0.01
 )
@@ -88,17 +89,14 @@ branches_g <- tarchetypes::tar_map(
   ),
   tarchetypes::tar_map(
     config_cpm,
-    names = !starts_with("file"),
+    names = !c(file_fc, fd),
     tarchetypes::tar_rep2(
       cpm_result,
       lapply_tar_batches(
         scores_g,
         perform_cpm,
         fc = qs::qread(file_fc),
-        confounds = match_confounds(
-          users_confounds,
-          as.matrix(rowMeans(qs::qread(file_fd)))
-        ),
+        confounds = match_confounds(users_confounds, fd),
         subjs_keep_neural = subjs_keep_neural,
         bias_correct = FALSE,
         thresh_method = thresh_method,
@@ -156,7 +154,7 @@ list(
     path_obj_from_proj("users_confounds", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
-  tar_prep_files_cpm(),
+  tar_prepare_cpm(),
   branches_g,
   tarchetypes::tar_combine(
     rel_pairs_g,
@@ -193,10 +191,7 @@ list(
     zutils::select_list(branches_g, starts_with("cpm_performance")),
     command = bind_rows_meta(
       !!!.x,
-      .names = c(
-        names(select(config_cpm, !starts_with("file"))),
-        names(config_vars)
-      ),
+      .names = c(names(config_fc), names(hypers_cpm), names(config_vars)),
       .prefix = "cpm_performance"
     )
   ),
@@ -205,10 +200,7 @@ list(
     zutils::select_list(branches_g, starts_with("dice_pairs")),
     command = bind_rows_meta(
       !!!.x,
-      .names = c(
-        names(select(config_cpm, !starts_with("file"))),
-        names(config_vars)
-      ),
+      .names = c(names(config_fc), names(hypers_cpm), names(config_vars)),
       .prefix = "dice_pairs"
     )
   )

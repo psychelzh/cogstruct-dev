@@ -9,7 +9,7 @@ setup_parallel_plan()
 
 # prepare functional connectivity (FC) data ----
 targets_fc <- tarchetypes::tar_map(
-  config_fc,
+  config_fmri,
   tar_target(
     meta_time_series,
     prepare_meta_time_series(config, session, task, atlas)
@@ -34,19 +34,16 @@ targets_fd <- tarchetypes::tar_map(
 list(
   targets_fc,
   targets_fd,
-  # criteria for keeping subjects ---
-  # 1. no run with mean FD > 0.5
-  # 2. no missing runs
   tarchetypes::tar_combine(
     fd_mean,
     targets_fd$fd_mean,
     command = do.call(cbind, list(!!!.x))
   ),
+  # criteria for keeping subjects ---
+  # 1. no run with mean FD > 0.5
+  # 2. no missing runs
   tar_target(
     subjs_keep_neural,
-    fd_mean |>
-      apply(1, \(x) all(x <= 0.5) && all(!is.na(x))) |>
-      which() |>
-      names()
+    names(which(apply(fd_mean, 1, \(x) all(x <= 0.5) && all(!is.na(x)))))
   )
 )

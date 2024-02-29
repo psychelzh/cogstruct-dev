@@ -269,33 +269,49 @@ tar_fit_cfa <- function(config, data, theory,
   )
 }
 
-tar_prep_files_cpm <- function(..., which_fc = c("fc", "fc_run1")) {
-  values <- prepare_config_cpm(...)
-  which_fc <- match.arg(which_fc)
-  c(
-    tarchetypes::tar_eval(
-      tar_target(
-        file_fd,
-        path_obj_from_proj(
-          paste("fd_mean", session, task, sep = "_"),
-          "prepare_neural"
-        ),
-        format = "file_fast"
-      ),
-      dplyr::distinct(values, session, task, file_fd)
-    ),
-    tarchetypes::tar_eval_raw(
-      bquote(
-        tar_target(
-          file_fc,
-          path_obj_from_proj(
-            paste(.(which_fc), config, session, task, atlas, sep = "_"),
-            "prepare_neural"
-          ),
-          format = "file_fast"
+tar_prepare_cpm <- function(...) {
+  prepare_config_cpm(...) |>
+    tidyr::nest(.by = run) |>
+    purrr::pmap(
+      \(run, data) {
+        which_fc <- switch(run,
+          full = "fc",
+          run1 = "fc_run1",
+          stop("Invalid run")
         )
-      ),
-      dplyr::distinct(values, config, session, task, atlas, file_fc)
+        read <- switch(run,
+          full = quote(as.matrix(rowMeans(qs::qread(!!.x)))),
+          run1 = quote(qs::qread(!!.x)[, 1, drop = FALSE]),
+          stop("Invalid run")
+        )
+        c(
+          tarchetypes::tar_eval_raw(
+            bquote(
+              tarchetypes::tar_file_read(
+                fd,
+                path_obj_from_proj(
+                  paste("fd_mean", session, task, sep = "_"),
+                  "prepare_neural"
+                ),
+                read = .(substitute(read))
+              )
+            ),
+            dplyr::distinct(data, session, task, fd)
+          ),
+          tarchetypes::tar_eval_raw(
+            bquote(
+              tar_target(
+                file_fc,
+                path_obj_from_proj(
+                  paste(.(which_fc), config, session, task, atlas, sep = "_"),
+                  "prepare_neural"
+                ),
+                format = "file_fast"
+              )
+            ),
+            dplyr::distinct(data, config, session, task, atlas, file_fc)
+          )
+        )
+      }
     )
-  )
 }

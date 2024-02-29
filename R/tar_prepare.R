@@ -16,14 +16,14 @@ prepare_config_cpm <- function(...) {
     dplyr::mutate(
       file_fc = rlang::syms(
         sprintf(
-          "file_fc_%s_%s_%s_%s",
-          config, session, task, atlas
+          "file_fc_%s_%s_%s_%s_%s",
+          config, session, task, atlas, run
         )
       ),
-      file_fd = rlang::syms(
+      fd = rlang::syms(
         sprintf(
-          "file_fd_%s_%s",
-          session, task
+          "fd_%s_%s_%s",
+          session, task, run
         )
       )
     )
