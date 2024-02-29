@@ -8,26 +8,11 @@ iterate_efa <- function(r, n_obs = 100) { # nolint: cyclocomp_linter.
   nfact <- psych::fa.parallel(r, n_obs, plot = FALSE)$nfact
   efa <- psych::fa(r, nfact, n_obs)
   removed <- list(
-    communality_too_small = character(),
     loading_too_small = character(),
     loading_cross = character()
   )
   repeat {
     stable <- TRUE
-    # ensure all communality is above 0.2
-    repeat {
-      communality_too_small <- efa$communality < 0.2
-      if (!any(communality_too_small)) {
-        break
-      }
-      stable <- FALSE
-      removed$communality_too_small <- c(
-        removed$communality_too_small,
-        names(which(communality_too_small))
-      )
-      r <- r[!communality_too_small, !communality_too_small]
-      efa <- psych::fa(r, nfact, n_obs)
-    }
     # ensure all factors have at least 3 loadings above 0.4
     repeat {
       loadings <- loadings(efa)
