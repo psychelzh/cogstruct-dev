@@ -103,16 +103,6 @@ list(
     merge(qs::qread(file_rapm), scores_g, by = "row.names") |>
       column_to_rownames("Row.names")
   ),
-  tarchetypes::tar_file_read(
-    users_confounds,
-    path_obj_from_proj("users_confounds", "prepare_source_data"),
-    read = qs::qread(!!.x)
-  ),
-  tarchetypes::tar_file_read(
-    subjs_keep_neural,
-    path_obj_from_proj("subjs_keep_neural", "prepare_neural"),
-    read = qs::qread(!!.x)
-  ),
   tar_prepare_cpm(),
   cpm_branches,
   tarchetypes::tar_combine(

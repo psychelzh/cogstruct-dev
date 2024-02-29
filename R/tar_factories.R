@@ -270,9 +270,9 @@ tar_fit_cfa <- function(config, data, theory,
 }
 
 tar_prepare_cpm <- function(...) {
-  prepare_config_cpm(...) |>
-    tidyr::nest(.by = run) |>
+  c(
     purrr::pmap(
+      tidyr::nest(prepare_config_cpm(...), .by = run),
       \(run, data) {
         which_fc <- switch(run,
           full = "fc",
@@ -313,5 +313,17 @@ tar_prepare_cpm <- function(...) {
           )
         )
       }
+    ),
+    # commonly used targets
+    tarchetypes::tar_file_read(
+      users_confounds,
+      path_obj_from_proj("users_confounds", "prepare_source_data"),
+      read = qs::qread(!!.x)
+    ),
+    tarchetypes::tar_file_read(
+      subjs_keep_neural,
+      path_obj_from_proj("subjs_keep_neural", "prepare_neural"),
+      read = qs::qread(!!.x)
     )
+  )
 }
