@@ -45,7 +45,7 @@ cpm_branches <- tarchetypes::tar_map(
 cpm_branches_perms <- tarchetypes::tar_map(
   dplyr::filter(
     config_cpm,
-    task == "am",
+    task %in% c("am", "wm"),
     thresh_method == "alpha",
     thresh_level == 0.01
   ),
