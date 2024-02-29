@@ -17,6 +17,12 @@ perform_cpm <- function(fc, behav, confounds, ...) {
   )
 }
 
+perform_cpm_perm <- function(fc, behav, confounds, ...) {
+  # shuffle subject labels
+  rownames(fc) <- sample(rownames(fc))
+  perform_cpm(fc, behav, confounds, ...)
+}
+
 extract_cpm_performance <- function(result) {
   as_tibble(
     cor(result$pred, result$real),
