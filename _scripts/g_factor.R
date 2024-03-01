@@ -7,10 +7,7 @@ tar_option_set(
 )
 setup_parallel_plan()
 
-n_vars_total <- 76
-n_steps <- 20
-
-config_vars <- prepare_config_vars(n_vars_total, n_steps)
+config_vars <- prepare_config_vars(num_vars_total)
 config_cpm <- prepare_config_cpm(
   config == "gsr",
   task == "wm",

@@ -10,6 +10,9 @@ prepare_neural:
 g_factor:
   script: _scripts/g_factor.R
   store: _targets/g_factor
+g_factor_cor_rapm:
+  script: _scripts/g_factor_cor_rapm.R
+  store: _targets/g_factor_cor_rapm
 explore_factors:
   script: _scripts/explore_factors.R
   store: _targets/explore_factors

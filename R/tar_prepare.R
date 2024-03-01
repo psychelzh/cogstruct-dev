@@ -1,10 +1,11 @@
-prepare_config_vars <- function(num_vars_total, n_steps) {
-  num_vars_base <- num_vars_total %/% n_steps
-  tibble::tibble(
-    num_vars = seq(num_vars_base, num_vars_total, num_vars_base),
-    use_pairs = num_vars * 2 <= num_vars_total
-  ) |>
+prepare_config_vars <- function(num_vars_total, ...,
+                                step = 3, from = 3, use_pairs = TRUE) {
+  out <- tibble::tibble(num_vars = seq(from, num_vars_total, step)) |>
     dplyr::filter(choose(num_vars_total, num_vars) > 1e4)
+  if (use_pairs) {
+    out$use_pairs <- out$num_vars * 2 <= num_vars_total
+  }
+  out
 }
 
 prepare_config_cpm <- function(...) {

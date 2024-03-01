@@ -1,6 +1,21 @@
 game_id_rapm <- bit64::as.integer64(265520726213317) # 瑞文高级推理
 # data for this game should be removed because another version was used
 game_id_rata <- bit64::as.integer64(240052750955077) # 远距离联想A (obsolete)
+game_id_reasoning <- bit64::as.integer64(
+  c(
+    355740871500677,
+    355740333933445,
+    356101783560965,
+    411281158706373,
+    324179001000709,
+    268008982659144,
+    324179964613381,
+    361750352892805,
+    324177880433541
+  )
+)
+# we define here to be used in g factor resampling
+num_vars_total <- 76
 
 # used in data quality check
 thresh_prop_miss <- 0.25
