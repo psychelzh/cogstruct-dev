@@ -34,6 +34,16 @@ targets_fd <- tarchetypes::tar_map(
 list(
   targets_fc,
   targets_fd,
+  tarchetypes::tar_eval(
+    tar_target(fc_run2, prepare_data_fc(meta_time_series, run <= 2)),
+    config_fmri |>
+      dplyr::filter(config == "gsr", task == "wm") |>
+      tidyr::unite("suffix", everything(), remove = FALSE) |>
+      dplyr::mutate(
+        meta_time_series = rlang::syms(paste0("meta_time_series_", suffix)),
+        fc_run2 = rlang::syms(paste0("fc_run2_", suffix))
+      )
+  ),
   tarchetypes::tar_combine(
     fd_mean,
     targets_fd$fd_mean,
