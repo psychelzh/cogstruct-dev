@@ -277,11 +277,13 @@ tar_prepare_cpm <- function(...) {
         which_fc <- switch(run,
           full = "fc",
           run1 = "fc_run1",
+          run2 = "fc_run2",
           stop("Invalid run")
         )
         read <- switch(run,
           full = quote(as.matrix(rowMeans(qs::qread(!!.x)))),
           run1 = quote(qs::qread(!!.x)[, 1, drop = FALSE]),
+          run2 = quote(as.matrix(rowMeans(qs::qread(!!.x)[, 1:2]))),
           stop("Invalid run")
         )
         c(
