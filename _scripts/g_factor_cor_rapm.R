@@ -11,13 +11,6 @@ config_vars <- prepare_config_vars(
   num_vars_total - length(game_id_reasoning),
   use_pairs = FALSE
 )
-config_cpm <- prepare_config_cpm(
-  config == "gsr",
-  task == "wm",
-  run == "full",
-  thresh_method == "alpha",
-  thresh_level == 0.01
-)
 branches_g <- tarchetypes::tar_map(
   config_vars,
   tarchetypes::tar_rep(
@@ -94,11 +87,35 @@ list(
   tarchetypes::tar_combine(
     cor_rapm,
     branches_g$cor_rapm,
-    command = list(!!!.x) |>
-      lapply(bind_rows) |>
-      bind_rows_meta(
-        .names = names(config_vars),
-        .prefix = "cor_rapm"
+    command = bind_rows_meta(
+      !!!.x,
+      .names = names(config_vars),
+      .prefix = "cor_rapm"
+    )
+  ),
+  tar_target(
+    fit_g,
+    fit_efa_g(
+      indices_cogstruct,
+      vars = setdiff(
+        names(indices_cogstruct),
+        match_game_index(game_id_reasoning)
+      ),
+      missing = "ml"
+    )
+  ),
+  tar_target(
+    scores_g,
+    extract_g_scores(fit_g, data = indices_cogstruct)
+  ),
+  tar_target(
+    cor_rapm_all,
+    {
+      subjs <- intersect(
+        rownames(indices_cogstruct),
+        rownames(indices_rapm)
       )
+      cor(indices_rapm[subjs, ], scores_g[subjs, ], use = "pairwise")
+    }
   )
 )
