@@ -49,12 +49,15 @@ cpm_branches <- tarchetypes::tar_map(
 )
 
 cpm_branches_perms <- tarchetypes::tar_map(
-  dplyr::filter(
-    config_cpm,
-    task %in% c("am", "wm"),
-    thresh_method == "alpha",
-    thresh_level == 0.01
-  ),
+  tidyr::expand_grid(
+    config_cpm_data,
+    hypers_cpm
+  ) |>
+    dplyr::filter(
+      task %in% c("am", "wm"),
+      thresh_method == "alpha",
+      thresh_level == 0.01
+    ),
   names = !c(file_fc, fd),
   tarchetypes::tar_rep(
     cpm_result_perm,
