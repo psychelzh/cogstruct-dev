@@ -71,6 +71,14 @@ branches_g <- tarchetypes::tar_map(
   )
 )
 
+# https://github.com/ropensci/tarchetypes/issues/168
+# adjust priority manually
+for (i in seq_len(nrow(config_vars))) {
+  for (target in c("vars_sample_batch", "vars_sample", "fit_g")) {
+    branches_g[[target]][[i]]$settings$priority <- i / nrow(config_vars)
+  }
+}
+
 list(
   tarchetypes::tar_file_read(
     indices_cogstruct,
