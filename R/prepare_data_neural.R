@@ -1,7 +1,12 @@
 # functional connectivity data preparation ----
-prepare_meta_time_series <- function(config, session, task, atlas) {
+prepare_meta_time_series <- function(xcpd, session, task, atlas) {
+  path_xcpd <- fs::path(
+    Sys.getenv("ROOT_BIDS_DERIV"),
+    sprintf("xcpd_%s", xcpd)
+  )
   extract_bids_meta(
-    config,
+    fs::path(path_xcpd, "xcp_d"),
+    fs::path(path_xcpd, "layout"),
     session = session,
     task = task,
     atlas = atlas,
@@ -13,10 +18,7 @@ prepare_meta_time_series <- function(config, session, task, atlas) {
 prepare_data_fc <- function(meta, ...) {
   meta |>
     filter(...) |>
-    summarise(
-      fc = list(calc_fc(path)),
-      .by = subject
-    ) |>
+    summarise(fc = list(calc_fc(path)), .by = subject) |>
     mutate(
       user_id = data.camp::users_id_mapping[subject],
       .keep = "unused",
@@ -29,11 +31,11 @@ prepare_data_fc <- function(meta, ...) {
 # frame-wise displacement (FD) data preparation ----
 prepare_meta_data_motion <- function(session, task) {
   extract_bids_meta(
-    # different xcp_d results used the same motion parameters
-    "gsr",
+    fs::path(Sys.getenv("ROOT_BIDS_DERIV"), "fmriprep"),
+    fs::path(Sys.getenv("ROOT_BIDS_DERIV"), "layout_fmriprep"),
     session = session,
     task = task,
-    suffix = "motion",
+    desc = "confounds",
     extension = "tsv"
   )
 }
@@ -44,11 +46,14 @@ prepare_fd_mean <- function(meta) {
       fd_mean = map_dbl(
         path,
         \(file) {
-          data.table::fread(
-            file,
-            na.strings = "n/a"
-          )$framewise_displacement[-1] |> # no fd for the first time point
-            mean()
+          mean(
+            data.table::fread(
+              file,
+              na.strings = "n/a",
+              select = "framewise_displacement"
+            )[[1]],
+            na.rm = TRUE
+          )
         }
       ),
       .keep = "unused"
@@ -68,17 +73,13 @@ prepare_fd_mean <- function(meta) {
 }
 
 # helper functions
-extract_bids_meta <- function(config, ...) {
-  path_root <- fs::path(
-    Sys.getenv("ROOT_BIDS_DERIV"),
-    sprintf("xcpd_%s", config)
-  )
+extract_bids_meta <- function(path_bids, path_bids_db, ...) {
   reticulate::use_condaenv("bids")
   bids <- reticulate::import("bids")
   bids$BIDSLayout(
-    fs::path(path_root, "xcp_d"),
+    path_bids,
     validate = FALSE,
-    database_path = fs::path(path_root, "layout")
+    database_path = path_bids_db
   )$get(...) |>
     map(
       ~ as_tibble(.x$get_entities()) |>

@@ -6,9 +6,12 @@ tar_option_set(
   controller = setup_crew_controller("bench_cpm")
 )
 setup_parallel_plan()
-config_cpm <- prepare_config_cpm()
+config_cpm_data <- prepare_config_cpm_data()
 cpm_branches <- tarchetypes::tar_map(
-  config_cpm,
+  tidyr::expand_grid(
+    config_cpm_data,
+    hypers_cpm
+  ),
   names = !c(file_fc, fd),
   tar_target(
     cpm_result,
@@ -19,7 +22,8 @@ cpm_branches <- tarchetypes::tar_map(
       confounds = match_confounds(users_confounds, fd),
       bias_correct = FALSE,
       thresh_method = thresh_method,
-      thresh_level = thresh_level
+      thresh_level = thresh_level,
+      return_edges = "sum"
     ),
     retrieval = "worker",
     storage = "worker"
@@ -34,12 +38,15 @@ cpm_branches <- tarchetypes::tar_map(
 )
 
 cpm_branches_perms <- tarchetypes::tar_map(
-  dplyr::filter(
-    config_cpm,
-    config == "gsr",
-    thresh_method == "alpha",
-    thresh_level == 0.01
-  ),
+  tidyr::expand_grid(
+    config_cpm_data,
+    hypers_cpm
+  ) |>
+    dplyr::filter(
+      xcpd == "gsr",
+      thresh_method == "alpha",
+      thresh_level == 0.01
+    ),
   names = !c(file_fc, fd),
   tarchetypes::tar_rep(
     cpm_result_perm,
@@ -103,7 +110,7 @@ list(
     merge(qs::qread(file_rapm), scores_g, by = "row.names") |>
       column_to_rownames("Row.names")
   ),
-  tar_prepare_cpm(),
+  tar_prepare_cpm_data(config_cpm_data),
   cpm_branches,
   tarchetypes::tar_combine(
     cpm_performance,

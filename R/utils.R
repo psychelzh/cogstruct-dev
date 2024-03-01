@@ -68,8 +68,8 @@ list_rbind_tar_batches <- function(l, names_to = rlang::zap(), append = FALSE) {
 # cpm related ----
 bind_rows_meta <- function(..., .names, .prefix) {
   patterns <- rep(".+?", length(.names))
-  # should be greedy because there are "_" in `config` field
-  patterns[.names == "config"] <- ".+"
+  # should be greedy because there are "_" in `xcpd` field
+  patterns[.names == "xcpd"] <- ".+"
   bind_rows(..., .id = ".id") |>
     zutils::separate_wider_dsv(
       ".id",
@@ -77,4 +77,9 @@ bind_rows_meta <- function(..., .names, .prefix) {
       patterns = patterns,
       prefix = .prefix
     )
+}
+
+# misc ----
+parse_digits <- function(x) {
+  as.numeric(stringr::str_extract_all(x, "\\d")[[1]])
 }

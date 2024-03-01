@@ -8,12 +8,10 @@ tar_option_set(
 setup_parallel_plan()
 
 config_vars <- prepare_config_vars(num_vars_total)
-config_cpm <- prepare_config_cpm(
-  config == "gsr",
+config_cpm_data <- prepare_config_cpm_data(
+  xcpd == "gsr",
   task == "wm",
-  run == "full",
-  thresh_method == "alpha",
-  thresh_level == 0.01
+  run == "full"
 )
 branches_g <- tarchetypes::tar_map(
   config_vars,
@@ -85,7 +83,14 @@ branches_g <- tarchetypes::tar_map(
     iteration = "list"
   ),
   tarchetypes::tar_map(
-    config_cpm,
+    tidyr::expand_grid(
+      config_cpm_data,
+      hypers_cpm |>
+        dplyr::filter(
+          thresh_method == "alpha",
+          thresh_level == 0.01
+        )
+    ),
     names = !c(file_fc, fd),
     tarchetypes::tar_rep2(
       cpm_result,
@@ -141,7 +146,7 @@ list(
     path_obj_from_proj("indices_rapm", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
-  tar_prepare_cpm(),
+  tar_prepare_cpm_data(config_cpm_data),
   branches_g,
   tarchetypes::tar_combine(
     rel_pairs_g,

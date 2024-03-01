@@ -8,25 +8,19 @@ prepare_config_vars <- function(num_vars_total, ...,
   out
 }
 
-prepare_config_cpm <- function(...) {
-  tidyr::expand_grid(
-    config_fc,
-    hypers_cpm
-  ) |>
+prepare_config_cpm_data <- function(...) {
+  config_fc |>
     dplyr::filter(...) |>
+    tidyr::unite("name_suffix_fc", everything(), remove = FALSE) |>
+    tidyr::unite("name_suffix_fd", c(session, task, run), remove = FALSE) |>
     dplyr::mutate(
       file_fc = rlang::syms(
-        sprintf(
-          "file_fc_%s_%s_%s_%s_%s",
-          config, session, task, atlas, run
-        )
+        sprintf("file_fc_%s", name_suffix_fc)
       ),
       fd = rlang::syms(
-        sprintf(
-          "fd_%s_%s_%s",
-          session, task, run
-        )
-      )
+        sprintf("fd_%s", name_suffix_fd)
+      ),
+      .keep = "unused"
     )
 }
 

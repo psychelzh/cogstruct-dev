@@ -269,50 +269,52 @@ tar_fit_cfa <- function(config, data, theory,
   )
 }
 
-tar_prepare_cpm <- function(...) {
+tar_prepare_cpm_data <- function(config) {
   c(
-    purrr::pmap(
-      tidyr::nest(prepare_config_cpm(...), .by = run),
-      \(run, data) {
-        which_fc <- switch(run,
-          full = "fc",
-          run1 = "fc_run1",
-          run2 = "fc_run2",
-          stop("Invalid run")
-        )
-        read <- switch(run,
-          full = quote(as.matrix(rowMeans(qs::qread(!!.x)))),
-          run1 = quote(qs::qread(!!.x)[, 1, drop = FALSE]),
-          run2 = quote(as.matrix(rowMeans(qs::qread(!!.x)[, 1:2]))),
-          stop("Invalid run")
-        )
-        c(
-          tarchetypes::tar_eval_raw(
-            bquote(
-              tarchetypes::tar_file_read(
-                fd,
-                path_obj_from_proj(
-                  paste("fd_mean", session, task, sep = "_"),
-                  "prepare_neural"
-                ),
-                read = .(substitute(read))
-              )
+    tarchetypes::tar_eval_raw(
+      bquote(
+        tar_target(
+          file_fc,
+          path_obj_from_proj(
+            .(
+              as.call(c(quote(paste), "fc",
+                rlang::syms(names(config_fc)),
+                sep = "_"
+              ))
             ),
-            dplyr::distinct(data, session, task, fd)
+            "prepare_neural"
           ),
-          tarchetypes::tar_eval_raw(
-            bquote(
-              tar_target(
-                file_fc,
-                path_obj_from_proj(
-                  paste(.(which_fc), config, session, task, atlas, sep = "_"),
-                  "prepare_neural"
-                ),
-                format = "file_fast"
-              )
-            ),
-            dplyr::distinct(data, config, session, task, atlas, file_fc)
+          format = "file_fast"
+        )
+      ),
+      config
+    ),
+    purrr::pmap(
+      config |>
+        dplyr::distinct(session, task, run, fd) |>
+        tidyr::nest(.by = run),
+      \(run, data) {
+        if (run == "full") {
+          read <- quote(as.matrix(rowMeans(qs::qread(!!.x))))
+        } else {
+          read <- bquote(
+            as.matrix(
+              rowMeans(qs::qread(!!.x)[, .(parse_digits(run)), drop = FALSE])
+            )
           )
+        }
+        tarchetypes::tar_eval_raw(
+          bquote(
+            tarchetypes::tar_file_read(
+              fd,
+              path_obj_from_proj(
+                paste("fd_mean", session, task, sep = "_"),
+                "prepare_neural"
+              ),
+              read = .(substitute(read))
+            )
+          ),
+          data
         )
       }
     ),

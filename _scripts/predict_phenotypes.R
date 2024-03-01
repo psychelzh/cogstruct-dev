@@ -7,14 +7,19 @@ tar_option_set(
 )
 setup_parallel_plan()
 
-config_cpm <- prepare_config_cpm(
-  config == "gsr",
-  run == "full",
-  thresh_method == "alpha",
-  thresh_level == 0.01
+config_cpm_data <- prepare_config_cpm_data(
+  xcpd == "gsr",
+  run == "full"
 )
 cpm_branches <- tarchetypes::tar_map(
-  config_cpm,
+  tidyr::expand_grid(
+    config_cpm_data,
+    hypers_cpm |>
+      dplyr::filter(
+        thresh_method == "alpha",
+        thresh_level == 0.01
+      )
+  ),
   names = !c(file_fc, fd),
   tar_target(
     cpm_result,
@@ -87,7 +92,7 @@ list(
     path_obj_from_proj("scores", "cognition_structure"),
     read = qs::qread(!!.x)
   ),
-  tar_prepare_cpm(),
+  tar_prepare_cpm_data(config_cpm_data),
   cpm_branches,
   tarchetypes::tar_combine(
     cpm_performance,

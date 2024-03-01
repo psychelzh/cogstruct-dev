@@ -70,47 +70,38 @@ tasks_biased <- c("NsymNCmp", "TOJ", "RP", "DRMA", "CardSortPro")
 
 # used in functional connectivity settings
 params_fmri_tasks <- tibble::tribble(
-  ~session, ~task,
-  "1", "rest",
-  "1", "am",
-  "1", "movie",
-  "2", "rest",
-  "2", "wm",
-  "2", "movie"
+  ~session, ~task, ~runs,
+  "1", "rest", 2,
+  "1", "am", 2,
+  "1", "movie", 2,
+  "2", "rest", 2,
+  "2", "wm", 3,
+  "2", "movie", 2
 )
-params_xcpd <- tibble::tibble(
-  config = c(
+params_conmat <- tibble::tibble(
+  xcpd = c(
     "gsr", # with global signal regression
     "no_gsr" # no global signal regression
-  )
-)
-params_atlas <- tibble::tibble(
-  atlas = c(
-    "Schaefer217",
-    "4S256Parcels"
-  )
-)
-params_run <- tibble::tibble(
-  run = c(
-    "full", # merge all runs
-    "run1", # the first run only
-    "run2" # the first two runs
-  )
+  ),
+  atlas = "4S256Parcels"
 )
 config_fmri <- tidyr::expand_grid(
-  params_xcpd,
   params_fmri_tasks,
-  params_atlas
+  params_conmat
 ) |>
-  dplyr::filter(
-    (config == "no_gsr" & atlas == "Schaefer217") |
-      (config == "gsr" & atlas == "4S256Parcels")
-  )
-config_fc <- tidyr::expand_grid(config_fmri, params_run) |>
-  dplyr::filter(
-    (run == "run2" & task == "wm" & config == "gsr") |
-      run != "run2"
-  )
+  dplyr::filter(xcpd == "gsr")
+config_fc <- dplyr::bind_rows(
+  config_fmri |>
+    dplyr::mutate(run = "full") |>
+    dplyr::select(-runs),
+  config_fmri |>
+    tidyr::uncount(runs, .id = "run") |>
+    dplyr::mutate(run = paste("run", run, sep = "")),
+  config_fmri |>
+    dplyr::filter(task == "wm") |>
+    dplyr::mutate(run = "run12") |>
+    dplyr::select(-runs)
+)
 
 # used in CPM modeling building
 hypers_cpm <- dplyr::bind_rows(
