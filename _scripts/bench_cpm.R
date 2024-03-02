@@ -6,20 +6,26 @@ tar_option_set(
   controller = setup_crew_controller("bench_cpm")
 )
 setup_parallel_plan()
+bench_indices <- tibble::tibble(
+  index = c("rapm", "g"),
+  scores = rlang::syms(sprintf("scores_%s", index))
+)
 config_cpm_data <- prepare_config_cpm_data()
+config_cpm <- tidyr::expand_grid(
+  config_cpm_data,
+  hypers_cpm,
+  bench_indices
+)
+names_exclude <- c("file_fc", "fd", "scores")
 cpm_branches <- tarchetypes::tar_map(
-  tidyr::expand_grid(
-    config_cpm_data,
-    hypers_cpm
-  ),
-  names = !c(file_fc, fd),
+  config_cpm,
+  names = !all_of(names_exclude),
   tar_target(
     cpm_result,
-    apply(
-      scores, 2,
-      perform_cpm,
-      fc = qs::qread(file_fc)[subjs_keep_neural, ],
-      confounds = match_confounds(users_confounds, fd),
+    perform_cpm(
+      qs::qread(file_fc)[subjs_keep_neural, ],
+      scores,
+      match_confounds(users_confounds, fd),
       bias_correct = FALSE,
       thresh_method = thresh_method,
       thresh_level = thresh_level,
@@ -30,31 +36,27 @@ cpm_branches <- tarchetypes::tar_map(
   ),
   tar_target(
     cpm_performance,
-    lapply(cpm_result, extract_cpm_performance) |>
-      list_rbind(names_to = "index"),
+    extract_cpm_performance(cpm_result),
     retrieval = "worker",
     storage = "worker"
   )
 )
 
 cpm_branches_perms <- tarchetypes::tar_map(
-  tidyr::expand_grid(
-    config_cpm_data,
-    hypers_cpm
-  ) |>
+  config_cpm |>
     dplyr::filter(
       xcpd == "gsr",
+      index == "g",
       thresh_method == "alpha",
       thresh_level == 0.01
     ),
-  names = !c(file_fc, fd),
+  names = !all_of(names_exclude),
   tarchetypes::tar_rep(
     cpm_result_perm,
-    apply(
-      scores, 2,
-      perform_cpm_perm,
-      fc = qs::qread(file_fc)[subjs_keep_neural, ],
-      confounds = match_confounds(users_confounds, fd),
+    perform_cpm_perm(
+      qs::qread(file_fc)[subjs_keep_neural, ],
+      scores,
+      match_confounds(users_confounds, fd),
       bias_correct = FALSE,
       thresh_method = thresh_method,
       thresh_level = thresh_level
@@ -67,11 +69,7 @@ cpm_branches_perms <- tarchetypes::tar_map(
   ),
   tarchetypes::tar_rep2(
     cpm_performance_perm,
-    lapply_tar_batches(
-      cpm_result_perm,
-      extract_cpm_performance
-    ) |>
-      list_rbind_tar_batches(names_to = "index"),
+    extract_cpm_performance(cpm_result_perm),
     cpm_result_perm,
     retrieval = "worker",
     storage = "worker"
@@ -79,36 +77,15 @@ cpm_branches_perms <- tarchetypes::tar_map(
 )
 
 list(
-  tar_target(
-    file_rapm,
+  tarchetypes::tar_file_read(
+    scores_rapm,
     path_obj_from_proj("indices_rapm", "prepare_source_data"),
-    format = "file_fast"
+    read = qs::qread(!!.x)
   ),
-  tar_target(
-    file_indices,
-    path_obj_from_proj("indices_cogstruct", "prepare_source_data"),
-    format = "file_fast"
-  ),
-  tar_target(
-    fit_g,
-    fit_efa_g(
-      qs::qread(file_indices),
-      vars = names(qs::qread(file_indices)),
-      missing = "ml"
-    )
-  ),
-  tar_target(
-    comp_rel_g,
-    tibble(comp_rel = unclass(semTools::compRelSEM(fit_g$nf1)))
-  ),
-  tar_target(
+  tarchetypes::tar_file_read(
     scores_g,
-    extract_g_scores(fit_g, data = qs::qread(file_indices))
-  ),
-  tar_target(
-    scores,
-    merge(qs::qread(file_rapm), scores_g, by = "row.names") |>
-      column_to_rownames("Row.names")
+    path_obj_from_proj("scores_g_full", "g_factor"),
+    read = qs::qread(!!.x)
   ),
   tar_prepare_cpm_data(config_cpm_data),
   cpm_branches,
@@ -117,7 +94,7 @@ list(
     cpm_branches$cpm_performance,
     command = bind_rows_meta(
       !!!.x,
-      .names = c(names(config_fc), names(hypers_cpm)),
+      .names = setdiff(names(config_cpm), names_exclude),
       .prefix = "cpm_performance"
     )
   ),
@@ -127,7 +104,7 @@ list(
     cpm_branches_perms$cpm_performance_perm,
     command = bind_rows_meta(
       !!!.x,
-      .names = c(names(config_fc), names(hypers_cpm)),
+      .names = setdiff(names(config_cpm), names_exclude),
       .prefix = "cpm_performance_perm"
     )
   )

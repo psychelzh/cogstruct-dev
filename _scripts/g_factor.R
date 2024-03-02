@@ -195,5 +195,21 @@ list(
       .names = c(names(config_fc), names(hypers_cpm), names(config_vars)),
       .prefix = "dice_pairs"
     )
+  ),
+  tar_target(
+    fit_g_full,
+    fit_efa_g(
+      indices_cogstruct,
+      vars = names(indices_cogstruct),
+      missing = "ml"
+    )
+  ),
+  tar_target(
+    comp_rel_g_full,
+    tibble(comp_rel = unclass(semTools::compRelSEM(fit_g_full$nf1)))
+  ),
+  tar_target(
+    scores_g_full,
+    extract_g_scores(fit_g_full, data = indices_cogstruct)
   )
 )
