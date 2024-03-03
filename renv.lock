@@ -3228,7 +3228,12 @@
     "renv": {
       "Package": "renv",
       "Version": "1.0.4",
-      "Source": "Repository"
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "utils"
+      ],
+      "Hash": "11abaf7c540ff33f94514d50f929bfd1"
     },
     "report": {
       "Package": "report",
