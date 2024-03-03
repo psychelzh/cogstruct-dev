@@ -82,7 +82,7 @@ cpm_branches_perms <- tarchetypes::tar_map(
       cpm_result_perm,
       extract_cpm_performance
     ) |>
-      list_rbind_tar_batches(names_to = "index"),
+      list_rbind_tar_batches(names_to = "latent"),
     cpm_result_perm,
     retrieval = "worker",
     storage = "worker"
