@@ -156,7 +156,8 @@ list(
       bind_rows_meta(
         .names = names(config_vars),
         .prefix = "rel_pairs_g"
-      )
+      ),
+    deployment = "main"
   ),
   tarchetypes::tar_combine(
     comp_rel_g,
@@ -166,7 +167,8 @@ list(
       bind_rows_meta(
         .names = names(config_vars),
         .prefix = "comp_rel_g"
-      )
+      ),
+    deployment = "main"
   ),
   tarchetypes::tar_combine(
     cor_rapm,
@@ -176,7 +178,8 @@ list(
       bind_rows_meta(
         .names = names(config_vars),
         .prefix = "cor_rapm"
-      )
+      ),
+    deployment = "main"
   ),
   tarchetypes::tar_combine(
     cpm_performance,
@@ -185,7 +188,8 @@ list(
       !!!.x,
       .names = c(names(config_fc), names(hypers_cpm), names(config_vars)),
       .prefix = "cpm_performance"
-    )
+    ),
+    deployment = "main"
   ),
   tarchetypes::tar_combine(
     dice_pairs,
@@ -194,7 +198,8 @@ list(
       !!!.x,
       .names = c(names(config_fc), names(hypers_cpm), names(config_vars)),
       .prefix = "dice_pairs"
-    )
+    ),
+    deployment = "main"
   ),
   tar_target(
     fit_g_full,

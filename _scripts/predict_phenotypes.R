@@ -104,7 +104,8 @@ list(
       !!!.x,
       .names = c(names(config_fc), names(hypers_cpm)),
       .prefix = "cpm_performance"
-    )
+    ),
+    deployment = "main"
   ),
   cpm_branches_perms,
   tarchetypes::tar_combine(
@@ -114,6 +115,7 @@ list(
       !!!.x,
       .names = c(names(config_fc), names(hypers_cpm)),
       .prefix = "cpm_performance_perm"
-    )
+    ),
+    deployment = "main"
   )
 )

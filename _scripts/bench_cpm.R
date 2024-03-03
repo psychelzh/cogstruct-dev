@@ -96,7 +96,8 @@ list(
       !!!.x,
       .names = setdiff(names(config_cpm), names_exclude),
       .prefix = "cpm_performance"
-    )
+    ),
+    deployment = "main"
   ),
   cpm_branches_perms,
   tarchetypes::tar_combine(
@@ -106,6 +107,7 @@ list(
       !!!.x,
       .names = setdiff(names(config_cpm), names_exclude),
       .prefix = "cpm_performance_perm"
-    )
+    ),
+    deployment = "main"
   )
 )
