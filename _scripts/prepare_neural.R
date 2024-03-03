@@ -6,20 +6,20 @@ tar_option_set(
   controller = setup_crew_controller("fc")
 )
 setup_parallel_plan()
-config_meta <- config_fmri |>
-  dplyr::select(!runs) |>
+
+config_fc_calc <- config_fc |>
   tidyr::unite("name_suffix", everything(), remove = FALSE) |>
   dplyr::mutate(
+    session = lapply(session, \(x) if (x == "0") character() else x),
+    run = lapply(run, parse_digits),
     meta_time_series = rlang::syms(
-      sprintf("meta_time_series_%s", name_suffix)
-    )
+      paste0("meta_time_series_", name_suffix)
+    ),
+    fc = rlang::syms(paste0("fc_", name_suffix))
   )
-config_fc_calc <- config_fc |>
-  dplyr::left_join(config_meta, by = c("xcpd", "session", "task", "atlas")) |>
-  dplyr::mutate(fc = rlang::syms(sprintf("fc_%s_%s", name_suffix, run)))
 
 targets_fd <- tarchetypes::tar_map(
-  dplyr::filter(params_fmri_tasks, task != "latent"),
+  dplyr::distinct(params_fmri_tasks, session, task),
   names = !runs,
   tar_target(
     meta_data_motion,
@@ -34,15 +34,17 @@ targets_fd <- tarchetypes::tar_map(
 list(
   # prepare functional connectivity (FC) data ----
   tarchetypes::tar_eval(
-    tar_target(
-      meta_time_series,
-      prepare_meta_time_series(xcpd, session, task, atlas)
+    list(
+      tar_target(
+        meta_time_series,
+        prepare_meta_time_series(xcpd, session, task, atlas, run)
+      ),
+      tar_target(
+        fc,
+        prepare_data_fc(meta_time_series)
+      )
     ),
-    dplyr::filter(config_meta, task != "latent")
-  ),
-  tarchetypes::tar_eval(
-    tar_target(fc, prepare_data_fc(meta_time_series)),
-    dplyr::filter(config_fc_calc, run == "full" & task != "latent")
+    dplyr::filter(config_fc_calc, task != "latent")
   ),
   tarchetypes::tar_eval(
     tar_target(
@@ -54,22 +56,15 @@ list(
       dplyr::filter(task == "latent") |>
       dplyr::left_join(
         config_fc_calc |>
-          dplyr::filter(run == "full" & task != "latent") |>
+          dplyr::filter(task != "latent") |>
           dplyr::summarise(
             call_list_fc = list(
               as.call(c(quote(list), fc))
             ),
-            .by = xcpd
+            .by = c(xcpd, run)
           ),
-        by = "xcpd"
+        by = c("xcpd", "run")
       )
-  ),
-  tarchetypes::tar_eval(
-    tar_target(
-      fc,
-      prepare_data_fc(meta_time_series, .data[["run"]] %in% parse_digits(run))
-    ),
-    dplyr::filter(config_fc_calc, grepl("^run\\d+$", run))
   ),
   # extract mean frame-wise displacement (FD) ----
   targets_fd,

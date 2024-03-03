@@ -76,33 +76,55 @@ params_fmri_tasks <- tibble::tribble(
   "1", "movie", 2,
   "2", "rest", 2,
   "2", "wm", 3,
-  "2", "movie", 2,
-  "0", "latent", 0
+  "2", "movie", 2
+) |>
+  tidyr::uncount(runs, .id = "run_id")
+# Note: sesion: 0 = all sessions, run_id: 0 = all runs
+params_fmri_special <- dplyr::bind_rows(
+  tibble::tibble(
+    session = "0",
+    task = "latent",
+    run_id = c(0, 1)
+  ),
+  tibble::tibble(
+    session = "0",
+    task = c("rest", "movie"),
+    run_id = 0
+  )
 )
+
 params_conmat <- tibble::tibble(
   xcpd = c(
     "gsr", # with global signal regression
     "no_gsr" # no global signal regression
   ),
   atlas = "4S256Parcels"
-)
+) |>
+  dplyr::filter(xcpd == "gsr")
 config_fmri <- tidyr::expand_grid(
   params_fmri_tasks,
   params_conmat
-) |>
-  dplyr::filter(xcpd == "gsr")
-config_fc <- dplyr::bind_rows(
-  config_fmri |>
-    dplyr::mutate(run = "full") |>
-    dplyr::select(-runs),
-  config_fmri |>
-    tidyr::uncount(runs, .id = "run") |>
-    dplyr::mutate(run = paste("run", run, sep = "")),
-  config_fmri |>
-    dplyr::filter(task == "wm") |>
-    dplyr::mutate(run = "run12") |>
-    dplyr::select(-runs)
 )
+config_fc <- dplyr::bind_rows(
+  config_fmri,
+  config_fmri |>
+    dplyr::distinct(dplyr::pick(!run_id)) |>
+    dplyr::mutate(
+      run_id = ifelse(task == "wm", list(c(0, 12)), list(0))
+    ) |>
+    tidyr::unnest(run_id),
+  tidyr::expand_grid(params_fmri_special, params_conmat)
+) |>
+  dplyr::mutate(
+    run = ifelse(
+      run_id == 0,
+      "full",
+      sprintf("run%d", run_id)
+    ),
+    .keep = "unused",
+    # backward compatibility
+    .after = dplyr::last_col()
+  )
 
 # used in CPM modeling building
 hypers_cpm <- dplyr::bind_rows(

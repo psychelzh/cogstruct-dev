@@ -1,5 +1,5 @@
 # functional connectivity data preparation ----
-prepare_meta_time_series <- function(xcpd, session, task, atlas) {
+prepare_meta_time_series <- function(xcpd, session, task, atlas, run) {
   path_xcpd <- fs::path(
     Sys.getenv("ROOT_BIDS_DERIV"),
     sprintf("xcpd_%s", xcpd)
@@ -10,6 +10,7 @@ prepare_meta_time_series <- function(xcpd, session, task, atlas) {
     session = session,
     task = task,
     atlas = atlas,
+    run = run,
     suffix = "timeseries",
     extension = "tsv"
   )
