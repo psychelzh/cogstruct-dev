@@ -289,29 +289,44 @@ tar_prepare_cpm_data <- function(config) {
       ),
       config
     ),
+    tar_target(
+      file_fd,
+      path_obj_from_proj("fd_mean", "prepare_neural"),
+      format = "file_fast"
+    ),
     purrr::pmap(
       dplyr::distinct(config, session, task, run, fd),
       \(session, task, run, fd) {
         if (task == "latent") {
-          path <- path_obj_from_proj("fd_mean", "prepare_neural")
+          if (run == "full") {
+            cols <- seq_len(nrow(params_fmri_tasks))
+          } else {
+            cols <- which(params_fmri_tasks$run_id %in% parse_digits(run))
+          }
         } else {
-          path <- path_obj_from_proj(
-            paste("fd_mean", session, task, sep = "_"),
-            "prepare_neural"
-          )
-        }
-        if (run == "full") {
-          read <- quote(as.matrix(rowMeans(qs::qread(!!.x))))
-        } else {
-          read <- bquote(
-            as.matrix(
-              rowMeans(qs::qread(!!.x)[, .(parse_digits(run)), drop = FALSE])
-            )
-          )
+          if (session == "0") {
+            cols <- which(params_fmri_tasks$task == task)
+          } else {
+            if (run == "full") {
+              cols <- which(
+                params_fmri_tasks$session == session &
+                  params_fmri_tasks$task == task
+              )
+            } else {
+              cols <- which(
+                params_fmri_tasks$session == session &
+                  params_fmri_tasks$task == task &
+                  params_fmri_tasks$run_id %in% parse_digits(run)
+              )
+            }
+          }
         }
         eval(substitute(
-          tarchetypes::tar_file_read(fd, path, read = read),
-          list(fd = fd, path = path, read = read)
+          tar_target(
+            fd,
+            as.matrix(rowMeans(qs::qread(file_fd)[, cols, drop = FALSE]))
+          ),
+          list(fd = fd, cols = cols)
         ))
       }
     ),
