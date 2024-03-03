@@ -290,10 +290,16 @@ tar_prepare_cpm_data <- function(config) {
       config
     ),
     purrr::pmap(
-      config |>
-        dplyr::distinct(session, task, run, fd) |>
-        tidyr::nest(.by = run),
-      \(run, data) {
+      dplyr::distinct(config, session, task, run, fd),
+      \(session, task, run, fd) {
+        if (task == "latent") {
+          path <- path_obj_from_proj("fd_mean", "prepare_neural")
+        } else {
+          path <- path_obj_from_proj(
+            paste("fd_mean", session, task, sep = "_"),
+            "prepare_neural"
+          )
+        }
         if (run == "full") {
           read <- quote(as.matrix(rowMeans(qs::qread(!!.x))))
         } else {
@@ -303,19 +309,10 @@ tar_prepare_cpm_data <- function(config) {
             )
           )
         }
-        tarchetypes::tar_eval_raw(
-          bquote(
-            tarchetypes::tar_file_read(
-              fd,
-              path_obj_from_proj(
-                paste("fd_mean", session, task, sep = "_"),
-                "prepare_neural"
-              ),
-              read = .(substitute(read))
-            )
-          ),
-          data
-        )
+        eval(substitute(
+          tarchetypes::tar_file_read(fd, path, read = read),
+          list(fd = fd, path = path, read = read)
+        ))
       }
     ),
     # commonly used targets

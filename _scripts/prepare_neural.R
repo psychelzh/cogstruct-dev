@@ -6,18 +6,6 @@ tar_option_set(
   controller = setup_crew_controller("fc")
 )
 setup_parallel_plan()
-targets_fd <- tarchetypes::tar_map(
-  params_fmri_tasks,
-  names = !runs,
-  tar_target(
-    meta_data_motion,
-    prepare_meta_data_motion(session, task)
-  ),
-  tar_target(
-    fd_mean,
-    prepare_fd_mean(meta_data_motion)
-  )
-)
 config_meta <- config_fmri |>
   dplyr::select(!runs) |>
   tidyr::unite("name_suffix", everything(), remove = FALSE) |>
@@ -29,6 +17,20 @@ config_meta <- config_fmri |>
 config_fc_calc <- config_fc |>
   dplyr::left_join(config_meta, by = c("xcpd", "session", "task", "atlas")) |>
   dplyr::mutate(fc = rlang::syms(sprintf("fc_%s_%s", name_suffix, run)))
+
+targets_fd <- tarchetypes::tar_map(
+  dplyr::filter(params_fmri_tasks, task != "latent"),
+  names = !runs,
+  tar_target(
+    meta_data_motion,
+    prepare_meta_data_motion(session, task)
+  ),
+  tar_target(
+    fd_mean,
+    prepare_fd_mean(meta_data_motion)
+  )
+)
+
 list(
   # prepare functional connectivity (FC) data ----
   tarchetypes::tar_eval(
@@ -36,11 +38,31 @@ list(
       meta_time_series,
       prepare_meta_time_series(xcpd, session, task, atlas)
     ),
-    config_meta
+    dplyr::filter(config_meta, task != "latent")
   ),
   tarchetypes::tar_eval(
     tar_target(fc, prepare_data_fc(meta_time_series)),
-    dplyr::filter(config_fc_calc, run == "full")
+    dplyr::filter(config_fc_calc, run == "full" & task != "latent")
+  ),
+  tarchetypes::tar_eval(
+    tar_target(
+      fc,
+      do.call(abind::abind, c(call_list_fc, along = 3)) |>
+        apply(2, \(x) princomp(x)$scores[, 1])
+    ),
+    config_fc_calc |>
+      dplyr::filter(task == "latent") |>
+      dplyr::left_join(
+        config_fc_calc |>
+          dplyr::filter(run == "full" & task != "latent") |>
+          dplyr::summarise(
+            call_list_fc = list(
+              as.call(c(quote(list), fc))
+            ),
+            .by = xcpd
+          ),
+        by = "xcpd"
+      )
   ),
   tarchetypes::tar_eval(
     tar_target(

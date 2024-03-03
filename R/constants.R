@@ -76,7 +76,8 @@ params_fmri_tasks <- tibble::tribble(
   "1", "movie", 2,
   "2", "rest", 2,
   "2", "wm", 3,
-  "2", "movie", 2
+  "2", "movie", 2,
+  "0", "latent", 0
 )
 params_conmat <- tibble::tibble(
   xcpd = c(
