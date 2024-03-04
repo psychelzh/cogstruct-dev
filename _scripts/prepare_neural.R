@@ -52,21 +52,31 @@ list(
   tarchetypes::tar_eval(
     tar_target(
       fc,
-      do.call(abind::abind, c(call_list_fc, along = 3)) |>
+      # calculate principal component only on kept subjects
+      lapply(call_list_fc, \(x) x[subjs_keep_neural, ]) |>
+        abind::abind(along = 3) |>
         apply(2, \(x) princomp(x)$scores[, 1])
     ),
     config_fc_calc |>
       dplyr::filter(task == "latent") |>
-      dplyr::left_join(
-        config_fc_calc |>
-          dplyr::filter(task != "latent" & session != "0") |>
-          dplyr::summarise(
-            call_list_fc = list(
-              as.call(c(quote(list), fc))
-            ),
-            .by = c(xcpd, run)
-          ),
-        by = c("xcpd", "run")
+      dplyr::mutate(
+        call_list_fc = purrr::map2(
+          xcpd, run,
+          \(cur_xcpd, cur_run) {
+            config <- config_fc_calc |>
+              dplyr::filter(
+                task != "latent",
+                session != "0",
+                xcpd == cur_xcpd,
+                if (cur_run == "full") {
+                  grepl("^run\\d$", run)
+                } else {
+                  run == cur_run
+                }
+              )
+            as.call(c(quote(list), config$fc))
+          }
+        )
       )
   ),
   # extract mean frame-wise displacement (FD) ----
