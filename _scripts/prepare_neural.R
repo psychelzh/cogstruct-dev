@@ -10,8 +10,6 @@ setup_parallel_plan()
 config_fc_calc <- config_fc |>
   tidyr::unite("name_suffix", everything(), remove = FALSE) |>
   dplyr::mutate(
-    session = lapply(session, \(x) if (x == "0") character() else x),
-    run = lapply(run, parse_digits),
     meta_time_series = rlang::syms(
       paste0("meta_time_series_", name_suffix)
     ),
@@ -44,7 +42,12 @@ list(
         prepare_data_fc(meta_time_series)
       )
     ),
-    dplyr::filter(config_fc_calc, task != "latent")
+    config_fc_calc |>
+      dplyr::filter(task != "latent") |>
+      dplyr::mutate(
+        session = lapply(session, \(x) if (x == "0") character() else x),
+        run = lapply(run, parse_digits)
+      )
   ),
   tarchetypes::tar_eval(
     tar_target(
@@ -56,7 +59,7 @@ list(
       dplyr::filter(task == "latent") |>
       dplyr::left_join(
         config_fc_calc |>
-          dplyr::filter(task != "latent") |>
+          dplyr::filter(task != "latent" & session != "0") |>
           dplyr::summarise(
             call_list_fc = list(
               as.call(c(quote(list), fc))
