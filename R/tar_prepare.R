@@ -16,8 +16,9 @@ prepare_config_cpm_data <- function(...) {
     dplyr::mutate(
       file_fc = rlang::syms(sprintf("file_fc_%s", name_suffix_fc)),
       fd = rlang::syms(sprintf("fd_%s", name_suffix_fd)),
-      .keep = "unused"
-    )
+      file_atlas_dseg = rlang::syms(sprintf("file_atlas_dseg_%s", atlas))
+    ) |>
+    dplyr::select(!tidyselect::starts_with("name_suffix"))
 }
 
 prepare_config_retest <- function(contents, name_suffix = NULL) {

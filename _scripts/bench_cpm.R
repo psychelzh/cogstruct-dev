@@ -16,7 +16,7 @@ config_cpm <- tidyr::expand_grid(
   hypers_cpm,
   bench_indices
 )
-names_exclude <- c("file_fc", "fd", "scores")
+names_exclude <- c(names_exclude, "scores")
 cpm_branches <- tarchetypes::tar_map(
   config_cpm,
   names = !all_of(names_exclude),

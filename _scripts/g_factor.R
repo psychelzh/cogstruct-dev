@@ -91,7 +91,7 @@ branches_g <- tarchetypes::tar_map(
           thresh_level == 0.01
         )
     ),
-    names = !c(file_fc, fd),
+    names = !all_of(names_exclude),
     tarchetypes::tar_rep2(
       cpm_result,
       lapply_tar_batches(

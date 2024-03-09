@@ -46,6 +46,36 @@ calc_dice_pairs <- function(result, level) {
     enframe(name = "network", value = "dice")
 }
 
+calc_edges_enrich <- function(result, atlas_dseg, level = 0.5) {
+  cbind(
+    as_tibble(
+      t(combn(atlas_dseg$network_label, 2)),
+      .name_repair = ~ c("row", "col")
+    ),
+    result$edges > level * length(unique(result$folds))
+  ) |>
+    drop_na() |>
+    mutate(
+      label_x = pmin(row, col),
+      label_y = pmax(row, col),
+      .keep = "unused"
+    ) |>
+    pivot_longer(
+      c(pos, neg),
+      names_to = "network",
+      values_to = "val"
+    ) |>
+    summarise(
+      n = sum(val),
+      total = n(),
+      .by = c(label_x, label_y, network)
+    ) |>
+    mutate(
+      prop = n / total,
+      enrich = (n / sum(n)) / (total / sum(total))
+    )
+}
+
 match_confounds <- function(users_confounds, fd_mean) {
   subjs <- intersect(rownames(users_confounds), rownames(fd_mean))
   cbind(users_confounds[subjs, ], fd_mean[subjs, ])

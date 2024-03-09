@@ -21,7 +21,7 @@ cpm_branches <- tarchetypes::tar_map(
     config_cpm_data,
     hypers_cpm
   ),
-  names = !c(file_fc, fd),
+  names = !all_of(names_exclude),
   tar_target(
     cpm_result,
     apply(
@@ -46,6 +46,17 @@ cpm_branches <- tarchetypes::tar_map(
       list_rbind(names_to = "latent"),
     retrieval = "worker",
     storage = "worker"
+  ),
+  tar_target(
+    edges_enrich,
+    lapply(
+      cpm_result,
+      calc_edges_enrich,
+      atlas_dseg = qs::qread(file_atlas_dseg)
+    ) |>
+      list_rbind(names_to = "latent"),
+    retrieval = "worker",
+    storage = "worker"
   )
 )
 
@@ -53,8 +64,8 @@ cpm_branches_perms <- tarchetypes::tar_map(
   tidyr::expand_grid(
     config_cpm_data,
     hypers_cpm
-    ),
-  names = !c(file_fc, fd),
+  ),
+  names = !all_of(names_exclude),
   tarchetypes::tar_rep(
     cpm_result_perm,
     apply(
@@ -100,6 +111,16 @@ list(
       !!!.x,
       .names = c(names(config_fc), names(hypers_cpm)),
       .prefix = "cpm_performance"
+    ),
+    deployment = "main"
+  ),
+  tarchetypes::tar_combine(
+    edges_enrich,
+    cpm_branches$edges_enrich,
+    command = bind_rows_meta(
+      !!!.x,
+      .names = c(names(config_fc), names(hypers_cpm)),
+      .prefix = "edges_enrich"
     ),
     deployment = "main"
   ),

@@ -330,6 +330,14 @@ tar_prepare_cpm_data <- function(config) {
         ))
       }
     ),
+    tarchetypes::tar_eval(
+      tar_target(
+        file_atlas_dseg,
+        path_obj_from_proj(sprintf("atlas_dseg_%s", atlas), "prepare_neural"),
+        format = "file_fast"
+      ),
+      dplyr::distinct(config, atlas, file_atlas_dseg)
+    ),
     # commonly used targets
     tarchetypes::tar_file_read(
       users_confounds,
