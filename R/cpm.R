@@ -46,34 +46,49 @@ calc_dice_pairs <- function(result, level) {
     enframe(name = "network", value = "dice")
 }
 
-calc_edges_enrich <- function(result, atlas_dseg, level = 0.5) {
-  cbind(
-    as_tibble(
-      t(combn(atlas_dseg$network_label, 2)),
-      .name_repair = ~ c("row", "col")
-    ),
-    result$edges > level * length(unique(result$folds))
+binarize_edges <- function(result, level = 0.5) {
+  result$edges > level * length(unique(result$folds))
+}
+
+calc_edges_degree <- function(edges) {
+  apply(
+    edges, 2,
+    \(x) colSums(Rfast::squareform(x)),
+    simplify = FALSE
   ) |>
-    drop_na() |>
-    mutate(
-      label_x = pmin(row, col),
-      label_y = pmax(row, col),
-      .keep = "unused"
-    ) |>
-    pivot_longer(
-      c(pos, neg),
-      names_to = "network",
-      values_to = "val"
-    ) |>
-    summarise(
-      n = sum(val),
-      total = n(),
-      .by = c(label_x, label_y, network)
-    ) |>
-    mutate(
-      prop = n / total,
-      enrich = (n / sum(n)) / (total / sum(total))
-    )
+    enframe(name = "network", value = "degree")
+}
+
+calc_edges_enrich <- function(edges, atlas_dseg) {
+  labels <- with(atlas_dseg, coalesce(network_label, atlas_name)) |>
+    fct_collapse(Subcortical = c("CIT168Subcortical", "SubcorticalHCP")) |>
+    as.character()
+  network_pairs <- as_tibble(
+    t(combn(labels, 2)),
+    .name_repair = ~ c("row", "col")
+  )
+  apply(
+    edges, 2,
+    \(x) {
+      cbind(network_pairs, val = x) |>
+        drop_na() |>
+        mutate(
+          label_x = pmin(row, col),
+          label_y = pmax(row, col),
+          .keep = "unused"
+        ) |>
+        summarise(
+          n = sum(val),
+          total = n(),
+          .by = c(label_x, label_y)
+        ) |>
+        mutate(
+          prop = n / total,
+          enrich = (n / sum(n)) / (total / sum(total))
+        )
+    }
+  ) |>
+    list_rbind(names_to = "network")
 }
 
 match_confounds <- function(users_confounds, fd_mean) {

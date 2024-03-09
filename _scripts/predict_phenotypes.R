@@ -47,10 +47,16 @@ cpm_branches <- tarchetypes::tar_map(
     retrieval = "worker",
     storage = "worker"
   ),
+  tar_target(edges, lapply(cpm_result, binarize_edges)),
+  tar_target(
+    edges_degree,
+    lapply(edges, calc_edges_degree) |>
+      list_rbind(names_to = "latent"),
+  ),
   tar_target(
     edges_enrich,
     lapply(
-      cpm_result,
+      edges,
       calc_edges_enrich,
       atlas_dseg = qs::qread(file_atlas_dseg)
     ) |>
@@ -111,6 +117,16 @@ list(
       !!!.x,
       .names = c(names(config_fc), names(hypers_cpm)),
       .prefix = "cpm_performance"
+    ),
+    deployment = "main"
+  ),
+  tarchetypes::tar_combine(
+    edges_degree,
+    cpm_branches$edges_degree,
+    command = bind_rows_meta(
+      !!!.x,
+      .names = c(names(config_fc), names(hypers_cpm)),
+      .prefix = "edges_degree"
     ),
     deployment = "main"
   ),
