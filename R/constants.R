@@ -93,12 +93,16 @@ params_fmri_special <- dplyr::bind_rows(
   )
 )
 
-params_conmat <- tibble::tibble(
+params_conmat <- tidyr::expand_grid(
   xcpd = c(
     "gsr", # with global signal regression
     "no_gsr" # no global signal regression
   ),
-  atlas = "4S256Parcels"
+  atlas = c(
+    "4S256Parcels",
+    # this is the same as 4S256Parcels but without subcortical regions
+    "Schaefer200Parcels"
+  )
 ) |>
   dplyr::filter(xcpd == "gsr")
 config_fmri <- tidyr::expand_grid(

@@ -4,6 +4,9 @@ prepare_meta_time_series <- function(xcpd, session, task, atlas, run) {
     Sys.getenv("ROOT_BIDS_DERIV"),
     sprintf("xcpd_%s", xcpd)
   )
+  if (atlas == "Schaefer200Parcels") {
+    atlas <- "4S256Parcels"
+  }
   extract_bids_meta(
     fs::path(path_xcpd, "xcp_d"),
     fs::path(path_xcpd, "layout"),
@@ -16,10 +19,10 @@ prepare_meta_time_series <- function(xcpd, session, task, atlas, run) {
   )
 }
 
-prepare_data_fc <- function(meta, ...) {
+prepare_data_fc <- function(meta, ..., cortical_only = FALSE) {
   meta |>
     filter(...) |>
-    summarise(fc = list(calc_fc(path)), .by = subject) |>
+    summarise(fc = list(calc_fc(path, cortical_only)), .by = subject) |>
     mutate(
       user_id = data.camp::users_id_mapping[subject],
       .keep = "unused",
@@ -89,8 +92,17 @@ extract_bids_meta <- function(path_bids, path_bids_db, ...) {
     list_rbind()
 }
 
-calc_fc <- function(path) {
-  lapply(path, data.table::fread, na.strings = "n/a") |>
+calc_fc <- function(path, cortical_only = FALSE) {
+  lapply(
+    path,
+    \(path) {
+      ts <- data.table::fread(path, na.strings = "n/a")
+      if (cortical_only) {
+        ts <- ts[, 1:200] # only the first 200 nodes are cortical
+      }
+      ts
+    }
+  ) |>
     data.table::rbindlist() |>
     fisher_cor() |>
     as.dist()

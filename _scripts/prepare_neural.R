@@ -39,14 +39,15 @@ list(
       ),
       tar_target(
         fc,
-        prepare_data_fc(meta_time_series)
+        prepare_data_fc(meta_time_series, cortical_only = cortical_only)
       )
     ),
     config_fc_calc |>
       dplyr::filter(task != "latent") |>
       dplyr::mutate(
         session = lapply(session, \(x) if (x == "0") character() else x),
-        run = lapply(run, parse_digits)
+        run = lapply(run, parse_digits),
+        cortical_only = atlas == "Schaefer200Parcels"
       )
   ),
   tarchetypes::tar_eval(
@@ -60,14 +61,15 @@ list(
     config_fc_calc |>
       dplyr::filter(task == "latent") |>
       dplyr::mutate(
-        call_list_fc = purrr::map2(
-          xcpd, run,
-          \(cur_xcpd, cur_run) {
+        call_list_fc = purrr::pmap(
+          list(xcpd, atlas, run),
+          \(cur_xcpd, cur_atlas, cur_run) {
             config <- config_fc_calc |>
               dplyr::filter(
                 task != "latent",
                 session != "0",
                 xcpd == cur_xcpd,
+                atlas == cur_atlas,
                 if (cur_run == "full") {
                   grepl("^run\\d$", run)
                 } else {
@@ -94,18 +96,37 @@ list(
     names(which(apply(fd_mean, 1, \(x) all(x <= 0.5) && all(!is.na(x)))))
   ),
   tarchetypes::tar_map(
-    dplyr::distinct(params_conmat, atlas),
-    tarchetypes::tar_file_read(
-      atlas_dseg,
+    dplyr::distinct(params_conmat, atlas) |>
+      dplyr::mutate(
+        atlas_store = ifelse(
+          atlas == "Schaefer200Parcels",
+          "4S256Parcels",
+          atlas
+        )
+      ),
+    names = atlas,
+    tar_target(
+      file_atlas_dseg,
       fs::path(
         Sys.getenv("ROOT_BIDS_DERIV"),
         "xcpd_gsr",
         "xcp_d",
         "atlases",
-        sprintf("atlas-%s", atlas)
+        sprintf("atlas-%s", atlas_store)
       ) |>
         fs::dir_ls(regexp = "tsv"),
-      read = read_tsv(!!.x, show_col_types = FALSE, na = "n/a")
+      format = "file_fast"
+    ),
+    tar_target(
+      atlas_dseg,
+      {
+        result <- read_tsv(file_atlas_dseg, show_col_types = FALSE, na = "n/a")
+        if (atlas == "Schaefer200Parcels") {
+          result[1:200, ]
+        } else {
+          result
+        }
+      }
     )
   )
 )
