@@ -18,9 +18,9 @@ targets_cfa <- tarchetypes::tar_map(
     hypers_model,
     tar_fit_cfa(
       config_dims,
-      indices_cogstruct_thin,
+      indices_cogstruct_censor,
       theory = theory,
-      missing = "pairwise",
+      missing = "ml",
       tar_post_fit = "gof"
     )
   )
@@ -50,12 +50,12 @@ list(
       mutate(censor = row_number() > 1, .by = paradigm_censor)
   ),
   tar_target(
-    indices_cogstruct_thin,
+    indices_cogstruct_censor,
     select(indices_cogstruct, !with(config_games_censor, game_index[censor]))
   ),
   tar_target(
     indices_splitted,
-    split_data_solomon(indices_cogstruct_thin)
+    split_data_solomon(indices_cogstruct_censor)
   ),
   tar_target(
     efa_results,
@@ -63,7 +63,7 @@ list(
   ),
   tar_target(
     efa_result_final,
-    iterate_efa(indices_cogstruct_thin)
+    iterate_efa(indices_cogstruct_censor)
   ),
   tarchetypes::tar_file_read(
     config_dims_theory,
@@ -108,9 +108,8 @@ list(
         prefix = "gof"
       )
   ),
-  tar_fit_cfa(
-    config_dims_efa,
-    indices_cogstruct_thin,
-    theory = "bf"
+  tar_target(
+    scores,
+    extract_latent_scores(fit_bf_efa, indices_cogstruct_censor)
   )
 )
