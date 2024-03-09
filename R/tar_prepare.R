@@ -14,12 +14,8 @@ prepare_config_cpm_data <- function(...) {
     tidyr::unite("name_suffix_fc", everything(), remove = FALSE) |>
     tidyr::unite("name_suffix_fd", c(session, task, run), remove = FALSE) |>
     dplyr::mutate(
-      file_fc = rlang::syms(
-        sprintf("file_fc_%s", name_suffix_fc)
-      ),
-      fd = rlang::syms(
-        sprintf("fd_%s", name_suffix_fd)
-      ),
+      file_fc = rlang::syms(sprintf("file_fc_%s", name_suffix_fc)),
+      fd = rlang::syms(sprintf("fd_%s", name_suffix_fd)),
       .keep = "unused"
     )
 }

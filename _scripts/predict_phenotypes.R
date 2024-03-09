@@ -11,14 +11,15 @@ config_cpm_data <- prepare_config_cpm_data(
   xcpd == "gsr",
   run == "full"
 )
+hypers_cpm <- hypers_cpm |>
+  dplyr::filter(
+    thresh_method == "alpha",
+    thresh_level == 0.01
+  )
 cpm_branches <- tarchetypes::tar_map(
   tidyr::expand_grid(
     config_cpm_data,
-    hypers_cpm |>
-      dplyr::filter(
-        thresh_method == "alpha",
-        thresh_level == 0.01
-      )
+    hypers_cpm
   ),
   names = !c(file_fc, fd),
   tar_target(
@@ -52,10 +53,6 @@ cpm_branches_perms <- tarchetypes::tar_map(
   tidyr::expand_grid(
     config_cpm_data,
     hypers_cpm
-  ) |>
-    dplyr::filter(
-      thresh_method == "alpha",
-      thresh_level == 0.01
     ),
   names = !c(file_fc, fd),
   tarchetypes::tar_rep(
