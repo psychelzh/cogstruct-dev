@@ -92,5 +92,20 @@ list(
   tar_target(
     subjs_keep_neural,
     names(which(apply(fd_mean, 1, \(x) all(x <= 0.5) && all(!is.na(x)))))
+  ),
+  tarchetypes::tar_map(
+    dplyr::distinct(params_conmat, atlas),
+    tarchetypes::tar_file_read(
+      atlas_dseg,
+      fs::path(
+        Sys.getenv("ROOT_BIDS_DERIV"),
+        "xcpd_gsr",
+        "xcp_d",
+        "atlases",
+        sprintf("atlas-%s", atlas)
+      ) |>
+        fs::dir_ls(regexp = "tsv"),
+      read = read_tsv(!!.x, show_col_types = FALSE, na = "n/a")
+    )
   )
 )
