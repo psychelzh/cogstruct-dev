@@ -124,7 +124,19 @@ list(
         if (atlas == "Schaefer200Parcels") {
           result[1:200, ]
         } else {
-          result
+          # add network labels for subcortical areas
+          result |>
+            mutate(
+              network_label = coalesce(network_label, atlas_name),
+              network_label = case_match(
+                network_label,
+                c("CIT168Subcortical", "SubcorticalHCP") ~ "Subcortical",
+                "ThalamusHCP" ~ "Thalamus",
+                .default = network_label
+              ) |>
+                as_factor() |>
+                as.ordered()
+            )
         }
       }
     )

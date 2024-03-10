@@ -60,18 +60,16 @@ calc_edges_degree <- function(edges) {
 }
 
 calc_edges_enrich <- function(edges, atlas_dseg) {
-  labels <- with(atlas_dseg, coalesce(network_label, atlas_name)) |>
-    fct_collapse(Subcortical = c("CIT168Subcortical", "SubcorticalHCP")) |>
-    as.character()
   network_pairs <- as_tibble(
-    t(combn(labels, 2)),
+    # https://stackoverflow.com/a/28724756/5996475
+    t(combn(seq_len(nrow(atlas_dseg)), 2)),
     .name_repair = ~ c("row", "col")
-  )
+  ) |>
+    mutate(across(everything(), ~ atlas_dseg$network_label[.]))
   apply(
     edges, 2,
     \(x) {
       cbind(network_pairs, val = x) |>
-        drop_na() |>
         mutate(
           label_x = pmin(row, col),
           label_y = pmax(row, col),
@@ -88,7 +86,7 @@ calc_edges_enrich <- function(edges, atlas_dseg) {
         )
     }
   ) |>
-    list_rbind(names_to = "network")
+    enframe(name = "network", value = "enrich")
 }
 
 match_confounds <- function(users_confounds, fd_mean) {
