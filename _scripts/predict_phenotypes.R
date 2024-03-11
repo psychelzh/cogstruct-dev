@@ -49,8 +49,8 @@ cpm_branches <- tarchetypes::tar_map(
   ),
   tar_target(edges, lapply(cpm_result, binarize_edges)),
   tar_target(
-    edges_degree,
-    lapply(edges, calc_edges_degree) |>
+    nodes_degree,
+    lapply(edges, calc_nodes_degree) |>
       list_rbind(names_to = "latent"),
   ),
   tar_target(
@@ -121,12 +121,12 @@ list(
     deployment = "main"
   ),
   tarchetypes::tar_combine(
-    edges_degree,
-    cpm_branches$edges_degree,
+    nodes_degree,
+    cpm_branches$nodes_degree,
     command = bind_rows_meta(
       !!!.x,
       .names = c(names(config_fc), names(hypers_cpm)),
-      .prefix = "edges_degree"
+      .prefix = "nodes_degree"
     ),
     deployment = "main"
   ),

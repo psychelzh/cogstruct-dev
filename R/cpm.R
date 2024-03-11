@@ -50,7 +50,7 @@ binarize_edges <- function(result, level = 0.5) {
   result$edges > level * length(unique(result$folds))
 }
 
-calc_edges_degree <- function(edges) {
+calc_nodes_degree <- function(edges) {
   apply(
     edges, 2,
     \(x) colSums(Rfast::squareform(x)),
