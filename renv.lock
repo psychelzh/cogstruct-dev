@@ -878,12 +878,12 @@
       "Package": "cpmr",
       "Version": "0.0.8",
       "Source": "Repository",
-      "Repository": "https://psychelzh.r-universe.dev",
+      "Repository": "CRAN",
       "Requirements": [
         "Rfast",
         "stats"
       ],
-      "Hash": "5a580bd9d248f5fa2e20cb28dfd37eae"
+      "Hash": "4a235df0e45212a7896c5dcf72b639c5"
     },
     "cpp11": {
       "Package": "cpp11",
