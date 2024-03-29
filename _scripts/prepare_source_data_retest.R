@@ -8,7 +8,7 @@ library(targets)
 
 # Set target options:
 tar_option_set(
-  packages = c("tidyverse", "tarflow.iquizoo", "preproc.iquizoo"),
+  packages = c("tidyverse", "tarflow.iquizoo", "preproc.iquizoo", "bit64"),
   imports = "preproc.iquizoo",
   format = "qs", # Optionally set the default storage format. qs is fast.
   #
@@ -27,7 +27,7 @@ contents <- tarflow.iquizoo::fetch_iquizoo_mem()(
   readr::read_file("sql/contents_with_retest.sql")
 )
 
-targets_preproc <- tarflow.iquizoo:::tar_action_raw_data(
+targets_preproc <- tarflow.iquizoo::tar_prep_raw(
   contents |>
     dplyr::distinct(game_id) |>
     data.iquizoo::match_preproc(type = "semi", rm_tagged = TRUE),
@@ -46,6 +46,23 @@ targets_test_retest_slices <- tar_test_retest(
   extra_by = "part"
 )
 
+targets_data_names <- tarchetypes::tar_map(
+  dplyr::distinct(contents, game_id) |>
+    dplyr::mutate(
+      game_id = as.character(game_id),
+      tar_parsed = rlang::syms(
+        sprintf("raw_data_parsed_%s", game_id)
+      )
+    ),
+  names = game_id,
+  tar_target(
+    data_names,
+    tar_parsed |>
+      mutate(col_names = map(raw_parsed, names)) |>
+      distinct(pick(c("game_id", "col_names")))
+  )
+)
+
 # Replace the target list below with your own:
 list(
   tarflow.iquizoo::tar_prep_iquizoo(
@@ -54,8 +71,11 @@ list(
     action_raw_data = "parse",
     check_progress = FALSE # set as `FALSE` if projects finalized
   ),
-  # more targets goes here
-  if (FALSE) tar_prep_creativity(),
+  targets_data_names,
+  tarchetypes::tar_combine(
+    data_names,
+    targets_data_names$data_names
+  ),
   tar_validate_rawdata(contents),
   targets_preproc,
   tarchetypes::tar_combine(indices, targets_preproc$indices),

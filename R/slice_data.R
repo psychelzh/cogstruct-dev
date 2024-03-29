@@ -41,10 +41,10 @@ slice_data_duration <- function(data, num_parts) {
         raw_parsed,
         ~ tibble(
           part = seq_len(num_parts - 1) / num_parts,
-          rt_cum_break = sum(.x$rt) * part
+          rt_cum_break = sum(.x$RT) * part
         ) |>
           inner_join(
-            mutate(.x, rt_cum = cumsum(rt)),
+            mutate(.x, rt_cum = cumsum(RT)),
             by = join_by(rt_cum_break >= rt_cum)
           ) |>
           select(-contains("rt_cum")) |>
@@ -64,7 +64,7 @@ slice_data_items <- function(data, num_parts) {
   if (unique(data$game_id) %in% "411281158706373") {
     data$raw_parsed <- map(
       data$raw_parsed,
-      ~ filter(., itemid != "268009865429099")
+      ~ filter(.x, ItemID != "268009865429099")
     )
   }
   stopifnot(
@@ -74,11 +74,11 @@ slice_data_items <- function(data, num_parts) {
   item_order <- data |>
     mutate(id = row_number()) |>
     tidytable::unnest(raw_parsed) |>
-    filter(acc != -1) |>
+    filter(ACC != -1) |>
     pivot_wider(
       id_cols = id,
-      names_from = itemid,
-      values_from = acc
+      names_from = ItemID,
+      values_from = ACC
     ) |>
     column_to_rownames("id") |>
     psych::alpha() |>
@@ -89,7 +89,7 @@ slice_data_items <- function(data, num_parts) {
     mutate(
       raw_parsed = map(
         raw_parsed,
-        ~ .x[match(item_order, .x$itemid), ]
+        ~ .x[match(item_order, .x$ItemID), ]
       )
     ) |>
     slice_data_trials(num_parts)
@@ -103,14 +103,14 @@ slice_data_blocks <- function(data) {
   data_names <- colnames(data$raw_parsed[[1]])
   add_block <- function(.x) {
     if (unique(data$game_id) == "384311706735365") {
-      mutate(.x, block = cumsum(type == "learn"))
+      mutate(.x, Block = cumsum(Type == "learn"))
     } else if ("phase" %in% data_names) {
-      rename(.x, block = phase)
+      rename(.x, Block = phase)
     } else {
-      mutate(.x, block = row_number())
+      mutate(.x, Block = row_number())
     }
   }
-  if (!"block" %in% data_names) {
+  if (!"Block" %in% data_names) {
     data$raw_parsed <- map(
       data$raw_parsed,
       add_block
@@ -121,16 +121,16 @@ slice_data_blocks <- function(data) {
       parts = map(
         raw_parsed,
         ~ {
-          blocks <- unique(.x$block)
+          blocks <- unique(.x$Block)
           tibble(
             part = seq_along(blocks) / length(blocks),
-            block = accumulate(blocks, c)
+            Block = accumulate(blocks, c)
           ) |>
             filter(part != 1) |>
-            unchop(block) |>
+            unchop(Block) |>
             inner_join(
               .x,
-              by = join_by(block),
+              by = join_by(Block),
               relationship = "many-to-many"
             ) |>
             nest(.by = part, .key = "raw_parsed")

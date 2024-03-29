@@ -26,7 +26,7 @@ correct_mst <- function(data) {
     mutate(
       raw_parsed = lapply(
         raw_parsed,
-        \(raw_parsed) filter(raw_parsed, phase == "test")
+        \(raw_parsed) filter(raw_parsed, Phase == "test")
       )
     )
 }
@@ -37,7 +37,7 @@ correct_rt <- function(data, adjust) {
     mutate(
       raw_parsed = lapply(
         raw_parsed,
-        \(raw_parsed) mutate(raw_parsed, rt = rt + adjust)
+        \(raw_parsed) mutate(raw_parsed, RT = RT + adjust)
       )
     )
 }
@@ -46,11 +46,11 @@ correct_rt <- function(data, adjust) {
 correct_device_issue <- function(raw_parsed, game_version) {
   raw_parsed |>
     mutate(
-      device = if_else(
+      Device = if_else(
         # 1.0.0 erroneously records device for right resp as "mouse"
-        resp == "right" & game_version == "1.0.0",
+        Resp == "right" & game_version == "1.0.0",
         "keyboard",
-        device
+        Device
       )
     )
 }

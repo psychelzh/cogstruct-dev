@@ -58,11 +58,10 @@ tar_validate_rawdata <- function(contents) {
   }
   contents |>
     dplyr::distinct(game_id) |>
-    dplyr::inner_join(data.iquizoo::game_info, by = "game_id") |>
     dplyr::left_join(game_data_names, by = "game_id") |>
     dplyr::left_join(config_data_correction, by = "game_id") |>
     dplyr::mutate(
-      require_keyboard = game_name %in% games_keyboard,
+      require_keyboard = game_id %in% game_id_keyboard,
       tar_name_data_valid = rlang::syms(sprintf("data_valid_%s", game_id))
     ) |>
     tidyr::nest(.by = c(game_id, correction)) |>

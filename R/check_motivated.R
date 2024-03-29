@@ -11,7 +11,7 @@ check_prop_miss <- function(data, name_acc, name_rt) {
 
 check_prop_miss_go <- function(data, name_acc, name_rt) {
   check_prop_miss(
-    filter(data, type == "go"),
+    filter(data, Type == "Go"),
     name_acc = name_acc,
     name_rt = name_rt
   )
@@ -39,7 +39,7 @@ check_fast_guess_items <- function(data, name_rt, thresh_rt) {
 
 check_fast_guess_rapm <- function(data, name_rt, thresh_rt) {
   data |>
-    filter(block == 2) |>
+    filter(Block == 2) |>
     check_fast_guess_items(
       name_rt = name_rt,
       thresh_rt = thresh_rt
@@ -75,7 +75,7 @@ check_pe <- function(data, chance, name_acc) {
 
 check_pe_nback <- function(data, chance, name_acc) {
   check_pe(
-    filter(data, type != "filler"),
+    filter(data, Type != "Filler"),
     chance = chance,
     name_acc = name_acc
   )
@@ -83,7 +83,7 @@ check_pe_nback <- function(data, chance, name_acc) {
 
 check_pe_go <- function(data, chance, name_acc) {
   check_pe(
-    filter(data, type == "go"),
+    filter(data, Type == "Go"),
     chance = chance,
     name_acc = name_acc
   )
@@ -103,6 +103,7 @@ check_ne <- function(data) {
 
 # check correct proportions ----
 check_pc <- function(data, thresh_pc, name_acc) {
+  stopifnot(has_name(data, name_acc))
   acc <- data[[name_acc]]
   if (is.character(acc)) {
     acc <- unlist(str_split(acc, "\\D"))
@@ -141,7 +142,7 @@ check_pc_supp <- function(data, thresh_pc, name_acc_supp) {
 
 check_pc_stop <- function(data) {
   between(
-    mean(data$acc[data$type != "go"] == 1),
+    mean(data$ACC[data$Type != "Go"] == 1),
     0.25, 0.75
   )
 }
@@ -154,14 +155,14 @@ check_min_move <- function(data) {
 # special case for SynWin ----
 check_synwin <- function(data) {
   is_valid_cake <- data |>
-    filter(status %in% c("flip", "drag")) |>
-    check_pc(thresh_pc = 0.25, name_acc = "acc")
+    filter(Status %in% c("flip", "drag")) |>
+    check_pc(thresh_pc = 0.25, name_acc = "ACC")
   is_valid_soup <- data |>
-    filter(status %in% 0:10) |>
-    check_pc(thresh_pc = 0.5, name_acc = "acc")
+    filter(Status %in% 0:10) |>
+    check_pc(thresh_pc = 0.5, name_acc = "ACC")
   is_valid_oven <- data |>
-    filter(status %in% c("low", "high")) |>
-    check_pe(chance = 0.5, name_acc = "acc")
+    filter(Status %in% c("low", "high")) |>
+    check_pe(chance = 0.5, name_acc = "ACC")
   is_valid_cake & is_valid_soup & is_valid_oven
 }
 
@@ -169,9 +170,9 @@ check_synwin <- function(data) {
 check_jlo <- function(data) {
   mean(
     preproc.iquizoo:::calc_angle_err(
-      data$resp, data$angle,
-      resp_anti = "left",
-      resp_clock = "right"
+      data$Resp, data$Angle,
+      resp_anti = "Left",
+      resp_clock = "Right"
     ) > 6
   ) < 0.25
 }

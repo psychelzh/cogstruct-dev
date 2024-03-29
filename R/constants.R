@@ -23,7 +23,10 @@ thresh_prop_guess <- 0.25
 thresh_prop_invalid <- 0.2 # consistent with my CC paper
 
 # used in raw data validation
-games_keyboard <- readr::read_lines("config/games_keyboard")
+game_id_keyboard <- readr::read_csv(
+  "config/games_keyboard.csv",
+  col_types = readr::cols(game_id = "I")
+)$game_id
 game_data_names <- readr::read_csv(
   "config/game_data_names.csv",
   col_types = readr::cols(game_id = "I")
