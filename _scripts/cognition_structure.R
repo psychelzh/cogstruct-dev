@@ -90,7 +90,6 @@ list(
   tar_target(
     file_config_dims,
     config_dims_alternatives |>
-      mutate(variable = match_name_cn_short(manifest)) |>
       writexl::write_xlsx("_output/config_dims.xlsx"),
     format = "file"
   ),
@@ -99,7 +98,7 @@ list(
     gofs,
     zutils::select_list(targets_cfa, starts_with("gof")),
     command = list(!!!.x) |>
-      map(\(x) as_tibble(x)) |>
+      map(as_tibble) |>
       bind_rows(.id = ".id") |>
       zutils::separate_wider_dsv(
         ".id",
