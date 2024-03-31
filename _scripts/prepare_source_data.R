@@ -17,8 +17,7 @@ contents <- tarflow.iquizoo::fetch_iquizoo_mem()(
 targets_preproc <- tarchetypes::tar_map(
   values = contents |>
     dplyr::distinct(game_id) |>
-    data.iquizoo::match_preproc(
-      type = "inner",
+    data.iquizoo::merge_preproc(
       rm_tagged = TRUE # the tagged are experimental or unavailable
     ) |>
     dplyr::mutate(

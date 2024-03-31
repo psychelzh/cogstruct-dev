@@ -9,7 +9,11 @@ censor_indices <- function(indices, subset, users_completed, res_motivated,
       row_number(desc(game_time)) == 1,
       .by = c(user_id, game_id, index_name, {{ id_cols_extra }})
     ) |>
-    data.iquizoo::screen_indices() |>
+    inner_join(
+      data.iquizoo::game_indices,
+      by = join_by(game_id, index_name == index_main)
+    ) |>
+    mutate(score_adj = if_else(index_reverse, -score, score)) |>
     mutate(
       game_index = game_id |>
         data.iquizoo::match_info(to = "game_name_abbr") |>

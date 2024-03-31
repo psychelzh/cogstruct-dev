@@ -146,7 +146,7 @@ tar_check_motivated <- function(config) {
 tar_partition_rawdata <- function(contents) {
   contents |>
     dplyr::distinct(game_id) |>
-    data.iquizoo::match_preproc(type = "inner") |>
+    data.iquizoo::merge_preproc() |>
     dplyr::inner_join(config_format, by = "game_id") |>
     dplyr::filter(!is.na(format)) |>
     dplyr::mutate(

@@ -24,7 +24,7 @@ prepare_config_cpm_data <- function(...) {
 prepare_config_retest <- function(contents, name_suffix = NULL) {
   contents |>
     dplyr::distinct(game_id) |>
-    data.iquizoo::match_preproc(type = "semi", rm_tagged = TRUE) |>
+    data.iquizoo::merge_preproc(filter_only = TRUE, rm_tagged = TRUE) |>
     dplyr::left_join(data.iquizoo::game_info, by = "game_id") |>
     dplyr::mutate(
       dplyr::across(dplyr::contains("game_id"), as.character),

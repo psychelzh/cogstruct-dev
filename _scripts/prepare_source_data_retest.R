@@ -30,7 +30,7 @@ contents <- tarflow.iquizoo::fetch_iquizoo_mem()(
 targets_preproc <- tarflow.iquizoo::tar_prep_raw(
   contents |>
     dplyr::distinct(game_id) |>
-    data.iquizoo::match_preproc(type = "semi", rm_tagged = TRUE),
+    data.iquizoo::merge_preproc(filter_only = TRUE, rm_tagged = TRUE),
   name_parsed = "data_valid",
   action_raw_data = "preproc"
 )
