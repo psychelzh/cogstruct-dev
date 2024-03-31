@@ -987,16 +987,16 @@
     },
     "data.iquizoo": {
       "Package": "data.iquizoo",
-      "Version": "2024.02.23",
+      "Version": "2024.03.29-1",
       "Source": "Repository",
-      "Repository": "https://psychelzh.r-universe.dev",
+      "Repository": "psychelzh",
       "Requirements": [
         "R",
         "bit64",
         "dplyr",
         "utils"
       ],
-      "Hash": "4bd768d28c06ae102f4abc89869ae732"
+      "Hash": "d651c9717f344c8534814dc726182083"
     },
     "data.table": {
       "Package": "data.table",
@@ -2016,7 +2016,7 @@
     },
     "igraph": {
       "Package": "igraph",
-      "Version": "2.0.2",
+      "Version": "2.0.3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -2035,7 +2035,7 @@
         "utils",
         "vctrs"
       ],
-      "Hash": "e3baa015afa83d9f1b748db5a2aedb5a"
+      "Hash": "c3b7d801d722e26e4cd888e042bf9af5"
     },
     "ini": {
       "Package": "ini",
@@ -2871,9 +2871,9 @@
     },
     "preproc.iquizoo": {
       "Package": "preproc.iquizoo",
-      "Version": "2.6.3",
+      "Version": "2.7.0",
       "Source": "Repository",
-      "Repository": "https://psychelzh.r-universe.dev",
+      "Repository": "psychelzh",
       "Requirements": [
         "R",
         "dplyr",
@@ -2887,7 +2887,7 @@
         "utils",
         "vctrs"
       ],
-      "Hash": "6c2bc9f87d48d028de79998c93c569fb"
+      "Hash": "60f28b4949ae98f9e05276d80bef00b0"
     },
     "prettyunits": {
       "Package": "prettyunits",
@@ -3739,7 +3739,7 @@
     },
     "tarchetypes": {
       "Package": "tarchetypes",
-      "Version": "0.7.12",
+      "Version": "0.8.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -3756,33 +3756,30 @@
         "vctrs",
         "withr"
       ],
-      "Hash": "27cbcc70b864c0df53cd454f062ac581"
+      "Hash": "38eddad863e58b95761d967887d7b59a"
     },
     "tarflow.iquizoo": {
       "Package": "tarflow.iquizoo",
-      "Version": "3.9.3",
+      "Version": "3.10.1",
       "Source": "Repository",
-      "Repository": "https://psychelzh.r-universe.dev",
+      "Repository": "psychelzh",
       "Requirements": [
         "DBI",
         "R",
         "cachem",
         "cli",
         "data.iquizoo",
-        "dplyr",
         "memoise",
-        "purrr",
         "rlang",
         "stringr",
         "tarchetypes",
-        "targets",
-        "tidyr"
+        "targets"
       ],
-      "Hash": "f38272e0c53ce32b76a1dd3be427bb12"
+      "Hash": "c01124dd25eddf1458352695c839b5ce"
     },
     "targets": {
       "Package": "targets",
-      "Version": "1.5.1",
+      "Version": "1.6.0",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -3807,7 +3804,7 @@
         "vctrs",
         "yaml"
       ],
-      "Hash": "782fd3684f0e7b9d2c7229fee21d01c0"
+      "Hash": "35b83348e5cf547715687c93ce5c2126"
     },
     "testthat": {
       "Package": "testthat",
