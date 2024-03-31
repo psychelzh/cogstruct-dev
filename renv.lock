@@ -987,16 +987,14 @@
     },
     "data.iquizoo": {
       "Package": "data.iquizoo",
-      "Version": "2024.03.29-1",
+      "Version": "2024.03.31-2",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
         "R",
-        "bit64",
-        "dplyr",
-        "utils"
+        "bit64"
       ],
-      "Hash": "d651c9717f344c8534814dc726182083"
+      "Hash": "f0bc5e3610a075931399c99672db6802"
     },
     "data.table": {
       "Package": "data.table",
@@ -3760,7 +3758,7 @@
     },
     "tarflow.iquizoo": {
       "Package": "tarflow.iquizoo",
-      "Version": "3.10.1",
+      "Version": "3.10.2",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
@@ -3775,7 +3773,7 @@
         "tarchetypes",
         "targets"
       ],
-      "Hash": "c01124dd25eddf1458352695c839b5ce"
+      "Hash": "34b410bab8bfdfaa8faa4797810602a5"
     },
     "targets": {
       "Package": "targets",
