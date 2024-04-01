@@ -46,23 +46,6 @@ targets_test_retest_slices <- tar_test_retest(
   extra_by = "part"
 )
 
-targets_data_names <- tarchetypes::tar_map(
-  dplyr::distinct(contents, game_id) |>
-    dplyr::mutate(
-      game_id = as.character(game_id),
-      tar_parsed = rlang::syms(
-        sprintf("raw_data_parsed_%s", game_id)
-      )
-    ),
-  names = game_id,
-  tar_target(
-    data_names,
-    tar_parsed |>
-      mutate(col_names = map(raw_parsed, names)) |>
-      distinct(pick(c("game_id", "col_names")))
-  )
-)
-
 # Replace the target list below with your own:
 list(
   tarflow.iquizoo::tar_prep_iquizoo(
@@ -70,11 +53,6 @@ list(
     what = "raw_data", # change to "scores" or "raw_data" if you want to
     action_raw_data = "parse",
     check_progress = FALSE # set as `FALSE` if projects finalized
-  ),
-  targets_data_names,
-  tarchetypes::tar_combine(
-    data_names,
-    targets_data_names$data_names
   ),
   tar_validate_rawdata(contents),
   targets_preproc,
