@@ -1,9 +1,5 @@
 clean_retest <- function(indices, extra_by = NULL) {
   indices_clean <- indices |>
-    semi_join(
-      data.iquizoo::game_indices,
-      by = join_by(game_id, index_name == index_main)
-    ) |>
     filter(is.finite(score)) |>
     mutate(ver_major = str_extract(game_version, "\\d")) |>
     group_by(user_id, ver_major, index_name, pick(all_of(extra_by))) |>
