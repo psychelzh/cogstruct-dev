@@ -39,30 +39,23 @@ clean_retest <- function(indices, extra_by = NULL) {
     )
 }
 
-calc_test_retest <- function(indices_retest, extra_by = NULL) {
+calc_test_retest <- function(data, ..., col_test = test, col_retest = retest) {
   bind_rows(
-    raw = indices_retest,
-    rm_out = indices_retest |>
+    raw = data,
+    rm_out = data |>
       filter(
         !possibly(
-          ~ performance::check_outliers(
-            .x,
-            method = "mcd"
-          ),
-          # treat all as normal if failed
-          otherwise = FALSE
-        )(pick(test, retest)),
-        .by = c(ver_major, index_name, all_of(extra_by))
+          performance::check_outliers,
+          otherwise = FALSE # treat all as normal if failed
+        )(data, method = "mcd")
       ),
     .id = "origin"
   ) |>
-    reframe(
-      tibble(
-        n = n(),
-        r = cor(test, retest),
-        # use ICC(2, 1)
-        icc = psych::ICC(pick(test, retest))$results$ICC[[2]]
-      ),
-      .by = c(origin, ver_major, index_name, all_of(extra_by))
+    summarise(
+      n = n(),
+      r = cor({{ col_test }}, {{ col_retest }}),
+      # use ICC(2, 1)
+      icc = psych::ICC(pick({{ col_test }}, {{ col_retest }}))$results$ICC[[2]],
+      .by = "origin"
     )
 }

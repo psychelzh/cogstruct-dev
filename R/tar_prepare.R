@@ -22,6 +22,7 @@ prepare_config_cpm_data <- function(...) {
 }
 
 prepare_config_retest <- function(contents, name_suffix = NULL) {
+  name_suffix <- if (is.null(name_suffix)) "" else paste0("_", name_suffix)
   contents |>
     dplyr::distinct(game_id) |>
     data.iquizoo::merge_preproc(filter_only = TRUE, rm_tagged = TRUE) |>
@@ -30,16 +31,6 @@ prepare_config_retest <- function(contents, name_suffix = NULL) {
       dplyr::across(dplyr::contains("game_id"), as.character),
       game_id_real = dplyr::coalesce(game_id_parallel, game_id)
     ) |>
-    dplyr::mutate(
-      tar_indices = lapply(
-        game_id,
-        \(game_id) {
-          as.symbol(
-            paste(c("indices", name_suffix, game_id), collapse = "_")
-          )
-        }
-      )
-    ) |>
-    dplyr::select(game_id = game_id_real, tar_indices) |>
-    tidyr::chop(tar_indices)
+    dplyr::select(game_id_real, game_id) |>
+    tidyr::chop(game_id)
 }

@@ -180,34 +180,46 @@ tar_partition_rawdata <- function(contents) {
 
 # item analysis related ----
 tar_test_retest <- function(contents, ...,
+                            cols_by = c("ver_major", "index_name"),
                             name_suffix = NULL,
                             extra_by = NULL) {
   rlang::check_dots_empty()
-  tar_name_indices_retest <- paste(
-    c("indices_retest", name_suffix),
-    collapse = "_"
-  )
-  tar_name_test_retest <- paste(
-    c("test_retest", name_suffix),
-    collapse = "_"
-  )
-  tarchetypes::tar_map(
-    prepare_config_retest(contents, name_suffix),
-    names = game_id,
-    tar_target_raw(
-      tar_name_indices_retest,
-      substitute(clean_retest(bind_rows(tar_indices), extra_by))
-    ),
-    tar_target_raw(
-      tar_name_test_retest,
-      bquote(
-        if (!is.null(.(as.symbol(tar_name_indices_retest)))) {
-          calc_test_retest(
-            .(as.symbol(tar_name_indices_retest)),
-            .(substitute(extra_by))
+  name_suffix <- if (is.null(name_suffix)) "" else paste0("_", name_suffix)
+  values <- prepare_config_retest(contents)
+  list(
+    indices_retest = purrr::pmap(
+      values,
+      \(game_id_real, game_id) {
+        indices <- rlang::syms(sprintf("indices%s_%s", name_suffix, game_id))
+        tar_target_raw(
+          sprintf("indices_retest%s_%s", name_suffix, game_id_real),
+          bquote(
+            clean_retest(bind_rows(..(indices)), .(extra_by)),
+            splice = TRUE
           )
-        }
-      )
+        )
+      }
+    ),
+    test_retest = purrr::pmap(
+      values,
+      \(game_id_real, ...) {
+        indices_retest <- as.symbol(
+          sprintf("indices_retest%s_%s", name_suffix, game_id_real)
+        )
+        tar_target_raw(
+          sprintf("test_retest%s_%s", name_suffix, game_id_real),
+          bquote(
+            if (!is.null(.(indices_retest))) {
+              # https://github.com/tidyverse/dplyr/issues/7008
+              # `reframe()` is preferable but there is some issue
+              .(indices_retest) |>
+                group_by(pick(.(c(cols_by, extra_by)))) |>
+                group_modify(calc_test_retest) |>
+                ungroup()
+            }
+          )
+        )
+      }
     )
   )
 }

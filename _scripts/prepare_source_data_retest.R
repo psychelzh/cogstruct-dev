@@ -46,6 +46,31 @@ targets_test_retest_slices <- tar_test_retest(
   extra_by = "part"
 )
 
+targets_hddm <- tarchetypes::tar_map(
+  fs::dir_ls("data/hddm_retest", regexp = "indices") |>
+    tibble::as_tibble_col("file") |>
+    dplyr::mutate(
+      game_id = stringr::str_extract(fs::path_file(file), "^[:alnum:]+") |>
+        data.iquizoo::match_info("game_id", "game_name_abbr") |>
+        as.character(),
+      indices_retest = rlang::syms(sprintf("indices_retest_%s", game_id)),
+    ) |>
+    tidyr::chop(file),
+  names = game_id,
+  tar_target(
+    indices_retest_hddm,
+    read_csv(file, col_types = cols(user_id = "I")) |>
+      semi_join(indices_retest, by = "user_id")
+  ),
+  tar_target(
+    test_retest_hddm,
+    indices_retest_hddm |>
+      group_by(index_name) |>
+      group_modify(calc_test_retest) |>
+      ungroup()
+  )
+)
+
 # Replace the target list below with your own:
 list(
   tarflow.iquizoo::tar_prep_iquizoo(
@@ -97,5 +122,17 @@ list(
       test_retest_slices,
       add_column(test_retest, part = 1)
     )
+  ),
+  # hddm
+  targets_hddm,
+  tarchetypes::tar_combine(
+    test_retest_hddm,
+    targets_hddm$test_retest_hddm,
+    command = bind_rows(!!!.x, .id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id", "game_id",
+        prefix = "test_retest_hddm"
+      ) |>
+      mutate(game_id = bit64::as.integer64(game_id))
   )
 )
