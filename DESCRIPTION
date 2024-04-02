@@ -49,6 +49,7 @@ Imports:
     RMariaDB,
     semTools,
     skimr,
+    snakecase,
     tarchetypes,
     tarflow.iquizoo,
     targets,

@@ -81,6 +81,20 @@ list(
         )
       )
   ),
+  # extract brain volume ----
+  tarchetypes::tar_file_read(
+    stats_brain_volume,
+    fs::path("data", "brain_vol_stats.csv"),
+    read = read_csv(!!.x, show_col_types = FALSE) |>
+      mutate(name = snakecase::to_snake_case(name)) |>
+      pivot_wider(id_cols = subj_id, names_from = name, values_from = volume) |>
+      mutate(
+        user_id = data.camp::users_id_mapping[subj_id],
+        .keep = "unused",
+        .before = 1
+      ) |>
+      column_to_rownames("user_id")
+  ),
   # extract mean frame-wise displacement (FD) ----
   targets_fd,
   tarchetypes::tar_combine(
