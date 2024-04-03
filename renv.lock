@@ -987,14 +987,14 @@
     },
     "data.iquizoo": {
       "Package": "data.iquizoo",
-      "Version": "2024.03.31-2",
+      "Version": "2024.04.03",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
         "R",
         "bit64"
       ],
-      "Hash": "f0bc5e3610a075931399c99672db6802"
+      "Hash": "f69d838d07d6e6bb17fcf19030bfc53f"
     },
     "data.table": {
       "Package": "data.table",
@@ -2869,13 +2869,12 @@
     },
     "preproc.iquizoo": {
       "Package": "preproc.iquizoo",
-      "Version": "2.7.0",
+      "Version": "2.8.0",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
         "R",
         "dplyr",
-        "jsonlite",
         "pracma",
         "purrr",
         "rlang",
@@ -2885,7 +2884,7 @@
         "utils",
         "vctrs"
       ],
-      "Hash": "60f28b4949ae98f9e05276d80bef00b0"
+      "Hash": "a4d62b13fc242b1fbd4973653f0adf8c"
     },
     "prettyunits": {
       "Package": "prettyunits",
@@ -3770,7 +3769,7 @@
     },
     "tarflow.iquizoo": {
       "Package": "tarflow.iquizoo",
-      "Version": "3.10.2",
+      "Version": "3.11.0",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
@@ -3779,13 +3778,14 @@
         "cachem",
         "cli",
         "data.iquizoo",
+        "jsonlite",
         "memoise",
         "rlang",
         "stringr",
         "tarchetypes",
         "targets"
       ],
-      "Hash": "34b410bab8bfdfaa8faa4797810602a5"
+      "Hash": "2f1e4448a87eecd116fe24fdd2372f3e"
     },
     "targets": {
       "Package": "targets",

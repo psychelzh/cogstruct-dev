@@ -38,7 +38,8 @@ tar_collect_camp <- function(contents) {
     raw_data_parsed = tarchetypes::tar_eval(
       tar_target(
         tar_name_data_parsed,
-        wrangle_data(tar_name_data_full)
+        parse_data(tar_name_data_full),
+        packages = "tarflow.iquizoo"
       ),
       config_contents
     )

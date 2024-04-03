@@ -28,7 +28,7 @@ targets_preproc <- tarchetypes::tar_map(
   tar_target(
     indices,
     preproc_data(tar_parsed, prep_fun, .input = input, .extra = extra),
-    packages = c("tarflow.iquizoo", "preproc.iquizoo")
+    packages = "preproc.iquizoo"
   ),
   tar_target(
     durations,
