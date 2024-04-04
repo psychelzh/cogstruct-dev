@@ -979,7 +979,7 @@
       "Package": "data.camp",
       "Version": "0.0.1",
       "Source": "Repository",
-      "Repository": "https://psychelzh.r-universe.dev",
+      "Repository": "psychelzh",
       "Requirements": [
         "R"
       ],
@@ -4250,7 +4250,7 @@
       "Package": "zutils",
       "Version": "0.0.10",
       "Source": "Repository",
-      "Repository": "https://psychelzh.r-universe.dev",
+      "Repository": "psychelzh",
       "Requirements": [
         "dplyr",
         "rlang",
