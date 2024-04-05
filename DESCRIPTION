@@ -13,6 +13,7 @@ Depends:
 Imports:
     Amelia,
     arrow,
+    brms,
     clustermq,
     corrplot,
     cpmr,
