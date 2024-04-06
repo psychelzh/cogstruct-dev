@@ -57,6 +57,5 @@ fit_wiener <- update(
   iter = 1000,
   warmup = 500,
   chains = 4,
-  cores = 4,
-  control = list(max_treedepth = 15, adapt_delta = 0.9)
+  cores = 4
 )
