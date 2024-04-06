@@ -46,9 +46,8 @@ fit_wiener <- update(
   newdata = data,
   init = initfun,
   file = file_save,
-  iter = 1000,
-  warmup = 500,
+  iter = 2000,
+  warmup = 1000,
   chains = 4,
-  cores = 4,
-  control = list(max_treedepth = 15, adapt_delta = 0.9)
+  cores = 4
 )
