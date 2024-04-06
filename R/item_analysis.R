@@ -47,7 +47,7 @@ calc_test_retest <- function(data, ..., col_test = test, col_retest = retest) {
         !possibly(
           performance::check_outliers,
           otherwise = FALSE # treat all as normal if failed
-        )(data, method = "mcd")
+        )(pick({{ col_test }}, {{ col_retest }}), method = "mcd")
       ),
     .id = "origin"
   ) |>
