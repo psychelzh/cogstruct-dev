@@ -1109,14 +1109,14 @@
     },
     "data.iquizoo": {
       "Package": "data.iquizoo",
-      "Version": "2024.04.03",
+      "Version": "2024.04.07",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
         "R",
         "bit64"
       ],
-      "Hash": "f69d838d07d6e6bb17fcf19030bfc53f"
+      "Hash": "7077c634c702aed1da46bdccddcd1628"
     },
     "data.table": {
       "Package": "data.table",
