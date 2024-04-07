@@ -3103,7 +3103,7 @@
     },
     "preproc.iquizoo": {
       "Package": "preproc.iquizoo",
-      "Version": "2.8.0",
+      "Version": "2.8.1",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
@@ -3118,7 +3118,7 @@
         "utils",
         "vctrs"
       ],
-      "Hash": "a4d62b13fc242b1fbd4973653f0adf8c"
+      "Hash": "91931ddcbf8dbae37cb78d04d617b940"
     },
     "prettyunits": {
       "Package": "prettyunits",
@@ -4053,7 +4053,7 @@
     },
     "tarflow.iquizoo": {
       "Package": "tarflow.iquizoo",
-      "Version": "3.11.1",
+      "Version": "3.11.3",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
@@ -4069,7 +4069,7 @@
         "tarchetypes",
         "targets"
       ],
-      "Hash": "e1c8cd436fb95f0b77c8e311a3abedf6"
+      "Hash": "9a00857d8b26515342cbe9cba243f058"
     },
     "targets": {
       "Package": "targets",

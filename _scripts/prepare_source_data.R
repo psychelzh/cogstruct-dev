@@ -27,8 +27,7 @@ targets_preproc <- tarchetypes::tar_map(
   names = game_id,
   tar_target(
     indices,
-    preproc_data(tar_parsed, prep_fun, .input = input, .extra = extra),
-    packages = "preproc.iquizoo"
+    preproc_data(tar_parsed, prep_fun, .input = input, .extra = extra)
   ),
   tar_target(
     durations,
