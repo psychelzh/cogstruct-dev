@@ -15,7 +15,7 @@ game_id_reasoning <- bit64::as.integer64(
   )
 )
 # we define here to be used in g factor resampling
-num_vars_total <- 76
+num_vars_total <- 78
 
 # used in data quality check
 thresh_prop_miss <- 0.25
