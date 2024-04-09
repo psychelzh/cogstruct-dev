@@ -7,7 +7,7 @@ tar_option_set(
 )
 setup_parallel_plan()
 
-config_cpm_data <- prepare_config_cpm_data(
+config_neural <- prepare_config_neural(
   xcpd == "gsr",
   run == "full"
 )
@@ -18,7 +18,7 @@ hypers_cpm <- hypers_cpm |>
   )
 cpm_branches <- tarchetypes::tar_map(
   tidyr::expand_grid(
-    config_cpm_data,
+    config_neural,
     hypers_cpm
   ),
   names = !all_of(names_exclude),
@@ -68,7 +68,7 @@ cpm_branches <- tarchetypes::tar_map(
 
 cpm_branches_perms <- tarchetypes::tar_map(
   tidyr::expand_grid(
-    config_cpm_data,
+    config_neural,
     hypers_cpm
   ),
   names = !all_of(names_exclude),
@@ -108,7 +108,7 @@ list(
     path_obj_from_proj("scores", "cognition_structure"),
     read = qs::qread(!!.x)
   ),
-  tar_prepare_cpm_data(config_cpm_data),
+  tar_prepare_neural_data(config_neural),
   cpm_branches,
   tarchetypes::tar_combine(
     cpm_performance,

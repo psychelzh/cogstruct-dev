@@ -8,7 +8,7 @@ prepare_config_vars <- function(num_vars_total, ...,
   out
 }
 
-prepare_config_cpm_data <- function(...) {
+prepare_config_neural <- function(...) {
   config_fc |>
     dplyr::filter(...) |>
     tidyr::unite("name_suffix_fc", everything(), remove = FALSE) |>

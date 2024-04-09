@@ -6,15 +6,15 @@ tar_option_set(
   controller = setup_crew_controller("bench_cpm")
 )
 setup_parallel_plan()
-bench_indices <- tibble::tibble(
+config_indices <- tibble::tibble(
   index = c("rapm", "g"),
   scores = rlang::syms(sprintf("scores_%s", index))
 )
-config_cpm_data <- prepare_config_cpm_data()
+config_neural <- prepare_config_neural()
 config_cpm <- tidyr::expand_grid(
-  config_cpm_data,
+  config_neural,
   hypers_cpm,
-  bench_indices
+  config_indices
 )
 names_exclude <- c(names_exclude, "scores")
 cpm_branches <- tarchetypes::tar_map(
@@ -87,7 +87,7 @@ list(
     path_obj_from_proj("scores_g_full", "g_factor"),
     read = qs::qread(!!.x)
   ),
-  tar_prepare_cpm_data(config_cpm_data),
+  tar_prepare_neural_data(config_neural),
   cpm_branches,
   tarchetypes::tar_combine(
     cpm_performance,

@@ -8,7 +8,7 @@ tar_option_set(
 setup_parallel_plan()
 
 config_vars <- prepare_config_vars(num_vars_total)
-config_cpm_data <- prepare_config_cpm_data(
+config_neural <- prepare_config_neural(
   xcpd == "gsr",
   task == "wm",
   run == "full"
@@ -84,7 +84,7 @@ branches_g <- tarchetypes::tar_map(
   ),
   tarchetypes::tar_map(
     tidyr::expand_grid(
-      config_cpm_data,
+      config_neural,
       hypers_cpm |>
         dplyr::filter(
           thresh_method == "alpha",
@@ -146,7 +146,7 @@ list(
     path_obj_from_proj("indices_rapm", "prepare_source_data"),
     read = qs::qread(!!.x)
   ),
-  tar_prepare_cpm_data(config_cpm_data),
+  tar_prepare_neural_data(config_neural),
   branches_g,
   tarchetypes::tar_combine(
     rel_pairs_g,

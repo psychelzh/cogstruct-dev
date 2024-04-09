@@ -281,7 +281,7 @@ tar_fit_cfa <- function(config, data, theory,
   )
 }
 
-tar_prepare_cpm_data <- function(config) {
+tar_prepare_neural_data <- function(config) {
   c(
     tarchetypes::tar_eval_raw(
       bquote(
