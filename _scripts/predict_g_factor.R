@@ -76,6 +76,39 @@ cpm_branches_perms <- tarchetypes::tar_map(
   )
 )
 
+targets_efficiency <- tarchetypes::tar_map(
+  tidyr::expand_grid(
+    config_neural,
+    params_efficiency
+  ),
+  names = !any_of(names_exclude),
+  tar_target(
+    efficiency,
+    prepare_efficiency(
+      qs::qread(file_fc),
+      weighted,
+      thresh_level
+    ),
+    retrieval = "worker",
+    storage = "worker"
+  ),
+  tarchetypes::tar_map(
+    config_indices,
+    names = !scores,
+    tar_target(
+      pred_efficiency,
+      {
+        subjs_keep <- intersect(
+          subjs_keep_neural,
+          rownames(scores)
+        )
+        cor.test(efficiency[subjs_keep], scores[subjs_keep, ]) |>
+          broom::tidy()
+      }
+    )
+  )
+)
+
 list(
   tarchetypes::tar_file_read(
     scores_rapm,
@@ -107,6 +140,40 @@ list(
       !!!.x,
       .names = setdiff(names(config_cpm), names_exclude),
       .prefix = "cpm_performance_perm"
+    ),
+    deployment = "main"
+  ),
+  tarchetypes::tar_file_read(
+    stats_brain_volume,
+    path_obj_from_proj("stats_brain_volume", "prepare_neural"),
+    read = qs::qread(!!.x)
+  ),
+  tar_target(
+    pred_brain_vol,
+    {
+      subjs_keep <- intersect(
+        subjs_keep_neural,
+        rownames(scores_g)
+      )
+      apply(
+        stats_brain_volume[subjs_keep, ],
+        2,
+        \(x) cor.test(x, scores_g[subjs_keep, ]) |> broom::tidy()
+      ) |>
+        list_rbind(names_to = "index_brain_vol")
+    }
+  ),
+  targets_efficiency,
+  tarchetypes::tar_combine(
+    pred_efficiency,
+    zutils::select_list(targets_efficiency, starts_with("pred_efficiency")),
+    command = bind_rows_meta(
+      !!!.x,
+      .names = setdiff(
+        c(names(config_neural), names(params_efficiency)),
+        names_exclude
+      ),
+      .prefix = "pred_efficiency"
     ),
     deployment = "main"
   )

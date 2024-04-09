@@ -132,6 +132,16 @@ config_fc <- dplyr::bind_rows(
     # backward compatibility
     .after = dplyr::last_col()
   )
+params_efficiency <- dplyr::bind_rows(
+  tibble::tibble(
+    weighted = TRUE,
+    thresh_level = 0
+  ),
+  tibble::tibble(
+    weighted = FALSE,
+    thresh_level = seq(0.1, 0.5, 0.1)
+  )
+)
 
 # used in CPM modeling building
 hypers_cpm <- dplyr::bind_rows(

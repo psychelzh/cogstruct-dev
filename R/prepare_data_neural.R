@@ -76,6 +76,15 @@ prepare_fd_mean <- function(meta) {
     as.matrix()
 }
 
+# efficiency-related ----
+prepare_efficiency <- function(fc, weighted, thresh_level) {
+  apply(
+    # converted to correlation values
+    tanh(fc), 1,
+    \(x) calc_efficiency(x, weighted, thresh_level)
+  )
+}
+
 # helper functions
 extract_bids_meta <- function(path_bids, path_bids_db, ...) {
   reticulate::use_condaenv("bids")
@@ -110,4 +119,22 @@ calc_fc <- function(path, cortical_only = FALSE) {
 
 fisher_cor <- function(ts) {
   atanh(cor(ts))
+}
+
+calc_efficiency <- function(fc, weighted = TRUE, thresh_level = 0) {
+  # assume pearson correlations (not Fisher transformed)
+  if (thresh_level > 0) {
+    fc <- ifelse(fc > thresh_level, fc, 0)
+  }
+  if (weighted) {
+    fc <- proxy::pr_simil2dist(fc)
+  } else {
+    fc <- as.numeric(fc > 0)
+  }
+  Rfast::squareform(fc) |>
+    igraph::graph_from_adjacency_matrix(
+      mode = "undirected",
+      weighted = weighted
+    ) |>
+    igraph::global_efficiency()
 }
