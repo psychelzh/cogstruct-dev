@@ -135,6 +135,111 @@ branches_g <- tarchetypes::tar_map(
   )
 )
 
+num_pairs_chc <- 20
+branches_g_chc <- tarchetypes::tar_map(
+  list(id_rsmp = seq_len(num_pairs_chc)),
+  tar_target(pairs_chc, resample_pairs_chc()),
+  tar_target(vars_chc, extract_vars_chc(pairs_chc)),
+  tar_target(num_vars_chc, allocate_num_vars_chc(vars_chc)),
+  tar_target(
+    vars_rsmp_chc,
+    replicate(100, lapply(vars_chc, sample, num_vars_chc), simplify = FALSE),
+    pattern = map(num_vars_chc),
+    iteration = "list"
+  ),
+  tar_target(
+    fit_g_chc,
+    lapply(
+      vars_rsmp_chc,
+      \(x) lapply(x, fit_efa_g, data = indices_cogstruct, missing = "ml")
+    ),
+    pattern = map(vars_rsmp_chc),
+    iteration = "list"
+  ),
+  tar_target(
+    scores_g_chc,
+    lapply(
+      fit_g_chc,
+      \(x) lapply(x, extract_g_scores, data = indices_cogstruct)
+    ),
+    pattern = map(fit_g_chc),
+    iteration = "list"
+  ),
+  tar_target(
+    rel_pairs_g_chc,
+    list_rbind(
+      lapply(
+        scores_g_chc,
+        \(x) tibble(r = as.vector(cor(x[[1]], x[[2]], use = "pairwise")))
+      ),
+      names_to = "id_rep"
+    ),
+    pattern = map(scores_g_chc),
+    iteration = "list"
+  ),
+  tarchetypes::tar_map(
+    tidyr::expand_grid(
+      config_neural,
+      hypers_cpm |>
+        dplyr::filter(
+          thresh_method == "alpha",
+          thresh_level == 0.01
+        )
+    ),
+    names = !all_of(names_exclude),
+    tar_target(
+      cpm_result_chc,
+      lapply(
+        scores_g_chc,
+        \(x) {
+          lapply(
+            x,
+            perform_cpm,
+            fc = qs::qread(file_fc),
+            confounds = match_confounds(users_confounds, fd),
+            subjs_keep_neural = subjs_keep_neural,
+            bias_correct = FALSE,
+            thresh_method = thresh_method,
+            thresh_level = thresh_level,
+            return_edges = "sum"
+          )
+        }
+      ),
+      pattern = map(scores_g_chc),
+      iteration = "list",
+      retrieval = "worker",
+      storage = "worker"
+    ),
+    tar_target(
+      dice_pairs_chc,
+      list_rbind(
+        lapply(cpm_result_chc, calc_dice_pairs, 0.5),
+        names_to = "id_rep"
+      ),
+      pattern = map(cpm_result_chc),
+      iteration = "list",
+      retrieval = "worker",
+      storage = "worker"
+    ),
+    tar_target(
+      cpm_performance_chc,
+      lapply(
+        cpm_result_chc,
+        \(result) {
+          list_rbind(
+            lapply(result, extract_cpm_performance),
+            names_to = "id_pairs"
+          )
+        }
+      ) |>
+        list_rbind(names_to = "id_rep"),
+      pattern = map(cpm_result_chc),
+      retrieval = "worker",
+      storage = "worker"
+    )
+  )
+)
+
 list(
   tarchetypes::tar_file_read(
     indices_cogstruct,
@@ -216,5 +321,6 @@ list(
   tar_target(
     scores_g_full,
     extract_g_scores(fit_g_full, data = indices_cogstruct)
-  )
+  ),
+  branches_g_chc
 )

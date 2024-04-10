@@ -14,3 +14,24 @@ resample_vars <- function(vars, num_vars, use_pairs = FALSE) {
     list(vars_sampled)
   }
 }
+
+resample_pairs_chc <- function() {
+  labels <- sample(unique(index_chc_labels))
+  half <- length(labels) / 2
+  list(labels[seq_len(half)], labels[seq_len(half) + half])
+}
+
+extract_vars_chc <- function(pairs_chc) {
+  lapply(
+    pairs_chc,
+    \(labels) {
+      names(index_chc_labels)[index_chc_labels %in% labels]
+    }
+  )
+}
+
+allocate_num_vars_chc <- function(vars_chc) {
+  num_vars_max <- min(lengths(vars_chc))
+  num_vars <- seq(3, num_vars_max, by = 3)
+  num_vars[choose(num_vars_max, num_vars) > 1000]
+}

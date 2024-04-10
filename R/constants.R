@@ -16,6 +16,12 @@ game_id_reasoning <- bit64::as.integer64(
 )
 # we define here to be used in g factor resampling
 num_vars_total <- 78
+index_chc_labels <- readr::read_csv(
+  "config/game_dims_theory.csv",
+  show_col_types = FALSE
+) |>
+  tidyr::unite("game_index", game_name_abbr, index_name, sep = ".") |>
+  dplyr::pull(label_chc, game_index)
 
 # used in data quality check
 thresh_prop_miss <- 0.25
