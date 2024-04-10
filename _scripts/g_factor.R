@@ -11,7 +11,8 @@ config_vars <- prepare_config_vars(num_vars_total)
 config_neural <- prepare_config_neural(
   xcpd == "gsr",
   task == "wm",
-  run == "full"
+  run == "full",
+  atlas == "4S256Parcels"
 )
 branches_g <- tarchetypes::tar_map(
   config_vars,

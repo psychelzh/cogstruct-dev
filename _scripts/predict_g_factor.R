@@ -10,7 +10,7 @@ config_indices <- tibble::tibble(
   index = c("rapm", "g"),
   scores = rlang::syms(sprintf("scores_%s", index))
 )
-config_neural <- prepare_config_neural()
+config_neural <- prepare_config_neural(atlas == "4S256Parcels", xcpd == "gsr")
 config_cpm <- tidyr::expand_grid(
   config_neural,
   hypers_cpm,
