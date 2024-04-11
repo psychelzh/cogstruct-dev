@@ -15,7 +15,7 @@ game_id_reasoning <- bit64::as.integer64(
   )
 )
 # we define here to be used in g factor resampling
-num_vars_total <- 78
+num_vars_total <- 77
 index_chc_labels <- readr::read_csv(
   "config/game_dims_theory.csv",
   show_col_types = FALSE

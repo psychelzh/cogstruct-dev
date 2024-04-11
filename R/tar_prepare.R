@@ -1,11 +1,20 @@
 prepare_config_vars <- function(num_vars_total, ...,
-                                step = 3, from = 3, use_pairs = TRUE) {
-  out <- tibble::tibble(num_vars = seq(from, num_vars_total, step)) |>
-    dplyr::filter(choose(num_vars_total, num_vars) > 1e4)
-  if (use_pairs) {
-    out$use_pairs <- out$num_vars * 2 <= num_vars_total
+                                step = 3, from = 3, use_pairs = NULL) {
+  out <- tibble::tibble(
+    num_vars = seq(from, num_vars_total, step),
+    n_reps = 100,
+  ) |>
+    dplyr::filter(choose(num_vars_total, num_vars) > 1000)
+  if (is.null(use_pairs)) {
+    use_pairs <- out$num_vars * 2 <= num_vars_total
   }
-  out
+  out$use_pairs <- use_pairs
+  out |>
+    tibble::add_row(
+      num_vars = num_vars_total,
+      n_reps = 1,
+      use_pairs = FALSE
+    )
 }
 
 prepare_config_neural <- function(...) {

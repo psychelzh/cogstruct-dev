@@ -7,12 +7,9 @@ prepare_source_data_retest:
 prepare_neural:
   script: _scripts/prepare_neural.R
   store: _targets/prepare_neural
-g_factor:
-  script: _scripts/g_factor.R
-  store: _targets/g_factor
-g_factor_cor_rapm:
-  script: _scripts/g_factor_cor_rapm.R
-  store: _targets/g_factor_cor_rapm
+resample_g_factor:
+  script: _scripts/resample_g_factor.R
+  store: _targets/resample_g_factor
 explore_factors:
   script: _scripts/explore_factors.R
   store: _targets/explore_factors
