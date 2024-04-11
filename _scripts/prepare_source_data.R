@@ -115,15 +115,22 @@ list(
       column_to_rownames("user_id") |>
       as.matrix()
   ),
+  # explicitly track game indices selection
+  tarchetypes::tar_file_read(
+    indices_filtering,
+    "config/indices_filtering.csv",
+    read = read_csv(!!.x, col_types = cols(game_id = "I"))
+  ),
   tar_target(
     indices_cogstruct_long,
-    censor_indices(
-      indices,
+    indices |>
       # RAMP is not included in structure exploration
-      game_id != game_id_rapm,
-      users_completed,
-      res_motivated
-    )
+      filter(game_id != game_id_rapm) |>
+      censor_indices(
+        indices_filtering,
+        users_completed,
+        res_motivated
+      )
   ),
   tar_target(users_clean, screen_users(indices_cogstruct_long)),
   tar_target(
@@ -133,8 +140,9 @@ list(
   tar_target(
     indices_rapm,
     indices |>
+      filter(game_id == game_id_rapm) |>
       censor_indices(
-        game_id == game_id_rapm,
+        indices_filtering,
         users_completed,
         res_motivated
       ) |>
@@ -150,13 +158,14 @@ list(
   ),
   tar_target(
     indices_slices_cogstruct_long,
-    censor_indices(
-      indices_slices,
-      game_id != game_id_rapm,
-      users_completed,
-      res_motivated,
-      id_cols_extra = part
-    )
+    indices_slices |>
+      filter(game_id != game_id_rapm) |>
+      censor_indices(
+        indices_filtering,
+        users_completed,
+        res_motivated,
+        id_cols_extra = part
+      )
   ),
   tar_target(
     indices_cogstruct_pool,
