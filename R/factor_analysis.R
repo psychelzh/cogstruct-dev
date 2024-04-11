@@ -167,7 +167,7 @@ extract_latent_scores <- function(fit, data = NULL) {
 }
 
 # Special for g factor estimation ----
-fit_efa_g <- function(data, vars, ...) {
+fit_efa_g <- function(data, vars = names(data), ...) {
   efa(
     data,
     ov.names = vars,
