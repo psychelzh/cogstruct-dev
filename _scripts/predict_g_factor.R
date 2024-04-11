@@ -116,9 +116,15 @@ list(
     read = qs::qread(!!.x)
   ),
   tarchetypes::tar_file_read(
-    scores_g,
-    path_obj_from_proj("scores_g_full", "g_factor"),
+    indices_cogstruct,
+    path_obj_from_proj("indices_cogstruct", "prepare_source_data"),
     read = qs::qread(!!.x)
+  ),
+  tar_target(
+    scores_g,
+    indices_cogstruct |>
+      fit_efa_g(missing = "ml") |>
+      extract_g_scores(data = indices_cogstruct)
   ),
   tar_prepare_neural_data(config_neural),
   cpm_branches,
