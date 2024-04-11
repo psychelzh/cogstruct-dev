@@ -7,7 +7,6 @@ tar_option_set(
 )
 setup_parallel_plan()
 
-config_vars <- prepare_config_vars(num_vars_total)
 config_neural <- prepare_config_neural(
   xcpd == "gsr",
   task == "wm",
@@ -19,20 +18,13 @@ hypers_cpm <- hypers_cpm |>
     thresh_method == "alpha",
     thresh_level == 0.01
   )
+
+config_vars <- prepare_config_vars(num_vars_total)
 branches_g <- tarchetypes::tar_map(
   config_vars,
-  tar_target(
-    vars_sample,
-    replicate(
-      n_reps,
-      resample_vars(names(indices_cogstruct), num_vars, use_pairs),
-      simplify = FALSE
-    ),
-    iteration = "list",
-    deployment = "main"
-  ),
   tar_calibrate_g(
-    vars_sample, indices_cogstruct,
+    resample_vars(names(indices_cogstruct), num_vars, use_pairs),
+    indices_cogstruct,
     data_rapm = indices_rapm,
     config_neural = config_neural,
     hypers_cpm = hypers_cpm
@@ -45,44 +37,24 @@ config_vars_no_rsn <- prepare_config_vars(
 )
 branches_g_no_rsn <- tarchetypes::tar_map(
   config_vars_no_rsn,
-  names = !c(n_reps, use_pairs),
-  tar_target(
-    vars_sample_no_rsn,
-    replicate(
-      n_reps,
-      resample_vars(
-        setdiff(names(indices_cogstruct), match_game_index(game_id_reasoning)),
-        num_vars
-      ),
-      simplify = FALSE
-    ),
-    iteration = "list",
-    deployment = "main"
-  ),
   tar_calibrate_g(
-    vars_sample_no_rsn,
+    resample_vars(
+      setdiff(names(indices_cogstruct), match_game_index(game_id_reasoning)),
+      num_vars
+    ),
     indices_cogstruct,
     name_suffix = "no_rsn",
     data_rapm = indices_rapm
   )
 )
 
-num_pairs_chc <- 10
+config_vars_chc <- prepare_config_vars_chc(10, 1)
 branches_g_chc <- tarchetypes::tar_map(
-  list(id_rsmp = seq_len(num_pairs_chc)),
-  tar_target(pairs_chc, resample_pairs_chc()),
-  tar_target(vars_chc, extract_vars_chc(pairs_chc)),
-  tar_target(num_vars_chc, allocate_num_vars_chc(vars_chc)),
-  tar_target(
-    vars_rsmp_chc,
-    replicate(100, lapply(vars_chc, sample, num_vars_chc), simplify = FALSE),
-    pattern = map(num_vars_chc),
-    iteration = "list"
-  ),
+  config_vars_chc,
+  names = !vars_pair,
   tar_calibrate_g(
-    vars_rsmp_chc,
+    lapply(vars_pair, sample, num_vars),
     indices_cogstruct,
-    is_pattern = TRUE,
     name_suffix = "chc",
     config_neural = config_neural,
     hypers_cpm = hypers_cpm
@@ -161,7 +133,7 @@ list(
     command = bind_rows_meta(
       !!!.x,
       .names = names(config_vars_no_rsn),
-      .prefix = "cor_rapm"
+      .prefix = "cor_rapm_no_rsn"
     )
   ),
   branches_g_chc

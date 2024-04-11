@@ -365,8 +365,8 @@ tar_prepare_neural_data <- function(config) {
 }
 
 # g factor ----
-tar_calibrate_g <- function(vars, data,
-                            is_pattern = FALSE,
+tar_calibrate_g <- function(expr, data,
+                            n_reps = 100,
                             name_suffix = NULL,
                             data_rapm = NULL,
                             config_neural = NULL,
@@ -376,15 +376,19 @@ tar_calibrate_g <- function(vars, data,
   sym <- function(x) as.symbol(chr(x))
   c(
     tar_target_raw(
+      chr("vars_sample"),
+      # note `expr` will return results as list type
+      substitute(replicate(n_reps, expr, simplify = FALSE)),
+      deployment = "main"
+    ),
+    tar_target_raw(
       chr("fit_g"),
-      substitute(
+      bquote(
         lapply(
-          vars,
-          \(x) lapply(x, fit_efa_g, data = data, missing = "ml")
+          .(sym("vars_sample")),
+          \(x) lapply(x, fit_efa_g, data = .(substitute(data)), missing = "ml")
         )
-      ),
-      pattern = if (is_pattern) substitute(map(vars)),
-      iteration = if (is_pattern) "list" else "vector"
+      )
     ),
     tar_target_raw(
       chr("comp_rel_g"),
@@ -402,9 +406,7 @@ tar_calibrate_g <- function(vars, data,
           ),
           names_to = "id_rep"
         )
-      ),
-      pattern = if (is_pattern) bquote(map(.(sym("fit_g")))),
-      iteration = if (is_pattern) "list" else "vector"
+      )
     ),
     tar_target_raw(
       chr("scores_g"),
@@ -413,9 +415,7 @@ tar_calibrate_g <- function(vars, data,
           .(sym("fit_g")),
           \(x) lapply(x, extract_g_scores, data = .(substitute(data)))
         )
-      ),
-      pattern = if (is_pattern) bquote(map(.(sym("fit_g")))),
-      iteration = if (is_pattern) "list" else "vector"
+      )
     ),
     tar_target_raw(
       chr("rel_pairs_g"),
@@ -431,9 +431,7 @@ tar_calibrate_g <- function(vars, data,
           ),
           names_to = "id_rep"
         )
-      ),
-      pattern = if (is_pattern) bquote(map(.(sym("scores_g")))),
-      iteration = if (is_pattern) "list" else "vector"
+      )
     ),
     if (!is.null(substitute(data_rapm))) {
       tar_target_raw(
@@ -456,17 +454,12 @@ tar_calibrate_g <- function(vars, data,
             ),
             names_to = "id_rep"
           )
-        ),
-        pattern = if (is_pattern) bquote(map(.(sym("scores_g")))),
-        iteration = if (is_pattern) "list" else "vector"
+        )
       )
     },
     if (!is.null(config_neural) && !is.null(hypers_cpm)) {
       tarchetypes::tar_map(
-        tidyr::expand_grid(
-          config_neural,
-          hypers_cpm
-        ),
+        tidyr::expand_grid(config_neural, hypers_cpm),
         names = !all_of(names_exclude),
         tar_target_raw(
           chr("cpm_result"),
@@ -488,8 +481,6 @@ tar_calibrate_g <- function(vars, data,
               }
             )
           ),
-          pattern = if (is_pattern) bquote(map(.(sym("scores_g")))),
-          iteration = if (is_pattern) "list" else "vector",
           retrieval = "worker",
           storage = "worker"
         ),
@@ -505,8 +496,6 @@ tar_calibrate_g <- function(vars, data,
               names_to = "id_rep"
             )
           ),
-          pattern = if (is_pattern) bquote(map(.(sym("cpm_result")))),
-          iteration = if (is_pattern) "list" else "vector",
           retrieval = "worker",
           storage = "worker"
         ),
@@ -524,8 +513,6 @@ tar_calibrate_g <- function(vars, data,
             ) |>
               list_rbind(names_to = "id_rep")
           ),
-          pattern = if (is_pattern) bquote(map(.(sym("cpm_result")))),
-          iteration = if (is_pattern) "list" else "vector",
           retrieval = "worker",
           storage = "worker"
         )
