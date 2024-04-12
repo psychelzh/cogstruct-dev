@@ -365,7 +365,7 @@ tar_prepare_neural_data <- function(config) {
 }
 
 # g factor ----
-tar_calibrate_g <- function(expr, data, n_reps,
+tar_calibrate_g <- function(expr, data, use_pairs, ...,
                             name_suffix = NULL,
                             data_rapm = NULL,
                             config_neural = NULL,
@@ -374,74 +374,72 @@ tar_calibrate_g <- function(expr, data, n_reps,
   chr <- function(x) paste0(x, suffix)
   sym <- function(x) as.symbol(chr(x))
   c(
-    tar_target_raw(
+    tarchetypes::tar_rep_raw(
       chr("vars_sample"),
-      # note `expr` will return results as list type
-      substitute(replicate(n_reps, expr, simplify = FALSE)),
-      deployment = "main",
-      iteration = "list"
+      substitute(expr),
+      ...,
+      iteration = "list",
+      deployment = "main"
     ),
-    tar_target_raw(
+    tarchetypes::tar_rep2_raw(
       chr("fit_g"),
       bquote(
-        lapply(
+        lapply_tar_batches(
           .(sym("vars_sample")),
           fit_efa_g,
           data = .(substitute(data)),
           missing = "ml"
         )
       ),
-      pattern = bquote(map(.(sym("vars_sample")))),
+      chr("vars_sample"),
       iteration = "list"
     ),
-    tar_target_raw(
+    tarchetypes::tar_rep2_raw(
       chr("comp_rel_g"),
       bquote(
-        lapply(
+        lapply_tar_batches(
           .(sym("fit_g")),
           \(x) tibble(comp_rel = unclass(semTools::compRelSEM(x$nf1)))
         ) |>
-          list_rbind(names_to = "id_pairs")
+          list_rbind_tar_batches(names_to = "id_pairs")
       ),
-      pattern = bquote(map(.(sym("fit_g")))),
+      chr("fit_g"),
       iteration = "list"
     ),
-    tar_target_raw(
+    tarchetypes::tar_rep2_raw(
       chr("scores_g"),
       bquote(
-        lapply(
+        lapply_tar_batches(
           .(sym("fit_g")),
           extract_g_scores,
           data = .(substitute(data))
         )
       ),
-      pattern = bquote(map(.(sym("fit_g")))),
-      deployment = "main",
+      chr("fit_g"),
       iteration = "list"
     ),
-    tar_target_raw(
+    tarchetypes::tar_rep2_raw(
       chr("rel_pairs_g"),
       bquote(
-        if (length(.(sym("scores_g"))) == 2) {
-          tibble(
-            r = as.vector(
+        tibble(
+          r = if (.(substitute(use_pairs))) {
+            as.vector(
               cor(
                 .(sym("scores_g"))[[1]],
                 .(sym("scores_g"))[[2]],
                 use = "pairwise"
               )
             )
-          )
-        }
+          }
+        )
       ),
-      pattern = bquote(map(.(sym("scores_g")))),
-      iteration = "list"
+      chr("scores_g")
     ),
     if (!is.null(substitute(data_rapm))) {
-      tar_target_raw(
+      tarchetypes::tar_rep2_raw(
         chr("cor_rapm"),
         bquote(
-          lapply(
+          lapply_tar_batches(
             .(sym("scores_g")),
             \(x) {
               .(substitute(data_rapm)) |>
@@ -449,21 +447,19 @@ tar_calibrate_g <- function(expr, data, n_reps,
                 summarise(r = cor(score, f1, use = "pairwise"))
             }
           ) |>
-            list_rbind(names_to = "id_pairs")
+            list_rbind_tar_batches(names_to = "id_pairs")
         ),
-        pattern = bquote(map(.(sym("scores_g")))),
-        deployment = "main",
-        iteration = "list"
+        chr("scores_g")
       )
     },
     if (!is.null(config_neural) && !is.null(hypers_cpm)) {
       tarchetypes::tar_map(
         tidyr::expand_grid(config_neural, hypers_cpm),
         names = !all_of(names_exclude),
-        tar_target_raw(
+        tarchetypes::tar_rep2_raw(
           chr("cpm_result"),
           bquote(
-            lapply(
+            lapply_tar_batches(
               .(sym("scores_g")),
               perform_cpm,
               fc = qs::qread(file_fc),
@@ -475,36 +471,34 @@ tar_calibrate_g <- function(expr, data, n_reps,
               return_edges = "sum"
             )
           ),
-          pattern = bquote(map(.(sym("scores_g")))),
+          chr("scores_g"),
           iteration = "list",
           retrieval = "worker",
           storage = "worker"
         ),
-        tar_target_raw(
+        tarchetypes::tar_rep2_raw(
           chr("dice_pairs"),
           bquote(
-            zutils::cautiously(calc_dice_pairs)(
-              .(sym("cpm_result")),
-              0.5
-            )
+            if (.(substitute(use_pairs))) {
+              calc_dice_pairs(.(sym("cpm_result")), 0.5)
+            } else {
+              tibble()
+            }
           ),
-          pattern = bquote(map(.(sym("cpm_result")))),
-          deployment = "main",
-          iteration = "list",
+          chr("cpm_result"),
           retrieval = "worker",
           storage = "worker"
         ),
-        tar_target_raw(
+        tarchetypes::tar_rep2_raw(
           chr("cpm_performance"),
           bquote(
-            list_rbind(
-              lapply(.(sym("cpm_result")), extract_cpm_performance),
-              names_to = "id_pairs"
-            )
+            lapply_tar_batches(
+              .(sym("cpm_result")),
+              extract_cpm_performance
+            ) |>
+              list_rbind_tar_batches(names_to = "id_pairs")
           ),
-          pattern = bquote(map(.(sym("cpm_result")))),
-          deployment = "main",
-          iteration = "list",
+          chr("cpm_result"),
           retrieval = "worker",
           storage = "worker"
         )

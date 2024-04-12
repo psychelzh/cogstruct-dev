@@ -25,10 +25,12 @@ branches_g <- tarchetypes::tar_map(
   tar_calibrate_g(
     resample_vars(names(indices_cogstruct), num_vars, use_pairs),
     indices_cogstruct,
-    n_reps,
+    use_pairs,
     data_rapm = indices_rapm,
     config_neural = config_neural,
-    hypers_cpm = hypers_cpm
+    hypers_cpm = hypers_cpm,
+    batches = 10,
+    reps = 10
   )
 )
 
@@ -44,9 +46,11 @@ branches_g_no_rsn <- tarchetypes::tar_map(
       num_vars
     ),
     indices_cogstruct,
-    n_reps,
+    use_pairs,
     name_suffix = "no_rsn",
-    data_rapm = indices_rapm
+    data_rapm = indices_rapm,
+    batches = 10,
+    reps = 10
   )
 )
 
@@ -57,10 +61,12 @@ branches_g_chc <- tarchetypes::tar_map(
   tar_calibrate_g(
     lapply(vars_pair, sample, num_vars),
     indices_cogstruct,
-    n_reps = 100,
+    use_pairs = TRUE,
     name_suffix = "chc",
     config_neural = config_neural,
-    hypers_cpm = hypers_cpm
+    hypers_cpm = hypers_cpm,
+    batches = 10,
+    reps = 10
   )
 )
 
@@ -76,6 +82,15 @@ list(
     read = qs::qread(!!.x)
   ),
   tar_prepare_neural_data(config_neural),
+  tar_calibrate_g(
+    list(names(indices_cogstruct)),
+    indices_cogstruct,
+    use_pairs = FALSE,
+    name_suffix = "full",
+    data_rapm = indices_rapm,
+    config_neural = config_neural,
+    hypers_cpm = hypers_cpm
+  ),
   branches_g,
   tarchetypes::tar_combine(
     rel_pairs_g,
@@ -128,6 +143,15 @@ list(
       .prefix = "dice_pairs"
     ),
     deployment = "main"
+  ),
+  tar_calibrate_g(
+    list(
+      setdiff(names(indices_cogstruct), match_game_index(game_id_reasoning))
+    ),
+    indices_cogstruct,
+    use_pairs = FALSE,
+    name_suffix = "no_rsn_full",
+    data_rapm = indices_rapm
   ),
   branches_g_no_rsn,
   tarchetypes::tar_combine(
