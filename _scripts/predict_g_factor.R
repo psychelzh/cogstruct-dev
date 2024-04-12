@@ -176,7 +176,7 @@ list(
     command = bind_rows_meta(
       !!!.x,
       .names = setdiff(
-        c(names(config_neural), names(params_efficiency)),
+        c("index", names(config_neural), names(params_efficiency)),
         names_exclude
       ),
       .prefix = "pred_efficiency"
