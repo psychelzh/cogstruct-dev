@@ -365,8 +365,7 @@ tar_prepare_neural_data <- function(config) {
 }
 
 # g factor ----
-tar_calibrate_g <- function(expr, data,
-                            n_reps = 100,
+tar_calibrate_g <- function(expr, data, n_reps,
                             name_suffix = NULL,
                             data_rapm = NULL,
                             config_neural = NULL,
@@ -379,82 +378,82 @@ tar_calibrate_g <- function(expr, data,
       chr("vars_sample"),
       # note `expr` will return results as list type
       substitute(replicate(n_reps, expr, simplify = FALSE)),
-      deployment = "main"
+      deployment = "main",
+      iteration = "list"
     ),
     tar_target_raw(
       chr("fit_g"),
       bquote(
         lapply(
           .(sym("vars_sample")),
-          \(x) lapply(x, fit_efa_g, data = .(substitute(data)), missing = "ml")
+          fit_efa_g,
+          data = .(substitute(data)),
+          missing = "ml"
         )
-      )
+      ),
+      pattern = bquote(map(.(sym("vars_sample")))),
+      iteration = "list"
     ),
     tar_target_raw(
       chr("comp_rel_g"),
       bquote(
-        list_rbind(
-          lapply(
-            .(sym("fit_g")),
-            \(fit) {
-              lapply(
-                fit,
-                \(x) tibble(comp_rel = unclass(semTools::compRelSEM(x$nf1)))
-              ) |>
-                list_rbind(names_to = "id_pairs")
-            }
-          ),
-          names_to = "id_rep"
-        )
-      )
+        lapply(
+          .(sym("fit_g")),
+          \(x) tibble(comp_rel = unclass(semTools::compRelSEM(x$nf1)))
+        ) |>
+          list_rbind(names_to = "id_pairs")
+      ),
+      pattern = bquote(map(.(sym("fit_g")))),
+      iteration = "list"
     ),
     tar_target_raw(
       chr("scores_g"),
       bquote(
         lapply(
           .(sym("fit_g")),
-          \(x) lapply(x, extract_g_scores, data = .(substitute(data)))
+          extract_g_scores,
+          data = .(substitute(data))
         )
-      )
+      ),
+      pattern = bquote(map(.(sym("fit_g")))),
+      deployment = "main",
+      iteration = "list"
     ),
     tar_target_raw(
       chr("rel_pairs_g"),
       bquote(
-        list_rbind(
-          lapply(
-            .(sym("scores_g")),
-            \(x) {
-              if (length(x) == 2) {
-                tibble(r = as.vector(cor(x[[1]], x[[2]], use = "pairwise")))
-              }
-            }
-          ),
-          names_to = "id_rep"
-        )
-      )
+        if (length(.(sym("scores_g"))) == 2) {
+          tibble(
+            r = as.vector(
+              cor(
+                .(sym("scores_g"))[[1]],
+                .(sym("scores_g"))[[2]],
+                use = "pairwise"
+              )
+            )
+          )
+        }
+      ),
+      pattern = bquote(map(.(sym("scores_g")))),
+      iteration = "list"
     ),
     if (!is.null(substitute(data_rapm))) {
       tar_target_raw(
         chr("cor_rapm"),
         bquote(
-          list_rbind(
-            lapply(
-              .(sym("scores_g")),
-              \(scores) {
-                lapply(
-                  scores,
-                  \(x) {
-                    .(substitute(data_rapm)) |>
-                      merge(x, by = "row.names") |>
-                      summarise(r = cor(score, f1, use = "pairwise"))
-                  }
-                ) |>
-                  list_rbind(names_to = "id_pairs")
-              }
-            ),
-            names_to = "id_rep"
-          )
-        )
+          lapply(
+            .(sym("scores_g")),
+            \(x) {
+              .(substitute(data_rapm)) |>
+                merge(x, by = "row.names") |>
+                summarise(r = cor(score, f1, use = "pairwise"))
+            }
+          ) |>
+            list_rbind(names_to = "id_pairs")
+        ),
+        pattern = bquote(map(.(sym("scores_g")))),
+        deployment = "main",
+        iteration = "list"
       )
     },
     if (!is.null(config_neural) && !is.null(hypers_cpm)) {
@@ -466,53 +465,46 @@ tar_calibrate_g <- function(expr, data,
           bquote(
             lapply(
               .(sym("scores_g")),
-              \(x) {
-                lapply(
-                  x,
-                  perform_cpm,
-                  fc = qs::qread(file_fc),
-                  confounds = match_confounds(users_confounds, fd),
-                  subjs_keep_neural = subjs_keep_neural,
-                  bias_correct = FALSE,
-                  thresh_method = thresh_method,
-                  thresh_level = thresh_level,
-                  return_edges = "sum"
-                )
-              }
+              perform_cpm,
+              fc = qs::qread(file_fc),
+              confounds = match_confounds(users_confounds, fd),
+              subjs_keep_neural = subjs_keep_neural,
+              bias_correct = FALSE,
+              thresh_method = thresh_method,
+              thresh_level = thresh_level,
+              return_edges = "sum"
             )
           ),
+          pattern = bquote(map(.(sym("scores_g")))),
+          iteration = "list",
           retrieval = "worker",
           storage = "worker"
         ),
         tar_target_raw(
           chr("dice_pairs"),
           bquote(
-            list_rbind(
-              lapply(
-                .(sym("cpm_result")),
-                zutils::cautiously(calc_dice_pairs, list()),
-                0.5
-              ),
-              names_to = "id_rep"
+            zutils::cautiously(calc_dice_pairs)(
+              .(sym("cpm_result")),
+              0.5
             )
           ),
+          pattern = bquote(map(.(sym("cpm_result")))),
+          deployment = "main",
+          iteration = "list",
           retrieval = "worker",
           storage = "worker"
         ),
         tar_target_raw(
           chr("cpm_performance"),
           bquote(
-            lapply(
-              .(sym("cpm_result")),
-              \(result) {
-                list_rbind(
-                  lapply(result, extract_cpm_performance),
-                  names_to = "id_pairs"
-                )
-              }
-            ) |>
-              list_rbind(names_to = "id_rep")
+            list_rbind(
+              lapply(.(sym("cpm_result")), extract_cpm_performance),
+              names_to = "id_pairs"
+            )
           ),
+          pattern = bquote(map(.(sym("cpm_result")))),
+          deployment = "main",
+          iteration = "list",
           retrieval = "worker",
           storage = "worker"
         )

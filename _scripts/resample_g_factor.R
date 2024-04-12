@@ -25,6 +25,7 @@ branches_g <- tarchetypes::tar_map(
   tar_calibrate_g(
     resample_vars(names(indices_cogstruct), num_vars, use_pairs),
     indices_cogstruct,
+    n_reps,
     data_rapm = indices_rapm,
     config_neural = config_neural,
     hypers_cpm = hypers_cpm
@@ -43,6 +44,7 @@ branches_g_no_rsn <- tarchetypes::tar_map(
       num_vars
     ),
     indices_cogstruct,
+    n_reps,
     name_suffix = "no_rsn",
     data_rapm = indices_rapm
   )
@@ -55,6 +57,7 @@ branches_g_chc <- tarchetypes::tar_map(
   tar_calibrate_g(
     lapply(vars_pair, sample, num_vars),
     indices_cogstruct,
+    n_reps = 100,
     name_suffix = "chc",
     config_neural = config_neural,
     hypers_cpm = hypers_cpm
