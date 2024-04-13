@@ -84,11 +84,7 @@ targets_efficiency <- tarchetypes::tar_map(
   names = !any_of(names_exclude),
   tar_target(
     efficiency,
-    prepare_efficiency(
-      qs::qread(file_fc),
-      weighted,
-      thresh_level
-    ),
+    prepare_efficiency(qs::qread(file_fc), weighted, thresh_level),
     retrieval = "worker",
     storage = "worker"
   ),
@@ -96,15 +92,8 @@ targets_efficiency <- tarchetypes::tar_map(
     config_indices,
     names = !scores,
     tar_target(
-      pred_efficiency,
-      {
-        subjs_keep <- intersect(
-          subjs_keep_neural,
-          rownames(scores)
-        )
-        cor.test(efficiency[subjs_keep], scores[subjs_keep, ]) |>
-          broom::tidy()
-      }
+      eff_performance,
+      predict_efficiency(efficiency[subjs_keep_neural, ], scores)
     )
   )
 )
@@ -171,15 +160,15 @@ list(
   ),
   targets_efficiency,
   tarchetypes::tar_combine(
-    pred_efficiency,
-    zutils::select_list(targets_efficiency, starts_with("pred_efficiency")),
+    eff_performance,
+    zutils::select_list(targets_efficiency, starts_with("eff_performance")),
     command = bind_rows_meta(
       !!!.x,
       .names = setdiff(
         c("index", names(config_neural), names(params_efficiency)),
         names_exclude
       ),
-      .prefix = "pred_efficiency"
+      .prefix = "eff_performance"
     ),
     deployment = "main"
   )
