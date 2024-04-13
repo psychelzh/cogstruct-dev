@@ -27,6 +27,7 @@ index_chc_labels <- readr::read_csv(
 thresh_prop_miss <- 0.25
 thresh_prop_guess <- 0.25
 thresh_prop_invalid <- 0.2 # consistent with my CC paper
+thresh_reliability <- 0.5 # consider low reliability
 
 # used in raw data validation
 game_id_keyboard <- readr::read_csv(

@@ -128,6 +128,43 @@ list(
     reshape_indices(indices_cogstruct_long, users_clean)
   ),
   tar_target(
+    file_test_retest,
+    path_obj_from_proj("test_retest", "prepare_source_data_retest"),
+    format = "file"
+  ),
+  tar_target(
+    indices_low_rel,
+    qs::qread(file_test_retest) |>
+      filter(origin == "rm_out") |>
+      semi_join(game_indices, by = join_by(game_id, index_name)) |>
+      mutate(game_index = match_game_index(game_id, index_name)) |>
+      filter(round(r, 2) < thresh_reliability) |>
+      pull(game_index)
+  ),
+  tar_target(file_games_censor, "config/games_censor.csv", format = "file"),
+  tar_target(
+    config_games_censor,
+    read_csv(file_games_censor, col_types = cols(game_id = "I")) |>
+      unite("game_index", game_name_abbr, index_name, sep = ".") |>
+      left_join(
+        enframe(psych::smc(indices_cogstruct), "game_index", "smc"),
+        by = "game_index"
+      ) |>
+      arrange(paradigm_censor, desc(smc)) |>
+      filter(!is.na(paradigm_censor)) |>
+      mutate(censor = row_number() > 1, .by = paradigm_censor)
+  ),
+  tar_target(
+    indices_cogstruct_games_censored,
+    indices_cogstruct |>
+      select(
+        !all_of(c(
+          indices_low_rel,
+          with(config_games_censor, game_index[censor])
+        ))
+      )
+  ),
+  tar_target(
     indices_rapm,
     indices |>
       filter(game_id == game_id_rapm) |>
