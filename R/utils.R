@@ -14,9 +14,7 @@ path_obj_from_proj <- function(object, project) {
 match_game_index <- function(game_id, index_name = NULL) {
   game_name_abbr <- data.iquizoo::match_info(game_id, "game_name_abbr")
   if (is.null(index_name)) {
-    index_name <- data.iquizoo::game_indices |>
-      filter(game_id %in% {{ game_id }}) |>
-      pull(index_main)
+    index_name <- game_indices$index_name[game_indices$game_id %in% game_id]
     if (length(index_name) != length(game_id)) {
       stop(
         "Some game does not match single index name. ",
