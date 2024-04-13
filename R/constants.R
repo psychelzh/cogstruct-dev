@@ -51,6 +51,10 @@ config_data_correction <- readr::read_csv(
   "config/game_data_correction.csv",
   col_types = readr::cols(game_id = "I")
 )
+game_indices <- readr::read_csv(
+  "config/game_indices.csv",
+  col_types = readr::cols(game_id = "I")
+)
 
 # used in cfa modeling building
 hypers_config_dims <- tibble::tibble(

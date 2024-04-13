@@ -1,5 +1,4 @@
-censor_indices <- function(indices, indices_filtering,
-                           users_completed, res_motivated,
+censor_indices <- function(indices, users_completed, res_motivated,
                            id_cols_extra = NULL) {
   indices |>
     # remove users who did not complete the experiment
@@ -9,12 +8,10 @@ censor_indices <- function(indices, indices_filtering,
       row_number(desc(game_time)) == 1,
       .by = c(user_id, game_id, index_name, {{ id_cols_extra }})
     ) |>
-    inner_join(indices_filtering, by = join_by(game_id, index_name)) |>
-    mutate(score_adj = if_else(inverse, -score, score)) |>
+    inner_join(game_indices, by = join_by(game_id, index_name)) |>
     mutate(
-      game_index = game_id |>
-        data.iquizoo::match_info(to = "game_name_abbr") |>
-        str_c(index_name, sep = ".")
+      score_adj = if_else(inverse, -score, score),
+      game_index = match_game_index(game_id, index_name)
     ) |>
     left_join(
       res_motivated,
