@@ -1109,14 +1109,14 @@
     },
     "data.iquizoo": {
       "Package": "data.iquizoo",
-      "Version": "2024.04.07",
+      "Version": "2024.04.13",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
         "R",
         "bit64"
       ],
-      "Hash": "7077c634c702aed1da46bdccddcd1628"
+      "Hash": "892c939fb35d693fe51162431d4ff0e0"
     },
     "data.table": {
       "Package": "data.table",
@@ -2224,7 +2224,7 @@
     },
     "insight": {
       "Package": "insight",
-      "Version": "0.19.8",
+      "Version": "0.19.10",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -2233,7 +2233,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "adcc19435135a4d211e5aa2e48e4f6b7"
+      "Hash": "c15a38c9655cba66f5f5537a14c1bef4"
     },
     "isoband": {
       "Package": "isoband",
@@ -2606,14 +2606,14 @@
     },
     "mirai": {
       "Package": "mirai",
-      "Version": "0.12.1",
+      "Version": "0.13.2",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "R",
         "nanonext"
       ],
-      "Hash": "bd1a289ee0b2a824e6715b996bf949eb"
+      "Hash": "12a6c1acf684492a0f604407f9aacbf6"
     },
     "mnormt": {
       "Package": "mnormt",
@@ -2712,13 +2712,13 @@
     },
     "nanonext": {
       "Package": "nanonext",
-      "Version": "0.13.2",
+      "Version": "0.13.5.2",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
         "R"
       ],
-      "Hash": "32530fd4384ec2f63587c43e66d21883"
+      "Hash": "73bb5ffe0dcc72aac343674bd65e02ad"
     },
     "narray": {
       "Package": "narray",
@@ -2840,7 +2840,7 @@
     },
     "parameters": {
       "Package": "parameters",
-      "Version": "0.21.5",
+      "Version": "0.21.6",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -2853,7 +2853,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "0e17cb609f27608c8312a822d7d85cc2"
+      "Hash": "1f1bf75cb49c61df8287a0fa3b68126f"
     },
     "patchwork": {
       "Package": "patchwork",
