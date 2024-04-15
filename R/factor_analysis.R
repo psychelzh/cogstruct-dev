@@ -65,6 +65,40 @@ iterate_efa <- function(r, n_obs = 100) { # nolint: cyclocomp_linter.
   )
 }
 
+# for bootstrap factor analysis
+prepare_procrustes_target <- function(x, col_ov = "rhs", col_lv = "lhs") {
+  x["id"] <- seq_len(nrow(x))
+  keys_list <- map(split(x, x[[col_lv]]), "id")
+  psych::make.keys(nrow(x), keys_list, x[[col_ov]])
+}
+
+get_procrusted_loadings <- function(data, target) {
+  EFA.dimensions::PROCRUSTES(
+    psych::fa(data[rownames(target)], ncol(target), rotate = "none")$loadings,
+    target,
+    type = "oblique",
+    verbose = FALSE
+  )
+}
+
+trim_loadings <- function(loadings_bootstrap) {
+  # mimic 0.4-0.3-0.2 rule as 0.3-0.2-0.2 rule:
+  # 0.3 for primary, 0.2 for alternative, 0.2 for cross-loading difference
+  loadings <- apply(loadings_bootstrap, 1:2, mean)
+  loadings_pri <- Rfast::rowMaxs(abs(loadings), value = TRUE)
+  loadings_alt <- Rfast::rownth(
+    abs(loadings), rep(2, nrow(loadings)),
+    descending = TRUE
+  )
+  # low loading: primary < 0.3
+  is_low <- loadings_pri < 0.3
+  # cross-loading cond 1: alternative loadings larger than 0.2
+  is_cross_1 <- loadings_alt > 0.2
+  # cross-loading cond 2: difference between primary and alternative < 0.2
+  is_cross_2 <- loadings_pri - loadings_alt < 0.2
+  loadings[!is_low & !is_cross_1 & !is_cross_2, ]
+}
+
 # Confirmatory factor analysis section ----
 
 #' Fit a confirmatory factor analysis model
