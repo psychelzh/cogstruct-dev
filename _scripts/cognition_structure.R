@@ -27,35 +27,17 @@ targets_cfa <- tarchetypes::tar_map(
 )
 
 list(
-  tar_target(
-    file_games_censor,
-    "config/games_censor.txt",
-    format = "file"
-  ),
   tarchetypes::tar_file_read(
-    indices_cogstruct,
-    path_obj_from_proj("indices_cogstruct", "prepare_source_data"),
+    indices_cogstruct_games_censored,
+    path_obj_from_proj(
+      "indices_cogstruct_games_censored",
+      "prepare_source_data"
+    ),
     read = qs::qread(!!.x)
   ),
   tar_target(
-    config_games_censor,
-    read_tsv(file_games_censor, col_types = cols(game_id = "I")) |>
-      unite("game_index", game_name_abbr, index_name, sep = ".") |>
-      left_join(
-        enframe(psych::smc(indices_cogstruct), "game_index", "smc"),
-        by = "game_index"
-      ) |>
-      arrange(paradigm_censor, desc(smc)) |>
-      filter(!is.na(paradigm_censor)) |>
-      mutate(censor = row_number() > 1, .by = paradigm_censor)
-  ),
-  tar_target(
-    indices_cogstruct_censor,
-    select(indices_cogstruct, !with(config_games_censor, game_index[censor]))
-  ),
-  tar_target(
     indices_splitted,
-    split_data_solomon(indices_cogstruct_censor)
+    split_data_solomon(indices_cogstruct_games_censored)
   ),
   tar_target(
     efa_results,
@@ -63,7 +45,7 @@ list(
   ),
   tar_target(
     efa_result_final,
-    iterate_efa(indices_cogstruct_censor)
+    iterate_efa(indices_cogstruct_games_censored)
   ),
   tarchetypes::tar_file_read(
     config_dims_theory,
