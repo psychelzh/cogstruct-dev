@@ -9,7 +9,8 @@ setup_parallel_plan()
 
 config_neural <- prepare_config_neural(
   xcpd == "gsr",
-  run == "full"
+  run == "full",
+  atlas == "4S256Parcels"
 )
 hypers_cpm <- hypers_cpm |>
   dplyr::filter(
@@ -105,7 +106,7 @@ cpm_branches_perms <- tarchetypes::tar_map(
 list(
   tarchetypes::tar_file_read(
     scores,
-    path_obj_from_proj("scores", "cognition_structure"),
+    path_obj_from_proj("scores", "analyze_factors"),
     read = qs::qread(!!.x)
   ),
   tar_prepare_neural_data(config_neural),
