@@ -105,23 +105,21 @@ list(
   tarchetypes::tar_combine(
     comp_rel_g,
     branches_g$comp_rel_g,
-    command = list(!!!.x) |>
-      lapply(bind_rows) |>
-      bind_rows_meta(
-        .names = names(config_vars),
-        .prefix = "comp_rel_g"
-      ),
+    command = bind_rows_meta(
+      !!!.x,
+      .names = names(config_vars),
+      .prefix = "comp_rel_g"
+    ),
     deployment = "main"
   ),
   tarchetypes::tar_combine(
     cor_rapm,
     branches_g$cor_rapm,
-    command = list(!!!.x) |>
-      lapply(bind_rows) |>
-      bind_rows_meta(
-        .names = names(config_vars),
-        .prefix = "cor_rapm"
-      ),
+    command = bind_rows_meta(
+      !!!.x,
+      .names = names(config_vars),
+      .prefix = "cor_rapm"
+    ),
     deployment = "main"
   ),
   tarchetypes::tar_combine(

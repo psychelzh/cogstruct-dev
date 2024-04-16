@@ -403,8 +403,7 @@ tar_calibrate_g <- function(expr, data, use_pairs, ...,
         ) |>
           list_rbind_tar_batches(names_to = "id_pairs")
       ),
-      chr("fit_g"),
-      iteration = "list"
+      chr("fit_g")
     ),
     tarchetypes::tar_rep2_raw(
       chr("scores_g"),
