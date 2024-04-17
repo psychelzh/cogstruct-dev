@@ -93,55 +93,17 @@ list(
     hypers_cpm = hypers_cpm
   ),
   branches_g,
-  tarchetypes::tar_combine(
-    rel_pairs_g,
-    branches_g$rel_pairs_g,
-    command = bind_rows_meta(
-      !!!.x,
-      .names = names(config_vars),
-      .prefix = "rel_pairs_g"
-    ),
-    deployment = "main"
+  lapply(
+    c("rel_pairs_g", "comp_rel_g", "cor_rapm"),
+    tar_combine_branches,
+    branches = branches_g,
+    meta_names = names(config_vars)
   ),
-  tarchetypes::tar_combine(
-    comp_rel_g,
-    branches_g$comp_rel_g,
-    command = bind_rows_meta(
-      !!!.x,
-      .names = names(config_vars),
-      .prefix = "comp_rel_g"
-    ),
-    deployment = "main"
-  ),
-  tarchetypes::tar_combine(
-    cor_rapm,
-    branches_g$cor_rapm,
-    command = bind_rows_meta(
-      !!!.x,
-      .names = names(config_vars),
-      .prefix = "cor_rapm"
-    ),
-    deployment = "main"
-  ),
-  tarchetypes::tar_combine(
-    cpm_performance,
-    zutils::select_list(branches_g, starts_with("cpm_performance")),
-    command = bind_rows_meta(
-      !!!.x,
-      .names = c(names(config_fc), names(hypers_cpm), names(config_vars)),
-      .prefix = "cpm_performance"
-    ),
-    deployment = "main"
-  ),
-  tarchetypes::tar_combine(
-    dice_pairs,
-    zutils::select_list(branches_g, starts_with("dice_pairs")),
-    command = bind_rows_meta(
-      !!!.x,
-      .names = c(names(config_fc), names(hypers_cpm), names(config_vars)),
-      .prefix = "dice_pairs"
-    ),
-    deployment = "main"
+  lapply(
+    c("cpm_performance", "dice_pairs"),
+    tar_combine_branches,
+    branches = branches_g,
+    meta_names = c(names(config_fc), names(hypers_cpm), names(config_vars))
   ),
   tar_calibrate_g(
     list(
@@ -153,14 +115,25 @@ list(
     data_rapm = indices_rapm
   ),
   branches_g_no_rsn,
-  tarchetypes::tar_combine(
-    cor_rapm_no_rsn,
-    branches_g_no_rsn$cor_rapm_no_rsn,
-    command = bind_rows_meta(
-      !!!.x,
-      .names = names(config_vars_no_rsn),
-      .prefix = "cor_rapm_no_rsn"
-    )
+  tar_combine_branches(
+    "cor_rapm_no_rsn",
+    branches = branches_g_no_rsn,
+    meta_names = names(config_vars_no_rsn)
   ),
-  branches_g_chc
+  branches_g_chc,
+  lapply(
+    c("rel_pairs_g_chc", "comp_rel_g_chc", "cor_rapm_chc"),
+    tar_combine_branches,
+    branches = branches_g_chc,
+    meta_names = setdiff(names(config_vars_chc), "vars_pair")
+  ),
+  lapply(
+    c("cpm_performance_chc", "dice_pairs_chc"),
+    tar_combine_branches,
+    branches = branches_g_chc,
+    meta_names = setdiff(
+      c(names(config_fc), names(hypers_cpm), names(config_vars_chc)),
+      "vars_pair"
+    )
+  )
 )

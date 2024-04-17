@@ -505,3 +505,23 @@ tar_calibrate_g <- function(expr, data, use_pairs, ...,
     }
   )
 }
+
+tar_combine_branches <- function(name, branches, targets, meta_names,
+                                 meta_prefix = name) {
+  rlang::check_exclusive(targets, branches)
+  if (missing(targets)) {
+    targets <- zutils::select_list(branches, starts_with(name))
+  }
+  tarchetypes::tar_combine_raw(
+    name,
+    targets,
+    command = bquote(
+      bind_rows_meta(
+        !!!.x,
+        .names = .(meta_names),
+        .prefix = .(meta_prefix)
+      )
+    ),
+    deployment = "main"
+  )
+}
