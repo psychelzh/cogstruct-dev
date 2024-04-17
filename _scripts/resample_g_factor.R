@@ -63,6 +63,7 @@ branches_g_chc <- tarchetypes::tar_map(
     indices_cogstruct,
     use_pairs = TRUE,
     name_suffix = "chc",
+    data_rapm = indices_rapm,
     config_neural = config_neural,
     hypers_cpm = hypers_cpm,
     batches = 10,
