@@ -48,7 +48,9 @@ list(
   tar_target(
     fit_kfa,
     readRDS(file_kfa) |>
-      kfa::k_model_fit() |>
+      kfa::k_model_fit(
+        index = c("chisq", "df", "cfi", "tli", "rmsea", "srmr")
+      ) |>
       list_rbind(names_to = "fold") |>
       mutate(n_factor = parse_number(model), .keep = "unused")
   ),
