@@ -26,7 +26,7 @@ branches_g <- tarchetypes::tar_map(
     resample_vars(names(indices_cogstruct), num_vars, use_pairs),
     indices_cogstruct,
     use_pairs,
-    data_rapm = indices_rapm,
+    data_crit = list(cor_rapm = indices_rapm),
     config_neural = config_neural,
     hypers_cpm = hypers_cpm,
     batches = 10,
@@ -48,7 +48,7 @@ branches_g_no_rsn <- tarchetypes::tar_map(
     indices_cogstruct,
     use_pairs,
     name_suffix = "no_rsn",
-    data_rapm = indices_rapm,
+    data_crit = list(cor_rapm = indices_rapm),
     batches = 10,
     reps = 10
   )
@@ -88,7 +88,7 @@ list(
     indices_cogstruct,
     use_pairs = FALSE,
     name_suffix = "full",
-    data_rapm = indices_rapm,
+    data_crit = list(cor_rapm = indices_rapm),
     config_neural = config_neural,
     hypers_cpm = hypers_cpm
   ),
@@ -112,7 +112,7 @@ list(
     indices_cogstruct,
     use_pairs = FALSE,
     name_suffix = "no_rsn_full",
-    data_rapm = indices_rapm
+    data_crit = list(cor_rapm = indices_rapm)
   ),
   branches_g_no_rsn,
   tar_combine_branches(

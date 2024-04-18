@@ -367,7 +367,7 @@ tar_prepare_neural_data <- function(config) {
 # g factor ----
 tar_calibrate_g <- function(expr, data, use_pairs, ...,
                             name_suffix = NULL,
-                            data_rapm = NULL,
+                            data_crit = NULL,
                             config_neural = NULL,
                             hypers_cpm = NULL) {
   suffix <- if (is.null(name_suffix)) "" else paste0("_", name_suffix)
@@ -434,21 +434,26 @@ tar_calibrate_g <- function(expr, data, use_pairs, ...,
       ),
       chr("scores_g")
     ),
-    if (!is.null(substitute(data_rapm))) {
-      tarchetypes::tar_rep2_raw(
-        chr("cor_rapm"),
-        bquote(
-          lapply_tar_batches(
-            .(sym("scores_g")),
-            \(x) {
-              .(substitute(data_rapm)) |>
-                merge(x, by = "row.names") |>
-                summarise(r = cor(score, f1, use = "pairwise"))
-            }
-          ) |>
-            list_rbind_tar_batches(names_to = "id_pairs")
-        ),
-        chr("scores_g")
+    if (!is.null(substitute(data_crit))) {
+      purrr::imap(
+        as.list(substitute(data_crit))[-1],
+        \(obj, name) {
+          tarchetypes::tar_rep2_raw(
+            chr(name),
+            bquote(
+              lapply_tar_batches(
+                .(sym("scores_g")),
+                \(x) {
+                  .(obj) |>
+                    merge(x, by = "row.names") |>
+                    summarise(r = cor(score, f1, use = "pairwise"))
+                }
+              ) |>
+                list_rbind_tar_batches(names_to = "id_pairs")
+            ),
+            chr("scores_g")
+          )
+        }
       )
     },
     if (!is.null(config_neural) && !is.null(hypers_cpm)) {
