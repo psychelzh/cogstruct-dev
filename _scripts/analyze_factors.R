@@ -81,10 +81,10 @@ list(
       )
     )
   ),
-  tar_target(loadings_base, trim_loadings(loadings_bootstrap)),
+  tar_target(loadings_kept, trim_loadings(loadings_bootstrap)),
   tar_target(
     model_efa,
-    loadings_base |>
+    loadings_kept |>
       apply(1, which.max) |>
       enframe(name = "manifest", value = "latent") |>
       mutate(latent = str_c("F", latent))
