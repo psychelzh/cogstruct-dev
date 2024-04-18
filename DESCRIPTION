@@ -12,6 +12,7 @@ Depends:
     tidyverse
 Imports:
     Amelia,
+    arrangements,
     arrow,
     brms,
     clustermq,

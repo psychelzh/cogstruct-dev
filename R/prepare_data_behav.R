@@ -70,7 +70,10 @@ split_data_solomon <- function(data, n = 2) {
     rotate = "none",
     missing = TRUE
   )
-  groups_source <- rep(c(1:n, seq(n, 1, -1)), length.out = nrow(data))
+  groups_source <- rep(
+    as.vector(t(arrangements::permutations(n))),
+    length.out = nrow(data)
+  )
   groups <- with(
     pca_result,
     groups_source[rank(scores %*% colMeans(loadings^2))]

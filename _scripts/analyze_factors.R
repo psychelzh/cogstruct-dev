@@ -46,6 +46,13 @@ list(
   ),
   tar_target(file_kfa, "data/fa/kfa_ml.rds"),
   tar_target(
+    fit_kfa,
+    readRDS(file_kfa) |>
+      kfa::k_model_fit() |>
+      list_rbind(names_to = "fold") |>
+      mutate(n_factor = parse_number(model), .keep = "unused")
+  ),
+  tar_target(
     target,
     readRDS(file_kfa)$cfa.syntax |>
       map_chr("7-factor") |>
@@ -81,6 +88,17 @@ list(
       apply(1, which.max) |>
       enframe(name = "manifest", value = "latent") |>
       mutate(latent = str_c("F", latent))
+  ),
+  tar_target(
+    indices_splitted,
+    indices_cogstruct_games_censored |>
+      select(model_efa$manifest) |>
+      split_data_solomon()
+  ),
+  tar_target(efa_solomon, psych::fa(indices_splitted[[1]], 7)),
+  tar_target(
+    cfa_solomon,
+    fit_cfa(model_efa, indices_splitted[[2]], "fo", missing = "pairwise")
   ),
   tarchetypes::tar_map(
     hypers_model,

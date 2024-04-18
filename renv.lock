@@ -523,6 +523,19 @@
       ],
       "Hash": "50cde02a35bca22b7b315e8e09af97ee"
     },
+    "arrangements": {
+      "Package": "arrangements",
+      "Version": "1.1.9",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "R6",
+        "gmp",
+        "methods"
+      ],
+      "Hash": "ebca94b9b3cff3fff7975e26216156c6"
+    },
     "arrow": {
       "Package": "arrow",
       "Version": "14.0.2.1",
@@ -2198,6 +2211,17 @@
         "methods"
       ],
       "Hash": "e0b3a53876554bd45879e596cdb10a52"
+    },
+    "gmp": {
+      "Package": "gmp",
+      "Version": "0.7-4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "methods"
+      ],
+      "Hash": "eef7063b82c79405f4eb2de9a051a312"
     },
     "googledrive": {
       "Package": "googledrive",
