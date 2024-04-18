@@ -37,7 +37,12 @@ list(
   ),
   tar_target(
     fspe,
-    fspe::fspe(drop_na(indices_cogstruct_games_censored), 14, rep = 10)
+    fspe::fspe(
+      drop_na(indices_cogstruct_games_censored),
+      14,
+      nfold = 5,
+      rep = 10
+    )
   ),
   tar_target(file_kfa, "data/fa/kfa_ml.rds"),
   tar_target(
