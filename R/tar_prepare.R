@@ -14,12 +14,9 @@ prepare_config_domain <- function(from = 2, step = 2, n_reps = 1) {
   tidyr::expand_grid(
     i_reps = seq_len(n_reps),
     num_domain = seq(from, num_domain_total, step),
-    tibble::tribble(
-      ~num_vars, ~use_pairs,
-      10, TRUE,
-      20, FALSE
-    )
-  )
+    num_vars = c(10, 20)
+  ) |>
+    dplyr::mutate(use_pairs = num_domain <= 10)
 }
 
 prepare_config_neural <- function(...) {
