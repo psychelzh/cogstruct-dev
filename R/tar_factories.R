@@ -444,9 +444,8 @@ tar_calibrate_g <- function(expr, data, use_pairs, ...,
               lapply_tar_batches(
                 .(sym("scores_g")),
                 \(x) {
-                  .(obj) |>
-                    merge(x, by = "row.names") |>
-                    summarise(r = cor(score, f1, use = "pairwise"))
+                  subjs <- intersect(rownames(x), rownames(.(obj)))
+                  tibble(r = cor(x[subjs, ], .(obj)[subjs, ], use = "pairwise"))
                 }
               ) |>
                 list_rbind_tar_batches(names_to = "id_pairs")

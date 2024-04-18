@@ -9,19 +9,17 @@ prepare_config_vars <- function(num_vars_total, ...,
   out
 }
 
-prepare_config_vars_chc <- function(num_pairs, seed = NULL) {
-  if (!is.null(seed)) withr::local_seed(seed)
-  replicate(
-    num_pairs, {
-      vars_chc <- resample_pairs_chc()
-      tibble::tibble(
-        vars_pair = list(vars_chc),
-        num_vars = allocate_num_vars_chc(vars_chc)
-      )
-    },
-    simplify = FALSE
-  ) |>
-    purrr::list_rbind(names_to = "id_rsmp")
+prepare_config_domain <- function(from = 2, step = 2, n_reps = 1) {
+  num_domain_total <- length(unique(index_chc_labels))
+  tidyr::expand_grid(
+    i_reps = seq_len(n_reps),
+    num_domain = seq(from, num_domain_total, step),
+    tibble::tribble(
+      ~num_vars, ~use_pairs,
+      10, TRUE,
+      20, FALSE
+    )
+  )
 }
 
 prepare_config_neural <- function(...) {

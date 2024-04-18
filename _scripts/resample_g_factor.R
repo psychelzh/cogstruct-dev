@@ -54,16 +54,20 @@ branches_g_no_rsn <- tarchetypes::tar_map(
   )
 )
 
-config_vars_chc <- prepare_config_vars_chc(10, 1)
-branches_g_chc <- tarchetypes::tar_map(
-  config_vars_chc,
-  names = !vars_pair,
+# "Gwm" is most included when number of domains is less than 4
+config_domains <- prepare_config_domain(from = 4)
+branches_domains <- tarchetypes::tar_map(
+  config_domains,
   tar_calibrate_g(
-    lapply(vars_pair, sample, num_vars),
+    resample_vars_domain(num_domain, num_vars, use_pairs),
     indices_cogstruct,
-    use_pairs = TRUE,
-    name_suffix = "chc",
-    data_rapm = indices_rapm,
+    use_pairs,
+    name_suffix = "domain",
+    data_crit = list(
+      cor_rapm = indices_rapm,
+      # use g based on all variables (`[[` is used because of list iteration)
+      cor_g = scores_g_full[[1]][[1]][[1]]
+    ),
     config_neural = config_neural,
     hypers_cpm = hypers_cpm,
     batches = 10,
@@ -120,20 +124,22 @@ list(
     branches = branches_g_no_rsn,
     meta_names = names(config_vars_no_rsn)
   ),
-  branches_g_chc,
+  branches_domains,
   lapply(
-    c("rel_pairs_g_chc", "comp_rel_g_chc", "cor_rapm_chc"),
+    c(
+      "rel_pairs_g_domain",
+      "comp_rel_g_domain",
+      "cor_rapm_domain",
+      "cor_g_domain"
+    ),
     tar_combine_branches,
-    branches = branches_g_chc,
-    meta_names = setdiff(names(config_vars_chc), "vars_pair")
+    branches = branches_domains,
+    meta_names = names(config_domains)
   ),
   lapply(
-    c("cpm_performance_chc", "dice_pairs_chc"),
+    c("cpm_performance_domain", "dice_pairs_domain"),
     tar_combine_branches,
-    branches = branches_g_chc,
-    meta_names = setdiff(
-      c(names(config_fc), names(hypers_cpm), names(config_vars_chc)),
-      "vars_pair"
-    )
+    branches = branches_domains,
+    meta_names = c(names(config_fc), names(hypers_cpm), names(config_domains))
   )
 )

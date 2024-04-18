@@ -15,19 +15,13 @@ resample_vars <- function(vars, num_vars, use_pairs = FALSE) {
   }
 }
 
-resample_pairs_chc <- function() {
-  labels <- sample(unique(index_chc_labels))
-  half <- length(labels) / 2
-  list(labels[seq_len(half)], labels[seq_len(half) + half]) |>
-    lapply(
-      \(labels) {
-        names(index_chc_labels)[index_chc_labels %in% labels]
-      }
-    )
-}
-
-allocate_num_vars_chc <- function(vars) {
-  num_vars_max <- min(lengths(vars))
-  num_vars <- seq(3, num_vars_max, by = 3)
-  num_vars[choose(num_vars_max, num_vars) > 1000]
+resample_vars_domain <- function(num_domain, num_vars, use_pairs = FALSE) {
+  domains_chc <- unique(index_chc_labels)
+  repeat {
+    domains_sel <- sample(domains_chc, num_domain)
+    vars <- names(index_chc_labels)[index_chc_labels %in% domains_sel]
+    num_vars_real <- if (use_pairs) num_vars * 2 else num_vars
+    if (choose(length(vars), num_vars_real) > 1000) break
+  }
+  resample_vars(vars, num_vars, use_pairs)
 }
