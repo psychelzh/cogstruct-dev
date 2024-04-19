@@ -33,6 +33,15 @@ branches_g <- tarchetypes::tar_map(
     reps = 10
   )
 )
+targets_full <- tar_calibrate_g(
+  list(names(indices_cogstruct)),
+  indices_cogstruct,
+  use_pairs = FALSE,
+  name_suffix = "full",
+  data_crit = list(cor_rapm = indices_rapm),
+  config_neural = config_neural,
+  hypers_cpm = hypers_cpm
+)
 
 config_vars_no_rsn <- prepare_config_vars(
   num_vars_total - length(game_id_reasoning),
@@ -87,14 +96,11 @@ list(
     read = qs::qread(!!.x)
   ),
   tar_prepare_neural_data(config_neural),
-  tar_calibrate_g(
-    list(names(indices_cogstruct)),
-    indices_cogstruct,
-    use_pairs = FALSE,
-    name_suffix = "full",
-    data_crit = list(cor_rapm = indices_rapm),
-    config_neural = config_neural,
-    hypers_cpm = hypers_cpm
+  targets_full,
+  tar_combine_branches(
+    "cpm_performance_full",
+    branches = targets_full,
+    meta_names = c(names(config_fc), names(hypers_cpm))
   ),
   branches_g,
   lapply(
