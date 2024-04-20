@@ -10,18 +10,12 @@ prepare_config_vars <- function(num_vars_total, ...,
 }
 
 prepare_config_domain <- function() {
-  num_domain_total <- length(unique(index_chc_labels))
-  dplyr::bind_rows(
-    tidyr::expand_grid(
-      num_domain = 1:3,
-      num_vars = 3:5
-    ),
-    tidyr::expand_grid(
-      num_domain = seq(4, num_domain_total, by = 2),
-      num_vars = c(5, 10, 15)
-    )
+  tidyr::expand_grid(
+    num_domain = seq_along(unique(game_index_dims$label_chc_merge)),
+    num_vars = c(5, 10, 15)
   ) |>
-    dplyr::mutate(use_pairs = num_domain <= 10)
+    dplyr::filter(!(num_domain == 1 & num_vars == 15)) |>
+    dplyr::mutate(use_pairs = !(num_domain %in% 1:2 & num_vars > 5))
 }
 
 prepare_config_neural <- function(...) {

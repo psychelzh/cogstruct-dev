@@ -15,34 +15,36 @@ resample_vars <- function(vars, num_vars, use_pairs = FALSE) {
   }
 }
 
-resample_vars_domain <- function(num_domain, num_vars, use_pairs = FALSE) {
+resample_vars_domain <- function(num_domain, num_vars, use_pairs,
+                                 label = label_chc_merge) {
+  index_labels <- dplyr::pull(game_index_dims, {{ label }}, game_index)
   repeat {
-    domains_sel <- sample(unique(index_chc_labels), num_domain)
-    vars <- names(index_chc_labels)[index_chc_labels %in% domains_sel]
+    domains_sel <- sample(unique(index_labels), num_domain)
+    vars <- names(index_labels)[index_labels %in% domains_sel]
     if (choose(length(vars), num_vars) < 200) next
-    if (use_pairs && any(table(index_chc_labels[vars]) < 2)) next
-    vars_sampled <- resample_keep_domains(vars, num_vars, num_domain)
+    if (use_pairs && any(table(index_labels[vars]) < 2)) next
+    vars_sel <- resample_keep_domains(vars, num_vars, num_domain, index_labels)
     if (!use_pairs) {
-      return(list(vars_sampled))
+      return(list(vars_sel))
     } else {
-      vars_remain <- setdiff(vars, vars_sampled)
+      vars_remain <- setdiff(vars, vars_sel)
       if (choose(length(vars_remain), num_vars) < 200) next
-      if (n_distinct(index_chc_labels[vars_remain]) < num_domain) next
+      if (n_distinct(index_labels[vars_remain]) < num_domain) next
       return(
         list(
-          vars_sampled,
-          resample_keep_domains(vars_remain, num_vars, num_domain)
+          vars_sel,
+          resample_keep_domains(vars_remain, num_vars, num_domain, index_labels)
         )
       )
     }
   }
 }
 
-resample_keep_domains <- function(vars, num_vars, num_domain) {
+resample_keep_domains <- function(vars, num_vars, num_domain, index_labels) {
   num_domain <- if (num_domain > num_vars) num_vars else num_domain
   repeat {
-    vars_sampled <- sample(vars, num_vars)
-    if (n_distinct(index_chc_labels[vars_sampled]) == num_domain) break
+    vars_sel <- sample(vars, num_vars)
+    if (n_distinct(index_labels[vars_sel]) == num_domain) break
   }
-  vars_sampled
+  vars_sel
 }
