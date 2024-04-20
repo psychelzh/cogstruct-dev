@@ -19,13 +19,14 @@ resample_vars_domain <- function(num_domain, num_vars, use_pairs = FALSE) {
   repeat {
     domains_sel <- sample(unique(index_chc_labels), num_domain)
     vars <- names(index_chc_labels)[index_chc_labels %in% domains_sel]
-    if (choose(length(vars), num_vars) < 1000) next
+    if (choose(length(vars), num_vars) < 200) next
+    if (use_pairs && any(table(index_chc_labels[vars]) < 2)) next
     vars_sampled <- resample_keep_domains(vars, num_vars, num_domain)
     if (!use_pairs) {
       return(list(vars_sampled))
     } else {
       vars_remain <- setdiff(vars, vars_sampled)
-      if (choose(length(vars_remain), num_vars) < 1000) next
+      if (choose(length(vars_remain), num_vars) < 200) next
       if (n_distinct(index_chc_labels[vars_remain]) < num_domain) next
       return(
         list(

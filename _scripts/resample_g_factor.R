@@ -63,8 +63,7 @@ branches_g_no_rsn <- tarchetypes::tar_map(
   )
 )
 
-# "Gwm" is most included when number of domains is less than 4
-config_domains <- prepare_config_domain(from = 4)
+config_domains <- prepare_config_domain()
 branches_domains <- tarchetypes::tar_map(
   config_domains,
   tar_calibrate_g(

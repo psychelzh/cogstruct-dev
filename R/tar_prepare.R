@@ -9,12 +9,17 @@ prepare_config_vars <- function(num_vars_total, ...,
   out
 }
 
-prepare_config_domain <- function(from = 2, step = 2, n_reps = 1) {
+prepare_config_domain <- function() {
   num_domain_total <- length(unique(index_chc_labels))
-  tidyr::expand_grid(
-    i_reps = seq_len(n_reps),
-    num_domain = seq(from, num_domain_total, step),
-    num_vars = c(10, 20)
+  dplyr::bind_rows(
+    tidyr::expand_grid(
+      num_domain = 1:3,
+      num_vars = 3:5
+    ),
+    tidyr::expand_grid(
+      num_domain = seq(4, num_domain_total, by = 2),
+      num_vars = c(5, 10, 15)
+    )
   ) |>
     dplyr::mutate(use_pairs = num_domain <= 10)
 }
