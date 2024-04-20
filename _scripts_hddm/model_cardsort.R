@@ -26,7 +26,7 @@ data <- targets::tar_read_raw(
       "Repeat" ~ "repeat"
     )
   ) |>
-  filter(RT > 0.15, !is.na(Type)) |>
+  filter(RT > 0.25, !is.na(Type)) |>
   select(user_id, ocassion, type = Type, acc = ACC, rt = RT)
 model <- readRDS("data/model_diff_retest.rds")
 
@@ -57,6 +57,5 @@ fit_wiener <- update(
   iter = 1000,
   warmup = 500,
   chains = 4,
-  cores = 4,
-  control = list(max_treedepth = 15, adapt_delta = 0.9)
+  cores = 4
 )
