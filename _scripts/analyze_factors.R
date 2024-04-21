@@ -131,15 +131,9 @@ list(
       fit_bootstrap
     )
   ),
-  tarchetypes::tar_file_read(
-    config_dims_theory,
-    "config/game_dims_theory.csv",
-    read = read_csv(!!.x, col_types = cols(game_id = "I"))
-  ),
   tar_target(
     config_dims_alternatives,
-    config_dims_theory |>
-      unite(manifest, game_name_abbr, index_name, sep = ".") |>
+    game_index_dims |>
       inner_join(rename(model_efa, efa = latent), by = "manifest")
   ),
   tar_target(

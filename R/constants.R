@@ -19,9 +19,7 @@ num_vars_total <- 77
 game_index_dims <- readr::read_csv(
   "config/game_dims_theory.csv",
   show_col_types = FALSE
-) |>
-  tidyr::unite("game_index", game_name_abbr, index_name, sep = ".") |>
-  dplyr::select(game_index, label_chc, label_chc_merge)
+)
 
 # used in data quality check
 thresh_prop_miss <- 0.25
