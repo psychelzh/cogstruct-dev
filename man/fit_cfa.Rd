@@ -8,7 +8,7 @@ fit_cfa(
   config,
   data,
   theory,
-  col_ov = observed,
+  col_ov = manifest,
   col_lv = latent,
   col_fix = NULL,
   missing = "ml"
@@ -20,7 +20,7 @@ specifies the model. The \code{latent} column specifies the latent variables and
 the \code{manifest} column specifies the manifest variables. The \code{latent} column
 can be omitted if the model is one-factor model.}
 
-\item{data}{A data frame with the observed variables.}
+\item{data}{A data frame with the manifest variables.}
 
 \item{theory}{The theory of the model. Should be one of \code{"fo"} (first-order),
 \code{"ho"} (higher-order), \code{"bf"} (bi-factor) and \code{"of"} (one-factor). See
@@ -28,7 +28,7 @@ Brunner et al. (2012) for detailed discussion of the models and the naming
 conventions used here.}
 
 \item{col_ov, col_lv}{The name of the column in \code{config} that specifies the
-observed and latent variables.}
+manifest and latent variables.}
 
 \item{col_fix}{The name of the column in \code{config} that specifies the fixed
 parameters. Only used for loadings. If \code{NULL}, all parameters are free.}
