@@ -9,12 +9,16 @@ prepare_config_vars <- function(num_vars_total, ...,
   out
 }
 
-prepare_config_domain <- function() {
+prepare_config_domain <- function(vars_domain) {
   tidyr::expand_grid(
-    num_domain = seq_along(unique(game_index_dims$label_chc_merge)),
+    num_domain = seq_along(unique(names(vars_domain))),
     num_vars = c(5, 10, 15)
   ) |>
-    dplyr::filter(!(num_domain == 1 & num_vars == 15)) |>
+    dplyr::filter(
+      !(num_domain == 1 & num_vars == 15),
+      # cannot sample more domains than given number of variables
+      num_domain <= num_vars
+    ) |>
     dplyr::mutate(use_pairs = !(num_domain %in% 1:2 & num_vars > 5))
 }
 

@@ -63,11 +63,12 @@ branches_g_no_rsn <- tarchetypes::tar_map(
   )
 )
 
-config_domains <- prepare_config_domain()
+vars_domain <- dplyr::pull(game_index_dims, manifest, label_chc_merged)
+config_domains <- prepare_config_domain(vars_domain)
 branches_domains <- tarchetypes::tar_map(
   config_domains,
   tar_calibrate_g(
-    resample_vars_domain(num_domain, num_vars, use_pairs),
+    resample_vars_domain(vars_domain, num_domain, num_vars, use_pairs),
     indices_cogstruct,
     use_pairs,
     name_suffix = "domain",

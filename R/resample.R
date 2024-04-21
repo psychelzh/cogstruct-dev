@@ -15,36 +15,38 @@ resample_vars <- function(vars, num_vars, use_pairs = FALSE) {
   }
 }
 
-resample_vars_domain <- function(num_domain, num_vars, use_pairs,
-                                 label = label_chc_merge) {
-  index_labels <- dplyr::pull(game_index_dims, {{ label }}, game_index)
+resample_vars_domain <- function(vars_domain, num_domain, num_vars, use_pairs) {
+  stopifnot(
+    "Cannot sample more domains than given number of variables." =
+      num_domain <= num_vars
+  )
   repeat {
-    domains_sel <- sample(unique(index_labels), num_domain)
-    vars <- names(index_labels)[index_labels %in% domains_sel]
-    if (choose(length(vars), num_vars) < 200) next
-    if (use_pairs && any(table(index_labels[vars]) < 2)) next
-    vars_sel <- resample_keep_domains(vars, num_vars, num_domain, index_labels)
+    # vars_domain: names are domains, values are variables
+    domains_pool <- sample(unique(names(vars_domain)), num_domain)
+    vars_pool <- vars_domain[names(vars_domain) %in% domains_pool]
+    if (choose(length(vars_pool), num_vars) < 200) next
+    if (use_pairs && any(table(names(vars_pool)) < 2)) next
+    vars_sel <- resample_keep_domains(vars_pool, num_vars, num_domain)
     if (!use_pairs) {
       return(list(vars_sel))
     } else {
-      vars_remain <- setdiff(vars, vars_sel)
+      vars_remain <- vars_pool[!vars_pool %in% vars_sel]
       if (choose(length(vars_remain), num_vars) < 200) next
-      if (n_distinct(index_labels[vars_remain]) < num_domain) next
+      if (n_distinct(names(vars_remain)) < num_domain) next
       return(
         list(
           vars_sel,
-          resample_keep_domains(vars_remain, num_vars, num_domain, index_labels)
+          resample_keep_domains(vars_domain, num_vars, num_domain)
         )
       )
     }
   }
 }
 
-resample_keep_domains <- function(vars, num_vars, num_domain, index_labels) {
-  num_domain <- if (num_domain > num_vars) num_vars else num_domain
+resample_keep_domains <- function(vars, num_vars, num_domain) {
   repeat {
     vars_sel <- sample(vars, num_vars)
-    if (n_distinct(index_labels[vars_sel]) == num_domain) break
+    if (n_distinct(names(vars_sel)) == num_domain) break
   }
   vars_sel
 }
