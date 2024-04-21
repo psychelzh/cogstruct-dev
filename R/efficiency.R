@@ -1,27 +1,30 @@
-prepare_efficiency <- function(fc, weighted = TRUE, thresh_level = 0) {
-  do.call(
-    rbind, # ensure rows are subjects
-    apply(
-      # converted to correlation values
-      tanh(fc), 1,
-      \(x) calc_efficiency(x, weighted, thresh_level),
-      simplify = FALSE
-    )
-  )
-}
-
-predict_efficiency <- function(efficiency, scores) {
-  subjs_keep <- intersect(rownames(efficiency), rownames(scores))
-  apply(efficiency[subjs_keep, ], 2, cor.test, scores[subjs_keep, ]) |>
-    lapply(broom::tidy) |>
-    list_rbind(names_to = "node_id")
-}
-
-# helper functions ----
-calc_efficiency <- function(fc, weighted, thresh_level) {
-  # assume pearson correlations (not Fisher transformed)
-  if (thresh_level > 0) {
-    fc <- ifelse(fc > thresh_level, fc, 0)
+#' Calculate global efficiency of a graph
+#'
+#' @param fc A functional connectivity matrix.
+#' @param ... Currently not used.
+#' @param weighted Whether to use weighted or binary graph.
+#' @param thresh_prop Proportion of edges to keep.
+#' @param negatives Whether to keep negative edges. If set to `FALSE`, all
+#'   negative edges will be set to 0. If set to `TRUE`, all negative edges will
+#'   be converted to positive values.
+#' @param local Whether to calculate local efficiency instead of global
+#'   efficiency.
+#' @return A numeric value representing the efficiency of the graph.
+#' @export
+#' @noRd
+calc_efficiency <- function(fc, ...,
+                            weighted = TRUE,
+                            thresh_prop = 0,
+                            negatives = FALSE,
+                            local = FALSE) {
+  if (!negatives) {
+    fc <- ifelse(fc < 0, 0, fc)
+  } else {
+    fc <- abs(fc)
+  }
+  if (thresh_prop > 0) {
+    r_thresh <- quantile(fc, 1 - thresh_prop)
+    fc <- ifelse(fc > r_thresh, fc, 0)
   }
   if (weighted) {
     fc <- proxy::pr_simil2dist(fc)
@@ -33,8 +36,9 @@ calc_efficiency <- function(fc, weighted, thresh_level) {
       mode = "undirected",
       weighted = weighted
     )
-  c(
-    igraph::local_efficiency(graph),
+  if (local) {
+    igraph::local_efficiency(graph)
+  } else {
     igraph::global_efficiency(graph)
-  )
+  }
 }

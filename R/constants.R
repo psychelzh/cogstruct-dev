@@ -146,11 +146,13 @@ config_fc <- dplyr::bind_rows(
 params_efficiency <- dplyr::bind_rows(
   tibble::tibble(
     weighted = TRUE,
-    thresh_level = 0
+    thresh_prop = 0,
+    negatives = FALSE
   ),
-  tibble::tibble(
+  tidyr::expand_grid(
     weighted = FALSE,
-    thresh_level = seq(0.1, 0.5, 0.1)
+    thresh_prop = seq(0.1, 0.5, 0.1),
+    negatives = c(FALSE, TRUE)
   )
 )
 
