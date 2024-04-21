@@ -20,7 +20,7 @@ hypers_cpm <- hypers_cpm |>
   )
 
 config_vars <- prepare_config_vars(num_vars_total)
-branches_g <- tarchetypes::tar_map(
+targets_num_vars <- tarchetypes::tar_map(
   config_vars,
   tar_calibrate_g(
     resample_vars(names(indices_cogstruct), num_vars, use_pairs),
@@ -47,7 +47,7 @@ config_vars_no_rsn <- prepare_config_vars(
   num_vars_total - length(game_id_reasoning),
   use_pairs = FALSE
 )
-branches_g_no_rsn <- tarchetypes::tar_map(
+targets_num_vars_no_rsn <- tarchetypes::tar_map(
   config_vars_no_rsn,
   tar_calibrate_g(
     resample_vars(
@@ -65,7 +65,7 @@ branches_g_no_rsn <- tarchetypes::tar_map(
 
 vars_domain <- dplyr::pull(game_index_dims, manifest, label_chc_merged)
 config_domains <- prepare_config_domain(vars_domain)
-branches_domains <- tarchetypes::tar_map(
+targets_domain <- tarchetypes::tar_map(
   config_domains,
   tar_calibrate_g(
     resample_vars_domain(vars_domain, num_domain, num_vars, use_pairs),
@@ -102,17 +102,17 @@ list(
     branches = targets_full,
     meta_names = c(names(config_fc), names(hypers_cpm))
   ),
-  branches_g,
+  targets_num_vars,
   lapply(
     c("rel_pairs_g", "comp_rel_g", "cor_rapm"),
     tar_combine_branches,
-    branches = branches_g,
+    branches = targets_num_vars,
     meta_names = names(config_vars)
   ),
   lapply(
     c("cpm_performance", "dice_pairs"),
     tar_combine_branches,
-    branches = branches_g,
+    branches = targets_num_vars,
     meta_names = c(names(config_fc), names(hypers_cpm), names(config_vars))
   ),
   tar_calibrate_g(
@@ -124,13 +124,13 @@ list(
     name_suffix = "no_rsn_full",
     data_crit = list(cor_rapm = indices_rapm)
   ),
-  branches_g_no_rsn,
+  targets_num_vars_no_rsn,
   tar_combine_branches(
     "cor_rapm_no_rsn",
-    branches = branches_g_no_rsn,
+    branches = targets_num_vars_no_rsn,
     meta_names = names(config_vars_no_rsn)
   ),
-  branches_domains,
+  targets_domain,
   lapply(
     c(
       "rel_pairs_g_domain",
@@ -139,13 +139,13 @@ list(
       "cor_g_domain"
     ),
     tar_combine_branches,
-    branches = branches_domains,
+    branches = targets_domain,
     meta_names = names(config_domains)
   ),
   lapply(
     c("cpm_performance_domain", "dice_pairs_domain"),
     tar_combine_branches,
-    branches = branches_domains,
+    branches = targets_domain,
     meta_names = c(names(config_fc), names(hypers_cpm), names(config_domains))
   )
 )
