@@ -81,3 +81,13 @@ bind_rows_meta <- function(..., .names, .prefix) {
 parse_digits <- function(x) {
   as.numeric(stringr::str_extract_all(x, "\\d")[[1]])
 }
+
+extract_vars_by_load <- function(loadings, part = c("high", "low")) {
+  part <- match.arg(part)
+  x <- if (part == "high") {
+    loadings > median(loadings)
+  } else {
+    loadings < median(loadings)
+  }
+  rownames(loadings)[x]
+}

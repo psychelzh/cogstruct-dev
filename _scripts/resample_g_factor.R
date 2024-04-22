@@ -84,6 +84,38 @@ targets_domain <- tarchetypes::tar_map(
   )
 )
 
+config_vars_load <- prepare_config_vars(
+  num_vars_total %/% 2,
+  from = 5, step = 5
+)
+targets_load <- tarchetypes::tar_map(
+  data.frame(part = c("high", "low")),
+  tar_target(
+    vars_pool,
+    extract_vars_by_load(
+      loadings(fit_g_full[[1]][[1]][[1]]),
+      part = part
+    )
+  ),
+  tarchetypes::tar_map(
+    config_vars_load,
+    tar_calibrate_g(
+      resample_vars(vars_pool, num_vars, use_pairs),
+      indices_cogstruct,
+      use_pairs,
+      name_suffix = "load",
+      data_crit = list(
+        cor_rapm = indices_rapm,
+        cor_g = scores_g_full[[1]][[1]][[1]]
+      ),
+      config_neural = config_neural,
+      hypers_cpm = hypers_cpm,
+      batches = 10,
+      reps = 10
+    )
+  )
+)
+
 list(
   tarchetypes::tar_file_read(
     indices_cogstruct,
@@ -147,5 +179,23 @@ list(
     tar_combine_branches,
     branches = targets_domain,
     meta_names = c(names(config_fc), names(hypers_cpm), names(config_domains))
+  ),
+  targets_load,
+  lapply(
+    c("rel_pairs_g_load", "comp_rel_g_load", "cor_rapm_load", "cor_g_load"),
+    tar_combine_branches,
+    branches = targets_load,
+    meta_names = c(names(config_vars_load), "part")
+  ),
+  lapply(
+    c("cpm_performance_load", "dice_pairs_load"),
+    tar_combine_branches,
+    branches = targets_load,
+    meta_names = c(
+      names(config_fc),
+      names(hypers_cpm),
+      names(config_vars_load),
+      "part"
+    )
   )
 )
