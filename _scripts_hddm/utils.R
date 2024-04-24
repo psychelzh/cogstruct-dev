@@ -46,11 +46,10 @@ load_data <- function(game_id,
 }
 
 sample_model <- function(model, data, chains = 4, ...) {
-  data_stan_model <- standata(update(model, newdata = data, chains = 0))
-  inits <- replicate(
-    chains,
-    with(
-      data_stan_model,
+  inits <- with(
+    standata(update(model, newdata = data, chains = 0)),
+    replicate(
+      chains,
       list(
         b = as.array(rnorm(K)),
         b_bs = as.array(runif(K_bs, 1, 2)),
@@ -58,9 +57,9 @@ sample_model <- function(model, data, chains = 4, ...) {
         sd_1 = as.array(runif(M_1, 0.5, 1)),
         z_1 = matrix(rnorm(M_1 * N_1, 0, 0.01), M_1, N_1),
         L_1 = diag(M_1)
-      )
-    ),
-    simplify = FALSE
+      ),
+      simplify = FALSE
+    )
   )
   update(
     model,
