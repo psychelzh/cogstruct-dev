@@ -82,7 +82,7 @@ brm(
   ),
   family = family,
   prior = prior,
-  file = "data/model_diff_once",
+  file = "data/model_diff_camp",
   chains = 0
 )
 ## simple intercept models
@@ -103,6 +103,6 @@ brm(
   ),
   family = family,
   prior = prior,
-  file = "data/model_simple_once",
+  file = "data/model_simple_camp",
   chains = 0
 )
