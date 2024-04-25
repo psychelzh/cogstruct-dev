@@ -47,20 +47,20 @@ targets_test_retest_slices <- tar_test_retest(
 )
 
 targets_hddm <- tarchetypes::tar_map(
-  fs::dir_ls("data/hddm_retest", regexp = "indices") |>
+  fs::dir_ls("data/hddm-retest") |>
     tibble::as_tibble_col("file") |>
     dplyr::mutate(
-      game_id = stringr::str_extract(fs::path_file(file), "^[:alnum:]+") |>
-        data.iquizoo::match_info("game_id", "game_name_abbr") |>
-        as.character(),
-      indices_retest = rlang::syms(sprintf("indices_retest_%s", game_id)),
+      game_id = stringr::str_extract(fs::path_file(file), "(?<=game-)[0-9]+"),
     ) |>
-    tidyr::chop(file),
+    tidyr::chop(file) |>
+    dplyr::mutate(
+      indices_retest = rlang::syms(sprintf("indices_retest_%s", game_id))
+    ),
   names = game_id,
-  tar_target(
+  tarchetypes::tar_file_read(
     indices_retest_hddm,
-    read_csv(file, col_types = cols(user_id = "I")) |>
-      semi_join(indices_retest, by = "user_id")
+    file,
+    read = list_rbind(lapply(!!.x, extract_hddm_coefs, context = "retest"))
   ),
   tar_target(
     test_retest_hddm,
