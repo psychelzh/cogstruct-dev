@@ -18,14 +18,13 @@ load_data <- function(game_id,
       mutate(
         ocassion = if_else(row_number(game_time) == 1, "test", "retest"),
         .by = user_id
-      ) |>
-      unnest(raw_parsed),
+      ),
     camp = targets::tar_read_raw(
       paste0("data_valid_", game_id),
       store = projects$prepare_source_data$store
-    ) |>
-      unnest(raw_parsed)
+    )
   ) |>
+    unnest(raw_parsed) |>
     mutate(
       rt = RT / 1000,
       # unify levels
