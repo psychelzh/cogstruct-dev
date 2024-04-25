@@ -436,6 +436,7 @@ tar_calibrate_g <- function(expr, data, use_pairs, ...,
     ),
     if (!is.null(substitute(data_crit))) {
       purrr::imap(
+        # https://stackoverflow.com/q/52392301/5996475
         as.list(substitute(data_crit))[-1],
         \(obj, name) {
           tarchetypes::tar_rep2_raw(
