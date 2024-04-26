@@ -1,7 +1,7 @@
 library(tidyverse)
 requireNamespace("bit64", quietly = TRUE)
 commands <- str_glue_data(
-  read_csv("config/config.csv", col_types = cols(game_id = "I")),
+  read_csv("config/hddm.csv", col_types = cols(game_id = "I")),
   read_file("_scripts_hddm/fit_model_tmpl.R"),
   .envir = rlang::env(context = "camp")
 ) |>
