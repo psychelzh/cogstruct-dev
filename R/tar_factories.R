@@ -185,17 +185,21 @@ tar_test_retest <- function(contents, ...,
                             name_suffix = NULL,
                             extra_by = NULL) {
   rlang::check_dots_empty()
-  name_suffix <- if (is.null(name_suffix)) "" else paste0("_", name_suffix)
+  suffix <- if (is.null(name_suffix)) "" else paste0("_", name_suffix)
+  chr <- function(x, ...) paste(paste0(x, suffix), ..., sep = "_")
+  sym <- function(x, ...) as.symbol(chr(x, ...))
   values <- prepare_config_retest(contents)
   list(
     indices_retest = purrr::pmap(
       values,
       \(game_id_real, game_id) {
-        indices <- rlang::syms(sprintf("indices%s_%s", name_suffix, game_id))
         tar_target_raw(
-          sprintf("indices_retest%s_%s", name_suffix, game_id_real),
+          chr("indices_retest", game_id_real),
           bquote(
-            clean_retest(bind_rows(..(indices)), .(extra_by)),
+            clean_retest(
+              bind_rows(..(rlang::syms(chr("indices", game_id)))),
+              .(extra_by)
+            ),
             splice = TRUE
           )
         )
@@ -204,16 +208,13 @@ tar_test_retest <- function(contents, ...,
     test_retest = purrr::pmap(
       values,
       \(game_id_real, ...) {
-        indices_retest <- as.symbol(
-          sprintf("indices_retest%s_%s", name_suffix, game_id_real)
-        )
         tar_target_raw(
-          sprintf("test_retest%s_%s", name_suffix, game_id_real),
+          chr("test_retest", game_id_real),
           bquote(
-            if (!is.null(.(indices_retest))) {
+            if (!is.null(.(sym("indices_retest", game_id_real)))) {
               # https://github.com/tidyverse/dplyr/issues/7008
               # `reframe()` is preferable but there is some issue
-              .(indices_retest) |>
+              .(sym("indices_retest", game_id_real)) |>
                 group_by(pick(.(c(cols_by, extra_by)))) |>
                 group_modify(calc_test_retest) |>
                 ungroup()
