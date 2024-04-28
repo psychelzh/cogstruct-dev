@@ -42,6 +42,7 @@ targets_test_retest_slices <- tar_test_retest(
       dplyr::filter(config_format, !is.na(format)),
       by = "game_id"
     ),
+  add_compare = FALSE,
   name_suffix = "slices",
   extra_by = "part"
 )
@@ -100,6 +101,16 @@ list(
       zutils::separate_wider_dsv(
         ".id", "game_id",
         prefix = "test_retest"
+      ) |>
+      mutate(game_id = bit64::as.integer64(game_id))
+  ),
+  tarchetypes::tar_combine(
+    compare_retest,
+    targets_test_retest$compare_retest,
+    command = bind_rows(!!!.x, .id = ".id") |>
+      zutils::separate_wider_dsv(
+        ".id", "game_id",
+        prefix = "compare_retest"
       ) |>
       mutate(game_id = bit64::as.integer64(game_id))
   ),

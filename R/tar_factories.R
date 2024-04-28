@@ -182,6 +182,7 @@ tar_partition_rawdata <- function(contents) {
 # item analysis related ----
 tar_test_retest <- function(contents, ...,
                             cols_by = c("ver_major", "index_name"),
+                            add_compare = TRUE,
                             name_suffix = NULL,
                             extra_by = NULL) {
   rlang::check_dots_empty()
@@ -222,7 +223,27 @@ tar_test_retest <- function(contents, ...,
           )
         )
       }
-    )
+    ),
+    compare_retest = if (add_compare) {
+      purrr::pmap(
+        values,
+        \(game_id_real, ...) {
+          tar_target_raw(
+            chr("compare_retest", game_id_real),
+            bquote(
+              if (!is.null(.(sym("indices_retest", game_id_real)))) {
+                .(sym("indices_retest", game_id_real)) |>
+                  summarise(
+                    t.test(test, retest, paired = TRUE) |>
+                      broom::tidy(),
+                    .by = .(cols_by)
+                  )
+              }
+            )
+          )
+        }
+      )
+    }
   )
 }
 
@@ -291,8 +312,8 @@ tar_prepare_neural_data <- function(config) {
           path_obj_from_proj(
             .(
               as.call(c(quote(paste), "fc",
-                rlang::syms(names(config_fc)),
-                sep = "_"
+                        rlang::syms(names(config_fc)),
+                        sep = "_"
               ))
             ),
             "prepare_neural"
