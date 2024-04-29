@@ -535,7 +535,7 @@ tar_calibrate_g <- function(expr, data, use_pairs, ...,
 }
 
 tar_combine_branches <- function(name, branches, targets, meta_names,
-                                 meta_prefix = name) {
+                                 meta_prefix = name, names_greedy = NULL) {
   rlang::check_exclusive(targets, branches)
   if (missing(targets)) {
     targets <- zutils::select_list(branches, starts_with(name))
@@ -547,7 +547,8 @@ tar_combine_branches <- function(name, branches, targets, meta_names,
       bind_rows_meta(
         !!!.x,
         .names = .(meta_names),
-        .prefix = .(meta_prefix)
+        .prefix = .(meta_prefix),
+        .names_greedy = .(names_greedy)
       )
     ),
     deployment = "main"

@@ -64,10 +64,11 @@ list_rbind_tar_batches <- function(l, names_to = rlang::zap(), append = FALSE) {
 }
 
 # cpm related ----
-bind_rows_meta <- function(..., .names, .prefix) {
+bind_rows_meta <- function(..., .names, .prefix, .names_greedy = NULL) {
   patterns <- rep(".+?", length(.names))
   # should be greedy because there are "_" in `xcpd` field
-  patterns[.names == "xcpd"] <- ".+"
+  .names_greedy <- .names_greedy %||% "xcpd"
+  patterns[.names %in% .names_greedy] <- ".+"
   bind_rows(..., .id = ".id") |>
     zutils::separate_wider_dsv(
       ".id",
