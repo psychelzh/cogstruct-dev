@@ -311,9 +311,10 @@ tar_prepare_neural_data <- function(config) {
           file_fc,
           path_obj_from_proj(
             .(
-              as.call(c(quote(paste), "fc",
-                        rlang::syms(names(config_fc)),
-                        sep = "_"
+              as.call(c(
+                quote(paste), "fc",
+                rlang::syms(names(config_fc)),
+                sep = "_"
               ))
             ),
             "prepare_neural"
