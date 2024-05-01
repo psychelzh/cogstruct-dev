@@ -44,6 +44,7 @@ Imports:
     matsbyname,
     nFactors,
     nonnest2,
+    olsrr,
     patchwork,
     preproc.iquizoo,
     proxy,

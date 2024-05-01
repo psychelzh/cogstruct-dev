@@ -2223,6 +2223,17 @@
       ],
       "Hash": "eef7063b82c79405f4eb2de9a051a312"
     },
+    "goftest": {
+      "Package": "goftest",
+      "Version": "1.2-3",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "stats"
+      ],
+      "Hash": "dbe0201f91eeb15918dd3fbf01ee689a"
+    },
     "googledrive": {
       "Package": "googledrive",
       "Version": "2.1.1",
@@ -3279,6 +3290,16 @@
       ],
       "Hash": "b2a7b96ab5ffd719dcd0bd17e28c55c9"
     },
+    "nortest": {
+      "Package": "nortest",
+      "Version": "1.0-4",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "stats"
+      ],
+      "Hash": "e587e7a30c737ad415590976481332e4"
+    },
     "numDeriv": {
       "Package": "numDeriv",
       "Version": "2016.8-1.1",
@@ -3307,6 +3328,25 @@
         "zip"
       ],
       "Hash": "3a71a529237487233ead151cba12be3f"
+    },
+    "olsrr": {
+      "Package": "olsrr",
+      "Version": "0.6.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "car",
+        "ggplot2",
+        "goftest",
+        "graphics",
+        "gridExtra",
+        "nortest",
+        "stats",
+        "utils",
+        "xplorerr"
+      ],
+      "Hash": "fc700aca442f1467f237803f5b0387c8"
     },
     "openssl": {
       "Package": "openssl",
@@ -5201,6 +5241,19 @@
         "processx"
       ],
       "Hash": "6c85f015dee9cc7710ddd20f86881f58"
+    },
+    "xplorerr": {
+      "Package": "xplorerr",
+      "Version": "0.1.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Requirements": [
+        "R",
+        "Rcpp",
+        "shiny",
+        "utils"
+      ],
+      "Hash": "88a988b19df700056d77966b74cdfdab"
     },
     "xtable": {
       "Package": "xtable",

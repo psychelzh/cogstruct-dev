@@ -26,7 +26,11 @@ targets_num_vars <- tarchetypes::tar_map(
     resample_vars(names(indices_cogstruct), num_vars, use_pairs),
     indices_cogstruct,
     use_pairs,
-    data_crit = list(cor_rapm = indices_rapm),
+    data_crit = list(
+      cor_rapm = indices_rapm,
+      # use g based on all variables (`[[` is used because of list iteration)
+      cor_g = scores_g_full[[1]][[1]][[1]]
+    ),
     config_neural = config_neural,
     hypers_cpm = hypers_cpm,
     batches = 10,
@@ -116,6 +120,57 @@ targets_load <- tarchetypes::tar_map(
   )
 )
 
+config_select_tasks <- tidyr::expand_grid(
+  scheme = c("by_load", "by_step"),
+  num_vars = seq(3, num_vars_total - 1)
+) |>
+  dplyr::mutate(vars = rlang::syms(sprintf("vars_sort_%s", scheme)))
+targets_select_tasks <- tarchetypes::tar_map(
+  config_select_tasks,
+  names = !vars,
+  tar_calibrate_g(
+    list(head(vars, num_vars)),
+    indices_cogstruct,
+    use_pairs = FALSE,
+    name_suffix = "select_tasks",
+    data_crit = list(
+      cor_g = scores_g_full[[1]][[1]][[1]]
+    ),
+    config_neural = config_neural,
+    hypers_cpm = hypers_cpm
+  )
+)
+
+targets_cpm_tasks <- tarchetypes::tar_map(
+  tidyr::expand_grid(
+    config_neural,
+    hypers_cpm
+  ),
+  names = !all_of(names_exclude),
+  tar_target(
+    cpm_result_tasks,
+    apply(
+      indices_cogstruct, 2,
+      perform_cpm,
+      fc = qs::qread(file_fc)[subjs_keep_neural, ],
+      confounds = match_confounds(users_confounds, fd),
+      bias_correct = FALSE,
+      thresh_method = thresh_method,
+      thresh_level = thresh_level,
+      return_edges = "sum"
+    ),
+    retrieval = "worker",
+    storage = "worker"
+  ),
+  tar_target(
+    cpm_performance_tasks,
+    lapply(cpm_result_tasks, extract_cpm_performance) |>
+      list_rbind(names_to = "game_index"),
+    retrieval = "worker",
+    storage = "worker"
+  )
+)
+
 list(
   tarchetypes::tar_file_read(
     indices_cogstruct,
@@ -136,7 +191,7 @@ list(
   ),
   targets_num_vars,
   lapply(
-    c("rel_pairs_g", "comp_rel_g", "cor_rapm"),
+    c("rel_pairs_g", "comp_rel_g", "cor_rapm", "cor_g"),
     tar_combine_branches,
     branches = targets_num_vars,
     meta_names = names(config_vars)
@@ -197,5 +252,51 @@ list(
       names(config_vars_load),
       "part"
     )
+  ),
+  targets_select_tasks,
+  lapply(
+    c("comp_rel_g_select_tasks", "cor_g_select_tasks"),
+    tar_combine_branches,
+    branches = targets_select_tasks,
+    meta_names = setdiff(names(config_select_tasks), "vars"),
+    names_greedy = "scheme"
+  ),
+  tar_combine_branches(
+    "cpm_performance_select_tasks",
+    branches = targets_select_tasks,
+    meta_names = setdiff(
+      c(names(config_fc), names(hypers_cpm), names(config_select_tasks)),
+      "vars"
+    ),
+    names_greedy = "scheme"
+  ),
+  tar_target(
+    step_forward,
+    cbind(indices_cogstruct, scores_g_full[[1]][[1]][[1]]) |>
+      lm(f1 ~ ., data = _) |>
+      olsrr::ols_step_forward_r2()
+  ),
+  tar_target(
+    vars_sort_by_step,
+    step_forward$metrics$variable
+  ),
+  tar_target(
+    loadings_all,
+    loadings(fit_g_full[[1]][[1]][[1]])
+  ),
+  tar_target(
+    vars_sort_by_load,
+    rownames(loadings_all)[order(loadings_all, decreasing = TRUE)]
+  ),
+  targets_cpm_tasks,
+  tarchetypes::tar_combine(
+    cpm_performance_tasks,
+    targets_cpm_tasks$cpm_performance_tasks,
+    command = bind_rows_meta(
+      !!!.x,
+      .names = c(names(config_fc), names(hypers_cpm)),
+      .prefix = "cpm_performance_tasks"
+    ),
+    deployment = "main"
   )
 )
