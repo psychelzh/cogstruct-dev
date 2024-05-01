@@ -7,7 +7,7 @@ requireNamespace("bit64", quietly = TRUE)
 context <- "{context}"
 game_id <- "{game_id}"
 effect <- "{effect}"
-model_name <- if (effect == "simple") "simple" else "diff"
+model_name <- if (effect %in% c("cong", "switch")) "diff" else effect
 model <- readRDS(
   fs::path("data", sprintf("model_%s_%s.rds", model_name, context))
 )

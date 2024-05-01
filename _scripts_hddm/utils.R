@@ -1,6 +1,6 @@
 load_data <- function(game_id,
                       context = c("retest", "camp"),
-                      effect = c("simple", "switch", "cong"),
+                      effect = c("simple", "switch", "cong", "diff2"),
                       key = NULL,
                       rt_min = NA,
                       rt_max = NA) {
@@ -32,6 +32,8 @@ load_data <- function(game_id,
         factor(tolower(.data[[key]]), c("repeat", "switch"))
       } else if (effect == "cong") {
         factor(str_sub(tolower(.data[[key]]), end = 3), c("con", "inc"))
+      } else if (effect == "diff2") {
+        factor(tolower(.data[[key]]))
       }
     ) |>
     filter(if_all(any_of("type"), \(x) !is.na(x)), rt > rt_min, rt < rt_max) |>
@@ -45,8 +47,9 @@ load_data <- function(game_id,
 }
 
 sample_model <- function(model, data, chains = 4, ...) {
+  model_updated <- update(model, newdata = data, chains = 0)
   inits <- with(
-    standata(update(model, newdata = data, chains = 0)),
+    standata(model_updated),
     replicate(
       chains,
       list(
@@ -61,8 +64,7 @@ sample_model <- function(model, data, chains = 4, ...) {
     )
   )
   update(
-    model,
-    newdata = data,
+    model_updated,
     init = inits,
     chains = chains,
     cores = chains,
