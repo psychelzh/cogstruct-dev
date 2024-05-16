@@ -22,7 +22,8 @@ load_data <- function(game_id,
     camp = targets::tar_read_raw(
       paste0("data_valid_", game_id),
       store = projects$prepare_source_data$store
-    )
+    ) |>
+      filter(row_number(desc(game_time)) == 1, .by = user_id)
   ) |>
     unnest(raw_parsed) |>
     mutate(

@@ -15,7 +15,10 @@ model_name <- switch(effect,
   effect
 )
 model <- readRDS(
-  fs::path("data", sprintf("model_%s_%s.rds", model_name, context))
+  fs::path(
+    "data", "hddm-models",
+    sprintf("model_%s_%s.rds", model_name, context)
+  )
 )
 cat("Processing: ", data.iquizoo::match_info(game_id, "game_name"), "\n")
 cat("Context: ", context, "\n")
