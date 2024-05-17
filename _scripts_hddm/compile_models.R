@@ -137,7 +137,7 @@ brm(
 ## simple intercept models
 brm(
   bf(
-    rt | dec(acc) ~ 0 + Intercept + (1 zhge| p | user_id),
+    rt | dec(acc) ~ 0 + Intercept + (1 | p | user_id),
     bs ~ 0 + Intercept + (1 | p | user_id),
     ndt ~ 0 + Intercept + (1 | p | user_id),
     bias = 0.5
