@@ -51,17 +51,20 @@ targets_hddm <- tarchetypes::tar_map(
   fs::dir_ls("data/hddm-retest") |>
     tibble::as_tibble_col("file") |>
     dplyr::mutate(
-      game_id = stringr::str_extract(fs::path_file(file), "(?<=game-)[0-9]+"),
-    ) |>
-    tidyr::chop(file) |>
-    dplyr::mutate(
-      indices_retest = rlang::syms(sprintf("indices_retest_%s", game_id))
+      game_id = stringr::str_extract(file, "(?<=game-)[0-9]+"),
+      effect = stringr::str_extract(file, "(?<=effect-)[[:alnum:]]+"),
+      load_fun = rlang::syms(sprintf("extract_%s", effect))
     ),
-  names = game_id,
-  tarchetypes::tar_file_read(
+  names = c(game_id, effect),
+  tar_target(file_hddm, file, format = "file"),
+  tar_target(
     indices_retest_hddm,
-    file,
-    read = list_rbind(lapply(!!.x, extract_hddm_coefs, context = "retest"))
+    load_fun(file_hddm) |>
+      pivot_wider(
+        id_cols = c("game_id", "user_id", "index_name"),
+        values_from = "score",
+        names_from = "occasion"
+      )
   ),
   tar_target(
     test_retest_hddm,
@@ -141,7 +144,7 @@ list(
     targets_hddm$test_retest_hddm,
     command = bind_rows(!!!.x, .id = ".id") |>
       zutils::separate_wider_dsv(
-        ".id", "game_id",
+        ".id", c("game_id", "effect"),
         prefix = "test_retest_hddm"
       ) |>
       mutate(game_id = bit64::as.integer64(game_id))

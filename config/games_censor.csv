@@ -1,79 +1,77 @@
-﻿game_id,game_name,game_name_abbr,index_name,paradigm_censor
-224374703641029,快速归类PRO,CRTPro,ies,
-224375977935045,变色魔块PRO,StopSigPro,ssrt,
-224375977935045,变色魔块PRO,StopSigPro,rt_nth,
-224376556507589,察颜观色PRO,FacesPro,switch_cost_ies,
-224377200398533,候鸟迁徙PRO,BirdsPro,cong_eff_ies,
-224377200398533,候鸟迁徙PRO,BirdsPro,switch_cost_ies,
-224377872388293,卡片分类PRO,CardSortPro,switch_cost_ies,
-224378628399301,多彩文字PRO,ColStrpPro,cong_eff_ies,
-224379118576069,太空飞船PRO,FlkrPro,cong_eff_ies,flanker
-224383397556421,过目不忘PRO,FWSPro,nc,
-225191359021253,数字卡片PRO,Digit3back,dprime,n-back
-225191769534981,格子卡片,Grid2back,dprime,n-back
-225525419221509,文字卡片,Verbal3back,dprime,n-back
-225525822632453,美术卡片,Paint2back,dprime,n-back
-225528186135045,打靶场,RSpan,nc,
-238239294447813,变戏法,AntiSac,ies,
-238267995484229,雪花收藏家,DirectSrc,nc_cor,attention search
-238279920537669,幸运小球PRO,OCSpanPro,nc,
-239263162577477,时间顺序判断,TOJ,thresh_last_block,
-239263721484357,节奏感知,RP,thresh_last_block,
-239264243732549,时长分辨,DD,thresh_last_block,
-240406295777861,我是大厨,MSynWin,score_total,
-265086851706949,小狗回家,Racer,mean_score,
-268008982642772,专注大师_中级,CalcSpdMed,nc,calculation fluency
-268008982642792,方向临摹,JLO,mean_log_err,
-268008982642793,强化学习,ProbRL,pc_test,
-268008982642798,位置记忆PRO,SSTMPro,nc,
-268008982642811,城市导航,LocMemAdv,nc,object-spatial association
-268008982646874,超级秒表PRO,SRTPro,mrt,
-268008982650985,登陆月球（中级）,NLEMed,mean_log_err,
-268008982650988,语义判断,Seman,mrt,verbal fluency
-268008982655053,塔罗牌,WxPred,nc,
-268008982655059,数感,NsymNCmp,w,
-268008982655069,言语记忆A,DRMA,memory_score,
-268008982655090,顺背数PRO,FDSPro,nc,
-268008982659144,三维心理旋转测试A,MR3DA,nc,mental rotation
-268008982659166,速算师（中级）,CalcMed,nc,calculation fluency
-268008982659192,一心二用PRO,DualTaskPro,nc,
-268008982663260,萤火虫PRO,MOTPro,nc,
-268008982663267,连点成画PRO,FPTPro,nc,
-268008982663269,魔术师终极,Nback4,dprime,
-268008982663278,蝴蝶照相机,SCSpan,nc,
-268008982663290,词语判断,Lexic,mrt,verbal fluency
-268008982667347,捉虫高级简版,TOVAS,dprime,
-268008982667350,火眼金睛,AttSrc,nc,attention search
-268008982667358,宇宙黑洞A,LocMemStd,nc,object-spatial association
-268008982667368,各得其所,LdnTwr,prop_perfect,
-268008982667380,舒尔特方格（中级）,SchulteMed,nc_cor,
-268008982667381,密码箱,KeepTrack,nc,
-268008982667388,按图索骥,HOP,mean_log_err_both,
-268008982667391,声调判断,Tone,mrt,verbal fluency
-268008982671439,图片记忆A,BPSA,bps_score,
-279330041741381,欢乐餐厅PRO,AscMemPro,nc,
-281039429226565,连续再认PRO,ConRecPro,dprime,
-322148361573125,阅读判断,Reading,nc,
-324177880433541,物体旋转,ObjRot,nc,mental rotation
-324179001000709,平面展开,Unfolding,nc,folding and unfolding
-324179964613381,视角判断,VAT,nc,
-324182449562501,视觉记忆测试,VMT,nc,
-355740333933445,图形推理,NVR,nc,
-355740871500677,数字推理,DR,nc,
-356101783560965,文字推理,VR,nc,
-361750352892805,图形折叠,FR,nc,folding and unfolding
-375903641948933,随机应变,NumLet,switch_cost_ies,
-375916542735109,万花筒,ObjSpan,nc,
-375917432341381,路径学习,PL,nc,
-375917961736965,方向检测,FiltOrient,k,change detection
-375934626087813,色彩检测,FiltColor,k,change detection
-380173315257221,注意警觉,AttenAlert,cong_eff_ies,flanker
-380173961339781,事件记忆,EOT,nc,
-380174783693701,注意指向,AttenOrient,cong_eff_ies,flanker
-380176247862021,多变计数师,ReflectCount,switch_cost_ies,
-381576542159749,社交达人,FName,fntotal,
-384311706735365,人工语言-高级,AscLanAdv,nc,
-386185817178885,词汇学习,VL,nc,
-386196539900677,井然有序,ManipSpan,nc,
-411281158706373,远距离联想,RAT,nc,
-265520726213317,瑞文高级推理,RAPM,nc_test,
+﻿game_id,game_name,game_name_abbr,paradigm_censor
+224374703641029,快速归类PRO,CRTPro,
+224375977935045,变色魔块PRO,StopSigPro,
+224376556507589,察颜观色PRO,FacesPro,
+224377200398533,候鸟迁徙PRO,BirdsPro,
+224377872388293,卡片分类PRO,CardSortPro,
+224378628399301,多彩文字PRO,ColStrpPro,
+224379118576069,太空飞船PRO,FlkrPro,flanker
+224383397556421,过目不忘PRO,FWSPro,
+225191359021253,数字卡片PRO,Digit3back,n-back
+225191769534981,格子卡片,Grid2back,n-back
+225525419221509,文字卡片,Verbal3back,n-back
+225525822632453,美术卡片,Paint2back,n-back
+225528186135045,打靶场,RSpan,
+238239294447813,变戏法,AntiSac,
+238267995484229,雪花收藏家,DirectSrc,attention search
+238279920537669,幸运小球PRO,OCSpanPro,
+239263162577477,时间顺序判断,TOJ,
+239263721484357,节奏感知,RP,
+239264243732549,时长分辨,DD,
+240406295777861,我是大厨,MSynWin,
+265086851706949,小狗回家,Racer,
+268008982642772,专注大师_中级,CalcSpdMed,calculation fluency
+268008982642792,方向临摹,JLO,
+268008982642793,强化学习,ProbRL,
+268008982642798,位置记忆PRO,SSTMPro,
+268008982642811,城市导航,LocMemAdv,object-spatial association
+268008982646874,超级秒表PRO,SRTPro,
+268008982650985,登陆月球（中级）,NLEMed,
+268008982650988,语义判断,Seman,verbal fluency
+268008982655053,塔罗牌,WxPred,
+268008982655059,数感,NsymNCmp,
+268008982655069,言语记忆A,DRMA,
+268008982655090,顺背数PRO,FDSPro,
+268008982659144,三维心理旋转测试A,MR3DA,mental rotation
+268008982659166,速算师（中级）,CalcMed,calculation fluency
+268008982659192,一心二用PRO,DualTaskPro,
+268008982663260,萤火虫PRO,MOTPro,
+268008982663267,连点成画PRO,FPTPro,
+268008982663269,魔术师终极,Nback4,
+268008982663278,蝴蝶照相机,SCSpan,
+268008982663290,词语判断,Lexic,verbal fluency
+268008982667347,捉虫高级简版,TOVAS,
+268008982667350,火眼金睛,AttSrc,attention search
+268008982667358,宇宙黑洞A,LocMemStd,object-spatial association
+268008982667368,各得其所,LdnTwr,
+268008982667380,舒尔特方格（中级）,SchulteMed,
+268008982667381,密码箱,KeepTrack,
+268008982667388,按图索骥,HOP,
+268008982667391,声调判断,Tone,verbal fluency
+268008982671439,图片记忆A,BPSA,
+279330041741381,欢乐餐厅PRO,AscMemPro,
+281039429226565,连续再认PRO,ConRecPro,
+322148361573125,阅读判断,Reading,
+324177880433541,物体旋转,ObjRot,mental rotation
+324179001000709,平面展开,Unfolding,folding and unfolding
+324179964613381,视角判断,VAT,
+324182449562501,视觉记忆测试,VMT,
+355740333933445,图形推理,NVR,
+355740871500677,数字推理,DR,
+356101783560965,文字推理,VR,
+361750352892805,图形折叠,FR,folding and unfolding
+375903641948933,随机应变,NumLet,
+375916542735109,万花筒,ObjSpan,
+375917432341381,路径学习,PL,
+375917961736965,方向检测,FiltOrient,change detection
+375934626087813,色彩检测,FiltColor,change detection
+380173315257221,注意警觉,AttenAlert,flanker
+380173961339781,事件记忆,EOT,
+380174783693701,注意指向,AttenOrient,flanker
+380176247862021,多变计数师,ReflectCount,
+381576542159749,社交达人,FName,
+384311706735365,人工语言-高级,AscLanAdv,
+386185817178885,词汇学习,VL,
+386196539900677,井然有序,ManipSpan,
+411281158706373,远距离联想,RAT,
+265520726213317,瑞文高级推理,RAPM,

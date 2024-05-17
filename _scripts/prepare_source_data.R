@@ -48,6 +48,19 @@ targets_preproc <- tarchetypes::tar_map(
   )
 )
 
+targets_hddm <- tarchetypes::tar_map(
+  fs::dir_ls("data/hddm-camp") |>
+    tibble::as_tibble_col("file") |>
+    dplyr::mutate(
+      game_id = stringr::str_extract(file, "(?<=game-)[0-9]+"),
+      effect = stringr::str_extract(file, "(?<=effect-)[[:alnum:]]+"),
+      load_fun = rlang::syms(sprintf("extract_%s", effect))
+    ),
+  names = c(game_id, effect),
+  tar_target(file_hddm, file, format = "file"),
+  tar_target(indices_hddm, load_fun(file_hddm))
+)
+
 targets_check_motivated <- tar_check_motivated(
   config = readr::read_csv(
     "config/rules_unmotivated.csv",
@@ -74,6 +87,8 @@ list(
   targets_preproc,
   tarchetypes::tar_combine(indices, targets_preproc$indices),
   tarchetypes::tar_combine(durations, targets_preproc$durations),
+  targets_hddm,
+  tarchetypes::tar_combine(indices_hddm, targets_hddm$indices_hddm),
   if (FALSE) tar_prep_creativity(),
   tarchetypes::tar_file_read(
     users_project_progress,
@@ -120,7 +135,11 @@ list(
     indices |>
       # RAMP is not included in structure exploration
       filter(game_id != game_id_rapm) |>
-      censor_indices(users_completed, res_motivated)
+      censor_indices(
+        indices_hddm,
+        users_completed = users_completed,
+        res_motivated = res_motivated
+      )
   ),
   tar_target(users_clean, screen_users(indices_cogstruct_long)),
   tar_target(
@@ -145,10 +164,15 @@ list(
   tar_target(
     config_games_censor,
     read_csv(file_games_censor, col_types = cols(game_id = "I")) |>
-      unite("game_index", game_name_abbr, index_name, sep = ".") |>
       left_join(
-        enframe(psych::smc(indices_cogstruct), "game_index", "smc"),
-        by = "game_index"
+        psych::smc(indices_cogstruct) |>
+          enframe("game_index", "smc") |>
+          separate_wider_delim(
+            "game_index", ".",
+            names = c("game_name_abbr", "index_name"),
+            cols_remove = FALSE
+          ),
+        by = "game_name_abbr"
       ) |>
       arrange(paradigm_censor, desc(smc)) |>
       filter(!is.na(paradigm_censor)) |>
@@ -168,7 +192,10 @@ list(
     indices_rapm,
     indices |>
       filter(game_id == game_id_rapm) |>
-      censor_indices(users_completed, res_motivated) |>
+      censor_indices(
+        users_completed = users_completed,
+        res_motivated = res_motivated
+      ) |>
       filter(!is_outlier_iqr & is_motivated) |>
       select(user_id, score = score_adj) |>
       column_to_rownames("user_id") |>
@@ -183,7 +210,11 @@ list(
     indices_slices_cogstruct_long,
     indices_slices |>
       filter(game_id != game_id_rapm) |>
-      censor_indices(users_completed, res_motivated, id_cols_extra = part)
+      censor_indices(
+        users_completed = users_completed,
+        res_motivated = res_motivated,
+        id_cols_extra = part
+      )
   ),
   tar_target(
     indices_cogstruct_pool,
