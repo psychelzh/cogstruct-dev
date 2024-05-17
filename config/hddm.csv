@@ -3,6 +3,7 @@
 224376556507589,switch,TaskType,0.25,10,
 224377200398533,cong,StimType,0.15,,
 224377200398533,switch,TaskType,0.15,,
+224377200398533,comp,,0.15,,
 224377872388293,switch,Type,0.25,,possible RT error! Mostly larger than 0.5s
 224378628399301,cong,Type,0.25,,
 224379118576069,cong,Type,0.25,,

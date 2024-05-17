@@ -1,11 +1,7 @@
-load_data <- function(game_id,
-                      context = c("retest", "camp"),
-                      effect = c("simple", "switch", "cong", "diff2"),
+load_data <- function(context, game_id, effect,
                       key = NULL,
                       rt_min = NA,
                       rt_max = NA) {
-  context <- match.arg(context)
-  effect <- match.arg(effect)
   rt_min <- coalesce(rt_min, 0)
   rt_max <- coalesce(rt_max, Inf)
   projects <- targets::tar_config_yaml()
@@ -33,15 +29,25 @@ load_data <- function(game_id,
         factor(tolower(.data[[key]]), c("repeat", "switch"))
       } else if (effect == "cong") {
         factor(str_sub(tolower(.data[[key]]), end = 3), c("con", "inc"))
-      } else if (effect == "diff2") {
+      } else if (effect %in% c("orient", "alert")) {
         factor(tolower(.data[[key]]))
+      },
+      stimtype = if (effect == "comp") {
+        factor(str_sub(tolower(.data$StimType), end = 3), c("con", "inc"))
+      },
+      tasktype = if (effect == "comp") {
+        factor(tolower(.data$TaskType), c("repeat", "switch"))
       }
     ) |>
-    filter(if_all(any_of("type"), \(x) !is.na(x)), rt > rt_min, rt < rt_max) |>
+    filter(
+      if_all(contains("type", ignore.case = FALSE), \(x) !is.na(x)),
+      rt > rt_min,
+      rt < rt_max
+    ) |>
     select(c(
       "user_id",
       if (context == "retest") "ocassion",
-      if (effect != "simple") "type",
+      if (effect != "simple") contains("type", ignore.case = FALSE),
       acc = "ACC",
       "rt"
     ))

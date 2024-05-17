@@ -32,7 +32,34 @@ brm(
   ),
   family = family,
   prior = prior,
-  file = "data/model_diff_retest",
+  file = "data/hddm-models/model_diff_retest",
+  chains = 0
+)
+## two interact terms effects drift rate only
+brm(
+  bf(
+    rt | dec(acc) ~ 0 + ocassion:stimtype:tasktype +
+      (0 + ocassion:stimtype:tasktype | p | user_id),
+    bs ~ 0 + ocassion + (0 + ocassion | p | user_id),
+    ndt ~ 0 + ocassion + (0 + ocassion | p | user_id),
+    bias = 0.5
+  ),
+  withr::with_seed(
+    1,
+    expand_grid(
+      user_id = 0,
+      ocassion = c("test", "retest"),
+      stimtype = c("A", "B"),
+      tasktype = c("C", "D")
+    ) |>
+      mutate(
+        rt = rexp(n()),
+        acc = sample(c(0, 1), n(), replace = TRUE)
+      )
+  ),
+  family = family,
+  prior = prior,
+  file = "data/hddm-models/model_comp_retest",
   chains = 0
 )
 ## one term effects all DDM parameters
@@ -57,7 +84,7 @@ brm(
   ),
   family = family,
   prior = prior,
-  file = "data/model_diff2_retest",
+  file = "data/hddm-models/model_diff2_retest",
   chains = 0
 )
 ## simple intercept models
@@ -81,7 +108,7 @@ brm(
   ),
   family = family,
   prior = prior,
-  file = "data/model_simple_retest",
+  file = "data/hddm-models/model_simple_retest",
   chains = 0
 )
 
@@ -107,7 +134,33 @@ brm(
   ),
   family = family,
   prior = prior,
-  file = "data/model_diff_camp",
+  file = "data/hddm-models/model_diff_camp",
+  chains = 0
+)
+## two interact terms effects drift rate only
+brm(
+  bf(
+    rt | dec(acc) ~ 0 + stimtype:tasktype +
+      (0 + stimtype:tasktype | p | user_id),
+    bs ~ 0 + Intercept + (1 | p | user_id),
+    ndt ~ 0 + Intercept + (1 | p | user_id),
+    bias = 0.5
+  ),
+  withr::with_seed(
+    1,
+    expand_grid(
+      user_id = 0,
+      stimtype = c("A", "B"),
+      tasktype = c("C", "D")
+    ) |>
+      mutate(
+        rt = rexp(n()),
+        acc = sample(c(0, 1), n(), replace = TRUE)
+      )
+  ),
+  family = family,
+  prior = prior,
+  file = "data/hddm-models/model_comp_camp",
   chains = 0
 )
 ## one term effects all DDM parameters
@@ -131,7 +184,7 @@ brm(
   ),
   family = family,
   prior = prior,
-  file = "data/model_diff2_camp",
+  file = "data/hddm-models/model_diff2_camp",
   chains = 0
 )
 ## simple intercept models
@@ -152,6 +205,6 @@ brm(
   ),
   family = family,
   prior = prior,
-  file = "data/model_simple_camp",
+  file = "data/hddm-models/model_simple_camp",
   chains = 0
 )
