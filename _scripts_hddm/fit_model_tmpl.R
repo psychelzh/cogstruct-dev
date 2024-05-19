@@ -9,7 +9,9 @@ game_id <- "{game_id}"
 effect <- "{effect}"
 model_name <- switch(effect,
   cong = ,
-  switch = "diff",
+  switch = ,
+  nback = ,
+  anti = "diff",
   alert = ,
   orient = "diff2",
   effect

@@ -31,6 +31,10 @@ load_data <- function(context, game_id, effect,
         factor(str_sub(tolower(.data[[key]]), end = 3), c("con", "inc"))
       } else if (effect %in% c("orient", "alert")) {
         factor(tolower(.data[[key]]))
+      } else if (effect == "nback") {
+        factor(tolower(.data[[key]]))
+      } else if (effect == "anti") {
+        factor(.data[[key]])
       },
       stimtype = if (effect == "comp") {
         factor(str_sub(tolower(.data$StimType), end = 3), c("con", "inc"))
