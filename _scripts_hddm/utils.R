@@ -5,7 +5,7 @@ load_data <- function(context, game_id, effect,
   rt_min <- coalesce(rt_min, 0)
   rt_max <- coalesce(rt_max, Inf)
   projects <- targets::tar_config_yaml()
-  switch(context,
+  dat <- switch(context,
     retest = targets::tar_read_raw(
       paste0("data_valid_", game_id),
       store = projects$prepare_source_data_retest$store
@@ -20,7 +20,12 @@ load_data <- function(context, game_id, effect,
       store = projects$prepare_source_data$store
     ) |>
       filter(row_number(desc(game_time)) == 1, .by = user_id)
-  ) |>
+  )
+  if (game_id == "238239294447813") {
+    dat <- dat |>
+      filter(map_lgl(raw_parsed, \(x) all(x[[key]] < 200)))
+  }
+  dat |>
     unnest(raw_parsed) |>
     mutate(
       rt = RT / 1000,
