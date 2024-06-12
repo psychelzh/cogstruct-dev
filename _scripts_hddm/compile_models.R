@@ -9,13 +9,13 @@ prior <- c(
   set_prior("gamma(3, .5)", class = "b", dpar = "bs", lb = 0),
   set_prior("gamma(1, .5)", class = "b", dpar = "ndt", lb = 0)
 )
-# retest models
-## one term effects drift rate only
+# retest models ----
+## one term for each ocassion
 brm(
   bf(
     rt | dec(acc) ~ 0 + ocassion:type + (0 + ocassion:type | p | user_id),
-    bs ~ 0 + ocassion + (0 + ocassion | p | user_id),
-    ndt ~ 0 + ocassion + (0 + ocassion | p | user_id),
+    bs ~ 0 + ocassion:type + (0 + ocassion | p | user_id),
+    ndt ~ 0 + ocassion:type + (0 + ocassion | p | user_id),
     bias = 0.5
   ),
   withr::with_seed(
@@ -35,13 +35,15 @@ brm(
   file = "data/hddm-models/model_diff_retest",
   chains = 0
 )
-## two interact terms effects drift rate only
+## two terms for each ocassion
 brm(
   bf(
     rt | dec(acc) ~ 0 + ocassion:stimtype:tasktype +
       (0 + ocassion:stimtype:tasktype | p | user_id),
-    bs ~ 0 + ocassion + (0 + ocassion | p | user_id),
-    ndt ~ 0 + ocassion + (0 + ocassion | p | user_id),
+    bs ~ 0 + ocassion:stimtype:tasktype +
+      (0 + ocassion:stimtype:tasktype | p | user_id),
+    ndt ~ 0 + ocassion:stimtype:tasktype +
+      (0 + ocassion:stimtype:tasktype | p | user_id),
     bias = 0.5
   ),
   withr::with_seed(
@@ -60,31 +62,6 @@ brm(
   family = family,
   prior = prior,
   file = "data/hddm-models/model_comp_retest",
-  chains = 0
-)
-## one term effects all DDM parameters
-brm(
-  bf(
-    rt | dec(acc) ~ 0 + ocassion:type + (0 + ocassion:type | p | user_id),
-    bs ~ 0 + ocassion:type + (0 + ocassion:type | p | user_id),
-    ndt ~ 0 + ocassion:type + (0 + ocassion:type | p | user_id),
-    bias = 0.5
-  ),
-  withr::with_seed(
-    1,
-    expand_grid(
-      user_id = 0,
-      ocassion = c("test", "retest"),
-      type = c("A", "B") # could be changed to switch related levels
-    ) |>
-      mutate(
-        rt = rexp(n()),
-        acc = sample(c(0, 1), n(), replace = TRUE)
-      )
-  ),
-  family = family,
-  prior = prior,
-  file = "data/hddm-models/model_diff2_retest",
   chains = 0
 )
 ## simple intercept models
@@ -112,13 +89,13 @@ brm(
   chains = 0
 )
 
-# one-time models
-## one term effects drift rate only
+# one-time models ----
+## one term
 brm(
   bf(
     rt | dec(acc) ~ 0 + type + (0 + type | p | user_id),
-    bs ~ 0 + Intercept + (1 | p | user_id),
-    ndt ~ 0 + Intercept + (1 | p | user_id),
+    bs ~ 0 + type + (type | p | user_id),
+    ndt ~ 0 + type + (type | p | user_id),
     bias = 0.5
   ),
   withr::with_seed(
@@ -137,13 +114,15 @@ brm(
   file = "data/hddm-models/model_diff_camp",
   chains = 0
 )
-## two interact terms effects drift rate only
+## two terms
 brm(
   bf(
     rt | dec(acc) ~ 0 + stimtype:tasktype +
       (0 + stimtype:tasktype | p | user_id),
-    bs ~ 0 + Intercept + (1 | p | user_id),
-    ndt ~ 0 + Intercept + (1 | p | user_id),
+    bs ~ 0 + stimtype:tasktype +
+      (stimtype:tasktype | p | user_id),
+    ndt ~ 0 + stimtype:tasktype +
+      (stimtype:tasktype | p | user_id),
     bias = 0.5
   ),
   withr::with_seed(
@@ -161,30 +140,6 @@ brm(
   family = family,
   prior = prior,
   file = "data/hddm-models/model_comp_camp",
-  chains = 0
-)
-## one term effects all DDM parameters
-brm(
-  bf(
-    rt | dec(acc) ~ 0 + type + (0 + type | p | user_id),
-    bs ~ 0 + type + (0 + type | p | user_id),
-    ndt ~ 0 + type + (0 + type | p | user_id),
-    bias = 0.5
-  ),
-  withr::with_seed(
-    1,
-    expand_grid(
-      user_id = 0,
-      type = c("A", "B") # could be changed to switch related levels
-    ) |>
-      mutate(
-        rt = rexp(n()),
-        acc = sample(c(0, 1), n(), replace = TRUE)
-      )
-  ),
-  family = family,
-  prior = prior,
-  file = "data/hddm-models/model_diff2_camp",
   chains = 0
 )
 ## simple intercept models

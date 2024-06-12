@@ -34,9 +34,7 @@ load_data <- function(context, game_id, effect,
         factor(tolower(.data[[key]]), c("repeat", "switch"))
       } else if (effect == "cong") {
         factor(str_sub(tolower(.data[[key]]), end = 3), c("con", "inc"))
-      } else if (effect %in% c("orient", "alert")) {
-        factor(tolower(.data[[key]]))
-      } else if (effect == "nback") {
+      } else if (effect %in% c("orient", "alert", "nback")) {
         factor(tolower(.data[[key]]))
       } else if (effect == "anti") {
         factor(.data[[key]])

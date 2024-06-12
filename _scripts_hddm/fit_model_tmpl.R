@@ -11,9 +11,9 @@ model_name <- switch(effect,
   cong = ,
   switch = ,
   nback = ,
-  anti = "diff",
+  anti = ,
   alert = ,
-  orient = "diff2",
+  orient = "diff",
   effect
 )
 model <- readRDS(
