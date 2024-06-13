@@ -34,7 +34,12 @@ check_device <- function(raw_parsed, require_keyboard) {
   if (!require_keyboard) {
     return(TRUE)
   }
-  !"mouse" %in% unlist(str_split(raw_parsed$device, "-"))
+  raw_parsed$Device |>
+    str_split("-") |>
+    unlist() |>
+    tolower() |>
+    setdiff(c("keyboard", "none")) |>
+    is_empty()
 }
 
 check_names <- function(raw_parsed, list_names) {
