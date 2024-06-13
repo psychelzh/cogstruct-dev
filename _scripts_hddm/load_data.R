@@ -59,29 +59,3 @@ load_data <- function(context, game_id, effect,
       "rt"
     ))
 }
-
-sample_model <- function(model, data, chains = 4, ...) {
-  model_updated <- update(model, newdata = data, chains = 0)
-  inits <- with(
-    standata(model_updated),
-    replicate(
-      chains,
-      list(
-        b = as.array(rnorm(K)),
-        b_bs = as.array(runif(K_bs, 1, 2)),
-        b_ndt = as.array(runif(K_ndt, 0.05, 0.1)),
-        sd_1 = as.array(runif(M_1, 0.5, 1)),
-        z_1 = matrix(rnorm(M_1 * N_1, 0, 0.01), M_1, N_1),
-        L_1 = diag(M_1)
-      ),
-      simplify = FALSE
-    )
-  )
-  update(
-    model_updated,
-    init = inits,
-    chains = chains,
-    cores = chains,
-    ...
-  )
-}

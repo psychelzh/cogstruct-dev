@@ -2,7 +2,8 @@ suppressPackageStartupMessages({{
   library(tidyverse)
   library(brms)
 }})
-source("_scripts_hddm/utils.R")
+source("_scripts_hddm/load_data.R")
+source("_scripts_hddm/sample_model.R")
 requireNamespace("bit64", quietly = TRUE)
 context <- "{context}"
 game_id <- "{game_id}"
@@ -30,5 +31,9 @@ file_save <- fs::path(
   sprintf("hddm-%s", context),
   sprintf("game-%s_effect-%s_wiener", game_id, effect)
 )
-data <- load_data(context, game_id, effect, "{key}", {rt_min}, {rt_max})
-sample_model(model, data, file = file_save, iter = 1000, warmup = 500)
+load_data(context, game_id, effect, "{key}", {rt_min}, {rt_max}) |>
+  sample_model(
+    context, effect,
+    iter = 1000, warmup = 500,
+    file = file_save
+  )
