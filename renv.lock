@@ -4743,7 +4743,7 @@
     },
     "tarflow.iquizoo": {
       "Package": "tarflow.iquizoo",
-      "Version": "3.11.3",
+      "Version": "3.11.4",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
@@ -4759,7 +4759,7 @@
         "tarchetypes",
         "targets"
       ],
-      "Hash": "9a00857d8b26515342cbe9cba243f058"
+      "Hash": "fab276664005698a3c04d8fa8096b47c"
     },
     "targets": {
       "Package": "targets",
