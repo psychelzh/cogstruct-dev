@@ -46,10 +46,11 @@ load_data <- function(context, game_id, effect,
         factor(tolower(.data$TaskType), c("repeat", "switch"))
       }
     ) |>
+    mutate(is_valid = between(rt, rt_min, rt_max)) |>
+    filter(mean(is_valid) > 0.8, .by = user_id) |> # at least 80% valid trials
     filter(
       if_all(contains("type", ignore.case = FALSE), \(x) !is.na(x)),
-      rt > rt_min,
-      rt < rt_max
+      is_valid
     ) |>
     select(c(
       "user_id",
