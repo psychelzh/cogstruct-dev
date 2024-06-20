@@ -6,7 +6,8 @@ load_data <- function(context, game_id, effect,
   rt_max <- coalesce(rt_max, Inf)
   projects <- targets::tar_config_yaml()
   dat <- switch(context,
-    retest = targets::tar_read_raw(
+    retest = ,
+    retest2 = targets::tar_read_raw(
       paste0("data_valid_", game_id),
       store = projects$prepare_source_data_retest$store
     ) |>
@@ -54,8 +55,8 @@ load_data <- function(context, game_id, effect,
     ) |>
     select(c(
       "user_id",
-      if (context == "retest") "ocassion",
-      if (effect != "simple") contains("type", ignore.case = FALSE),
+      any_of("ocassion"),
+      contains("type", ignore.case = FALSE), # keep lower case columns only
       acc = "ACC",
       "rt"
     ))

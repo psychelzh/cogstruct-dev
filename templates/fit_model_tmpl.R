@@ -8,21 +8,6 @@ requireNamespace("bit64", quietly = TRUE)
 context <- "{context}"
 game_id <- "{game_id}"
 effect <- "{effect}"
-model_name <- switch(effect,
-  cong = ,
-  switch = ,
-  nback = ,
-  anti = ,
-  alert = ,
-  orient = "diff",
-  effect
-)
-model <- readRDS(
-  fs::path(
-    "data", "hddm-models",
-    sprintf("model_%s_%s.rds", model_name, context)
-  )
-)
 cat("Context: ", context, "\n")
 cat("Processing: ", data.iquizoo::match_info(game_id, "game_name"), "\n")
 cat("Effect: ", effect, "\n")
@@ -31,8 +16,13 @@ file_save <- fs::path(
   sprintf("hddm-%s", context),
   sprintf("game-%s_effect-%s_wiener", game_id, effect)
 )
+sample_fun <- switch(context,
+  retest2 = sample_model2,
+  retest = ,
+  camp = sample_model
+)
 load_data(context, game_id, effect, "{key}", {rt_min}, {rt_max}) |>
-  sample_model(
+  sample_fun(
     context, effect,
     iter = 1000, warmup = 500,
     file = file_save
