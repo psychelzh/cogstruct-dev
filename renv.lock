@@ -1406,7 +1406,7 @@
     },
     "datawizard": {
       "Package": "datawizard",
-      "Version": "0.12.1",
+      "Version": "0.12.2",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -1415,7 +1415,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "b59aa2ad4d2bb3f76aff054ea64f12b6"
+      "Hash": "4070785c656b9ded5d0ed5db387a96d5"
     },
     "dbplyr": {
       "Package": "dbplyr",
@@ -2582,7 +2582,7 @@
     },
     "htmlTable": {
       "Package": "htmlTable",
-      "Version": "2.4.2",
+      "Version": "2.4.3",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -2596,7 +2596,7 @@
         "rstudioapi",
         "stringr"
       ],
-      "Hash": "0164d8cade33fac2190703da7e6e3241"
+      "Hash": "ca027d8771f2c039aed82f00a81e725b"
     },
     "htmltools": {
       "Package": "htmltools",
@@ -3522,7 +3522,7 @@
     },
     "parameters": {
       "Package": "parameters",
-      "Version": "0.22.0",
+      "Version": "0.22.1",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -3535,7 +3535,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "6060dd2f863d2285151148b0a0011e77"
+      "Hash": "d54adeaf90f744bd8a342a46153a3fe5"
     },
     "patchwork": {
       "Package": "patchwork",
@@ -4866,7 +4866,7 @@
     },
     "tarflow.iquizoo": {
       "Package": "tarflow.iquizoo",
-      "Version": "3.12.1",
+      "Version": "3.12.2",
       "Source": "Repository",
       "Repository": "psychelzh",
       "Requirements": [
@@ -4874,7 +4874,6 @@
         "R",
         "cachem",
         "cli",
-        "data.iquizoo",
         "glue",
         "jsonlite",
         "memoise",
@@ -4882,7 +4881,7 @@
         "tarchetypes",
         "targets"
       ],
-      "Hash": "84cb2c2cec8eb4fb30315c1f4ed8a449"
+      "Hash": "da81b7e99dc870aa8ce3cccc96782bdc"
     },
     "targets": {
       "Package": "targets",
