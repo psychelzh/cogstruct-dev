@@ -5,7 +5,6 @@ tar_option_set(
   format = "qs",
   controller = setup_crew_controller("efa")
 )
-setup_parallel_plan()
 
 # parameters for resampling
 n_resamples <- 1000

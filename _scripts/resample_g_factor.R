@@ -5,7 +5,6 @@ tar_option_set(
   format = "qs",
   controller = setup_crew_controller("gf")
 )
-setup_parallel_plan()
 
 config_neural <- prepare_config_neural(
   xcpd == "gsr",

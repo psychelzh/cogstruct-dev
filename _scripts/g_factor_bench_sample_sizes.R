@@ -5,7 +5,6 @@ tar_option_set(
   format = "qs",
   controller = setup_crew_controller("gf_samples")
 )
-setup_parallel_plan()
 
 # configure data
 data_root <- r"(D:\Research\brain-intelligence\g-factor)"

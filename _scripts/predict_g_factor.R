@@ -5,7 +5,7 @@ tar_option_set(
   format = "qs",
   controller = setup_crew_controller("bench_cpm")
 )
-setup_parallel_plan()
+
 config_indices <- tibble::tibble(
   index = c("rapm", "g"),
   scores = rlang::syms(sprintf("scores_%s", index))

@@ -5,7 +5,6 @@ tar_option_set(
   format = "qs",
   controller = setup_crew_controller("fc")
 )
-setup_parallel_plan()
 
 config_fc_calc <- config_fc |>
   tidyr::unite("name_suffix", everything(), remove = FALSE) |>

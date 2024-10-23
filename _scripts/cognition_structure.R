@@ -5,7 +5,6 @@ tar_option_set(
   format = "qs",
   controller = setup_crew_controller("efa")
 )
-setup_parallel_plan()
 
 targets_cfa <- tarchetypes::tar_map(
   list(type = rlang::syms(c("efa", "chc", "cognition"))),

@@ -5,7 +5,6 @@ tar_option_set(
   format = "qs",
   controller = setup_crew_controller("cfa")
 )
-setup_parallel_plan()
 
 prepare_config <- function(name, config, loadings = NULL) {
   if (!is.null(loadings)) {
