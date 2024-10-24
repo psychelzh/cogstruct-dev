@@ -1,16 +1,18 @@
-censor_indices <- function(indices, ...,
-                           users_completed, res_motivated,
-                           id_cols_extra = NULL) {
+censor_indices <- function(indices, users_completed, res_motivated,
+                           id_cols_extra = NULL, type = NULL) {
+  type <- type %||% unique(game_indices$type)
   indices |>
-    # remove users who did not complete the experiment
-    semi_join(users_completed, by = "user_id") |>
-    # Keep the latest data for each user.
+    # keep the latest data for each user.
     filter(
-      row_number(desc(game_time)) == 1,
+      row_number(desc(game_time)) == 1 | is.na(game_time),
       .by = c(user_id, game_id, index_name, {{ id_cols_extra }})
     ) |>
-    bind_rows(...) |>
-    inner_join(game_indices, by = join_by(game_id, index_name)) |>
+    # remove users who did not complete the experiment
+    semi_join(users_completed, by = "user_id") |>
+    inner_join(
+      filter(game_indices, .data$type %in% .env$type),
+      by = join_by(game_id, index_name)
+    ) |>
     mutate(
       score_adj = if_else(inverse, -score, score),
       game_index = match_game_index(game_id, index_name)

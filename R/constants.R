@@ -1,4 +1,3 @@
-game_id_rapm <- bit64::as.integer64(265520726213317) # 瑞文高级推理
 game_id_unused <- bit64::as.integer64(
   c(
     240052750955077, # 远距离联想A (obsolete)

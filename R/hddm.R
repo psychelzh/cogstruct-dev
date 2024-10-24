@@ -1,3 +1,4 @@
+# extract coefficients ----
 extract_simple <- function(file) {
   load_coefs(file) |>
     mutate(
@@ -5,6 +6,43 @@ extract_simple <- function(file) {
       .before = score,
       .keep = "unused"
     )
+}
+
+extract_anti <- function(file) {
+  load_coefs(file) |>
+    separate_wider_delim(index, "_", names = c("index_name", "type")) |>
+    summarise(
+      score = mean(score),
+      .by = any_of(c("game_id", "user_id", "occasion", "index_name"))
+    )
+}
+
+extract_nback <- function(file) {
+  load_coefs(file) |>
+    mutate(
+      index_name = str_remove(index, "type"),
+      .before = score,
+      .keep = "unused"
+    )
+}
+
+extract_comp <- function(file) {
+  coefs <- load_coefs(file)
+  switch_cost <- {
+    names_cond <- c("repeat", "switch")
+    index_prefix <- "switch_cost"
+    coefs |>
+      filter(str_detect(index, "stimtypecon")) |>
+      extract_diff(names_cond, index_prefix)
+  }
+  cong_eff <- {
+    names_cond <- c("con", "inc")
+    index_prefix <- "cong_eff"
+    coefs |>
+      filter(str_detect(index, "tasktyperepeat")) |>
+      extract_diff(names_cond, index_prefix)
+  }
+  bind_rows(switch_cost, cong_eff)
 }
 
 extract_switch <- function(file) {
@@ -62,21 +100,19 @@ extract_diff <- function(coefs, names_cond, index_prefix) {
   coefs |>
     mutate(
       par = str_extract(index, "^.*(?=_)"),
-      cond = str_extract(index, paste(names_cond, collapse = "|")),
-      index_name = if_else(
-        is.na(cond),
-        par,
-        paste(cond, par, sep = "_")
-      )
+      cond = str_extract(index, paste(names_cond, collapse = "|"))
     ) |>
     pivot_wider(
-      id_cols = any_of(c("game_id", "user_id", "occasion")),
+      id_cols = any_of(c("game_id", "user_id", "occasion", "par")),
       values_from = score,
-      names_from = index_name
+      names_from = cond
     ) |>
     mutate(
-      "{index_prefix}_v" := .data[[str_c(names_cond[[1]], "_v")]] -
-        .data[[str_c(names_cond[[2]], "_v")]]
+      "{index_prefix}" := .data[[names_cond[[1]]]] - .data[[names_cond[[2]]]]
+    ) |>
+    pivot_wider(
+      names_from = par,
+      values_from = !any_of(c("game_id", "user_id", "occasion", "par"))
     ) |>
     pivot_longer(
       !any_of(c("game_id", "user_id", "occasion")),
