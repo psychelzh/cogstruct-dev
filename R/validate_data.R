@@ -30,7 +30,7 @@ check_ver <- function(version) {
   ver_major == max(ver_major)
 }
 
-check_device <- function(raw_parsed, require_keyboard) {
+check_device <- function(raw_parsed, require_keyboard = TRUE) {
   if (!require_keyboard) {
     return(TRUE)
   }
