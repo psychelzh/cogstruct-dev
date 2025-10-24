@@ -46,6 +46,30 @@ tar_collect_camp <- function(contents) {
   )
 }
 
+tar_validate_device <- function(contents) {
+  tarchetypes::tar_map(
+    contents |>
+      dplyr::distinct(game_id) |>
+      dplyr::filter(game_id %in% game_id_keyboard) |>
+      dplyr::mutate(
+        data_raw = rlang::syms(sprintf("raw_data_parsed_%s", game_id)),
+        game_id = as.character(game_id)
+      ),
+    names = game_id,
+    tar_target(
+      device_validity,
+      data_raw |>
+        mutate(
+          device_valid = map_lgl(
+            raw_parsed,
+            check_device
+          ),
+          .keep = "unused"
+        )
+    )
+  )
+}
+
 tar_validate_rawdata <- function(contents) {
   prepare_command_correction <- function(correction, game_id) {
     expr <- as.symbol(sprintf("raw_data_parsed_%s", game_id))

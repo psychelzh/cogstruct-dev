@@ -9,7 +9,7 @@ tar_option_set(
   controller = crew::crew_controller_local(workers = 12)
 )
 
-contents <- tarflow.iquizoo::fetch_iquizoo_mem()(
+contents <- tarflow.iquizoo::fetch_iquizoo(
   readr::read_file("sql/contents_camp.sql")
 ) |>
   dplyr::filter(!game_id %in% game_id_unused)
@@ -17,9 +17,7 @@ contents <- tarflow.iquizoo::fetch_iquizoo_mem()(
 targets_preproc <- tarchetypes::tar_map(
   values = contents |>
     dplyr::distinct(game_id) |>
-    data.iquizoo::merge_preproc(
-      rm_tagged = TRUE # the tagged are experimental or unavailable
-    ) |>
+    data.iquizoo::merge_preproc(rm_tagged = TRUE) |> # the tagged are experimental or unavailable
     dplyr::mutate(
       game_id = as.character(.data$game_id),
       tar_parsed = rlang::syms(stringr::str_glue("data_valid_{game_id}"))
@@ -33,7 +31,8 @@ targets_preproc <- tarchetypes::tar_map(
     durations,
     tar_parsed |>
       mutate(
-        game_dur_mins = game_duration / 60000 +
+        game_dur_mins = game_duration /
+          60000 +
           case_match(
             .data[["game_id"]],
             bit64::as.integer64(c(268008982671439, 268008982671433)) ~ 4.7,
@@ -61,6 +60,8 @@ targets_hddm <- tarchetypes::tar_map(
   tar_target(indices_hddm, load_fun(file_hddm))
 )
 
+targets_check_device <- tar_validate_device(contents)
+
 targets_check_motivated <- tar_check_motivated(
   config = readr::read_csv(
     "config/rules_unmotivated.csv",
@@ -79,6 +80,11 @@ list(
   ),
   tar_collect_camp(contents),
   tar_validate_rawdata(contents),
+  targets_check_device,
+  tarchetypes::tar_combine(
+    device_validity,
+    targets_check_device$device_validity
+  ),
   targets_check_motivated,
   tarchetypes::tar_combine(
     res_motivated,
@@ -145,9 +151,9 @@ list(
   ),
   tarchetypes::tar_map(
     tibble::tribble(
-      ~mode, ~type,
-      "convention", c("general", "convention"),
-      "ddm", c("general", "ddm")
+      ~mode        , ~type                      ,
+      "convention" , c("general", "convention") ,
+      "ddm"        , c("general", "ddm")
     ),
     tar_target(
       indices_cogstruct_long,
