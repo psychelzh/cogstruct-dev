@@ -47,6 +47,7 @@ Imports:
     proxy,
     psych,
     qs,
+    qs2,
     quarto,
     reticulate,
     semTools,
