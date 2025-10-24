@@ -3,6 +3,7 @@ tar_source()
 tar_option_set(
   packages = c("tidyverse", "bit64", "lavaan", "preproc.iquizoo"),
   format = "qs",
+  error = "trim",
   imports = "preproc.iquizoo",
   memory = "transient",
   garbage_collection = TRUE,
