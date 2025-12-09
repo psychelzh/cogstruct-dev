@@ -108,7 +108,8 @@ list(
   tar_target(
     users_completed,
     users_project_progress |>
-      filter(str_detect(project_name, "^认知实验[A-E]$")) |>
+      # one of the organization's project names was misnamed as "认知测评A-E"
+      filter(str_detect(project_name, "^认知(实验|测评)[A-E]$")) |>
       summarise(n = sum(project_progress) / 100, .by = user_id) |>
       filter(n >= 4)
   ),
