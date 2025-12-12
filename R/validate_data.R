@@ -13,23 +13,24 @@
 #' another game caused by the technical issues.
 #'
 #' @param data_parsed Data with parsed raw data.
+#' @param list_versions List of possible versions.
 #' @param require_keyboard Logical indicating if keyboard response is required.
 #' @param list_names A [list()] of possible column names.
 #' @return Validated data of class [data.frame()].
 #' @export
-validate_data <- function(data_parsed, require_keyboard, list_names) {
+validate_data <- function(
+  data_parsed,
+  list_versions,
+  require_keyboard,
+  list_names
+) {
   data_parsed |>
-    filter(check_ver(game_version)) |>
+    filter(game_version %in% list_versions) |>
     filter(map_lgl(raw_parsed, check_device, require_keyboard)) |>
     filter(map_lgl(raw_parsed, check_names, list_names))
 }
 
 # helper functions
-check_ver <- function(version) {
-  ver_major <- str_extract(version, "\\d+")
-  ver_major == max(ver_major)
-}
-
 check_device <- function(raw_parsed, require_keyboard = TRUE) {
   if (!require_keyboard) {
     return(TRUE)

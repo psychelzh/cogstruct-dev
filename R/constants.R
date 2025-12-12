@@ -35,6 +35,11 @@ game_id_keyboard <- readr::read_csv(
   "config/games_keyboard.csv",
   col_types = readr::cols(game_id = "I")
 )$game_id
+game_versions <- readr::read_csv(
+  "config/game_versions.csv",
+  col_types = readr::cols(game_id = "I")
+) |>
+  dplyr::mutate(game_versions = strsplit(game_versions, ";"))
 game_data_names <- readr::read_csv(
   "config/game_data_names.csv",
   col_types = readr::cols(game_id = "I")
@@ -85,13 +90,13 @@ tasks_biased <- c("NsymNCmp", "TOJ", "RP", "DRMA", "CardSortPro")
 
 # used in functional connectivity settings
 params_fmri_tasks <- tibble::tribble(
-  ~session, ~task, ~runs,
-  "1", "rest", 2,
-  "1", "am", 2,
-  "1", "movie", 2,
-  "2", "rest", 2,
-  "2", "wm", 3,
-  "2", "movie", 2
+  ~session , ~task   , ~runs ,
+  "1"      , "rest"  ,     2 ,
+  "1"      , "am"    ,     2 ,
+  "1"      , "movie" ,     2 ,
+  "2"      , "rest"  ,     2 ,
+  "2"      , "wm"    ,     3 ,
+  "2"      , "movie" ,     2
 ) |>
   tidyr::uncount(runs, .id = "run_id")
 # Note: sesion: 0 = all sessions, run_id: 0 = all runs

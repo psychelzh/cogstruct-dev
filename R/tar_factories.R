@@ -26,7 +26,8 @@ tar_collect_camp <- function(contents) {
           bind_rows(
             select(tar_name_current, -project_id),
             zutils::cautiously(targets::tar_read, tibble())(
-              tar_name_restore, store = .(path_restore)
+              tar_name_restore,
+              store = .(path_restore)
             ) |>
               select(!contains("name"))
           ) |>
@@ -83,6 +84,7 @@ tar_validate_rawdata <- function(contents) {
   }
   contents |>
     dplyr::distinct(game_id) |>
+    dplyr::left_join(game_versions, by = "game_id") |>
     dplyr::left_join(game_data_names, by = "game_id") |>
     dplyr::left_join(config_data_correction, by = "game_id") |>
     dplyr::mutate(
@@ -98,6 +100,7 @@ tar_validate_rawdata <- function(contents) {
               tar_name_data_valid,
               .(prepare_command_correction(correction, game_id)) |>
                 validate_data(
+                  list_versions = game_versions,
                   require_keyboard = require_keyboard,
                   list_names = list_names
                 )
@@ -204,11 +207,14 @@ tar_partition_rawdata <- function(contents) {
 }
 
 # item analysis related ----
-tar_test_retest <- function(contents, ...,
-                            cols_by = c("ver_major", "index_name"),
-                            add_compare = TRUE,
-                            name_suffix = NULL,
-                            extra_by = NULL) {
+tar_test_retest <- function(
+  contents,
+  ...,
+  cols_by = c("ver_major", "index_name"),
+  add_compare = TRUE,
+  name_suffix = NULL,
+  extra_by = NULL
+) {
   rlang::check_dots_empty()
   suffix <- if (is.null(name_suffix)) "" else paste0("_", name_suffix)
   chr <- function(x, ...) paste(paste0(x, suffix), ..., sep = "_")
@@ -272,12 +278,16 @@ tar_test_retest <- function(contents, ...,
 }
 
 # modeling related ----
-tar_fit_cfa <- function(config, data, theory,
-                        col_ov = manifest,
-                        col_lv = latent,
-                        col_fix = NULL,
-                        missing = "ml",
-                        tar_post_fit = c("gof", "comp_rel", "scores")) {
+tar_fit_cfa <- function(
+  config,
+  data,
+  theory,
+  col_ov = manifest,
+  col_lv = latent,
+  col_fix = NULL,
+  missing = "ml",
+  tar_post_fit = c("gof", "comp_rel", "scores")
+) {
   tar_post_fit <- match.arg(tar_post_fit, several.ok = TRUE)
   list(
     tar_target_raw(
@@ -336,7 +346,8 @@ tar_prepare_neural_data <- function(config) {
           path_obj_from_proj(
             .(
               as.call(c(
-                quote(paste), "fc",
+                quote(paste),
+                "fc",
                 rlang::syms(names(config_fc)),
                 sep = "_"
               ))
@@ -412,11 +423,16 @@ tar_prepare_neural_data <- function(config) {
 }
 
 # g factor ----
-tar_calibrate_g <- function(expr, data, use_pairs, ...,
-                            name_suffix = NULL,
-                            data_crit = NULL,
-                            config_neural = NULL,
-                            hypers_cpm = NULL) {
+tar_calibrate_g <- function(
+  expr,
+  data,
+  use_pairs,
+  ...,
+  name_suffix = NULL,
+  data_crit = NULL,
+  config_neural = NULL,
+  hypers_cpm = NULL
+) {
   suffix <- if (is.null(name_suffix)) "" else paste0("_", name_suffix)
   chr <- function(x) paste0(x, suffix)
   sym <- function(x) as.symbol(chr(x))
@@ -558,8 +574,14 @@ tar_calibrate_g <- function(expr, data, use_pairs, ...,
   )
 }
 
-tar_combine_branches <- function(name, branches, targets, meta_names,
-                                 meta_prefix = name, names_greedy = NULL) {
+tar_combine_branches <- function(
+  name,
+  branches,
+  targets,
+  meta_names,
+  meta_prefix = name,
+  names_greedy = NULL
+) {
   rlang::check_exclusive(targets, branches)
   if (missing(targets)) {
     targets <- zutils::select_list(branches, starts_with(name))
